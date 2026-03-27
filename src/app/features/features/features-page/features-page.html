@@ -1,0 +1,40 @@
+<section class="features-shell">
+  <app-site-header [sticky]="true" />
+
+  <main class="features-content">
+    <section class="backend-card">
+      <div class="backend-head">
+        <div>
+          <span class="badge">{{ copy().badge }}</span>
+          <h1>{{ copy().title }}</h1>
+          <p>{{ copy().description }}</p>
+        </div>
+        @if (saved()) {
+          <span class="saved-pill">{{ copy().saved }}</span>
+        }
+      </div>
+
+      <div class="feature-list">
+        @for (card of copy().cards; track card.title) {
+          <article class="feature-row">
+            <h2>{{ card.title }}</h2>
+            <p>{{ card.description }}</p>
+          </article>
+        }
+      </div>
+
+      <div class="backend-copy">
+        <span class="badge badge--soft">API</span>
+        <h2>{{ copy().backendTitle }}</h2>
+        <p>{{ copy().backendDescription }}</p>
+      </div>
+
+      <form class="backend-form" [formGroup]="form" (ngSubmit)="save()">
+        <input type="url" formControlName="apiBaseUrl" placeholder="http://127.0.0.1:8000/api/v1" />
+        <button type="submit">{{ copy().submit }}</button>
+      </form>
+    </section>
+  </main>
+
+  <app-site-footer />
+</section>

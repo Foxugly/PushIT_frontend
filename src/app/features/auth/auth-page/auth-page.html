@@ -1,0 +1,68 @@
+<section class="auth-shell">
+  <app-site-header [sticky]="true" />
+
+  <form class="auth-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+    <div class="card-heading">
+      <div>
+        <span class="eyebrow">Connexion</span>
+        <h1>Acceder a votre espace.</h1>
+      </div>
+    </div>
+
+    <p class="hero-copy">
+      Connectez-vous pour acceder au dashboard PushIT et gerer vos campagnes.
+    </p>
+
+    <label>
+      <span>Email</span>
+      <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="auth-input" />
+    </label>
+    @for (message of fieldErrors(loginError(), 'email'); track message) {
+      <p class="field-error">{{ message }}</p>
+    }
+
+    <label>
+      <span>Mot de passe</span>
+      <p-password
+        formControlName="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        placeholder="Mot de passe"
+        styleClass="auth-password"
+        inputStyleClass="auth-password__input"
+      />
+    </label>
+    @for (message of fieldErrors(loginError(), 'password'); track message) {
+      <p class="field-error">{{ message }}</p>
+    }
+    @for (message of fieldErrors(loginError(), 'non_field_errors'); track message) {
+      <p class="field-error">{{ message }}</p>
+    }
+
+    <label class="checkbox">
+      <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
+      <span>Se souvenir de moi</span>
+    </label>
+
+    @if (loginError()?.detail) {
+      <p class="api-error">{{ loginError()?.detail }}</p>
+    }
+
+    <div class="link-row">
+      <a routerLink="/forgot-password">Mot de passe oublie ?</a>
+      <a routerLink="/register">Inscription</a>
+    </div>
+
+    <div class="auth-submit-row">
+      <p-button
+        type="submit"
+        [label]="loginPending() ? 'Connexion...' : 'Se connecter'"
+        [loading]="loginPending()"
+        [disabled]="loginPending()"
+        styleClass="auth-submit"
+      />
+    </div>
+  </form>
+
+  <app-site-footer />
+</section>

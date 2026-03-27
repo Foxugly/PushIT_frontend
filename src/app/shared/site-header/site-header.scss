@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--card-border);
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.site-header--sticky {
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+}
+
+.site-nav,
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.site-nav a,
+.login-link {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-nav a.is-active {
+  color: var(--accent-strong);
+}
+
+:host ::ng-deep .p-selectbutton .p-button {
+  min-width: 3rem;
+}
+
+:host ::ng-deep .p-menu {
+  min-width: 16rem;
+}
+
+@media (max-width: 800px) {
+  .site-header,
+  .site-nav,
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+}

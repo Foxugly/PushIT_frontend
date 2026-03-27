@@ -1,0 +1,219 @@
+<section class="console-page">
+  @if (banner()) {
+    <section class="console-flash">
+      <p>{{ banner() }}</p>
+    </section>
+  }
+
+  @if (error()?.detail) {
+    <section class="console-error">
+      <p>{{ error()?.detail }}</p>
+    </section>
+  }
+
+  <section class="console-card">
+    <div class="console-card__header quiet-periods-header">
+      <h2 class="quiet-periods-header__title">Gestion des fenetres de silence</h2>
+      <div class="console-card__toolbar quiet-periods-header__toolbar">
+        <p-button label="Rafraichir" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
+        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+      </div>
+    </div>
+
+    <p class="console-note">{{ scheduleNote() }}</p>
+
+    @if (loading()) {
+      <p class="console-empty">Chargement des periodes blanches...</p>
+    } @else if (quietPeriods().length) {
+      <p-table [value]="quietPeriods()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Cible</th>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Regle</th>
+            <th>Statut</th>
+            <th class="console-table__actions">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-quietPeriod>
+          <tr [class.console-row-selected]="selectedQuietPeriodId() === quietPeriod.id">
+            <td>
+              <p-tag [value]="quietPeriodTargetLabel(quietPeriod)" severity="contrast" />
+            </td>
+            <td class="console-table__name">
+              <strong>{{ quietPeriod.name }}</strong>
+              <p class="console-table__subtext">{{ quietPeriodScopeLabel(quietPeriod) }}</p>
+            </td>
+            <td>
+              <p-tag
+                [value]="quietPeriod.period_type === 'ONCE' ? 'once' : 'recurring'"
+                [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
+              />
+            </td>
+            <td>{{ quietPeriodScheduleLabel(quietPeriod) }}</td>
+            <td>
+              <p-tag
+                [value]="quietPeriod.is_active ? 'active' : 'inactive'"
+                [severity]="quietPeriodStatusSeverity(quietPeriod)"
+              />
+            </td>
+            <td class="console-table__actions">
+              <div class="console-icon-actions">
+                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" pTooltip="Editer" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
+                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" pTooltip="Supprimer" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <p class="console-empty">Aucune periode blanche configuree.</p>
+    }
+  </section>
+
+  <p-dialog
+    [header]="editingQuietPeriodId() ? 'Modifier une periode blanche' : 'Nouvelle periode blanche'"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="isModalOpen()"
+    (visibleChange)="setModalVisible($event)"
+    [style]="{ width: '44rem' }"
+  >
+    <form class="console-form" [formGroup]="form" (ngSubmit)="saveQuietPeriod()">
+      @if (!editingQuietPeriodId()) {
+        <label>
+          <span>Cible</span>
+          <p-select
+            [options]="scopeOptions"
+            [ngModel]="modalScope()"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="setModalScope($event)"
+            optionLabel="label"
+            optionValue="value"
+          />
+        </label>
+
+        @if (modalScope() === 'device') {
+          <label>
+            <span>Device</span>
+            <p-select
+              [options]="deviceOptions()"
+              [ngModel]="modalDeviceId()"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="setModalDevice($event)"
+              placeholder="Choisir..."
+              [disabled]="loadingDevices() || !deviceOptions().length"
+            />
+          </label>
+        } @else {
+          <label>
+            <span>Application</span>
+            <p-select
+              [options]="applicationOptions()"
+              [ngModel]="modalApplicationId()"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="setModalApplication($event)"
+              placeholder="Choisir..."
+              [disabled]="!applicationOptions().length"
+            />
+          </label>
+        }
+      } @else {
+        <label>
+          <span>Cible</span>
+          <p-tag [value]="modalTargetLabel()" severity="contrast" />
+        </label>
+      }
+
+      <label>
+        <span>Nom</span>
+        <input pInputText type="text" formControlName="name" placeholder="Nuit marketing" />
+      </label>
+      @for (message of fieldErrors('name'); track message) {
+        <p class="console-field-error">{{ message }}</p>
+      }
+
+      <label>
+        <span>Type</span>
+        <p-select
+          formControlName="period_type"
+          [options]="periodTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </label>
+      @for (message of fieldErrors('period_type'); track message) {
+        <p class="console-field-error">{{ message }}</p>
+      }
+
+      @if (isRecurring()) {
+        <label>
+          <span>Jours de recurrence</span>
+          <div class="quiet-periods-weekdays">
+            @for (day of weekdayOptions; track day.value) {
+              <label class="quiet-periods-weekdays__item">
+                <p-checkbox
+                  [binary]="true"
+                  [ngModel]="hasRecurrenceDay(day.value)"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="toggleRecurrenceDay(day.value, $event)"
+                />
+                <span>{{ day.label }}</span>
+              </label>
+            }
+          </div>
+        </label>
+        @for (message of fieldErrors('recurrence_days'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+
+        <div class="console-form-grid console-form-grid--2">
+          <label>
+            <span>Heure de debut</span>
+            <input type="time" formControlName="start_time" />
+          </label>
+
+          <label>
+            <span>Heure de fin</span>
+            <input type="time" formControlName="end_time" />
+          </label>
+        </div>
+        @for (message of fieldErrors('start_time'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+        @for (message of fieldErrors('end_time'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+      } @else {
+        <div class="console-form-grid console-form-grid--2">
+          <label>
+            <span>Debut</span>
+            <input type="datetime-local" formControlName="start_at" />
+          </label>
+
+          <label>
+            <span>Fin</span>
+            <input type="datetime-local" formControlName="end_at" />
+          </label>
+        </div>
+        @for (message of fieldErrors('start_at'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+        @for (message of fieldErrors('end_at'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+      }
+
+      <label class="console-checkbox">
+        <p-checkbox formControlName="is_active" [binary]="true" inputId="quiet-period-active" />
+        <span>Periode active</span>
+      </label>
+
+      <div class="console-actions">
+        <p-button type="submit" [label]="pending() ? 'Enregistrement...' : editingQuietPeriodId() ? 'Mettre a jour' : 'Creer la periode'" [loading]="pending()" />
+      </div>
+    </form>
+  </p-dialog>
+</section>

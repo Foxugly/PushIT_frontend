@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.devices-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.devices-header__title {
+  margin: 0;
+  flex: 0 1 auto;
+  white-space: nowrap;
+}
+
+.devices-header__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+  flex-wrap: nowrap;
+}
+
+.devices-header__badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 960px) {
+  .devices-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .devices-header__title {
+    white-space: normal;
+  }
+
+  .devices-header__toolbar {
+    width: 100%;
+    flex-wrap: wrap;
+    margin-left: 0;
+  }
+
+  .devices-header__badges {
+    flex-wrap: wrap;
+  }
+}

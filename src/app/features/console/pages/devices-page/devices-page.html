@@ -1,0 +1,137 @@
+<section class="console-page">
+  @if (banner()) {
+    <section class="console-flash">
+      <p>{{ banner() }}</p>
+    </section>
+  }
+
+  @if (error()?.detail) {
+    <section class="console-error">
+      <p>{{ error()?.detail }}</p>
+    </section>
+  }
+
+  <section class="console-card">
+    <div class="console-card__header devices-header">
+      <h2 class="devices-header__title">Inventaire et liaison des devices</h2>
+      <div class="console-card__toolbar devices-header__toolbar">
+        <div class="devices-header__badges">
+          <p-tag [value]="devices().length + ' devices'" severity="secondary" />
+        </div>
+        <p-button label="Rafraichir" icon="pi pi-refresh" severity="secondary" (onClick)="loadDevices()" />
+        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" />
+      </div>
+    </div>
+
+    @if (loading()) {
+      <p class="console-empty">Chargement des devices...</p>
+    } @else if (devices().length) {
+      <p-table [value]="devices()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nom</th>
+            <th>Plateforme</th>
+            <th>Token</th>
+            <th>Applications</th>
+            <th>Derniere activite</th>
+            <th class="console-table__actions">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-device>
+          <tr [class.console-row-selected]="selectedDeviceId() === device.id">
+            <td class="console-table__name">
+              <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
+                <strong>{{ device.device_name }}</strong>
+              </a>
+            </td>
+            <td>{{ device.platform }}</td>
+            <td><p-tag [value]="device.push_token_status" [severity]="statusSeverity(device.push_token_status)" /></td>
+            <td>{{ deviceApplicationNames(device) }}</td>
+            <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : 'Jamais' }}</td>
+            <td class="console-table__actions">
+              <div class="console-icon-actions">
+                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" pTooltip="Voir le detail" tooltipPosition="top" (onClick)="openDetails(device)" />
+                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" pTooltip="Editer" tooltipPosition="top" (onClick)="openEditModal(device)" />
+                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" pTooltip="Supprimer" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <p class="console-empty">Aucun device lie pour ce compte.</p>
+    }
+  </section>
+
+  <p-dialog
+    [header]="modalMode() === 'create' ? 'Lier un device' : 'Modifier le device'"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="modalMode() !== null"
+    (visibleChange)="setModalVisible($event)"
+    [style]="{ width: '46rem' }"
+  >
+    @if (modalMode() === 'create') {
+      <div class="console-form">
+        <div class="console-actions">
+          <p-button label="Utiliser le dernier token genere" severity="secondary" (onClick)="useLatestToken()" />
+        </div>
+
+        <form class="console-form" [formGroup]="appTokenForm">
+          <label>
+            <span>X-App-Token</span>
+            <textarea pTextarea rows="4" formControlName="app_token" placeholder="Coller le token brut ici"></textarea>
+          </label>
+        </form>
+
+        <form class="console-form" [formGroup]="linkForm" (ngSubmit)="linkDevice()">
+          <label>
+            <span>Nom du device</span>
+            <input pInputText type="text" formControlName="device_name" placeholder="iPhone Marie" />
+          </label>
+
+          <div class="console-form-grid console-form-grid--2">
+            <label>
+              <span>Plateforme</span>
+              <p-select formControlName="platform" [options]="platformSelectOptions()" optionLabel="label" optionValue="value" />
+            </label>
+
+            <label>
+              <span>Push token</span>
+              <input pInputText type="text" formControlName="push_token" placeholder="ExponentPushToken..." />
+            </label>
+          </div>
+
+          <div class="console-actions">
+            <p-button type="submit" [label]="linking() ? 'Association...' : 'Lier le device'" [loading]="linking()" />
+          </div>
+        </form>
+      </div>
+    } @else {
+      <form class="console-form" [formGroup]="editForm" (ngSubmit)="saveDevice()">
+        <label>
+          <span>Nom</span>
+          <input pInputText type="text" formControlName="device_name" />
+        </label>
+
+        <div class="console-form-grid console-form-grid--2">
+          <label>
+            <span>Plateforme</span>
+            <p-select formControlName="platform" [options]="platformSelectOptions()" optionLabel="label" optionValue="value" />
+          </label>
+
+          <label>
+            <span>Statut du push token</span>
+            <p-select formControlName="push_token_status" [options]="statusSelectOptions()" optionLabel="label" optionValue="value" />
+          </label>
+        </div>
+
+        <div class="console-actions">
+          <p-button type="submit" [label]="saving() ? 'Enregistrement...' : 'Enregistrer'" [loading]="saving()" />
+          <p-button label="Supprimer" severity="secondary" icon="pi pi-trash" (onClick)="deleteDevice()" [disabled]="saving()" />
+        </div>
+      </form>
+    }
+  </p-dialog>
+</section>

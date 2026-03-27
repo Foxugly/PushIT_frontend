@@ -1,0 +1,78 @@
+<form class="register-panel" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+  <div class="panel-heading">
+    <div>
+      <h2>{{ title() }}</h2>
+      <p>{{ subtitle() }}</p>
+    </div>
+  </div>
+
+  <label>
+    <span>Email</span>
+    <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="register-input" />
+  </label>
+  @for (message of fieldErrors('email'); track message) {
+    <p class="field-error">{{ message }}</p>
+  }
+
+  <label>
+    <span>Username</span>
+    <input pInputText type="text" formControlName="username" placeholder="pushit-admin" class="register-input" />
+  </label>
+  @for (message of fieldErrors('username'); track message) {
+    <p class="field-error">{{ message }}</p>
+  }
+
+  <label>
+    <span>Mot de passe</span>
+    <p-password
+      formControlName="password"
+      [feedback]="false"
+      [toggleMask]="true"
+      placeholder="Minimum 8 caracteres"
+      styleClass="register-password"
+      inputStyleClass="register-password__input"
+    />
+  </label>
+  @for (message of fieldErrors('password'); track message) {
+    <p class="field-error">{{ message }}</p>
+  }
+
+  <label>
+    <span>Langue</span>
+    <p-select
+      formControlName="language"
+      [options]="languagePreference.options"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Choisir une langue"
+    />
+  </label>
+  @for (message of fieldErrors('language'); track message) {
+    <p class="field-error">{{ message }}</p>
+  }
+
+  @for (message of fieldErrors('non_field_errors'); track message) {
+    <p class="field-error">{{ message }}</p>
+  }
+
+  @if (registerError()?.detail) {
+    <p class="api-error">{{ registerError()?.detail }}</p>
+  }
+
+  <div class="register-submit-row">
+    <p-button
+      type="submit"
+      [label]="pending() ? 'Creation...' : 'Creer le compte'"
+      [loading]="pending()"
+      [disabled]="pending()"
+      styleClass="register-submit"
+    />
+  </div>
+
+  @if (showLoginLink()) {
+    <p class="panel-link">
+      Deja un compte ?
+      <a routerLink="/auth">Se connecter</a>
+    </p>
+  }
+</form>

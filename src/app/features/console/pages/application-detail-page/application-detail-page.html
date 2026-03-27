@@ -1,0 +1,82 @@
+<section class="console-page">
+  <section class="console-card">
+    <div class="console-card__header console-detail-header">
+      <div class="console-detail-header__main">
+        <a class="console-back-link" [routerLink]="['/dashboard/applications']">
+          <i class="pi pi-arrow-left"></i>
+          <span>Retour aux applications</span>
+        </a>
+
+        <div>
+          <p class="console-shell__eyebrow">Application</p>
+          <h2>{{ application()?.name || 'Detail application' }}</h2>
+          <p class="console-muted">Vue detaillee de la configuration et de l'etat de l'application.</p>
+        </div>
+      </div>
+
+      @if (application(); as app) {
+        <div class="console-detail-badges">
+          <p-tag [value]="app.is_active ? 'active' : 'inactive'" [severity]="appSeverity(app)" />
+          <p-tag [value]="'Prefixe ' + app.app_token_prefix" severity="info" />
+        </div>
+      }
+    </div>
+
+    @if (error()?.detail) {
+      <section class="console-error">
+        <p>{{ error()?.detail }}</p>
+      </section>
+    }
+
+    @if (loading() && !application()) {
+      <p class="console-empty">Chargement de l'application...</p>
+    } @else if (application(); as app) {
+      <div class="console-detail-grid">
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>Description</h3>
+          <p>{{ app.description || 'Aucune description disponible pour cette application.' }}</p>
+        </article>
+
+        <article class="console-detail-panel">
+          <h3>Identite</h3>
+          <dl class="console-detail-list">
+            <div>
+              <dt>ID</dt>
+              <dd>{{ app.id }}</dd>
+            </div>
+            <div>
+              <dt>Nom</dt>
+              <dd>{{ app.name }}</dd>
+            </div>
+            <div>
+              <dt>Prefixe token</dt>
+              <dd>{{ app.app_token_prefix }}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="console-detail-panel">
+          <h3>Etat</h3>
+          <dl class="console-detail-list">
+            <div>
+              <dt>Statut</dt>
+              <dd>{{ app.is_active ? 'Active' : 'Inactive' }}</dd>
+            </div>
+            <div>
+              <dt>Derniere utilisation</dt>
+              <dd>{{ app.last_used_at ? (app.last_used_at | date: 'dd/MM/yyyy HH:mm') : 'Jamais' }}</dd>
+            </div>
+            <div>
+              <dt>Token revoque</dt>
+              <dd>{{ app.revoked_at ? (app.revoked_at | date: 'dd/MM/yyyy HH:mm') : 'Non' }}</dd>
+            </div>
+            <div>
+              <dt>Creee le</dt>
+              <dd>{{ app.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+    }
+  </section>
+</section>

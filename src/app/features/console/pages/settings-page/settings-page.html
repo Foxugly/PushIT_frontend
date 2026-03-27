@@ -1,0 +1,61 @@
+<section class="console-page">
+  <header class="console-page__hero">
+    <div>
+      <p class="console-shell__eyebrow">Settings</p>
+      <h2>Parametres de la console</h2>
+      <p class="console-muted">Cette page centralise la configuration frontend utilisee pour joindre le backend.</p>
+    </div>
+  </header>
+
+  @if (banner()) {
+    <section class="console-flash">
+      <p>{{ banner() }}</p>
+    </section>
+  }
+
+  <div class="console-grid console-grid--2">
+    <form class="console-card console-form" [formGroup]="form" (ngSubmit)="save()">
+      <div class="console-card__header">
+        <div>
+          <p class="console-shell__eyebrow">Backend</p>
+          <h3>Prefixe de l'API</h3>
+        </div>
+      </div>
+
+      <label>
+        <span>URL API</span>
+        <input pInputText type="text" formControlName="apiBaseUrl" placeholder="/api/v1" />
+      </label>
+
+      <label>
+        <span>Langue du compte</span>
+        <p-select
+          formControlName="language"
+          [options]="languagePreference.options"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </label>
+
+      <div class="console-actions">
+        <p-button type="submit" label="Enregistrer" />
+      </div>
+    </form>
+
+    <section class="console-card">
+      <div class="console-card__header">
+        <div>
+          <p class="console-shell__eyebrow">Session</p>
+          <h3>Compte connecte</h3>
+        </div>
+      </div>
+
+      <div class="console-list-item__content">
+        <strong>{{ shell.user()?.username || 'Utilisateur' }}</strong>
+        <p class="console-muted">{{ shell.user()?.email || 'Email indisponible' }}</p>
+        <p class="console-note">Prefixe actif: {{ settings.apiBaseUrl() }}</p>
+        <p class="console-note">Langue active: {{ shell.user()?.language || form.getRawValue().language }}</p>
+      </div>
+    </section>
+  </div>
+</section>

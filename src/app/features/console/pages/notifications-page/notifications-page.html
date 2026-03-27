@@ -1,0 +1,226 @@
+<section class="console-page">
+  @if (banner()) {
+    <section class="console-flash">
+      <p>{{ banner() }}</p>
+    </section>
+  }
+
+  @if (error()?.detail) {
+    <section class="console-error">
+      <p>{{ error()?.detail }}</p>
+    </section>
+  }
+
+  <section class="console-card">
+    <div class="console-card__header notifications-header">
+      <h2 class="notifications-header__title">Notifications utilisateur</h2>
+      <div class="console-card__toolbar notifications-header__toolbar">
+        <div class="notifications-header__badges">
+          <p-tag value="Historique {{ notifications().length }}" severity="info" />
+          <p-tag value="Futures {{ futureNotifications().length }}" severity="warn" />
+          <p-tag value="Decalees {{ shiftedCount() }}" severity="contrast" />
+        </div>
+        <p-button label="Rafraichir" icon="pi pi-refresh" severity="secondary" (onClick)="refreshNotifications()" />
+        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" />
+      </div>
+    </div>
+
+    <div class="notifications-status-badges">
+      @for (status of statusOptions; track status) {
+        <p-tag
+          [value]="status + ' ' + statusCount(status)"
+          [severity]="statusBadgeSeverity(status)"
+        />
+      }
+    </div>
+
+    <form class="console-filter-grid notifications-filters" [formGroup]="filtersForm" (ngSubmit)="applyFilters()">
+      <label>
+        <span>Application</span>
+        <p-select
+          formControlName="application_id"
+          [options]="appOptions()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Toutes"
+          size="small"
+        />
+      </label>
+
+      <label>
+        <span>Statut</span>
+        <p-select
+          formControlName="status"
+          [options]="statusOptionsSelect()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Tous"
+          size="small"
+        />
+      </label>
+
+      <label>
+        <span>Effectif a partir de</span>
+        <input class="notifications-filters__input" type="datetime-local" formControlName="effective_scheduled_from" />
+      </label>
+
+      <label>
+        <span>Effectif jusqu'a</span>
+        <input class="notifications-filters__input" type="datetime-local" formControlName="effective_scheduled_to" />
+      </label>
+
+      <div class="console-filter-actions notifications-filters__actions">
+        <p-button type="submit" label="Appliquer" size="small" />
+        <p-button type="button" label="Reinitialiser" severity="secondary" size="small" (onClick)="clearFilters()" />
+      </div>
+    </form>
+
+    <p class="console-note">
+      `effective_scheduled_for` reflete uniquement les periodes blanches application. Les periodes blanches device peuvent retarder une delivery sans changer cette date.
+    </p>
+
+    @if (loading()) {
+      <p class="console-empty">Chargement des notifications...</p>
+    } @else {
+      <p-table [value]="notifications().concat(futureNotifications())" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nom</th>
+            <th>Application</th>
+            <th>Message</th>
+            <th>Statut</th>
+            <th>Effective</th>
+            <th class="console-table__actions">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-notification>
+          <tr [class.console-row-selected]="selectedNotificationId() === notification.id">
+            <td class="console-table__name">
+              <a class="console-table__link" [routerLink]="['/dashboard/notifications', notification.id]">
+                <strong>{{ notification.title }}</strong>
+              </a>
+              @if (isFutureNotification(notification)) {
+                <p class="console-table__subtext">Planifiee</p>
+              }
+            </td>
+            <td>{{ notification.application_name }}</td>
+            <td>{{ notification.message }}</td>
+            <td>
+              <p-tag [value]="isShifted(notification) ? 'shifted' : notification.status" [severity]="notificationSeverity(notification)" />
+            </td>
+            <td>{{ notification.effective_scheduled_for ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : 'immediat' }}</td>
+            <td class="console-table__actions">
+              <div class="console-icon-actions">
+                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" pTooltip="Voir le detail" tooltipPosition="top" (onClick)="openDetails(notification)" />
+                @if (notification.status === 'draft' && !notification.scheduled_for) {
+                  <p-button icon="pi pi-send" [text]="true" [rounded]="true" pTooltip="Envoyer" tooltipPosition="top" (onClick)="sendNotification(notification)" />
+                }
+                @if (isFutureNotification(notification)) {
+                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" pTooltip="Editer" tooltipPosition="top" (onClick)="openEditModal(notification)" />
+                  <p-button icon="pi pi-trash" [text]="true" [rounded]="true" pTooltip="Supprimer" tooltipPosition="top" (onClick)="deleteFutureNotification(notification)" />
+                }
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      @if (!notifications().length && !futureNotifications().length) {
+        <p class="console-empty">Aucune notification pour ces filtres.</p>
+      }
+    }
+  </section>
+
+  <p-dialog
+    [header]="modalMode() === 'create' ? 'Creer une notification' : 'Modifier une notification future'"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="modalMode() !== null"
+    (visibleChange)="setModalVisible($event)"
+    [style]="{ width: '44rem' }"
+  >
+    @if (modalMode() === 'create') {
+      <form class="console-form" [formGroup]="notificationForm" (ngSubmit)="createNotification()">
+        <label>
+          <span>Application</span>
+          <p-select
+            formControlName="application_id"
+            [options]="appOptions()"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Choisir..."
+            styleClass="notifications-form__control"
+          />
+        </label>
+        @for (message of fieldErrors('application_id'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+
+        <label>
+          <span>Devices cibles</span>
+          <p-multiselect
+            formControlName="device_ids"
+            [options]="availableDeviceOptions()"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Choisir un ou plusieurs devices"
+            display="chip"
+            styleClass="notifications-form__control"
+            [disabled]="!notificationForm.controls.application_id.value"
+          />
+        </label>
+        <p class="console-muted notifications-form__hint">
+          Seuls les devices actifs lies a l'application selectionnee sont proposes.
+        </p>
+        @for (message of fieldErrors('device_ids'); track message) {
+          <p class="console-field-error">{{ message }}</p>
+        }
+
+        <label>
+          <span>Titre</span>
+          <input pInputText type="text" formControlName="title" placeholder="Promo weekend" />
+        </label>
+
+        <label>
+          <span>Message</span>
+          <textarea pTextarea rows="5" formControlName="message" placeholder="Votre message push"></textarea>
+        </label>
+
+        <label>
+          <span>Planification optionnelle</span>
+          <input type="datetime-local" formControlName="scheduled_for" />
+        </label>
+
+        <div class="console-actions">
+          <p-button type="submit" [label]="pending() ? 'Creation...' : 'Creer la notification'" [loading]="pending()" />
+        </div>
+      </form>
+    } @else {
+      <form class="console-form" [formGroup]="futureEditForm" (ngSubmit)="saveFutureNotification()">
+        <label>
+          <span>Titre</span>
+          <input pInputText type="text" formControlName="title" />
+        </label>
+
+        <label>
+          <span>Message</span>
+          <textarea pTextarea rows="5" formControlName="message"></textarea>
+        </label>
+
+        <label>
+          <span>Nouvelle date</span>
+          <input type="datetime-local" formControlName="scheduled_for" />
+        </label>
+
+        @if (futureError()?.detail) {
+          <p class="console-error">{{ futureError()?.detail }}</p>
+        }
+
+        <div class="console-actions">
+          <p-button type="submit" [label]="futurePending() ? 'Sauvegarde...' : 'Enregistrer'" [loading]="futurePending()" />
+        </div>
+      </form>
+    }
+  </p-dialog>
+</section>

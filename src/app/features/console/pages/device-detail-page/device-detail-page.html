@@ -1,0 +1,88 @@
+<section class="console-page">
+  <section class="console-card">
+    <div class="console-card__header console-detail-header">
+      <div class="console-detail-header__main">
+        <a class="console-back-link" [routerLink]="['/dashboard/devices']">
+          <i class="pi pi-arrow-left"></i>
+          <span>Retour aux devices</span>
+        </a>
+
+        <div>
+          <p class="console-shell__eyebrow">Device</p>
+          <h2>{{ device()?.device_name || 'Detail device' }}</h2>
+          <p class="console-muted">Vue detaillee du terminal, de son statut push et de ses applications liees.</p>
+        </div>
+      </div>
+
+      @if (device(); as currentDevice) {
+        <div class="console-detail-badges">
+          <p-tag [value]="currentDevice.platform" severity="info" />
+          <p-tag [value]="currentDevice.push_token_status" [severity]="statusSeverity(currentDevice.push_token_status)" />
+        </div>
+      }
+    </div>
+
+    @if (error()?.detail) {
+      <section class="console-error">
+        <p>{{ error()?.detail }}</p>
+      </section>
+    }
+
+    @if (loading() && !device()) {
+      <p class="console-empty">Chargement du device...</p>
+    } @else if (device(); as currentDevice) {
+      <div class="console-detail-grid">
+        <article class="console-detail-panel">
+          <h3>Identite</h3>
+          <dl class="console-detail-list">
+            <div>
+              <dt>ID</dt>
+              <dd>{{ currentDevice.id }}</dd>
+            </div>
+            <div>
+              <dt>Nom</dt>
+              <dd>{{ currentDevice.device_name }}</dd>
+            </div>
+            <div>
+              <dt>Plateforme</dt>
+              <dd>{{ currentDevice.platform }}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="console-detail-panel">
+          <h3>Push</h3>
+          <dl class="console-detail-list">
+            <div>
+              <dt>Statut token</dt>
+              <dd>{{ currentDevice.push_token_status }}</dd>
+            </div>
+            <div>
+              <dt>Derniere activite</dt>
+              <dd>{{ currentDevice.last_seen_at ? (currentDevice.last_seen_at | date: 'dd/MM/yyyy HH:mm') : 'Jamais' }}</dd>
+            </div>
+            <div>
+              <dt>Creee le</dt>
+              <dd>{{ currentDevice.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>Applications liees</h3>
+          @if (linkedApplications().length) {
+            <div class="console-detail-tags">
+              @for (app of linkedApplications(); track app.id) {
+                <a class="console-detail-tag-link" [routerLink]="['/dashboard/applications', app.id]">
+                  <p-tag [value]="app.name" [severity]="app.is_active ? 'success' : 'secondary'" />
+                </a>
+              }
+            </div>
+          } @else {
+            <p class="console-muted">Aucune application liee.</p>
+          }
+        </article>
+      </div>
+    }
+  </section>
+</section>

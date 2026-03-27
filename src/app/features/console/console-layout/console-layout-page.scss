@@ -1,0 +1,47 @@
+.console-shell {
+  min-height: 100vh;
+  background: var(--page-bg);
+}
+
+.console-shell__backdrop {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.console-shell__eyebrow {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: var(--accent-strong);
+}
+
+.console-shell__body {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.console-shell__main {
+  min-width: 0;
+}
+
+.console-shell__sidebar {
+  min-width: 0;
+}
+
+@media (max-width: 1080px) {
+  .console-shell__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .console-shell__backdrop {
+    padding: 1rem;
+  }
+}

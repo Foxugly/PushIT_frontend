@@ -1,0 +1,53 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--text-main);
+}
+
+.register-shell {
+  display: grid;
+  gap: 1.5rem;
+  min-height: 100vh;
+  padding: 0 0 clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.register-layout {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.eyebrow {
+  width: fit-content;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+.register-copy {
+  display: grid;
+  gap: 1rem;
+}
+
+.register-copy p {
+  max-width: 52ch;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+@media (min-width: 900px) {
+  .register-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 420px);
+  }
+}

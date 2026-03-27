@@ -1,0 +1,152 @@
+<section class="console-page">
+  @if (banner()) {
+    <section class="console-flash">
+      <p>{{ banner() }}</p>
+    </section>
+  }
+
+  <section class="console-card">
+    <div class="console-card__header applications-header">
+      <h2 class="applications-header__title">Gestion des applications</h2>
+      <div class="console-card__toolbar applications-header__toolbar">
+        <div class="applications-header__badges">
+          <p-tag value="Total {{ shell.apps().length }}" severity="info" />
+          <p-tag value="Actives {{ activeAppsCount() }}" severity="success" />
+        </div>
+        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" />
+      </div>
+    </div>
+
+    @if (shell.apps().length) {
+      <p-table [value]="shell.apps()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>Prefixe</th>
+            <th>Statut</th>
+            <th>Creee le</th>
+            <th class="console-table__actions">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-app>
+          <tr>
+            <td class="console-table__name">
+              <a class="console-table__link" [routerLink]="['/dashboard/applications', app.id]">
+                <strong>{{ app.name }}</strong>
+              </a>
+            </td>
+            <td>{{ app.description || 'Aucune description.' }}</td>
+            <td>{{ app.app_token_prefix }}</td>
+            <td>
+              <p-tag [value]="app.is_active ? 'active' : 'inactive'" [severity]="appSeverity(app)" />
+            </td>
+            <td>{{ app.created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="console-table__actions">
+              <div class="console-icon-actions">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  pTooltip="Voir le detail"
+                  tooltipPosition="top"
+                  (onClick)="openDetails(app)"
+                />
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  pTooltip="Editer"
+                  tooltipPosition="top"
+                  (onClick)="openEditModal(app)"
+                />
+                <p-button
+                  [icon]="app.is_active ? 'pi pi-power-off' : 'pi pi-play'"
+                  [text]="true"
+                  [rounded]="true"
+                  [disabled]="pending()"
+                  [pTooltip]="app.is_active ? 'Desactiver' : 'Activer'"
+                  tooltipPosition="top"
+                  (onClick)="toggleState(app)"
+                />
+                <p-button
+                  icon="pi pi-refresh"
+                  [text]="true"
+                  [rounded]="true"
+                  [disabled]="pending()"
+                  pTooltip="Regenerer le token"
+                  tooltipPosition="top"
+                  (onClick)="regenerateToken(app)"
+                />
+                <p-button
+                  icon="pi pi-ban"
+                  [text]="true"
+                  [rounded]="true"
+                  [disabled]="pending()"
+                  pTooltip="Revoquer le token"
+                  tooltipPosition="top"
+                  (onClick)="revokeToken(app)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  [rounded]="true"
+                  [disabled]="pending()"
+                  pTooltip="Supprimer"
+                  tooltipPosition="top"
+                  (onClick)="deleteApp(app)"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <p class="console-empty">Aucune application pour ce compte.</p>
+    }
+
+    <p class="console-note">
+      Les changements de statut restent geres par les endpoints dedies, et le token reste gere via `regenerate-token` et `revoke-token`.
+    </p>
+  </section>
+
+  <p-dialog
+    [header]="modalMode() === 'create' ? 'Creer une application' : 'Modifier une application'"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="isModalOpen()"
+    (visibleChange)="setModalVisible($event)"
+    [style]="{ width: '42rem' }"
+  >
+    <form class="console-form" [formGroup]="form" (ngSubmit)="saveApp()">
+      <label>
+        <span>Nom</span>
+        <input pInputText type="text" formControlName="name" placeholder="Push mobile Europe" />
+      </label>
+      @for (message of fieldErrors('name'); track message) {
+        <p class="console-field-error">{{ message }}</p>
+      }
+
+      <label>
+        <span>Description</span>
+        <textarea pTextarea rows="5" formControlName="description" placeholder="Canal, environnement, usage..."></textarea>
+      </label>
+      @for (message of fieldErrors('description'); track message) {
+        <p class="console-field-error">{{ message }}</p>
+      }
+
+      @if (error()?.detail) {
+        <p class="console-error">{{ error()?.detail }}</p>
+      }
+
+      <div class="console-actions">
+        <p-button
+          type="submit"
+          [label]="pending() ? (modalMode() === 'create' ? 'Creation...' : 'Enregistrement...') : (modalMode() === 'create' ? 'Creer l application' : 'Enregistrer')"
+          [loading]="pending()"
+        />
+      </div>
+    </form>
+  </p-dialog>
+</section>
