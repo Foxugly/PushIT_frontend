@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
@@ -33,6 +34,7 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
     ReactiveFormsModule,
     DatePipe,
     ButtonModule,
+    DatePickerModule,
     DialogModule,
     InputTextModule,
     MultiSelectModule,
@@ -81,21 +83,21 @@ export class NotificationsPage {
     device_ids: [[] as number[], [Validators.required]],
     title: ['', [Validators.required, Validators.maxLength(255)]],
     message: ['', [Validators.required]],
-    scheduled_for: [''],
+    scheduled_for: [null as Date | null],
   });
 
   readonly filtersForm = this.fb.nonNullable.group({
     application_id: [''],
     status: [''],
-    effective_scheduled_from: [''],
-    effective_scheduled_to: [''],
+    effective_scheduled_from: [null as Date | null],
+    effective_scheduled_to: [null as Date | null],
   });
 
   readonly futureEditForm = this.fb.nonNullable.group({
     id: [0],
     title: ['', [Validators.required, Validators.maxLength(255)]],
     message: ['', [Validators.required]],
-    scheduled_for: [''],
+    scheduled_for: [null as Date | null],
   });
 
   constructor() {
@@ -154,7 +156,7 @@ export class NotificationsPage {
       device_ids: [],
       title: '',
       message: '',
-      scheduled_for: '',
+      scheduled_for: null,
     });
     this.syncSelectedDevices();
     this.modalMode.set('create');
@@ -168,7 +170,7 @@ export class NotificationsPage {
       id: notification.id,
       title: notification.title,
       message: notification.message,
-      scheduled_for: this.asDateTimeLocal(notification.scheduled_for),
+      scheduled_for: this.toDateValue(notification.scheduled_for),
     });
     this.modalMode.set('edit');
   }
@@ -305,8 +307,8 @@ export class NotificationsPage {
     this.filtersForm.reset({
       application_id: '',
       status: '',
-      effective_scheduled_from: '',
-      effective_scheduled_to: '',
+      effective_scheduled_from: null,
+      effective_scheduled_to: null,
     });
     this.refreshNotifications();
   }
@@ -422,25 +424,20 @@ export class NotificationsPage {
     };
   }
 
-  private toIsoOrNull(value: string): string | null {
+  private toIsoOrNull(value: Date | null): string | null {
     if (!value) {
       return null;
     }
 
-    return new Date(value).toISOString();
+    return value.toISOString();
   }
 
-  private asDateTimeLocal(value: string | null): string {
+  private toDateValue(value: string | null): Date | null {
     if (!value) {
-      return '';
+      return null;
     }
 
-    const date = new Date(value);
-    const pad = (part: number) => String(part).padStart(2, '0');
-
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-      date.getHours(),
-    )}:${pad(date.getMinutes())}`;
+    return new Date(value);
   }
 
   private availableDevices(): DeviceRead[] {

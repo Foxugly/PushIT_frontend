@@ -244,6 +244,14 @@ textarea {
   resize: vertical;
 }
 
+.dashboard-date-control {
+  width: 100%;
+}
+
+:host ::ng-deep .dashboard-date-control .p-inputtext {
+  width: 100%;
+}
+
 .checkbox {
   grid-template-columns: auto 1fr;
   align-items: center;

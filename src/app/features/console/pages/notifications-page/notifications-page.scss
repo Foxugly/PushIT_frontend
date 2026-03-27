@@ -53,25 +53,24 @@
   font-size: 0.82rem;
 }
 
-.notifications-filters__input {
-  min-height: 2.2rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: 14px;
-  font-size: 0.92rem;
-}
-
 .notifications-filters__actions {
   grid-column: auto;
   justify-content: flex-end;
   gap: 0.5rem;
 }
 
+.notifications-filters__picker,
 .notifications-form__control {
   width: 100%;
 }
 
 .notifications-form__hint {
   margin-top: -0.25rem;
+}
+
+:host ::ng-deep .notifications-filters__picker .p-inputtext,
+:host ::ng-deep .notifications-form__control .p-inputtext {
+  width: 100%;
 }
 
 @media (max-width: 960px) {

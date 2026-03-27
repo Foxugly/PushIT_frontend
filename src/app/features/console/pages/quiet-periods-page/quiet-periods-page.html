@@ -172,12 +172,24 @@
         <div class="console-form-grid console-form-grid--2">
           <label>
             <span>Heure de debut</span>
-            <input type="time" formControlName="start_time" />
+            <p-datepicker
+              formControlName="start_time"
+              [timeOnly]="true"
+              hourFormat="24"
+              appendTo="body"
+              styleClass="quiet-periods-form__control"
+            ></p-datepicker>
           </label>
 
           <label>
             <span>Heure de fin</span>
-            <input type="time" formControlName="end_time" />
+            <p-datepicker
+              formControlName="end_time"
+              [timeOnly]="true"
+              hourFormat="24"
+              appendTo="body"
+              styleClass="quiet-periods-form__control"
+            ></p-datepicker>
           </label>
         </div>
         @for (message of fieldErrors('start_time'); track message) {
@@ -190,12 +202,24 @@
         <div class="console-form-grid console-form-grid--2">
           <label>
             <span>Debut</span>
-            <input type="datetime-local" formControlName="start_at" />
+            <p-datepicker
+              formControlName="start_at"
+              [showTime]="true"
+              hourFormat="24"
+              appendTo="body"
+              styleClass="quiet-periods-form__control"
+            ></p-datepicker>
           </label>
 
           <label>
             <span>Fin</span>
-            <input type="datetime-local" formControlName="end_at" />
+            <p-datepicker
+              formControlName="end_at"
+              [showTime]="true"
+              hourFormat="24"
+              appendTo="body"
+              styleClass="quiet-periods-form__control"
+            ></p-datepicker>
           </label>
         </div>
         @for (message of fieldErrors('start_at'); track message) {

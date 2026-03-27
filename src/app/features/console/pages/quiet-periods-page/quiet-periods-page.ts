@@ -5,6 +5,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { finalize, forkJoin, Observable, of } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -37,6 +38,7 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     ReactiveFormsModule,
     ButtonModule,
     CheckboxModule,
+    DatePickerModule,
     DialogModule,
     InputTextModule,
     SelectModule,
@@ -89,11 +91,11 @@ export class QuietPeriodsPage {
     id: [0],
     name: ['', [Validators.required, Validators.maxLength(120)]],
     period_type: ['ONCE' as QuietPeriodType, [Validators.required]],
-    start_at: [''],
-    end_at: [''],
+    start_at: [null as Date | null],
+    end_at: [null as Date | null],
     recurrence_days: [[] as Weekday[]],
-    start_time: [''],
-    end_time: [''],
+    start_time: [null as Date | null],
+    end_time: [null as Date | null],
     is_active: [true],
   });
 
@@ -139,8 +141,8 @@ export class QuietPeriodsPage {
         if (periodType === 'RECURRING') {
           this.form.patchValue(
             {
-              start_at: '',
-              end_at: '',
+              start_at: null,
+              end_at: null,
             },
             { emitEvent: false },
           );
@@ -150,8 +152,8 @@ export class QuietPeriodsPage {
         this.form.patchValue(
           {
             recurrence_days: [],
-            start_time: '',
-            end_time: '',
+            start_time: null,
+            end_time: null,
           },
           { emitEvent: false },
         );
@@ -240,11 +242,11 @@ export class QuietPeriodsPage {
       id: quietPeriod.id,
       name: quietPeriod.name,
       period_type: quietPeriod.period_type,
-      start_at: this.asDateTimeLocal(quietPeriod.start_at),
-      end_at: this.asDateTimeLocal(quietPeriod.end_at),
+      start_at: this.toDateValue(quietPeriod.start_at),
+      end_at: this.toDateValue(quietPeriod.end_at),
       recurrence_days: [...quietPeriod.recurrence_days],
-      start_time: this.asTimeLocal(quietPeriod.start_time),
-      end_time: this.asTimeLocal(quietPeriod.end_time),
+      start_time: this.toTimeValue(quietPeriod.start_time),
+      end_time: this.toTimeValue(quietPeriod.end_time),
       is_active: quietPeriod.is_active,
     });
     this.isModalOpen.set(true);
@@ -278,11 +280,11 @@ export class QuietPeriodsPage {
       id: 0,
       name: '',
       period_type: 'ONCE',
-      start_at: '',
-      end_at: '',
+      start_at: null,
+      end_at: null,
       recurrence_days: [],
-      start_time: '',
-      end_time: '',
+      start_time: null,
+      end_time: null,
       is_active: true,
     });
   }
@@ -483,9 +485,7 @@ export class QuietPeriodsPage {
         return null;
       }
 
-      const startAt = new Date(rawValue.start_at);
-      const endAt = new Date(rawValue.end_at);
-      if (Number.isNaN(startAt.getTime()) || Number.isNaN(endAt.getTime()) || endAt <= startAt) {
+      if (Number.isNaN(rawValue.start_at.getTime()) || Number.isNaN(rawValue.end_at.getTime()) || rawValue.end_at <= rawValue.start_at) {
         this.error.set({
           code: 'validation_error',
           detail: 'Validation error.',
@@ -521,7 +521,7 @@ export class QuietPeriodsPage {
       return null;
     }
 
-    if (rawValue.start_time === rawValue.end_time) {
+    if (rawValue.start_time.getTime() === rawValue.end_time.getTime()) {
       this.error.set({
         code: 'validation_error',
         detail: 'Validation error.',
@@ -532,45 +532,45 @@ export class QuietPeriodsPage {
       return null;
     }
 
-      return {
-        name: rawValue.name,
-        period_type: 'RECURRING',
-        start_at: null,
-        end_at: null,
-        recurrence_days: rawValue.recurrence_days,
-        start_time: this.toTimeWithSeconds(rawValue.start_time),
-        end_time: this.toTimeWithSeconds(rawValue.end_time),
+    return {
+      name: rawValue.name,
+      period_type: 'RECURRING',
+      start_at: null,
+      end_at: null,
+      recurrence_days: rawValue.recurrence_days,
+      start_time: this.toTimeWithSeconds(rawValue.start_time),
+      end_time: this.toTimeWithSeconds(rawValue.end_time),
       is_active: rawValue.is_active,
     };
   }
 
-  private toIso(value: string): string {
-    return new Date(value).toISOString();
+  private toIso(value: Date): string {
+    return value.toISOString();
   }
 
-  private toTimeWithSeconds(value: string): string {
-    return value.length === 5 ? `${value}:00` : value;
-  }
-
-  private asDateTimeLocal(value: string | null): string {
-    if (!value) {
-      return '';
-    }
-
-    const date = new Date(value);
+  private toTimeWithSeconds(value: Date): string {
     const pad = (part: number) => String(part).padStart(2, '0');
 
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-      date.getHours(),
-    )}:${pad(date.getMinutes())}`;
+    return `${pad(value.getHours())}:${pad(value.getMinutes())}:00`;
   }
 
-  private asTimeLocal(value: string | null): string {
+  private toDateValue(value: string | null): Date | null {
     if (!value) {
-      return '';
+      return null;
     }
 
-    return value.slice(0, 5);
+    return new Date(value);
+  }
+
+  private toTimeValue(value: string | null): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const [hours, minutes] = value.split(':').map((part) => Number(part));
+    const date = new Date();
+    date.setHours(hours || 0, minutes || 0, 0, 0);
+    return date;
   }
 
   private formatDateTime(value: string | null): string {

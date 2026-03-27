@@ -224,11 +224,23 @@
             <div class="split-fields">
               <label>
                 <span>Debut</span>
-                <input type="datetime-local" formControlName="start_at" />
+                <p-datepicker
+                  formControlName="start_at"
+                  [showTime]="true"
+                  hourFormat="24"
+                  appendTo="body"
+                  styleClass="dashboard-date-control"
+                ></p-datepicker>
               </label>
               <label>
                 <span>Fin</span>
-                <input type="datetime-local" formControlName="end_at" />
+                <p-datepicker
+                  formControlName="end_at"
+                  [showTime]="true"
+                  hourFormat="24"
+                  appendTo="body"
+                  styleClass="dashboard-date-control"
+                ></p-datepicker>
               </label>
             </div>
             @for (message of fieldErrors(quietPeriodError(), 'end_at'); track message) {
@@ -328,7 +340,13 @@
 
             <label>
               <span>Planification optionnelle</span>
-              <input type="datetime-local" formControlName="scheduled_for" />
+              <p-datepicker
+                formControlName="scheduled_for"
+                [showTime]="true"
+                hourFormat="24"
+                appendTo="body"
+                styleClass="dashboard-date-control"
+              ></p-datepicker>
             </label>
             @for (message of fieldErrors(notificationError(), 'scheduled_for'); track message) {
               <p class="field-error">{{ message }}</p>
@@ -364,7 +382,13 @@
 
               <label>
                 <span>Nouvelle date</span>
-                <input type="datetime-local" formControlName="scheduled_for" />
+                <p-datepicker
+                  formControlName="scheduled_for"
+                  [showTime]="true"
+                  hourFormat="24"
+                  appendTo="body"
+                  styleClass="dashboard-date-control"
+                ></p-datepicker>
               </label>
 
               @if (futureError()?.detail) {
@@ -435,12 +459,24 @@
 
             <label>
               <span>Effectif a partir de</span>
-              <input type="datetime-local" formControlName="effective_scheduled_from" />
+              <p-datepicker
+                formControlName="effective_scheduled_from"
+                [showTime]="true"
+                hourFormat="24"
+                appendTo="body"
+                styleClass="dashboard-date-control"
+              ></p-datepicker>
             </label>
 
             <label>
               <span>Effectif jusqu a</span>
-              <input type="datetime-local" formControlName="effective_scheduled_to" />
+              <p-datepicker
+                formControlName="effective_scheduled_to"
+                [showTime]="true"
+                hourFormat="24"
+                appendTo="body"
+                styleClass="dashboard-date-control"
+              ></p-datepicker>
             </label>
 
             <div class="button-row">
@@ -637,7 +673,13 @@
 
               <label>
                 <span>Planification optionnelle</span>
-                <input type="datetime-local" formControlName="scheduled_for" />
+                <p-datepicker
+                  formControlName="scheduled_for"
+                  [showTime]="true"
+                  hourFormat="24"
+                  appendTo="body"
+                  styleClass="dashboard-date-control"
+                ></p-datepicker>
               </label>
 
               @if (appTokenError()?.detail) {

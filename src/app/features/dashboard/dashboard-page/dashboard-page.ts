@@ -2,6 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, forkJoin } from 'rxjs';
+import { DatePickerModule } from 'primeng/datepicker';
 
 import {
   ApiErrorResponse,
@@ -23,7 +24,7 @@ import { SiteFooter } from '../../../shared/site-footer/site-footer';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [CommonModule, ReactiveFormsModule, DatePipe, SiteFooter],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe, DatePickerModule, SiteFooter],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
 })
@@ -104,8 +105,8 @@ export class DashboardPage {
   readonly quietPeriodForm = this.fb.nonNullable.group({
     id: [0],
     name: ['', [Validators.required, Validators.maxLength(120)]],
-    start_at: ['', [Validators.required]],
-    end_at: ['', [Validators.required]],
+    start_at: [null as Date | null, [Validators.required]],
+    end_at: [null as Date | null, [Validators.required]],
     is_active: [true],
   });
 
@@ -114,14 +115,14 @@ export class DashboardPage {
     device_ids: [[] as number[], [Validators.required]],
     title: ['', [Validators.required, Validators.maxLength(255)]],
     message: ['', [Validators.required]],
-    scheduled_for: [''],
+    scheduled_for: [null as Date | null],
   });
 
   readonly notificationFiltersForm = this.fb.nonNullable.group({
     application_id: [''],
     status: [''],
-    effective_scheduled_from: [''],
-    effective_scheduled_to: [''],
+    effective_scheduled_from: [null as Date | null],
+    effective_scheduled_to: [null as Date | null],
     has_quiet_period_shift: [''],
     ordering: ['-effective_scheduled_for'],
   });
@@ -130,7 +131,7 @@ export class DashboardPage {
     id: [0],
     title: ['', [Validators.required, Validators.maxLength(255)]],
     message: ['', [Validators.required]],
-    scheduled_for: [''],
+    scheduled_for: [null as Date | null],
   });
 
   readonly appTokenForm = this.fb.nonNullable.group({
@@ -147,13 +148,13 @@ export class DashboardPage {
     idempotency_key: [this.generateIdempotencyKey(), [Validators.required]],
     title: ['', [Validators.required, Validators.maxLength(255)]],
     message: ['', [Validators.required]],
-    scheduled_for: [''],
+    scheduled_for: [null as Date | null],
   });
 
   readonly appNotificationFiltersForm = this.fb.nonNullable.group({
     status: [''],
-    effective_scheduled_from: [''],
-    effective_scheduled_to: [''],
+    effective_scheduled_from: [null as Date | null],
+    effective_scheduled_to: [null as Date | null],
     has_quiet_period_shift: [''],
     ordering: ['-effective_scheduled_for'],
   });
@@ -336,8 +337,8 @@ export class DashboardPage {
     this.quietPeriodForm.patchValue({
       id: quietPeriod.id,
       name: quietPeriod.name,
-      start_at: this.asDateTimeLocal(quietPeriod.start_at),
-      end_at: this.asDateTimeLocal(quietPeriod.end_at),
+      start_at: this.toDateValue(quietPeriod.start_at),
+      end_at: this.toDateValue(quietPeriod.end_at),
       is_active: quietPeriod.is_active,
     });
   }
@@ -347,8 +348,8 @@ export class DashboardPage {
     this.quietPeriodForm.reset({
       id: 0,
       name: '',
-      start_at: '',
-      end_at: '',
+      start_at: null,
+      end_at: null,
       is_active: true,
     });
   }
@@ -458,7 +459,7 @@ export class DashboardPage {
             device_ids: this.activeDeviceIdsForApplication(Number(rawValue.application_id)),
             title: '',
             message: '',
-            scheduled_for: '',
+            scheduled_for: null,
           });
           this.banner.set({
             tone: 'success',
@@ -499,8 +500,8 @@ export class DashboardPage {
     this.notificationFiltersForm.reset({
       application_id: '',
       status: '',
-      effective_scheduled_from: '',
-      effective_scheduled_to: '',
+      effective_scheduled_from: null,
+      effective_scheduled_to: null,
       has_quiet_period_shift: '',
       ordering: '-effective_scheduled_for',
     });
@@ -534,7 +535,7 @@ export class DashboardPage {
       id: notification.id,
       title: notification.title,
       message: notification.message,
-      scheduled_for: this.asDateTimeLocal(notification.scheduled_for),
+      scheduled_for: this.toDateValue(notification.scheduled_for),
     });
   }
 
@@ -544,7 +545,7 @@ export class DashboardPage {
       id: 0,
       title: '',
       message: '',
-      scheduled_for: '',
+      scheduled_for: null,
     });
   }
 
@@ -702,7 +703,7 @@ export class DashboardPage {
             idempotency_key: this.generateIdempotencyKey(),
             title: '',
             message: '',
-            scheduled_for: '',
+            scheduled_for: null,
           });
           this.loadAppNotifications();
           this.refreshNotifications();
@@ -716,8 +717,8 @@ export class DashboardPage {
   clearAppNotificationFilters(): void {
     this.appNotificationFiltersForm.reset({
       status: '',
-      effective_scheduled_from: '',
-      effective_scheduled_to: '',
+      effective_scheduled_from: null,
+      effective_scheduled_to: null,
       has_quiet_period_shift: '',
       ordering: '-effective_scheduled_for',
     });
@@ -862,25 +863,20 @@ export class DashboardPage {
     return null;
   }
 
-  private toIsoOrNull(value: string): string | null {
+  private toIsoOrNull(value: Date | null): string | null {
     if (!value) {
       return null;
     }
 
-    return new Date(value).toISOString();
+    return value.toISOString();
   }
 
-  private asDateTimeLocal(value: string | null): string {
+  private toDateValue(value: string | null): Date | null {
     if (!value) {
-      return '';
+      return null;
     }
 
-    const date = new Date(value);
-    const pad = (part: number) => String(part).padStart(2, '0');
-
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-      date.getHours(),
-    )}:${pad(date.getMinutes())}`;
+    return new Date(value);
   }
 
   private activeDeviceIdsForApplication(applicationId: number): number[] {
