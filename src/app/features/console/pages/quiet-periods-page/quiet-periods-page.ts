@@ -23,8 +23,12 @@ import {
   Weekday,
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
+import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 
 type QuietPeriodScope = 'application' | 'device';
 type QuietPeriodView = ApplicationQuietPeriod | DeviceQuietPeriod;
@@ -36,6 +40,8 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    AppAlert,
+    ConsoleDialogActions,
     ButtonModule,
     CheckboxModule,
     DatePickerModule,
@@ -52,25 +58,22 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
 export class QuietPeriodsPage {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
+  private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly confirm = inject(AppConfirmService);
   readonly shell = inject(ConsoleShellService);
+  readonly copy = computed(() => this.consoleCopy.current().quietPeriods);
 
-  readonly scopeOptions = [
-    { label: 'Application', value: 'application' as QuietPeriodScope },
-    { label: 'Device', value: 'device' as QuietPeriodScope },
-  ];
-  readonly periodTypeOptions = [
-    { label: 'Ponctuelle', value: 'ONCE' as QuietPeriodType },
-    { label: 'Recurrente', value: 'RECURRING' as QuietPeriodType },
-  ];
-  readonly weekdayOptions: Array<{ label: string; value: Weekday }> = [
-    { label: 'Lun', value: 0 },
-    { label: 'Mar', value: 1 },
-    { label: 'Mer', value: 2 },
-    { label: 'Jeu', value: 3 },
-    { label: 'Ven', value: 4 },
-    { label: 'Sam', value: 5 },
-    { label: 'Dim', value: 6 },
-  ];
+  readonly scopeOptions = computed(() => [
+    { label: this.copy().scopeLabels.application, value: 'application' as QuietPeriodScope },
+    { label: this.copy().scopeLabels.device, value: 'device' as QuietPeriodScope },
+  ]);
+  readonly periodTypeOptions = computed(() => [
+    { label: this.copy().typeLabels.once, value: 'ONCE' as QuietPeriodType },
+    { label: this.copy().typeLabels.recurring, value: 'RECURRING' as QuietPeriodType },
+  ]);
+  readonly weekdayOptions = computed<Array<{ label: string; value: Weekday }>>(() =>
+    this.copy().weekdays.map((label, index) => ({ label, value: index as Weekday })),
+  );
 
   readonly quietPeriods = signal<QuietPeriodView[]>([]);
   readonly devices = signal<DeviceRead[]>([]);
@@ -111,11 +114,6 @@ export class QuietPeriodsPage {
       label: `${device.device_name} (${device.platform})`,
       value: device.id,
     })),
-  );
-
-  readonly scheduleNote = computed(
-    () =>
-      "Les periodes blanches application recalculent `effective_scheduled_for`. Les periodes blanches device reportent seulement la delivery du device concerne.",
   );
 
   readonly modalTargetLabel = computed(() => {
@@ -217,7 +215,7 @@ export class QuietPeriodsPage {
     if (!this.shell.apps().length && !this.devices().length) {
       this.error.set({
         code: 'missing_targets',
-        detail: 'Aucune application ou aucun device disponible pour creer une periode blanche.',
+        detail: this.copy().missingTargets,
       });
       return;
     }
@@ -226,6 +224,12 @@ export class QuietPeriodsPage {
     this.modalScope.set(this.shell.apps().length ? 'application' : 'device');
     this.modalApplicationId.set(this.applicationOptions()[0]?.value ?? null);
     this.modalDeviceId.set(this.deviceOptions()[0]?.value ?? null);
+    this.form.patchValue(
+      {
+        name: this.defaultQuietPeriodName(),
+      },
+      { emitEvent: false },
+    );
     this.error.set(null);
     this.isModalOpen.set(true);
   }
@@ -305,7 +309,7 @@ export class QuietPeriodsPage {
     if (!context) {
       this.error.set({
         code: 'missing_parent',
-        detail: 'Selectionnez une cible valide avant de creer une periode blanche.',
+        detail: this.copy().missingParent,
       });
       return;
     }
@@ -343,8 +347,8 @@ export class QuietPeriodsPage {
         next: () => {
           this.banner.set(
             this.editingQuietPeriodId()
-              ? 'Periode blanche mise a jour.'
-              : 'Periode blanche creee.',
+              ? this.copy().alerts.updated
+              : this.copy().alerts.created,
           );
           this.shell.refreshNavigationCounts();
           this.closeModal();
@@ -356,9 +360,11 @@ export class QuietPeriodsPage {
       });
   }
 
-  deleteQuietPeriod(quietPeriod: QuietPeriodView): void {
+  async deleteQuietPeriod(quietPeriod: QuietPeriodView): Promise<void> {
     const context = this.contextForQuietPeriod(quietPeriod);
-    const shouldDelete = window.confirm(`Supprimer la periode blanche "${quietPeriod.name}" ?`);
+    const shouldDelete = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmDelete, { name: quietPeriod.name }),
+    });
     if (!shouldDelete) {
       return;
     }
@@ -376,7 +382,7 @@ export class QuietPeriodsPage {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: () => {
-          this.banner.set(`Periode blanche "${quietPeriod.name}" supprimee.`);
+          this.banner.set(this.interpolate(this.copy().alerts.deleted, { name: quietPeriod.name }));
           this.shell.refreshNavigationCounts();
           this.loadQuietPeriods();
         },
@@ -410,15 +416,23 @@ export class QuietPeriodsPage {
   }
 
   quietPeriodScopeLabel(quietPeriod: QuietPeriodView): string {
-    return 'application' in quietPeriod ? 'Application' : 'Device';
+    return 'application' in quietPeriod
+      ? this.copy().scopeLabels.application
+      : this.copy().scopeLabels.device;
   }
 
   quietPeriodTargetLabel(quietPeriod: QuietPeriodView): string {
     if ('application' in quietPeriod) {
-      return this.shell.apps().find((app) => app.id === quietPeriod.application)?.name ?? 'Application inconnue';
+      return (
+        this.shell.apps().find((app) => app.id === quietPeriod.application)?.name ??
+        this.copy().targetUnknownApplication
+      );
     }
 
-    return this.devices().find((device) => device.id === quietPeriod.device)?.device_name ?? 'Device inconnu';
+    return (
+      this.devices().find((device) => device.id === quietPeriod.device)?.device_name ??
+      this.copy().targetUnknownDevice
+    );
   }
 
   quietPeriodTypeSeverity(type: QuietPeriodType): 'info' | 'warn' {
@@ -435,7 +449,7 @@ export class QuietPeriodsPage {
     }
 
     const days = quietPeriod.recurrence_days
-      .map((day) => this.weekdayOptions.find((option) => option.value === day)?.label ?? String(day))
+      .map((day) => this.weekdayOptions().find((option) => option.value === day)?.label ?? String(day))
       .join(', ');
 
     return `${days} | ${this.formatTime(quietPeriod.start_time)} -> ${this.formatTime(quietPeriod.end_time)}`;
@@ -462,11 +476,17 @@ export class QuietPeriodsPage {
   private targetLabelForContext(context: QuietPeriodContext): string {
     if (context.scope === 'application') {
       const app = this.shell.apps().find((item) => item.id === context.parentId);
-      return app ? `Application: ${app.name}` : 'Application inconnue';
+      return app ? `${this.copy().scopeLabels.application}: ${app.name}` : this.copy().targetUnknownApplication;
     }
 
     const device = this.devices().find((item) => item.id === context.parentId);
-    return device ? `Device: ${device.device_name}` : 'Device inconnu';
+    return device ? `${this.copy().scopeLabels.device}: ${device.device_name}` : this.copy().targetUnknownDevice;
+  }
+
+  private defaultQuietPeriodName(): string {
+    return this.modalScope() === 'device'
+      ? this.copy().defaultNames.device
+      : this.copy().defaultNames.application;
   }
 
   private buildPayload(): QuietPeriodWrite | null {
@@ -476,10 +496,10 @@ export class QuietPeriodsPage {
       if (!rawValue.start_at || !rawValue.end_at) {
         this.error.set({
           code: 'validation_error',
-          detail: 'Une periode ponctuelle demande une date de debut et une date de fin.',
+          detail: this.copy().validation.onceRequired,
           errors: {
-            start_at: rawValue.start_at ? [] : ['Ce champ est obligatoire.'],
-            end_at: rawValue.end_at ? [] : ['Ce champ est obligatoire.'],
+            start_at: rawValue.start_at ? [] : [this.copy().validation.required],
+            end_at: rawValue.end_at ? [] : [this.copy().validation.required],
           },
         });
         return null;
@@ -490,7 +510,7 @@ export class QuietPeriodsPage {
           code: 'validation_error',
           detail: 'Validation error.',
           errors: {
-            end_at: ['La fin de la periode blanche doit etre apres le debut.'],
+            end_at: [this.copy().validation.endAfterStart],
           },
         });
         return null;
@@ -501,9 +521,6 @@ export class QuietPeriodsPage {
         period_type: 'ONCE',
         start_at: this.toIso(rawValue.start_at),
         end_at: this.toIso(rawValue.end_at),
-        recurrence_days: [],
-        start_time: null,
-        end_time: null,
         is_active: rawValue.is_active,
       };
     }
@@ -511,11 +528,11 @@ export class QuietPeriodsPage {
     if (!rawValue.recurrence_days.length || !rawValue.start_time || !rawValue.end_time) {
       this.error.set({
         code: 'validation_error',
-        detail: 'Une periode recurrente demande des jours et une plage horaire.',
+        detail: this.copy().validation.recurringRequired,
         errors: {
-          recurrence_days: rawValue.recurrence_days.length ? [] : ['Selectionnez au moins un jour.'],
-          start_time: rawValue.start_time ? [] : ['Ce champ est obligatoire.'],
-          end_time: rawValue.end_time ? [] : ['Ce champ est obligatoire.'],
+          recurrence_days: rawValue.recurrence_days.length ? [] : [this.copy().validation.selectOneDay],
+          start_time: rawValue.start_time ? [] : [this.copy().validation.required],
+          end_time: rawValue.end_time ? [] : [this.copy().validation.required],
         },
       });
       return null;
@@ -524,19 +541,17 @@ export class QuietPeriodsPage {
     if (rawValue.start_time.getTime() === rawValue.end_time.getTime()) {
       this.error.set({
         code: 'validation_error',
-        detail: 'Validation error.',
-        errors: {
-          end_time: ["L'heure de fin doit etre differente de l'heure de debut."],
-        },
-      });
+          detail: 'Validation error.',
+          errors: {
+            end_time: [this.copy().validation.differentEndTime],
+          },
+        });
       return null;
     }
 
     return {
       name: rawValue.name,
       period_type: 'RECURRING',
-      start_at: null,
-      end_at: null,
       recurrence_days: rawValue.recurrence_days,
       start_time: this.toTimeWithSeconds(rawValue.start_time),
       end_time: this.toTimeWithSeconds(rawValue.end_time),
@@ -552,6 +567,13 @@ export class QuietPeriodsPage {
     const pad = (part: number) => String(part).padStart(2, '0');
 
     return `${pad(value.getHours())}:${pad(value.getMinutes())}:00`;
+  }
+
+  private interpolate(template: string, values: Record<string, string | number>): string {
+    return Object.entries(values).reduce(
+      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
+      template,
+    );
   }
 
   private toDateValue(value: string | null): Date | null {

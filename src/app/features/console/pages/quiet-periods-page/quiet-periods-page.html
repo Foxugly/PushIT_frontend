@@ -1,39 +1,32 @@
 <section class="console-page">
   @if (banner()) {
-    <section class="console-flash">
-      <p>{{ banner() }}</p>
-    </section>
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
 
   @if (error()?.detail) {
-    <section class="console-error">
-      <p>{{ error()?.detail }}</p>
-    </section>
+    <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
   }
 
   <section class="console-card">
-    <div class="console-card__header quiet-periods-header">
-      <h2 class="quiet-periods-header__title">Gestion des fenetres de silence</h2>
-      <div class="console-card__toolbar quiet-periods-header__toolbar">
-        <p-button label="Rafraichir" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
-        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+    <div class="console-card__header console-resource-header">
+      <h2 class="console-resource-header__title">{{ copy().title }}</h2>
+      <div class="console-card__toolbar console-resource-header__toolbar">
+        <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
+        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
       </div>
     </div>
-
-    <p class="console-note">{{ scheduleNote() }}</p>
-
     @if (loading()) {
-      <p class="console-empty">Chargement des periodes blanches...</p>
+      <p class="console-empty">{{ copy().loading }}</p>
     } @else if (quietPeriods().length) {
       <p-table [value]="quietPeriods()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Cible</th>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Regle</th>
-            <th>Statut</th>
-            <th class="console-table__actions">Actions</th>
+            <th>{{ copy().table.target }}</th>
+            <th>{{ copy().table.name }}</th>
+            <th>{{ copy().table.type }}</th>
+            <th>{{ copy().table.rule }}</th>
+            <th>{{ copy().table.status }}</th>
+            <th class="console-table__actions">{{ copy().table.actions }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-quietPeriod>
@@ -47,33 +40,33 @@
             </td>
             <td>
               <p-tag
-                [value]="quietPeriod.period_type === 'ONCE' ? 'once' : 'recurring'"
+                [value]="quietPeriod.period_type === 'ONCE' ? copy().typeLabels.badgeOnce : copy().typeLabels.badgeRecurring"
                 [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
               />
             </td>
             <td>{{ quietPeriodScheduleLabel(quietPeriod) }}</td>
             <td>
               <p-tag
-                [value]="quietPeriod.is_active ? 'active' : 'inactive'"
+                [value]="quietPeriod.is_active ? copy().statusLabels.active : copy().statusLabels.inactive"
                 [severity]="quietPeriodStatusSeverity(quietPeriod)"
               />
             </td>
             <td class="console-table__actions">
               <div class="console-icon-actions">
-                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" pTooltip="Editer" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
-                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" pTooltip="Supprimer" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
+                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
+                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [pTooltip]="copy().actions.delete" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
               </div>
             </td>
           </tr>
         </ng-template>
       </p-table>
     } @else {
-      <p class="console-empty">Aucune periode blanche configuree.</p>
+      <p class="console-empty">{{ copy().empty }}</p>
     }
   </section>
 
   <p-dialog
-    [header]="editingQuietPeriodId() ? 'Modifier une periode blanche' : 'Nouvelle periode blanche'"
+    [header]="editingQuietPeriodId() ? copy().dialog.editTitle : copy().dialog.createTitle"
     [modal]="true"
     [draggable]="false"
     [resizable]="false"
@@ -84,9 +77,9 @@
     <form class="console-form" [formGroup]="form" (ngSubmit)="saveQuietPeriod()">
       @if (!editingQuietPeriodId()) {
         <label>
-          <span>Cible</span>
+          <span>{{ copy().form.target }}</span>
           <p-select
-            [options]="scopeOptions"
+            [options]="scopeOptions()"
             [ngModel]="modalScope()"
             [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="setModalScope($event)"
@@ -97,49 +90,53 @@
 
         @if (modalScope() === 'device') {
           <label>
-            <span>Device</span>
+            <span>{{ copy().form.device }}</span>
             <p-select
               [options]="deviceOptions()"
+              optionLabel="label"
+              optionValue="value"
               [ngModel]="modalDeviceId()"
               [ngModelOptions]="{ standalone: true }"
               (ngModelChange)="setModalDevice($event)"
-              placeholder="Choisir..."
+              [placeholder]="copy().form.selectPlaceholder"
               [disabled]="loadingDevices() || !deviceOptions().length"
             />
           </label>
         } @else {
           <label>
-            <span>Application</span>
+            <span>{{ copy().form.application }}</span>
             <p-select
               [options]="applicationOptions()"
+              optionLabel="label"
+              optionValue="value"
               [ngModel]="modalApplicationId()"
               [ngModelOptions]="{ standalone: true }"
               (ngModelChange)="setModalApplication($event)"
-              placeholder="Choisir..."
+              [placeholder]="copy().form.selectPlaceholder"
               [disabled]="!applicationOptions().length"
             />
           </label>
         }
       } @else {
         <label>
-          <span>Cible</span>
+          <span>{{ copy().form.target }}</span>
           <p-tag [value]="modalTargetLabel()" severity="contrast" />
         </label>
       }
 
       <label>
-        <span>Nom</span>
-        <input pInputText type="text" formControlName="name" placeholder="Nuit marketing" />
+        <span>{{ copy().form.name }}</span>
+        <input pInputText type="text" formControlName="name" [placeholder]="copy().form.namePlaceholder" />
       </label>
       @for (message of fieldErrors('name'); track message) {
         <p class="console-field-error">{{ message }}</p>
       }
 
       <label>
-        <span>Type</span>
+        <span>{{ copy().form.type }}</span>
         <p-select
           formControlName="period_type"
-          [options]="periodTypeOptions"
+          [options]="periodTypeOptions()"
           optionLabel="label"
           optionValue="value"
         />
@@ -150,9 +147,9 @@
 
       @if (isRecurring()) {
         <label>
-          <span>Jours de recurrence</span>
+          <span>{{ copy().form.recurrenceDays }}</span>
           <div class="quiet-periods-weekdays">
-            @for (day of weekdayOptions; track day.value) {
+            @for (day of weekdayOptions(); track day.value) {
               <label class="quiet-periods-weekdays__item">
                 <p-checkbox
                   [binary]="true"
@@ -171,22 +168,28 @@
 
         <div class="console-form-grid console-form-grid--2">
           <label>
-            <span>Heure de debut</span>
+            <span>{{ copy().form.startTime }}</span>
             <p-datepicker
               formControlName="start_time"
               [timeOnly]="true"
+              [showIcon]="true"
+              iconDisplay="input"
               hourFormat="24"
+              size="small"
               appendTo="body"
               styleClass="quiet-periods-form__control"
             ></p-datepicker>
           </label>
 
           <label>
-            <span>Heure de fin</span>
+            <span>{{ copy().form.endTime }}</span>
             <p-datepicker
               formControlName="end_time"
               [timeOnly]="true"
+              [showIcon]="true"
+              iconDisplay="input"
               hourFormat="24"
+              size="small"
               appendTo="body"
               styleClass="quiet-periods-form__control"
             ></p-datepicker>
@@ -201,22 +204,28 @@
       } @else {
         <div class="console-form-grid console-form-grid--2">
           <label>
-            <span>Debut</span>
+            <span>{{ copy().form.startAt }}</span>
             <p-datepicker
               formControlName="start_at"
               [showTime]="true"
+              [showIcon]="true"
+              iconDisplay="input"
               hourFormat="24"
+              size="small"
               appendTo="body"
               styleClass="quiet-periods-form__control"
             ></p-datepicker>
           </label>
 
           <label>
-            <span>Fin</span>
+            <span>{{ copy().form.endAt }}</span>
             <p-datepicker
               formControlName="end_at"
               [showTime]="true"
+              [showIcon]="true"
+              iconDisplay="input"
               hourFormat="24"
+              size="small"
               appendTo="body"
               styleClass="quiet-periods-form__control"
             ></p-datepicker>
@@ -232,12 +241,12 @@
 
       <label class="console-checkbox">
         <p-checkbox formControlName="is_active" [binary]="true" inputId="quiet-period-active" />
-        <span>Periode active</span>
+        <span>{{ copy().form.active }}</span>
       </label>
 
-      <div class="console-actions">
-        <p-button type="submit" [label]="pending() ? 'Enregistrement...' : editingQuietPeriodId() ? 'Mettre a jour' : 'Creer la periode'" [loading]="pending()" />
-      </div>
+      <app-console-dialog-actions (cancelled)="closeModal()">
+        <p-button type="submit" [label]="pending() ? copy().dialog.saving : editingQuietPeriodId() ? copy().dialog.update : copy().dialog.create" [loading]="pending()" />
+      </app-console-dialog-actions>
     </form>
   </p-dialog>
 </section>

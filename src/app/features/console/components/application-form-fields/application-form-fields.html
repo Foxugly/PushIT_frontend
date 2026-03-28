@@ -1,0 +1,27 @@
+<div class="console-form" [formGroup]="form()">
+  <label>
+    <span>{{ copy().name }}</span>
+    <input
+      pInputText
+      type="text"
+      formControlName="name"
+      [placeholder]="usePlaceholders() ? copy().namePlaceholder : ''"
+    />
+  </label>
+  @for (message of nameMessages(); track message) {
+    <p class="console-field-error">{{ message }}</p>
+  }
+
+  <label>
+    <span>{{ copy().description }}</span>
+    <textarea
+      pTextarea
+      rows="4"
+      formControlName="description"
+      [placeholder]="usePlaceholders() ? copy().descriptionPlaceholder : ''"
+    ></textarea>
+  </label>
+  @for (message of descriptionMessages(); track message) {
+    <p class="console-field-error">{{ message }}</p>
+  }
+</div>

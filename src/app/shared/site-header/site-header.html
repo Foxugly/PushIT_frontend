@@ -1,4 +1,4 @@
-<header class="site-header" [class.site-header--sticky]="sticky()">
+<header class="site-header" [class.site-header--sticky]="sticky()" [style.--site-header-max-width]="maxWidth()">
   <nav class="site-nav">
     <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
       {{ labels().home }}
@@ -8,6 +8,7 @@
     }
     <a routerLink="/features" routerLinkActive="is-active">{{ labels().features }}</a>
     <a routerLink="/donate" routerLinkActive="is-active">{{ labels().donate }}</a>
+    <a routerLink="/about" routerLinkActive="is-active">{{ labels().about }}</a>
   </nav>
 
   <div class="header-actions">
@@ -20,17 +21,17 @@
       ariaLabel="Language switcher"
     />
 
-    @if (showUserMenu()) {
-      <p-menu #userMenu [model]="userMenuItems()" [popup]="true" />
+    @if (session.isAuthenticated()) {
+      <p-menu #userMenu [model]="userMenuItems()" [popup]="true" appendTo="body" />
       <p-button
-        [label]="username() || 'Compte'"
+        [label]="displayUsername()"
         icon="pi pi-angle-down"
         iconPos="right"
         severity="contrast"
         rounded="true"
         (onClick)="userMenu.toggle($event)"
       />
-    } @else if (showLoginButton()) {
+    } @else {
       <a routerLink="/auth" pButton [label]="labels().login" rounded="true" class="login-link"></a>
     }
   </div>

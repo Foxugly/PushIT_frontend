@@ -3,10 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
+    "start": "ng serve --no-hmr --proxy-config proxy.conf.json",
+    "start:hmr": "ng serve --hmr --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage && node scripts/check-coverage.mjs",
+    "e2e:serve": "node scripts/serve-dist.mjs",
+    "test:e2e": "npm run build && playwright test"
   },
   "prettier": {
     "printWidth": 100,
@@ -30,6 +34,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@ctrl/ngx-emoji-mart": "^9.3.0",
     "@primeuix/themes": "^2.0.3",
     "primeicons": "^7.0.0",
     "primeng": "^20.4.0",
@@ -38,6 +43,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@angular/build": "^20.3.9",
     "@angular/cli": "^20.3.9",
     "@angular/compiler-cli": "^20.3.0",

@@ -1,0 +1,16 @@
+:host {
+  display: contents;
+}
+
+.app-confirm-dialog__message {
+  margin: 0;
+  color: var(--text-color, #1f2937);
+  line-height: 1.5;
+}
+
+.app-confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

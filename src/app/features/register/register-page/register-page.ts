@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
+import { AppCopyService } from '../../../core/services/app-copy.service';
 import { RegisterPanel } from '../../../shared/register-panel/register-panel';
-import { SiteFooter } from '../../../shared/site-footer/site-footer';
-import { SiteHeader } from '../../../shared/site-header/site-header';
 
 @Component({
   selector: 'app-register-page',
-  imports: [CommonModule, RegisterPanel, SiteFooter, SiteHeader],
+  imports: [CommonModule, RegisterPanel],
   templateUrl: './register-page.html',
   styleUrl: './register-page.scss',
 })
-export class RegisterPage {}
+export class RegisterPage {
+  private readonly appCopy = inject(AppCopyService);
+  readonly copy = computed(() => this.appCopy.current().registerPage);
+}

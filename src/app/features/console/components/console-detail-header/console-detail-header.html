@@ -1,0 +1,17 @@
+<div class="console-card__header console-detail-header">
+  <div class="console-detail-header__main">
+    <a class="console-back-link" [routerLink]="backLink()">
+      <i class="pi pi-arrow-left"></i>
+      <span>{{ backLabel() }}</span>
+    </a>
+
+    <div>
+      <p class="console-shell__eyebrow">{{ eyebrow() }}</p>
+      <h2>{{ title() }}</h2>
+    </div>
+  </div>
+
+  <div class="console-detail-badges">
+    <ng-content />
+  </div>
+</div>

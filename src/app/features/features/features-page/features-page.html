@@ -1,40 +1,38 @@
-<section class="features-shell">
-  <app-site-header [sticky]="true" />
-
-  <main class="features-content">
-    <section class="backend-card">
-      <div class="backend-head">
-        <div>
-          <span class="badge">{{ copy().badge }}</span>
-          <h1>{{ copy().title }}</h1>
-          <p>{{ copy().description }}</p>
-        </div>
-        @if (saved()) {
-          <span class="saved-pill">{{ copy().saved }}</span>
-        }
+<main class="public-content features-content">
+  <section class="public-card backend-card">
+    <div class="backend-head">
+      <div>
+        <span class="public-badge">{{ copy().badge }}</span>
+        <h1>{{ copy().title }}</h1>
+        <p>{{ copy().description }}</p>
       </div>
+      @if (saved()) {
+        <span class="public-badge public-badge--success saved-pill">{{ copy().saved }}</span>
+      }
+    </div>
 
-      <div class="feature-list">
-        @for (card of copy().cards; track card.title) {
-          <article class="feature-row">
-            <h2>{{ card.title }}</h2>
-            <p>{{ card.description }}</p>
-          </article>
-        }
-      </div>
+    <div class="feature-list">
+      @for (section of copy().sections; track section.title) {
+        <article class="feature-row">
+          <h2>{{ section.title }}</h2>
+          <ul class="feature-points">
+            @for (item of section.items; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </article>
+      }
+    </div>
 
-      <div class="backend-copy">
-        <span class="badge badge--soft">API</span>
-        <h2>{{ copy().backendTitle }}</h2>
-        <p>{{ copy().backendDescription }}</p>
-      </div>
+    <div class="backend-copy">
+      <span class="public-badge public-badge--soft">API</span>
+      <h2>{{ copy().backendTitle }}</h2>
+      <p>{{ copy().backendDescription }}</p>
+    </div>
 
-      <form class="backend-form" [formGroup]="form" (ngSubmit)="save()">
-        <input type="url" formControlName="apiBaseUrl" placeholder="http://127.0.0.1:8000/api/v1" />
-        <button type="submit">{{ copy().submit }}</button>
-      </form>
-    </section>
-  </main>
-
-  <app-site-footer />
-</section>
+    <form class="backend-form" [formGroup]="form" (ngSubmit)="save()">
+      <input class="public-input" type="url" formControlName="apiBaseUrl" placeholder="http://127.0.0.1:8000/api/v1" />
+      <button class="public-button" type="submit">{{ copy().submit }}</button>
+    </form>
+  </section>
+</main>

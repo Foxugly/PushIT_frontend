@@ -1,88 +1,109 @@
 <section class="console-page">
   <section class="console-card">
-    <div class="console-card__header console-detail-header">
-      <div class="console-detail-header__main">
-        <a class="console-back-link" [routerLink]="['/dashboard/devices']">
-          <i class="pi pi-arrow-left"></i>
-          <span>Retour aux devices</span>
-        </a>
-
-        <div>
-          <p class="console-shell__eyebrow">Device</p>
-          <h2>{{ device()?.device_name || 'Detail device' }}</h2>
-          <p class="console-muted">Vue detaillee du terminal, de son statut push et de ses applications liees.</p>
-        </div>
-      </div>
-
+    <app-console-detail-header
+      [backLink]="['/dashboard/devices']"
+      [backLabel]="copy().back"
+      [eyebrow]="copy().eyebrow"
+      [title]="device()?.device_name || copy().fallbackTitle"
+    >
       @if (device(); as currentDevice) {
-        <div class="console-detail-badges">
-          <p-tag [value]="currentDevice.platform" severity="info" />
-          <p-tag [value]="currentDevice.push_token_status" [severity]="statusSeverity(currentDevice.push_token_status)" />
-        </div>
+        <p-button
+          icon="pi pi-pencil"
+          [text]="true"
+          [rounded]="true"
+          [pTooltip]="copy().editTooltip"
+          tooltipPosition="top"
+          (onClick)="openEditModal()"
+        />
+        <p-tag [value]="currentDevice.platform" severity="info" />
+        <p-tag [value]="currentDevice.push_token_status" [severity]="statusSeverity(currentDevice.push_token_status)" />
       }
-    </div>
+    </app-console-detail-header>
 
     @if (error()?.detail) {
-      <section class="console-error">
-        <p>{{ error()?.detail }}</p>
-      </section>
+      <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
     }
 
     @if (loading() && !device()) {
-      <p class="console-empty">Chargement du device...</p>
+      <p class="console-empty">{{ copy().loading }}</p>
     } @else if (device(); as currentDevice) {
       <div class="console-detail-grid">
-        <article class="console-detail-panel">
-          <h3>Identite</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>ID</dt>
-              <dd>{{ currentDevice.id }}</dd>
-            </div>
-            <div>
-              <dt>Nom</dt>
-              <dd>{{ currentDevice.device_name }}</dd>
-            </div>
-            <div>
-              <dt>Plateforme</dt>
-              <dd>{{ currentDevice.platform }}</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article class="console-detail-panel">
-          <h3>Push</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>Statut token</dt>
-              <dd>{{ currentDevice.push_token_status }}</dd>
-            </div>
-            <div>
-              <dt>Derniere activite</dt>
-              <dd>{{ currentDevice.last_seen_at ? (currentDevice.last_seen_at | date: 'dd/MM/yyyy HH:mm') : 'Jamais' }}</dd>
-            </div>
-            <div>
-              <dt>Creee le</dt>
-              <dd>{{ currentDevice.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
-            </div>
-          </dl>
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>{{ copy().applicationsTitle }}</h3>
+          @if (linkedApplications().length) {
+            <p-table [value]="linkedApplications()" styleClass="p-datatable-sm device-detail-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ copy().table.name }}</th>
+                  <th>{{ copy().table.prefix }}</th>
+                  <th>{{ copy().table.status }}</th>
+                  <th>{{ copy().table.createdAt }}</th>
+                  <th class="console-table__actions">{{ copy().table.actions }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-app>
+                <tr>
+                  <td class="console-table__name">
+                    <a class="console-table__link" [routerLink]="['/dashboard/applications', app.id]">
+                      <strong>{{ app.name }}</strong>
+                    </a>
+                  </td>
+                  <td>{{ app.app_token_prefix }}</td>
+                  <td>
+                    <p-tag [value]="app.is_active ? copy().labels.active : copy().labels.inactive" [severity]="appSeverity(app)" />
+                  </td>
+                  <td>{{ app.created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td class="console-table__actions">
+                    <div class="console-icon-actions">
+                      <p-button
+                        icon="pi pi-eye"
+                        [text]="true"
+                        [rounded]="true"
+                        [pTooltip]="copy().actions.view"
+                        tooltipPosition="top"
+                        [routerLink]="['/dashboard/applications', app.id]"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <p class="console-muted">{{ copy().applicationsEmpty }}</p>
+          }
         </article>
 
         <article class="console-detail-panel console-detail-panel--wide">
-          <h3>Applications liees</h3>
-          @if (linkedApplications().length) {
-            <div class="console-detail-tags">
-              @for (app of linkedApplications(); track app.id) {
-                <a class="console-detail-tag-link" [routerLink]="['/dashboard/applications', app.id]">
-                  <p-tag [value]="app.name" [severity]="app.is_active ? 'success' : 'secondary'" />
-                </a>
-              }
-            </div>
-          } @else {
-            <p class="console-muted">Aucune application liee.</p>
-          }
+          <h3>{{ copy().statusTitle }}</h3>
+          <app-console-facts-table [items]="deviceFacts(currentDevice)" styleClass="p-datatable-sm device-detail-table" />
         </article>
       </div>
     }
   </section>
+
+  <p-dialog
+    [header]="copy().dialog.title"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="isEditModalOpen()"
+    (visibleChange)="setEditModalVisible($event)"
+    [style]="{ width: '42rem' }"
+  >
+    <form class="console-form" [formGroup]="editForm" (ngSubmit)="saveDevice()">
+      <app-device-edit-form-fields
+        [form]="editForm"
+        [platformOptions]="platformSelectOptions()"
+        [statusOptions]="statusSelectOptions()"
+      />
+
+      @if (editError()?.detail) {
+        <app-alert [message]="editError()!.detail" tone="danger" (dismissed)="editError.set(null)" />
+      }
+
+      <app-console-dialog-actions (cancelled)="closeEditModal()">
+        <p-button type="submit" [label]="saving() ? copy().dialog.saving : copy().dialog.save" [loading]="saving()" />
+      </app-console-dialog-actions>
+    </form>
+  </p-dialog>
 </section>

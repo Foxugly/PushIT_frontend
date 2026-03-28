@@ -1,5 +1,6 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 .site-header {
@@ -7,6 +8,9 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  width: min(100%, var(--site-header-max-width, 1120px));
+  min-height: 4.75rem;
+  margin-inline: auto;
   padding: 1rem 1.2rem;
   border: 1px solid var(--card-border);
   border-radius: 1.4rem;
@@ -26,6 +30,7 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  min-height: 2.75rem;
 }
 
 .site-nav a,
@@ -44,7 +49,24 @@
 }
 
 :host ::ng-deep .p-menu {
-  min-width: 16rem;
+  min-width: 18rem;
+  max-width: 24rem;
+}
+
+:host ::ng-deep .p-menu .site-header__menu-meta .p-menu-item-link {
+  align-items: flex-start;
+  opacity: 1;
+}
+
+:host ::ng-deep .p-menu .site-header__menu-meta .p-menu-item-icon {
+  margin-top: 0.1rem;
+}
+
+:host ::ng-deep .p-menu .site-header__menu-meta .p-menu-item-label {
+  white-space: normal;
+  word-break: break-word;
+  font-size: 0.82rem;
+  color: var(--text-muted);
 }
 
 @media (max-width: 800px) {

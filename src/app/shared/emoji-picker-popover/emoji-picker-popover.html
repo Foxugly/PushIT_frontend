@@ -1,0 +1,41 @@
+<p-button
+  [icon]="icon()"
+  type="button"
+  [text]="true"
+  [rounded]="true"
+  size="small"
+  [pTooltip]="tooltip()"
+  tooltipPosition="top"
+  (onClick)="openPopover($event, pickerPopover)"
+/>
+
+<p-popover
+  #pickerPopover
+  appendTo="body"
+  styleClass="emoji-picker-popover"
+  [focusOnShow]="false"
+  (onShow)="onPopoverShow()"
+>
+  @defer (when pickerRequested()) {
+    <emoji-mart
+      class="emoji-picker-popover__picker"
+      [isNative]="true"
+      [showPreview]="false"
+      [autoFocus]="false"
+      [enableSearch]="false"
+      [emojiTooltip]="true"
+      [perLine]="7"
+      [emojiSize]="18"
+      [showSingleCategory]="true"
+      [hideRecent]="true"
+      [include]="includedCategories"
+      [i18n]="pickerI18n()"
+      (emojiClick)="onEmojiSelect($event, pickerPopover)"
+    />
+  } @placeholder {
+    <div class="emoji-picker-popover__placeholder">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>{{ loadingLabel() }}</span>
+    </div>
+  }
+</p-popover>

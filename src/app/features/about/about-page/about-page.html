@@ -1,7 +1,8 @@
-<section class="about-shell">
-  <app-site-header [sticky]="true" />
-
-  <main class="about-content"></main>
-
-  <app-site-footer />
-</section>
+<main class="public-content about-content">
+  <section class="public-card">
+    <span class="public-badge">{{ copy().badge }}</span>
+    <h1>{{ copy().title }}</h1>
+    <p>{{ copy().description }}</p>
+    <p class="public-muted">{{ copy().placeholder }}</p>
+  </section>
+</main>

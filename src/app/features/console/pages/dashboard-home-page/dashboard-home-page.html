@@ -1,0 +1,37 @@
+<section class="console-page dashboard-home">
+  <section class="console-card">
+    <div class="console-card__header dashboard-home__hero">
+      <div>
+        <p class="console-shell__eyebrow">{{ copy().eyebrow }}</p>
+        <h2>{{ copy().title }}</h2>
+        <p class="console-muted">{{ copy().description }}</p>
+      </div>
+      <div class="console-card__toolbar">
+        <a routerLink="/dashboard/applications" pButton [label]="copy().cta" icon="pi pi-arrow-right" severity="secondary"></a>
+      </div>
+    </div>
+
+    <div class="dashboard-home__metrics">
+      <article class="console-stat">
+        <span class="console-muted">{{ copy().metrics.apps }}</span>
+        <strong>{{ shell.apps().length }}</strong>
+      </article>
+      <article class="console-stat">
+        <span class="console-muted">{{ copy().metrics.activeApps }}</span>
+        <strong>{{ activeAppsCount() }}</strong>
+      </article>
+      <article class="console-stat">
+        <span class="console-muted">{{ copy().metrics.devices }}</span>
+        <strong>{{ shell.devicesCount() }}</strong>
+      </article>
+      <article class="console-stat">
+        <span class="console-muted">{{ copy().metrics.notifications }}</span>
+        <strong>{{ shell.notificationsCount() }}</strong>
+      </article>
+      <article class="console-stat">
+        <span class="console-muted">{{ copy().metrics.quietPeriods }}</span>
+        <strong>{{ shell.quietPeriodsCount() }}</strong>
+      </article>
+    </div>
+  </section>
+</section>

@@ -1,68 +1,68 @@
-<form class="register-panel" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+<form class="public-card public-form register-panel" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
   <div class="panel-heading">
     <div>
-      <h2>{{ title() }}</h2>
-      <p>{{ subtitle() }}</p>
+      <h2>{{ resolvedTitle() }}</h2>
+      <p>{{ resolvedSubtitle() }}</p>
     </div>
   </div>
 
   <label>
-    <span>Email</span>
-    <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="register-input" />
+    <span>{{ copy().email }}</span>
+    <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
   </label>
   @for (message of fieldErrors('email'); track message) {
-    <p class="field-error">{{ message }}</p>
+    <p class="public-field-error">{{ message }}</p>
   }
 
   <label>
-    <span>Username</span>
-    <input pInputText type="text" formControlName="username" placeholder="pushit-admin" class="register-input" />
+    <span>{{ copy().username }}</span>
+    <input pInputText type="text" formControlName="username" placeholder="pushit-admin" class="public-input" />
   </label>
   @for (message of fieldErrors('username'); track message) {
-    <p class="field-error">{{ message }}</p>
+    <p class="public-field-error">{{ message }}</p>
   }
 
   <label>
-    <span>Mot de passe</span>
+    <span>{{ copy().password }}</span>
     <p-password
       formControlName="password"
       [feedback]="false"
       [toggleMask]="true"
-      placeholder="Minimum 8 caracteres"
-      styleClass="register-password"
+      [placeholder]="copy().passwordPlaceholder"
+      styleClass="public-password register-password"
       inputStyleClass="register-password__input"
     />
   </label>
   @for (message of fieldErrors('password'); track message) {
-    <p class="field-error">{{ message }}</p>
+    <p class="public-field-error">{{ message }}</p>
   }
 
   <label>
-    <span>Langue</span>
+    <span>{{ copy().language }}</span>
     <p-select
       formControlName="language"
       [options]="languagePreference.options"
       optionLabel="label"
       optionValue="value"
-      placeholder="Choisir une langue"
+      [placeholder]="copy().languagePlaceholder"
     />
   </label>
   @for (message of fieldErrors('language'); track message) {
-    <p class="field-error">{{ message }}</p>
+    <p class="public-field-error">{{ message }}</p>
   }
 
   @for (message of fieldErrors('non_field_errors'); track message) {
-    <p class="field-error">{{ message }}</p>
+    <p class="public-field-error">{{ message }}</p>
   }
 
   @if (registerError()?.detail) {
-    <p class="api-error">{{ registerError()?.detail }}</p>
+    <app-alert [message]="registerError()!.detail" tone="danger" (dismissed)="registerError.set(null)" />
   }
 
-  <div class="register-submit-row">
+  <div class="public-submit-row register-submit-row">
     <p-button
       type="submit"
-      [label]="pending() ? 'Creation...' : 'Creer le compte'"
+      [label]="pending() ? copy().pending : copy().submit"
       [loading]="pending()"
       [disabled]="pending()"
       styleClass="register-submit"
@@ -71,8 +71,8 @@
 
   @if (showLoginLink()) {
     <p class="panel-link">
-      Deja un compte ?
-      <a routerLink="/auth">Se connecter</a>
+      {{ copy().loginPrompt }}
+      <a routerLink="/auth">{{ copy().loginLink }}</a>
     </p>
   }
 </form>

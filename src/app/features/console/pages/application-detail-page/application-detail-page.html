@@ -1,82 +1,221 @@
 <section class="console-page">
   <section class="console-card">
-    <div class="console-card__header console-detail-header">
-      <div class="console-detail-header__main">
-        <a class="console-back-link" [routerLink]="['/dashboard/applications']">
-          <i class="pi pi-arrow-left"></i>
-          <span>Retour aux applications</span>
-        </a>
-
-        <div>
-          <p class="console-shell__eyebrow">Application</p>
-          <h2>{{ application()?.name || 'Detail application' }}</h2>
-          <p class="console-muted">Vue detaillee de la configuration et de l'etat de l'application.</p>
-        </div>
-      </div>
-
+    <app-console-detail-header
+      [backLink]="['/dashboard/applications']"
+      [backLabel]="copy().back"
+      [eyebrow]="copy().eyebrow"
+      [title]="application()?.name || copy().fallbackTitle"
+    >
       @if (application(); as app) {
-        <div class="console-detail-badges">
-          <p-tag [value]="app.is_active ? 'active' : 'inactive'" [severity]="appSeverity(app)" />
-          <p-tag [value]="'Prefixe ' + app.app_token_prefix" severity="info" />
-        </div>
+        <p-button
+          icon="pi pi-pencil"
+          [text]="true"
+          [rounded]="true"
+          [pTooltip]="copy().editTooltip"
+          tooltipPosition="top"
+          (onClick)="openEditModal()"
+        />
+        <p-tag [value]="app.is_active ? copy().statusLabels.active : copy().statusLabels.inactive" [severity]="appSeverity(app)" />
+        <p-tag [value]="copy().facts.tokenPrefix + ' ' + app.app_token_prefix" severity="info" />
       }
-    </div>
+    </app-console-detail-header>
 
     @if (error()?.detail) {
-      <section class="console-error">
-        <p>{{ error()?.detail }}</p>
-      </section>
+      <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
+    }
+
+    @if (banner()) {
+      <app-alert [message]="banner()!" [tone]="bannerTone()" (dismissed)="banner.set(null)" />
     }
 
     @if (loading() && !application()) {
-      <p class="console-empty">Chargement de l'application...</p>
+      <p class="console-empty">{{ copy().loading }}</p>
     } @else if (application(); as app) {
       <div class="console-detail-grid">
         <article class="console-detail-panel console-detail-panel--wide">
-          <h3>Description</h3>
-          <p>{{ app.description || 'Aucune description disponible pour cette application.' }}</p>
+          <div class="application-detail-section__header application-detail-email__header">
+            <div>
+              <h3>{{ copy().inboundEmailTitle }}</h3>
+              <p class="console-table__subtext">{{ copy().inboundEmailHelp.intro }}</p>
+            </div>
+            <p-button
+              icon="pi pi-copy"
+              [label]="copy().inboundEmailCopy"
+              size="small"
+              (onClick)="copyInboundEmail(app.inbound_email_address)"
+            />
+          </div>
+          <div class="application-detail-email__address">
+            <span class="application-detail-email__label">{{ copy().inboundEmailLabel }}</span>
+            <code>{{ app.inbound_email_address }}</code>
+          </div>
+          <ul class="application-detail-email__help">
+            <li>{{ copy().inboundEmailHelp.subject }}</li>
+            <li>{{ copy().inboundEmailHelp.body }}</li>
+            <li>{{ copy().inboundEmailHelp.schedule }}</li>
+            <li>{{ copy().inboundEmailHelp.sender }}</li>
+          </ul>
         </article>
 
-        <article class="console-detail-panel">
-          <h3>Identite</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>ID</dt>
-              <dd>{{ app.id }}</dd>
-            </div>
-            <div>
-              <dt>Nom</dt>
-              <dd>{{ app.name }}</dd>
-            </div>
-            <div>
-              <dt>Prefixe token</dt>
-              <dd>{{ app.app_token_prefix }}</dd>
-            </div>
-          </dl>
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>{{ copy().descriptionTitle }}</h3>
+          <p>{{ app.description || copy().descriptionEmpty }}</p>
         </article>
 
-        <article class="console-detail-panel">
-          <h3>Etat</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>Statut</dt>
-              <dd>{{ app.is_active ? 'Active' : 'Inactive' }}</dd>
+        <article class="console-detail-panel console-detail-panel--wide">
+          <div class="application-detail-section__header">
+            <h3>{{ copy().devicesTitle }}</h3>
+            <p-tag [value]="devices().length + ' devices'" severity="info" />
+          </div>
+          @if (devices().length) {
+            <p-table [value]="devices()" styleClass="p-datatable-sm application-detail-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ copy().table.name }}</th>
+                  <th>{{ copy().table.platform }}</th>
+                  <th>{{ copy().table.pushStatus }}</th>
+                  <th>{{ copy().table.lastActivity }}</th>
+                  <th class="console-table__actions">{{ copy().table.actions }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-device>
+                <tr>
+                  <td class="console-table__name">
+                    <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
+                      <strong>{{ device.device_name }}</strong>
+                    </a>
+                  </td>
+                  <td>{{ device.platform }}</td>
+                  <td>
+                    <p-tag [value]="device.push_token_status" [severity]="deviceSeverity(device.push_token_status)" />
+                  </td>
+                  <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.never }}</td>
+                  <td class="console-table__actions">
+                    <div class="console-icon-actions">
+                      <p-button
+                        icon="pi pi-eye"
+                        [text]="true"
+                        [rounded]="true"
+                        [pTooltip]="copy().actions.view"
+                        tooltipPosition="top"
+                        [routerLink]="['/dashboard/devices', device.id]"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <p class="console-muted">{{ copy().devicesEmpty }}</p>
+          }
+        </article>
+
+        <article class="console-detail-panel console-detail-panel--wide">
+          <div class="application-detail-section__header">
+            <h3>{{ copy().notificationsTitle }}</h3>
+            <p-tag [value]="(notifications().length + futureNotifications().length) + ' notifications'" severity="contrast" />
+          </div>
+          @if (notifications().length || futureNotifications().length) {
+            <p-table
+              [value]="futureNotifications().concat(notifications())"
+              styleClass="p-datatable-sm application-detail-table"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ copy().table.title }}</th>
+                  <th>{{ copy().table.type }}</th>
+                  <th>{{ copy().table.status }}</th>
+                  <th>{{ copy().table.effective }}</th>
+                  <th class="console-table__actions">{{ copy().table.actions }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-notification>
+                <tr>
+                  <td class="console-table__name">
+                    <a class="console-table__link" [routerLink]="['/dashboard/notifications', notification.id]">
+                      <strong>{{ notification.title }}</strong>
+                    </a>
+                  </td>
+                  <td>{{ isFutureNotification(notification) ? copy().notificationTypes.future : copy().notificationTypes.history }}</td>
+                  <td>
+                    <p-tag [value]="notification.status" [severity]="notificationSeverity(notification.status)" />
+                  </td>
+                  <td>{{ notification.effective_scheduled_for ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.immediate }}</td>
+                  <td class="console-table__actions">
+                    <div class="console-icon-actions">
+                      <p-button
+                        icon="pi pi-eye"
+                        [text]="true"
+                        [rounded]="true"
+                        [pTooltip]="copy().actions.view"
+                        tooltipPosition="top"
+                        [routerLink]="['/dashboard/notifications', notification.id]"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <p class="console-muted">{{ copy().notificationsEmpty }}</p>
+          }
+        </article>
+
+        <article class="console-detail-panel console-detail-panel--wide">
+          <div class="application-detail-section__header">
+            <h3>{{ copy().quietPeriodsTitle }}</h3>
+            <p-tag [value]="quietPeriods().length + ' periodes'" severity="warn" />
+          </div>
+          @if (quietPeriods().length) {
+            <div class="application-detail-list">
+              @for (quietPeriod of quietPeriods(); track quietPeriod.id) {
+                <div class="application-detail-list__item">
+                  <div>
+                    <strong>{{ quietPeriod.name }}</strong>
+                    <p class="console-table__subtext">{{ quietPeriodScheduleLabel(quietPeriod) }}</p>
+                  </div>
+                  <div class="application-detail-list__meta">
+                    <p-tag
+                      [value]="quietPeriod.period_type === 'ONCE' ? copy().statusLabels.once : copy().statusLabels.recurring"
+                      [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
+                    />
+                    <p-tag [value]="quietPeriod.is_active ? 'active' : 'inactive'" [severity]="quietPeriod.is_active ? 'success' : 'secondary'" />
+                  </div>
+                </div>
+              }
             </div>
-            <div>
-              <dt>Derniere utilisation</dt>
-              <dd>{{ app.last_used_at ? (app.last_used_at | date: 'dd/MM/yyyy HH:mm') : 'Jamais' }}</dd>
-            </div>
-            <div>
-              <dt>Token revoque</dt>
-              <dd>{{ app.revoked_at ? (app.revoked_at | date: 'dd/MM/yyyy HH:mm') : 'Non' }}</dd>
-            </div>
-            <div>
-              <dt>Creee le</dt>
-              <dd>{{ app.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
-            </div>
-          </dl>
+          } @else {
+            <p class="console-muted">{{ copy().quietPeriodsEmpty }}</p>
+          }
+        </article>
+
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>{{ copy().statusTitle }}</h3>
+          <app-console-facts-table [items]="applicationFacts(app)" styleClass="p-datatable-sm application-detail-table" />
         </article>
       </div>
     }
   </section>
+
+  <p-dialog
+    [header]="copy().dialog.title"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="isEditModalOpen()"
+    (visibleChange)="setEditModalVisible($event)"
+    [style]="{ width: '42rem' }"
+  >
+    <form class="console-form" [formGroup]="editForm" (ngSubmit)="saveApplication()">
+      <app-application-form-fields [form]="editForm" [usePlaceholders]="false" />
+
+      @if (editError()?.detail) {
+        <app-alert [message]="editError()!.detail" tone="danger" (dismissed)="editError.set(null)" />
+      }
+
+      <app-console-dialog-actions (cancelled)="closeEditModal()">
+        <p-button type="submit" [label]="saving() ? copy().dialog.saving : copy().dialog.save" [loading]="saving()" />
+      </app-console-dialog-actions>
+    </form>
+  </p-dialog>
 </section>

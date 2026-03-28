@@ -3,81 +3,18 @@
 }
 
 .register-panel {
-  display: grid;
   gap: 0.9rem;
   padding: 1.35rem;
-  border: 1px solid var(--card-border);
-  border-radius: 1.5rem;
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
 }
 
-.panel-heading,
-label {
+.panel-heading {
   display: grid;
   gap: 0.35rem;
-}
-
-h2,
-p {
-  margin: 0;
 }
 
 .panel-heading p,
 .panel-link {
   color: var(--text-muted);
-}
-
-label span {
-  color: #3d5870;
-  font-size: 0.92rem;
-}
-
-.register-input {
-  width: 100%;
-  padding: 0.95rem 1rem;
-  border: 1px solid var(--card-border);
-  border-radius: 1rem;
-  background: white;
-  color: var(--text-main);
-}
-
-:host ::ng-deep .register-password,
-:host ::ng-deep .register-password .p-password-input,
-:host ::ng-deep .register-password .p-inputtext {
-  width: 100%;
-}
-
-:host ::ng-deep .register-password .p-inputtext {
-  padding: 0.95rem 1rem;
-  border-radius: 1rem;
-}
-
-.register-submit-row {
-  display: flex;
-  justify-content: center;
-}
-
-button {
-  padding: 0.95rem 1.1rem;
-  border: 0;
-  border-radius: 1rem;
-  background: var(--accent);
-  color: #fdfbf8;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.field-error,
-.api-error {
-  margin: 0;
-  color: #b35347;
-  font-size: 0.86rem;
 }
 
 .panel-link a {

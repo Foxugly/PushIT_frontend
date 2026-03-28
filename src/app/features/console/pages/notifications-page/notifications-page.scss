@@ -2,34 +2,6 @@
   display: block;
 }
 
-.notifications-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.notifications-header__title {
-  margin: 0;
-  flex: 0 1 auto;
-  white-space: nowrap;
-}
-
-.notifications-header__toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-left: auto;
-  flex-wrap: nowrap;
-}
-
-.notifications-header__badges {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: nowrap;
-}
-
 .notifications-status-badges {
   display: flex;
   align-items: center;
@@ -39,7 +11,9 @@
 }
 
 .notifications-filters {
-  grid-template-columns: 1.1fr 0.9fr 1fr 1fr auto;
+  display: flex;
+  align-items: end;
+  flex-wrap: nowrap;
   align-items: end;
   gap: 0.75rem;
   margin-bottom: 1rem;
@@ -47,54 +21,89 @@
 
 .notifications-filters label {
   gap: 0.3rem;
+  min-width: 0;
 }
 
 .notifications-filters span {
   font-size: 0.82rem;
 }
 
-.notifications-filters__actions {
-  grid-column: auto;
-  justify-content: flex-end;
-  gap: 0.5rem;
+.notifications-filters > label:nth-child(1) {
+  flex: 0 0 10rem;
 }
 
-.notifications-filters__picker,
+.notifications-filters > label:nth-child(2) {
+  flex: 0 0 7.5rem;
+}
+
+.notifications-filters > label:nth-child(3),
+.notifications-filters > label:nth-child(4) {
+  flex: 0 0 11rem;
+}
+
+.notifications-filters__actions {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+:host ::ng-deep .notifications-filters__select,
+:host ::ng-deep .notifications-filters__date {
+  display: flex;
+  width: 100%;
+}
+
+:host ::ng-deep .notifications-filters__select .p-select,
+:host ::ng-deep .notifications-filters__date .p-datepicker {
+  width: 100%;
+}
+
+:host ::ng-deep .notifications-filters__select .p-select-label {
+  font-size: 0.88rem;
+}
+
+:host ::ng-deep .notifications-filters__date .p-datepicker-input {
+  width: 100%;
+}
+
 .notifications-form__control {
   width: 100%;
 }
 
-.notifications-form__hint {
-  margin-top: -0.25rem;
-}
-
-:host ::ng-deep .notifications-filters__picker .p-inputtext,
-:host ::ng-deep .notifications-form__control .p-inputtext {
+:host ::ng-deep .notifications-form__control.p-select,
+:host ::ng-deep .notifications-form__control.p-multiselect,
+:host ::ng-deep .notifications-form__control.p-datepicker {
+  display: flex;
   width: 100%;
 }
 
+:host ::ng-deep .notifications-form__control.p-datepicker .p-datepicker-input {
+  width: 100%;
+}
+
+.notifications-form__label-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  width: fit-content;
+}
+
+.console-form .console-field-error {
+  margin: 0;
+}
+
 @media (max-width: 960px) {
-  .notifications-header {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .notifications-header__title {
-    white-space: normal;
-  }
-
-  .notifications-header__toolbar {
-    width: 100%;
-    flex-wrap: wrap;
-    margin-left: 0;
-  }
-
-  .notifications-header__badges {
-    flex-wrap: wrap;
-  }
-
   .notifications-filters {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .notifications-filters > label:nth-child(1),
+  .notifications-filters > label:nth-child(2),
+  .notifications-filters > label:nth-child(3),
+  .notifications-filters > label:nth-child(4) {
+    flex: initial;
   }
 }
 

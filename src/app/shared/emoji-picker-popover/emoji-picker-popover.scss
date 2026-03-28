@@ -1,0 +1,21 @@
+:host {
+  display: inline-flex;
+}
+
+:host ::ng-deep .emoji-picker-popover .p-popover-content {
+  padding: 0;
+}
+
+:host ::ng-deep .emoji-picker-popover__picker {
+  display: block;
+}
+
+.emoji-picker-popover__placeholder {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 16rem;
+  min-height: 4rem;
+  padding: 1rem;
+  color: var(--text-muted);
+}

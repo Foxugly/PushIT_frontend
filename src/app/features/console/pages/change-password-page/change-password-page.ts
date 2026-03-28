@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+
+import { AppCopyService } from '../../../../core/services/app-copy.service';
 
 @Component({
   selector: 'app-change-password-page',
@@ -7,4 +9,7 @@ import { Component } from '@angular/core';
   templateUrl: './change-password-page.html',
   styleUrl: './change-password-page.scss',
 })
-export class ChangePasswordPage {}
+export class ChangePasswordPage {
+  private readonly appCopy = inject(AppCopyService);
+  readonly copy = computed(() => this.appCopy.current().console.changePassword);
+}

@@ -1,19 +1,18 @@
 <section class="console-page">
   @if (banner()) {
-    <section class="console-flash">
-      <p>{{ banner() }}</p>
-    </section>
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
 
   <section class="console-card">
-    <div class="console-card__header applications-header">
-      <h2 class="applications-header__title">Gestion des applications</h2>
-      <div class="console-card__toolbar applications-header__toolbar">
-        <div class="applications-header__badges">
-          <p-tag value="Total {{ shell.apps().length }}" severity="info" />
-          <p-tag value="Actives {{ activeAppsCount() }}" severity="success" />
+    <div class="console-card__header console-resource-header">
+      <h2 class="console-resource-header__title">{{ copy().title }}</h2>
+      <div class="console-card__toolbar console-resource-header__toolbar">
+        <div class="console-resource-header__badges">
+          <p-tag [value]="copy().total + ' ' + shell.apps().length" severity="info" />
+          <p-tag [value]="copy().active + ' ' + activeAppsCount()" severity="success" />
         </div>
-        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" />
+        <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="refreshApplications()" />
+        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" />
       </div>
     </div>
 
@@ -21,12 +20,12 @@
       <p-table [value]="shell.apps()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Nom</th>
-            <th>Description</th>
-            <th>Prefixe</th>
-            <th>Statut</th>
-            <th>Creee le</th>
-            <th class="console-table__actions">Actions</th>
+            <th>{{ copy().table.name }}</th>
+            <th>{{ copy().table.description }}</th>
+            <th>{{ copy().table.prefix }}</th>
+            <th>{{ copy().table.status }}</th>
+            <th>{{ copy().table.createdAt }}</th>
+            <th class="console-table__actions">{{ copy().table.actions }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-app>
@@ -36,10 +35,10 @@
                 <strong>{{ app.name }}</strong>
               </a>
             </td>
-            <td>{{ app.description || 'Aucune description.' }}</td>
+            <td>{{ app.description || copy().noDescription }}</td>
             <td>{{ app.app_token_prefix }}</td>
             <td>
-              <p-tag [value]="app.is_active ? 'active' : 'inactive'" [severity]="appSeverity(app)" />
+              <p-tag [value]="appStatusLabel(app)" [severity]="appSeverity(app)" />
             </td>
             <td>{{ app.created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
             <td class="console-table__actions">
@@ -48,7 +47,7 @@
                   icon="pi pi-eye"
                   [text]="true"
                   [rounded]="true"
-                  pTooltip="Voir le detail"
+                  [pTooltip]="copy().actions.view"
                   tooltipPosition="top"
                   (onClick)="openDetails(app)"
                 />
@@ -56,16 +55,16 @@
                   icon="pi pi-pencil"
                   [text]="true"
                   [rounded]="true"
-                  pTooltip="Editer"
+                  [pTooltip]="copy().actions.edit"
                   tooltipPosition="top"
                   (onClick)="openEditModal(app)"
                 />
                 <p-button
-                  [icon]="app.is_active ? 'pi pi-power-off' : 'pi pi-play'"
+                  [icon]="app.is_active ? 'pi pi-pause' : 'pi pi-play'"
                   [text]="true"
                   [rounded]="true"
                   [disabled]="pending()"
-                  [pTooltip]="app.is_active ? 'Desactiver' : 'Activer'"
+                  [pTooltip]="app.is_active ? copy().actions.deactivate : copy().actions.activate"
                   tooltipPosition="top"
                   (onClick)="toggleState(app)"
                 />
@@ -74,7 +73,7 @@
                   [text]="true"
                   [rounded]="true"
                   [disabled]="pending()"
-                  pTooltip="Regenerer le token"
+                  [pTooltip]="copy().actions.regenerate"
                   tooltipPosition="top"
                   (onClick)="regenerateToken(app)"
                 />
@@ -83,7 +82,7 @@
                   [text]="true"
                   [rounded]="true"
                   [disabled]="pending()"
-                  pTooltip="Revoquer le token"
+                  [pTooltip]="copy().actions.revoke"
                   tooltipPosition="top"
                   (onClick)="revokeToken(app)"
                 />
@@ -92,7 +91,7 @@
                   [text]="true"
                   [rounded]="true"
                   [disabled]="pending()"
-                  pTooltip="Supprimer"
+                  [pTooltip]="copy().actions.delete"
                   tooltipPosition="top"
                   (onClick)="deleteApp(app)"
                 />
@@ -102,16 +101,13 @@
         </ng-template>
       </p-table>
     } @else {
-      <p class="console-empty">Aucune application pour ce compte.</p>
+      <p class="console-empty">{{ copy().empty }}</p>
     }
 
-    <p class="console-note">
-      Les changements de statut restent geres par les endpoints dedies, et le token reste gere via `regenerate-token` et `revoke-token`.
-    </p>
   </section>
 
   <p-dialog
-    [header]="modalMode() === 'create' ? 'Creer une application' : 'Modifier une application'"
+    [header]="modalMode() === 'create' ? copy().dialog.createTitle : copy().dialog.editTitle"
     [modal]="true"
     [draggable]="false"
     [resizable]="false"
@@ -120,33 +116,23 @@
     [style]="{ width: '42rem' }"
   >
     <form class="console-form" [formGroup]="form" (ngSubmit)="saveApp()">
-      <label>
-        <span>Nom</span>
-        <input pInputText type="text" formControlName="name" placeholder="Push mobile Europe" />
-      </label>
-      @for (message of fieldErrors('name'); track message) {
-        <p class="console-field-error">{{ message }}</p>
-      }
-
-      <label>
-        <span>Description</span>
-        <textarea pTextarea rows="5" formControlName="description" placeholder="Canal, environnement, usage..."></textarea>
-      </label>
-      @for (message of fieldErrors('description'); track message) {
-        <p class="console-field-error">{{ message }}</p>
-      }
+      <app-application-form-fields
+        [form]="form"
+        [nameMessages]="fieldErrors('name')"
+        [descriptionMessages]="fieldErrors('description')"
+      />
 
       @if (error()?.detail) {
-        <p class="console-error">{{ error()?.detail }}</p>
+        <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
       }
 
-      <div class="console-actions">
+      <app-console-dialog-actions (cancelled)="closeModal()">
         <p-button
           type="submit"
-          [label]="pending() ? (modalMode() === 'create' ? 'Creation...' : 'Enregistrement...') : (modalMode() === 'create' ? 'Creer l application' : 'Enregistrer')"
+          [label]="pending() ? (modalMode() === 'create' ? copy().dialog.creating : copy().dialog.saving) : (modalMode() === 'create' ? copy().dialog.create : copy().dialog.save)"
           [loading]="pending()"
         />
-      </div>
+      </app-console-dialog-actions>
     </form>
   </p-dialog>
 </section>

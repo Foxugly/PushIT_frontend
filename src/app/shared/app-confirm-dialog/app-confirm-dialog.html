@@ -1,0 +1,24 @@
+<p-dialog
+  [visible]="!!confirm.current()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [closeOnEscape]="true"
+  [style]="{ width: '28rem' }"
+  [header]="confirm.current()?.title ?? ''"
+  (visibleChange)="setVisible($event)"
+>
+  @if (confirm.current(); as request) {
+    <p class="app-confirm-dialog__message">{{ request.message }}</p>
+
+    <div class="app-confirm-dialog__actions">
+      <p-button
+        [label]="request.rejectLabel"
+        severity="secondary"
+        (onClick)="confirm.reject()"
+      />
+      <p-button [label]="request.acceptLabel" (onClick)="confirm.accept()" />
+    </div>
+  }
+</p-dialog>

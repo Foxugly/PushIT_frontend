@@ -1,135 +1,185 @@
 <section class="console-page">
   @if (banner()) {
-    <section class="console-flash">
-      <p>{{ banner() }}</p>
-    </section>
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
 
   @if (error()?.detail) {
-    <section class="console-error">
-      <p>{{ error()?.detail }}</p>
-    </section>
+    <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
   }
 
   <section class="console-card">
-    <div class="console-card__header notifications-header">
-      <h2 class="notifications-header__title">Notifications utilisateur</h2>
-      <div class="console-card__toolbar notifications-header__toolbar">
-        <div class="notifications-header__badges">
-          <p-tag value="Historique {{ notifications().length }}" severity="info" />
-          <p-tag value="Futures {{ futureNotifications().length }}" severity="warn" />
-          <p-tag value="Decalees {{ shiftedCount() }}" severity="contrast" />
+    <div class="console-card__header console-resource-header">
+      <h2 class="console-resource-header__title">{{ copy().title }}</h2>
+      <div class="console-card__toolbar console-resource-header__toolbar">
+        <div class="console-resource-header__badges">
+          <p-tag [value]="copy().history + ' ' + notifications().length" severity="info" />
+          <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
+          <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
         </div>
-        <p-button label="Rafraichir" icon="pi pi-refresh" severity="secondary" (onClick)="refreshNotifications()" />
-        <p-button label="Ajouter" icon="pi pi-plus" (onClick)="openCreateModal()" />
+        <p-button
+          [label]="copy().refresh"
+          icon="pi pi-refresh"
+          severity="secondary"
+          (onClick)="refreshNotifications()"
+        />
+        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" />
       </div>
     </div>
 
-    <div class="notifications-status-badges">
-      @for (status of statusOptions; track status) {
-        <p-tag
-          [value]="status + ' ' + statusCount(status)"
-          [severity]="statusBadgeSeverity(status)"
-        />
-      }
-    </div>
-
-    <form class="console-filter-grid notifications-filters" [formGroup]="filtersForm" (ngSubmit)="applyFilters()">
+    <form
+      class="console-filter-grid notifications-filters"
+      [formGroup]="filtersForm"
+      (ngSubmit)="applyFilters()"
+    >
       <label>
-        <span>Application</span>
+        <span>{{ copy().filters.application }}</span>
         <p-select
           formControlName="application_id"
           [options]="appOptions()"
           optionLabel="label"
           optionValue="value"
-          placeholder="Toutes"
+          [placeholder]="copy().filters.allApps"
           size="small"
+          styleClass="notifications-filters__select notifications-filters__select--app"
         />
       </label>
 
       <label>
-        <span>Statut</span>
+        <span>{{ copy().filters.status }}</span>
         <p-select
           formControlName="status"
           [options]="statusOptionsSelect()"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous"
+          [placeholder]="copy().filters.allStatuses"
           size="small"
+          styleClass="notifications-filters__select notifications-filters__select--status"
         />
       </label>
 
       <label>
-        <span>Effectif a partir de</span>
+        <span>{{ copy().filters.from }}</span>
         <p-datepicker
           formControlName="effective_scheduled_from"
           [showTime]="true"
+          [showIcon]="true"
+          iconDisplay="input"
           hourFormat="24"
+          size="small"
           appendTo="body"
-          styleClass="notifications-filters__picker"
+          [inputStyle]="{ width: '11rem' }"
+          [panelStyle]="compactDatepickerPanelStyle"
+          styleClass="notifications-filters__date"
         ></p-datepicker>
       </label>
 
       <label>
-        <span>Effectif jusqu'a</span>
+        <span>{{ copy().filters.to }}</span>
         <p-datepicker
           formControlName="effective_scheduled_to"
           [showTime]="true"
+          [showIcon]="true"
+          iconDisplay="input"
           hourFormat="24"
+          size="small"
           appendTo="body"
-          styleClass="notifications-filters__picker"
+          [inputStyle]="{ width: '11rem' }"
+          [panelStyle]="compactDatepickerPanelStyle"
+          styleClass="notifications-filters__date"
         ></p-datepicker>
       </label>
 
       <div class="console-filter-actions notifications-filters__actions">
-        <p-button type="submit" label="Appliquer" size="small" />
-        <p-button type="button" label="Reinitialiser" severity="secondary" size="small" (onClick)="clearFilters()" />
+        <p-button type="submit" [label]="copy().filters.apply" size="small" />
+        <p-button
+          type="button"
+          [label]="copy().filters.reset"
+          severity="secondary"
+          size="small"
+          (onClick)="clearFilters()"
+        />
       </div>
     </form>
 
-    <p class="console-note">
-      `effective_scheduled_for` reflete uniquement les periodes blanches application. Les periodes blanches device peuvent retarder une delivery sans changer cette date.
-    </p>
-
     @if (loading()) {
-      <p class="console-empty">Chargement des notifications...</p>
+      <p class="console-empty">{{ copy().loading }}</p>
     } @else {
       <p-table [value]="notifications().concat(futureNotifications())" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Nom</th>
-            <th>Application</th>
-            <th>Message</th>
-            <th>Statut</th>
-            <th>Effective</th>
-            <th class="console-table__actions">Actions</th>
+            <th>{{ copy().table.name }}</th>
+            <th>{{ copy().table.application }}</th>
+            <th>{{ copy().table.message }}</th>
+            <th>{{ copy().table.status }}</th>
+            <th>{{ copy().table.effective }}</th>
+            <th class="console-table__actions">{{ copy().table.actions }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-notification>
           <tr [class.console-row-selected]="selectedNotificationId() === notification.id">
             <td class="console-table__name">
-              <a class="console-table__link" [routerLink]="['/dashboard/notifications', notification.id]">
+              <a
+                class="console-table__link"
+                [routerLink]="['/dashboard/notifications', notification.id]"
+              >
                 <strong>{{ notification.title }}</strong>
               </a>
               @if (isFutureNotification(notification)) {
-                <p class="console-table__subtext">Planifiee</p>
+                <p class="console-table__subtext">{{ copy().scheduledSubtext }}</p>
               }
             </td>
             <td>{{ notification.application_name }}</td>
             <td>{{ notification.message }}</td>
             <td>
-              <p-tag [value]="isShifted(notification) ? 'shifted' : notification.status" [severity]="notificationSeverity(notification)" />
+              <p-tag
+                [value]="notificationStatusLabel(notification)"
+                [severity]="notificationSeverity(notification)"
+              />
             </td>
-            <td>{{ notification.effective_scheduled_for ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : 'immediat' }}</td>
+            <td>
+              {{
+                notification.effective_scheduled_for
+                  ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm')
+                  : copy().immediate
+              }}
+            </td>
             <td class="console-table__actions">
               <div class="console-icon-actions">
-                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" pTooltip="Voir le detail" tooltipPosition="top" (onClick)="openDetails(notification)" />
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="copy().actions.view"
+                  tooltipPosition="top"
+                  (onClick)="openDetails(notification)"
+                />
                 @if (notification.status === 'draft' && !notification.scheduled_for) {
-                  <p-button icon="pi pi-send" [text]="true" [rounded]="true" pTooltip="Envoyer" tooltipPosition="top" (onClick)="sendNotification(notification)" />
+                  <p-button
+                    icon="pi pi-send"
+                    [text]="true"
+                    [rounded]="true"
+                    [pTooltip]="copy().actions.send"
+                    tooltipPosition="top"
+                    (onClick)="sendNotification(notification)"
+                  />
                 }
                 @if (isFutureNotification(notification)) {
-                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" pTooltip="Editer" tooltipPosition="top" (onClick)="openEditModal(notification)" />
-                  <p-button icon="pi pi-trash" [text]="true" [rounded]="true" pTooltip="Supprimer" tooltipPosition="top" (onClick)="deleteFutureNotification(notification)" />
+                  <p-button
+                    icon="pi pi-pencil"
+                    [text]="true"
+                    [rounded]="true"
+                    [pTooltip]="copy().actions.edit"
+                    tooltipPosition="top"
+                    (onClick)="openEditModal(notification)"
+                  />
+                  <p-button
+                    icon="pi pi-trash"
+                    [text]="true"
+                    [rounded]="true"
+                    [pTooltip]="copy().actions.delete"
+                    tooltipPosition="top"
+                    (onClick)="deleteFutureNotification(notification)"
+                  />
                 }
               </div>
             </td>
@@ -138,13 +188,13 @@
       </p-table>
 
       @if (!notifications().length && !futureNotifications().length) {
-        <p class="console-empty">Aucune notification pour ces filtres.</p>
+        <p class="console-empty">{{ copy().empty }}</p>
       }
     }
   </section>
 
   <p-dialog
-    [header]="modalMode() === 'create' ? 'Creer une notification' : 'Modifier une notification future'"
+    [header]="modalMode() === 'create' ? copy().dialog.createTitle : copy().dialog.editTitle"
     [modal]="true"
     [draggable]="false"
     [resizable]="false"
@@ -155,13 +205,13 @@
     @if (modalMode() === 'create') {
       <form class="console-form" [formGroup]="notificationForm" (ngSubmit)="createNotification()">
         <label>
-          <span>Application</span>
+          <span>{{ copy().form.application }}</span>
           <p-select
             formControlName="application_id"
             [options]="appOptions()"
             optionLabel="label"
             optionValue="value"
-            placeholder="Choisir..."
+            [placeholder]="copy().form.applicationPlaceholder"
             styleClass="notifications-form__control"
           />
         </label>
@@ -170,80 +220,123 @@
         }
 
         <label>
-          <span>Devices cibles</span>
+          <span class="notifications-form__label-inline">
+            {{ copy().form.devices }}
+            <p-button
+              icon="pi pi-question-circle"
+              type="button"
+              [text]="true"
+              [rounded]="true"
+              size="small"
+              [pTooltip]="copy().form.devicesHelp"
+              tooltipPosition="top"
+            />
+          </span>
           <p-multiselect
             formControlName="device_ids"
             [options]="availableDeviceOptions()"
             optionLabel="label"
             optionValue="value"
-            placeholder="Choisir un ou plusieurs devices"
+            [placeholder]="copy().form.devicesPlaceholder"
             display="chip"
             styleClass="notifications-form__control"
-            [disabled]="!notificationForm.controls.application_id.value"
           />
         </label>
-        <p class="console-muted notifications-form__hint">
-          Seuls les devices actifs lies a l'application selectionnee sont proposes.
-        </p>
         @for (message of fieldErrors('device_ids'); track message) {
           <p class="console-field-error">{{ message }}</p>
         }
 
         <label>
-          <span>Titre</span>
-          <input pInputText type="text" formControlName="title" placeholder="Promo weekend" />
+          <span>{{ copy().form.title }}</span>
+          <input
+            pInputText
+            type="text"
+            formControlName="title"
+            [placeholder]="copy().form.titlePlaceholder"
+          />
         </label>
 
         <label>
-          <span>Message</span>
-          <textarea pTextarea rows="5" formControlName="message" placeholder="Votre message push"></textarea>
+          <span class="notifications-form__label-inline">
+            {{ copy().form.message }}
+            <app-emoji-picker-popover (emojiSelected)="appendEmojiToCreateMessage($event)" />
+          </span>
+          <textarea
+            pTextarea
+            rows="5"
+            formControlName="message"
+            [placeholder]="copy().form.messagePlaceholder"
+          ></textarea>
         </label>
 
         <label>
-          <span>Planification optionnelle</span>
+          <span>{{ copy().form.schedule }}</span>
           <p-datepicker
             formControlName="scheduled_for"
             [showTime]="true"
+            [showIcon]="true"
+            iconDisplay="input"
             hourFormat="24"
             appendTo="body"
+            [inputStyle]="{ width: '100%' }"
+            [panelStyle]="compactDatepickerPanelStyle"
             styleClass="notifications-form__control"
           ></p-datepicker>
         </label>
 
-        <div class="console-actions">
-          <p-button type="submit" [label]="pending() ? 'Creation...' : 'Creer la notification'" [loading]="pending()" />
-        </div>
+        <app-console-dialog-actions (cancelled)="closeModal()">
+          <p-button
+            type="submit"
+            [label]="pending() ? copy().dialog.creating : copy().dialog.create"
+            [loading]="pending()"
+          />
+        </app-console-dialog-actions>
       </form>
     } @else {
       <form class="console-form" [formGroup]="futureEditForm" (ngSubmit)="saveFutureNotification()">
         <label>
-          <span>Titre</span>
+          <span>{{ copy().form.title }}</span>
           <input pInputText type="text" formControlName="title" />
         </label>
 
         <label>
-          <span>Message</span>
+          <span class="notifications-form__label-inline">
+            {{ copy().form.message }}
+            <app-emoji-picker-popover (emojiSelected)="appendEmojiToFutureMessage($event)" />
+          </span>
           <textarea pTextarea rows="5" formControlName="message"></textarea>
         </label>
 
         <label>
-          <span>Nouvelle date</span>
+          <span>{{ copy().form.newDate }}</span>
           <p-datepicker
             formControlName="scheduled_for"
             [showTime]="true"
+            [showIcon]="true"
+            iconDisplay="input"
             hourFormat="24"
             appendTo="body"
+            [inputStyle]="{ width: '100%' }"
+            [panelStyle]="compactDatepickerPanelStyle"
             styleClass="notifications-form__control"
           ></p-datepicker>
         </label>
 
         @if (futureError()?.detail) {
-          <p class="console-error">{{ futureError()?.detail }}</p>
+          <app-alert
+            [message]="futureError()!.detail"
+            tone="danger"
+            (dismissed)="futureError.set(null)"
+          />
         }
 
-        <div class="console-actions">
-          <p-button type="submit" [label]="futurePending() ? 'Sauvegarde...' : 'Enregistrer'" [loading]="futurePending()" />
-        </div>
+        <app-console-dialog-actions (cancelled)="closeModal()">
+          <p-button
+            type="submit"
+            [label]="futurePending() ? copy().dialog.saving : copy().dialog.save"
+            [loading]="futurePending()"
+          />
+        </app-console-dialog-actions>
       </form>
     }
   </p-dialog>

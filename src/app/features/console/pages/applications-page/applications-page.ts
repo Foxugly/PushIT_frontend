@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,8 +13,13 @@ import { finalize } from 'rxjs';
 
 import { ApiErrorResponse, ApplicationRead } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
+import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
+import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 
 @Component({
   selector: 'app-applications-page',
@@ -23,6 +28,9 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
+    AppAlert,
+    ApplicationFormFields,
+    ConsoleDialogActions,
     ButtonModule,
     DialogModule,
     InputTextModule,
@@ -37,8 +45,12 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
 export class ApplicationsPage {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
+  private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly confirm = inject(AppConfirmService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
+  readonly copy = computed(() => this.consoleCopy.current().applications);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -52,6 +64,18 @@ export class ApplicationsPage {
   readonly modalMode = signal<'create' | 'edit'>('create');
   readonly editingAppId = signal<number | null>(null);
   readonly activeAppsCount = computed(() => this.shell.apps().filter((app) => app.is_active).length);
+
+  ngOnInit(): void {
+    const editAppId = Number(this.route.snapshot.queryParamMap.get('edit'));
+    if (!Number.isFinite(editAppId) || editAppId <= 0) {
+      return;
+    }
+
+    const app = this.shell.apps().find((item) => item.id === editAppId);
+    if (app) {
+      this.openEditModal(app);
+    }
+  }
 
   openCreateModal(): void {
     this.error.set(null);
@@ -76,6 +100,12 @@ export class ApplicationsPage {
     this.isModalOpen.set(false);
     this.editingAppId.set(null);
     this.modalMode.set('create');
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { edit: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   setModalVisible(visible: boolean): void {
@@ -102,14 +132,14 @@ export class ApplicationsPage {
       () => {
         this.pending.set(false);
         this.form.reset({ name: '', description: '' });
-        this.banner.set("Application creee. Le token brut est disponible dans la colonne de droite.");
+        this.banner.set(this.copy().alerts.created);
         this.closeModal();
       },
       () => {
         this.pending.set(false);
         this.error.set({
           code: 'application_create_failed',
-          detail: "Impossible de creer l'application.",
+          detail: this.copy().errors.create,
         });
       },
     );
@@ -140,7 +170,7 @@ export class ApplicationsPage {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: (app) => {
-          this.banner.set(`Application ${app.name} mise a jour.`);
+          this.banner.set(this.interpolate(this.copy().alerts.updated, { name: app.name }));
           this.closeModal();
           this.shell.loadShell(app.id);
         },
@@ -159,13 +189,13 @@ export class ApplicationsPage {
       app,
       () => {
         this.pending.set(false);
-        this.banner.set(`Application ${app.is_active ? 'desactivee' : 'activee'} avec succes.`);
+        this.banner.set(app.is_active ? this.copy().alerts.deactivated : this.copy().alerts.activated);
       },
       () => {
         this.pending.set(false);
         this.error.set({
           code: 'application_toggle_failed',
-          detail: "Impossible de mettre a jour l'etat de l'application.",
+          detail: this.copy().errors.toggle,
         });
       },
     );
@@ -180,13 +210,13 @@ export class ApplicationsPage {
       app,
       () => {
         this.pending.set(false);
-        this.banner.set('Un nouveau token a ete genere et affiche dans la colonne de droite.');
+        this.banner.set(this.copy().alerts.regenerated);
       },
       () => {
         this.pending.set(false);
         this.error.set({
           code: 'application_token_failed',
-          detail: 'Impossible de regenerer le token.',
+          detail: this.copy().errors.regenerate,
         });
       },
     );
@@ -201,20 +231,22 @@ export class ApplicationsPage {
       app,
       () => {
         this.pending.set(false);
-        this.banner.set('Le token de cette application a ete revoque.');
+        this.banner.set(this.copy().alerts.revoked);
       },
       () => {
         this.pending.set(false);
         this.error.set({
           code: 'application_revoke_failed',
-          detail: 'Impossible de revoquer le token.',
+          detail: this.copy().errors.revoke,
         });
       },
     );
   }
 
-  deleteApp(app: ApplicationRead): void {
-    const shouldDelete = window.confirm(`Supprimer l'application "${app.name}" ?`);
+  async deleteApp(app: ApplicationRead): Promise<void> {
+    const shouldDelete = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmDelete, { name: app.name }),
+    });
     if (!shouldDelete) {
       return;
     }
@@ -228,7 +260,7 @@ export class ApplicationsPage {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: () => {
-          this.banner.set(`Application ${app.name} supprimee.`);
+          this.banner.set(this.interpolate(this.copy().alerts.deleted, { name: app.name }));
           this.shell.loadShell();
         },
         error: (error) => {
@@ -249,7 +281,24 @@ export class ApplicationsPage {
     return app.is_active ? 'success' : 'secondary';
   }
 
+  appStatusLabel(app: ApplicationRead): string {
+    return app.is_active ? this.copy().statuses.active : this.copy().statuses.inactive;
+  }
+
+  refreshApplications(): void {
+    this.error.set(null);
+    this.banner.set(null);
+    this.shell.loadShell(this.shell.selectedAppId() ?? undefined);
+  }
+
   openDetails(app: ApplicationRead): void {
     void this.router.navigate(['/dashboard/applications', app.id]);
+  }
+
+  private interpolate(template: string, values: Record<string, string | number>): string {
+    return Object.entries(values).reduce(
+      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
+      template,
+    );
   }
 }

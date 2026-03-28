@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -9,12 +9,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
 import { ApiErrorResponse } from '../../../core/models/api.models';
+import { AppCopyService } from '../../../core/services/app-copy.service';
 import { LanguagePreferenceService } from '../../../core/services/language-preference.service';
 import { PushitApiService } from '../../../core/services/pushit-api.service';
 import { SessionService } from '../../../core/services/session.service';
 import { coerceApiError, errorFieldMessages } from '../../../core/utils/api-error.utils';
-import { SiteFooter } from '../../../shared/site-footer/site-footer';
-import { SiteHeader } from '../../../shared/site-header/site-header';
+import { AppAlert } from '../../../shared/app-alert/app-alert';
 
 @Component({
   selector: 'app-auth-page',
@@ -22,8 +22,7 @@ import { SiteHeader } from '../../../shared/site-header/site-header';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    SiteFooter,
-    SiteHeader,
+    AppAlert,
     ButtonModule,
     CheckboxModule,
     InputTextModule,
@@ -37,10 +36,12 @@ export class AuthPage {
   private readonly router = inject(Router);
   private readonly api = inject(PushitApiService);
   private readonly session = inject(SessionService);
+  private readonly appCopy = inject(AppCopyService);
   private readonly languagePreference = inject(LanguagePreferenceService);
 
   readonly loginPending = signal(false);
   readonly loginError = signal<ApiErrorResponse | null>(null);
+  readonly copy = computed(() => this.appCopy.current().auth);
 
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

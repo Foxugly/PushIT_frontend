@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -18,8 +18,13 @@ import {
   PushTokenStatus,
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
+import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
+import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
+import { DeviceEditFormFields } from '../../components/device-edit-form-fields/device-edit-form-fields';
 
 @Component({
   selector: 'app-devices-page',
@@ -28,6 +33,9 @@ import { coerceApiError } from '../../../../core/utils/api-error.utils';
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
+    AppAlert,
+    ConsoleDialogActions,
+    DeviceEditFormFields,
     ButtonModule,
     DialogModule,
     InputTextModule,
@@ -43,8 +51,11 @@ import { coerceApiError } from '../../../../core/utils/api-error.utils';
 export class DevicesPage {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
+  private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly confirm = inject(AppConfirmService);
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
+  readonly copy = computed(() => this.consoleCopy.current().devices);
 
   readonly platformOptions: DevicePlatform[] = ['android', 'ios'];
   readonly statusOptions: PushTokenStatus[] = ['active', 'invalid', 'revoked'];
@@ -162,10 +173,10 @@ export class DevicesPage {
       })
       .subscribe({
         next: () => {
-          this.saving.set(false);
-          this.banner.set('Device mis a jour avec succes.');
-          this.closeModal();
-          this.loadDevices();
+        this.saving.set(false);
+        this.banner.set(this.copy().alerts.updated);
+        this.closeModal();
+        this.loadDevices();
         },
         error: (error) => {
           this.saving.set(false);
@@ -174,14 +185,16 @@ export class DevicesPage {
       });
   }
 
-  deleteDevice(): void {
+  async deleteDevice(): Promise<void> {
     const deviceId = this.selectedDeviceId();
     const device = this.devices().find((item) => item.id === deviceId);
     if (!deviceId || !device) {
       return;
     }
 
-    const shouldDelete = window.confirm(`Supprimer le device "${device.device_name}" ?`);
+    const shouldDelete = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmDelete, { name: device.device_name }),
+    });
     if (!shouldDelete) {
       return;
     }
@@ -193,7 +206,7 @@ export class DevicesPage {
     this.api.deleteDevice(deviceId).subscribe({
       next: () => {
         this.saving.set(false);
-        this.banner.set('Device supprime.');
+        this.banner.set(this.copy().alerts.deleted);
         this.selectedDeviceId.set(null);
         this.closeModal();
         this.shell.refreshNavigationCounts();
@@ -215,10 +228,10 @@ export class DevicesPage {
 
     const appToken = this.appTokenForm.getRawValue().app_token.trim();
     if (!appToken) {
-      this.error.set({
-        code: 'missing_app_token',
-        detail: 'Renseignez un X-App-Token pour lier un device.',
-      });
+        this.error.set({
+          code: 'missing_app_token',
+          detail: this.copy().errors.missingAppToken,
+        });
       return;
     }
 
@@ -234,7 +247,12 @@ export class DevicesPage {
           platform: 'android',
           push_token: '',
         });
-        this.banner.set(`Device ${response.device_id} lie a l'application ${response.application_id}.`);
+        this.banner.set(
+          this.interpolate(this.copy().alerts.linked, {
+            deviceId: response.device_id,
+            applicationId: response.application_id,
+          }),
+        );
         this.closeModal();
         this.shell.refreshNavigationCounts();
         this.loadDevices();
@@ -282,14 +300,14 @@ export class DevicesPage {
 
   deviceApplicationNames(device: DeviceRead): string {
     if (!device.application_ids.length) {
-      return 'aucune';
+      return this.copy().none;
     }
 
     const appNames = device.application_ids
       .map((applicationId) => this.shell.apps().find((app) => app.id === applicationId)?.name ?? null)
       .filter((name): name is string => Boolean(name));
 
-    return appNames.length ? appNames.join(', ') : 'aucune';
+    return appNames.length ? appNames.join(', ') : this.copy().none;
   }
 
   openDetails(device: DeviceRead): void {
@@ -312,5 +330,12 @@ export class DevicesPage {
       platform: 'android',
       push_token_status: 'active',
     });
+  }
+
+  private interpolate(template: string, values: Record<string, string | number>): string {
+    return Object.entries(values).reduce(
+      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
+      template,
+    );
   }
 }

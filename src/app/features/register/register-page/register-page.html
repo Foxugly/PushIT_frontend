@@ -1,18 +1,9 @@
-<section class="register-shell">
-  <app-site-header [sticky]="true" />
+<div class="register-layout">
+  <section class="public-copy register-copy">
+    <span class="public-eyebrow">{{ copy().eyebrow }}</span>
+    <h1>{{ copy().title }}</h1>
+    <p>{{ copy().description }}</p>
+  </section>
 
-  <div class="register-layout">
-    <section class="register-copy">
-      <span class="eyebrow">Inscription</span>
-      <h1>Creer un compte PushIT.</h1>
-      <p>
-        Inscrivez-vous pour acceder a la console et commencer a gerer vos applications et vos
-        notifications.
-      </p>
-    </section>
-
-    <app-register-panel />
-  </div>
-
-  <app-site-footer />
-</section>
+  <app-register-panel />
+</div>

@@ -1,22 +1,16 @@
-<section class="donate-shell">
-  <app-site-header [sticky]="true" />
+<main class="public-content donate-content">
+  <section class="public-card donate-hero">
+    <span class="public-badge">{{ copy().badge }}</span>
+    <h1>{{ copy().title }}</h1>
+    <p>{{ copy().description }}</p>
+    <button class="public-button" type="button">{{ copy().button }}</button>
+  </section>
 
-  <main class="donate-content">
-    <section class="donate-hero">
-      <span class="badge">{{ copy().badge }}</span>
-      <h1>{{ copy().title }}</h1>
-      <p>{{ copy().description }}</p>
-      <button type="button">{{ copy().button }}</button>
-    </section>
-
-    <section class="donate-grid">
-      @for (item of copy().cards; track item) {
-        <article class="donate-card">
-          <p>{{ item }}</p>
-        </article>
-      }
-    </section>
-  </main>
-
-  <app-site-footer />
-</section>
+  <section class="donate-grid">
+    @for (item of copy().cards; track item) {
+      <article class="public-card donate-card">
+        <p>{{ item }}</p>
+      </article>
+    }
+  </section>
+</main>

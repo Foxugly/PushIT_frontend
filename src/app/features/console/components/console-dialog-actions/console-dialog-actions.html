@@ -1,0 +1,7 @@
+<div class="console-dialog-actions">
+  <div class="console-dialog-actions__content">
+    <ng-content />
+  </div>
+
+  <p-button type="button" [label]="cancelLabel" [severity]="cancelSeverity" (onClick)="cancelled.emit()" />
+</div>

@@ -1,0 +1,15 @@
+@if (isVisible) {
+  <section class="app-alert" [class.app-alert--success]="tone() === 'success'" [class.app-alert--danger]="tone() === 'danger'" [class.app-alert--fading]="isFadingOut">
+    <p>{{ message() }}</p>
+    <p-button
+      icon="pi pi-times"
+      [text]="true"
+      [rounded]="true"
+      size="small"
+      severity="secondary"
+      pTooltip="Fermer"
+      tooltipPosition="top"
+      (onClick)="close()"
+    />
+  </section>
+}

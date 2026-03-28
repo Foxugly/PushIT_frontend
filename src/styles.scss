@@ -29,6 +29,12 @@
   --accent-strong: #0d5ed7;
   --success-soft: #e9f7ef;
   --success-text: #2e6a4f;
+  --control-radius: 8px;
+  --field-radius: 8px;
+  --field-padding-y: 0.5rem;
+  --field-padding-x: 0.75rem;
+  --content-width: 1280px;
+  --shell-gap: 1rem;
 }
 
 html,
@@ -63,9 +69,164 @@ a {
   color: inherit;
 }
 
+.public-shell {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 0;
+  width: min(var(--content-width), calc(100% - 2.5rem));
+  margin: 0 auto;
+  padding: 0.75rem 0 1rem;
+  align-content: start;
+}
+
+.public-content,
+.public-stack,
+.public-copy {
+  display: grid;
+  gap: var(--shell-gap);
+}
+
+.public-card {
+  border: 1px solid var(--card-border);
+  border-radius: 1.5rem;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+}
+
+.public-card--compact {
+  max-width: 460px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.public-shell h1,
+.public-shell h2,
+.public-shell h3,
+.public-shell p {
+  margin: 0;
+}
+
+.public-copy p,
+.public-card p,
+.public-muted {
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .public-shell {
+    width: calc(100% - 2rem);
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+.public-eyebrow,
+.public-badge {
+  width: fit-content;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.public-eyebrow,
+.public-badge--soft {
+  border: 1px solid var(--card-border);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.public-badge {
+  background: var(--accent);
+  color: #fff;
+}
+
+.public-badge--success {
+  background: var(--success-soft);
+  color: var(--success-text);
+}
+
+.public-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.95rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.public-button--secondary {
+  border-color: var(--card-border);
+  background: #fff;
+  color: var(--text-main);
+}
+
+.public-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.public-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.public-form label span {
+  color: #3d5870;
+  font-size: 0.92rem;
+}
+
+.public-input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--card-border);
+  border-radius: var(--control-radius);
+  background: #fff;
+  color: var(--text-main);
+}
+
+:where(.public-form) .public-password,
+:where(.public-form) .public-password .p-password-input,
+:where(.public-form) .public-password .p-inputtext {
+  width: 100%;
+}
+
+:where(.public-form) .public-password .p-inputtext {
+  padding: 0.95rem 1rem;
+  border-radius: var(--control-radius);
+}
+
+.public-submit-row {
+  display: flex;
+  justify-content: center;
+}
+
+.public-link-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.public-field-error,
+.public-api-error {
+  margin: 0;
+  color: #b35347;
+  font-size: 0.86rem;
+}
+
 .console-page {
   display: grid;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .console-shell__eyebrow {
@@ -120,6 +281,34 @@ a {
   align-items: center;
 }
 
+.console-resource-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.console-resource-header__title {
+  margin: 0;
+  flex: 0 1 auto;
+  white-space: nowrap;
+}
+
+.console-resource-header__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+  flex-wrap: nowrap;
+}
+
+.console-resource-header__badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
 .console-card__toolbar .console-metrics {
   grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
 }
@@ -142,8 +331,8 @@ a {
 .console-card__picker select {
   width: 100%;
   border: 1px solid rgba(42, 127, 255, 0.16);
-  border-radius: 14px;
-  padding: 0.7rem 0.9rem;
+  border-radius: var(--field-radius);
+  padding: var(--field-padding-y) var(--field-padding-x);
   background: rgba(255, 255, 255, 0.88);
   color: var(--text-main);
 }
@@ -154,7 +343,7 @@ a {
 
 .console-grid {
   display: grid;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .console-grid--2 {
@@ -196,21 +385,23 @@ a {
   font-size: 0.92rem;
 }
 
-.console-form input,
+.console-form input:not(.p-datepicker-input),
 .console-form textarea,
 .console-form select,
-.console-form-grid input,
+.console-form-grid input:not(.p-datepicker-input),
 .console-form-grid textarea,
 .console-form-grid select,
-.console-filter-grid input,
+.console-filter-grid input:not(.p-datepicker-input),
 .console-filter-grid textarea,
 .console-filter-grid select {
   width: 100%;
   border: 1px solid rgba(42, 127, 255, 0.16);
-  border-radius: 18px;
-  padding: 0.85rem 1rem;
+  border-radius: var(--field-radius);
+  padding: var(--field-padding-y) var(--field-padding-x);
   background: rgba(255, 255, 255, 0.88);
   color: var(--text-main);
+  font-size: 0.95rem;
+  line-height: 1.35;
   outline: none;
   transition:
     border-color 0.2s ease,
@@ -218,15 +409,32 @@ a {
     transform 0.2s ease;
 }
 
-.console-form input:focus,
+.console-form input:not(.p-datepicker-input):focus,
 .console-form textarea:focus,
 .console-form select:focus,
-.console-form-grid input:focus,
+.console-form-grid input:not(.p-datepicker-input):focus,
 .console-form-grid textarea:focus,
 .console-form-grid select:focus,
-.console-filter-grid input:focus,
+.console-filter-grid input:not(.p-datepicker-input):focus,
 .console-filter-grid textarea:focus,
 .console-filter-grid select:focus {
+  border-color: rgba(42, 127, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(42, 127, 255, 0.12);
+}
+
+:where(.console-form, .console-form-grid, .console-filter-grid) textarea {
+  min-height: 5.5rem;
+  resize: vertical;
+}
+
+:where(.console-form, .console-form-grid, .console-filter-grid) .p-inputtext:not(.p-datepicker-input) {
+  border-radius: var(--field-radius);
+  padding: var(--field-padding-y) var(--field-padding-x);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+:where(.console-form, .console-form-grid, .console-filter-grid) .p-inputtext:not(.p-datepicker-input):enabled:focus {
   border-color: rgba(42, 127, 255, 0.45);
   box-shadow: 0 0 0 4px rgba(42, 127, 255, 0.12);
 }
@@ -624,7 +832,38 @@ a {
     display: grid;
   }
 
+  .console-resource-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .console-resource-header__title {
+    white-space: normal;
+  }
+
+  .console-resource-header__toolbar {
+    width: 100%;
+    flex-wrap: wrap;
+    margin-left: 0;
+  }
+
+  .console-resource-header__badges {
+    flex-wrap: wrap;
+  }
+
   .console-list-item {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .public-link-row {
+    flex-direction: column;
+  }
+
+  .public-shell {
+    width: calc(100% - 2rem);
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
   }
 }

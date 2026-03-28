@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
-import { SiteFooter } from '../../../shared/site-footer/site-footer';
-import { SiteHeader } from '../../../shared/site-header/site-header';
+import { AppCopyService } from '../../../core/services/app-copy.service';
 
 @Component({
   selector: 'app-about-page',
-  imports: [CommonModule, SiteHeader, SiteFooter],
+  imports: [CommonModule],
   templateUrl: './about-page.html',
   styleUrl: './about-page.scss',
 })
-export class AboutPage {}
+export class AboutPage {
+  private readonly appCopy = inject(AppCopyService);
+  readonly copy = computed(() => this.appCopy.current().about);
+}

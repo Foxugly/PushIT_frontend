@@ -34,46 +34,17 @@ export class ConsoleShellService {
       user: this.api.me(),
       apps: this.api.listApps(),
       devices: this.api.listDevices(),
-      notifications: this.api.listNotifications({
-        application_id: null,
-        status: null,
-        effective_scheduled_from: null,
-        effective_scheduled_to: null,
-        has_quiet_period_shift: null,
-        ordering: '-effective_scheduled_for',
-      }),
-      futureNotifications: this.api.listFutureNotifications({
-        effective_scheduled_from: null,
-        effective_scheduled_to: null,
-        has_quiet_period_shift: null,
-        ordering: '-effective_scheduled_for',
-      }),
     })
-      .pipe(
-        switchMap(({ user, apps, devices, notifications, futureNotifications }) =>
-          this.loadQuietPeriodsCount(apps, devices).pipe(
-            map((quietPeriodsCount) => ({
-              user,
-              apps,
-              devices,
-              notifications,
-              futureNotifications,
-              quietPeriodsCount,
-            })),
-          ),
-        ),
-        finalize(() => this.loading.set(false)),
-      )
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: ({ user, apps, devices, notifications, futureNotifications, quietPeriodsCount }) => {
+        next: ({ user, apps, devices }) => {
           this.session.updateUser(user);
           this.user.set(user);
           this.languagePreference.applyBackendLanguage(user.language);
           this.apps.set(apps);
           this.devicesCount.set(devices.length);
-          this.notificationsCount.set(notifications.length + futureNotifications.length);
-          this.quietPeriodsCount.set(quietPeriodsCount);
           this.syncSelectedApp(apps, preferredAppId);
+          this.refreshSupplementaryCounts(apps, devices);
         },
         error: () => {
           this.error.set("Impossible de charger l'espace console.");
@@ -108,6 +79,25 @@ export class ConsoleShellService {
     forkJoin({
       apps: this.api.listApps(),
       devices: this.api.listDevices(),
+    })
+      .subscribe({
+        next: ({ apps, devices }) => {
+          this.apps.set(apps);
+          this.syncSelectedApp(apps);
+          this.devicesCount.set(devices.length);
+          this.refreshSupplementaryCounts(apps, devices);
+        },
+        error: () => {
+          this.error.set("Impossible de rafraichir les compteurs de navigation.");
+        },
+      });
+  }
+
+  private refreshSupplementaryCounts(
+    apps: ApplicationRead[] = this.apps(),
+    devices: Array<{ id: number }> = [],
+  ): void {
+    forkJoin({
       notifications: this.api.listNotifications({
         application_id: null,
         status: null,
@@ -124,10 +114,7 @@ export class ConsoleShellService {
       }),
     })
       .pipe(
-        switchMap(({ apps, devices, notifications, futureNotifications }) => {
-          this.apps.set(apps);
-          this.syncSelectedApp(apps);
-          this.devicesCount.set(devices.length);
+        switchMap(({ notifications, futureNotifications }) => {
           this.notificationsCount.set(notifications.length + futureNotifications.length);
 
           return this.loadQuietPeriodsCount(apps, devices);
@@ -138,7 +125,7 @@ export class ConsoleShellService {
           this.quietPeriodsCount.set(quietPeriodsCount);
         },
         error: () => {
-          this.error.set("Impossible de rafraichir les compteurs de navigation.");
+          this.quietPeriodsCount.set(0);
         },
       });
   }

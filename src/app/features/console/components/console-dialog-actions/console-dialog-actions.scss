@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.console-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.console-dialog-actions__content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .console-dialog-actions,
+  .console-dialog-actions__content {
+    width: 100%;
+  }
+}

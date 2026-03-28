@@ -1,0 +1,58 @@
+.dashboard-home__hero {
+  align-items: center;
+}
+
+.dashboard-home__metrics {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.dashboard-home__shortcuts {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-home__shortcut {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(42, 127, 255, 0.1);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+}
+
+.dashboard-home__shortcut i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: rgba(220, 236, 255, 0.92);
+  color: var(--accent-strong);
+}
+
+.dashboard-home__shortcut strong {
+  display: block;
+}
+
+@media (max-width: 960px) {
+  .dashboard-home__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-home__metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-home__shortcuts {
+    grid-template-columns: 1fr;
+  }
+}

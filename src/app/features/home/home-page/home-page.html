@@ -1,35 +1,20 @@
-<section class="home-shell">
-  <app-site-header [sticky]="true" />
+<main class="public-content home-content">
+  <section class="hero-grid">
+    <section class="public-card hero-card">
+      <span class="public-badge public-badge--soft">{{ copy().badge }}</span>
+      <h1>{{ copy().title }}</h1>
+      <p>{{ copy().description }}</p>
 
-  <main class="home-content">
-    <section class="hero-grid">
-      <section class="hero-card">
-        <span class="hero-badge">{{ copy().badge }}</span>
-        <h1>{{ copy().title }}</h1>
-        <p>{{ copy().description }}</p>
-
-        <div class="hero-actions">
-          <a class="button button--primary" routerLink="/features">{{ copy().primary }}</a>
-          <a class="button button--secondary" routerLink="/auth">{{ copy().secondary }}</a>
-        </div>
-      </section>
-
-      <app-register-panel
-        [title]="copy().register.title"
-        [subtitle]="copy().register.subtitle"
-        [showLoginLink]="false"
-      />
-    </section>
-
-    <section class="preview-card">
-      <h2>{{ copy().previewTitle }}</h2>
-      <div class="preview-grid">
-        @for (item of copy().preview; track item) {
-          <article class="preview-item">
-            <p>{{ item }}</p>
-          </article>
-        }
+      <div class="hero-actions">
+        <a class="public-button" routerLink="/features">{{ copy().primary }}</a>
+        <a class="public-button public-button--secondary" routerLink="/auth">{{ copy().secondary }}</a>
       </div>
     </section>
-  </main>
-</section>
+
+    <app-register-panel
+      [title]="copy().register.title"
+      [subtitle]="copy().register.subtitle"
+      [showLoginLink]="false"
+    />
+  </section>
+</main>

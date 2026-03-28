@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.app-alert {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  background: rgba(220, 236, 255, 0.58);
+  color: var(--text-main);
+  opacity: 1;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.app-alert p {
+  margin: 0;
+}
+
+.app-alert--success {
+  background: rgba(233, 247, 239, 0.88);
+  color: var(--success-text);
+}
+
+.app-alert--danger {
+  background: rgba(255, 237, 239, 0.92);
+  color: #9e3650;
+}
+
+.app-alert--fading {
+  opacity: 0;
+  transform: translateY(-4px);
+}

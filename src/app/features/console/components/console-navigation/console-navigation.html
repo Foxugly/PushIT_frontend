@@ -7,22 +7,15 @@
   </div>
 
   <nav class="console-shell__nav">
-    <a routerLink="/dashboard/applications" routerLinkActive="is-active">
-      <span>Applications</span>
-      <span class="console-shell__nav-badge">{{ shell.apps().length }}</span>
-    </a>
-    <a routerLink="/dashboard/devices" routerLinkActive="is-active">
-      <span>Devices</span>
-      <span class="console-shell__nav-badge">{{ shell.devicesCount() }}</span>
-    </a>
-    <a routerLink="/dashboard/notifications" routerLinkActive="is-active">
-      <span>Notifications</span>
-      <span class="console-shell__nav-badge">{{ shell.notificationsCount() }}</span>
-    </a>
-    <a routerLink="/dashboard/quiet-periods" routerLinkActive="is-active">
-      <span>Periodes blanches</span>
-      <span class="console-shell__nav-badge">{{ shell.quietPeriodsCount() }}</span>
-    </a>
+    @for (item of navigationItems(); track item.link) {
+      <app-console-menu-item
+        [link]="item.link"
+        [label]="item.label"
+        [description]="item.description"
+        [icon]="item.icon"
+        [count]="item.count"
+      />
+    }
   </nav>
 
   @if (shell.lastGeneratedToken(); as tokenState) {

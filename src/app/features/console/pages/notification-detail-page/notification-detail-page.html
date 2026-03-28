@@ -1,119 +1,140 @@
 <section class="console-page">
   <section class="console-card">
-    <div class="console-card__header console-detail-header">
-      <div class="console-detail-header__main">
-        <a class="console-back-link" [routerLink]="['/dashboard/notifications']">
-          <i class="pi pi-arrow-left"></i>
-          <span>Retour aux notifications</span>
-        </a>
-
-        <div>
-          <p class="console-shell__eyebrow">Notification</p>
-          <h2>{{ notification()?.title || 'Detail notification' }}</h2>
-          <p class="console-muted">Vue detaillee du message, de sa planification et de son statut de livraison.</p>
-        </div>
-      </div>
-
+    <app-console-detail-header
+      [backLink]="['/dashboard/notifications']"
+      [backLabel]="copy().back"
+      [eyebrow]="copy().eyebrow"
+      [title]="notification()?.title || copy().fallbackTitle"
+    >
       @if (notification(); as currentNotification) {
-        <div class="console-detail-badges">
-          <p-tag [value]="currentNotification.status" [severity]="statusBadgeSeverity(currentNotification.status)" />
-          @if (isFuture()) {
-            <p-tag value="Planifiee" severity="warn" />
-          }
-          @if (isShifted(currentNotification)) {
-            <p-tag value="Decalee" severity="contrast" />
-          }
-        </div>
+        @if (isFuture()) {
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            [rounded]="true"
+            [pTooltip]="copy().editTooltip"
+            tooltipPosition="top"
+            (onClick)="openEditModal()"
+          />
+        }
+        <p-tag [value]="currentNotification.status" [severity]="statusBadgeSeverity(currentNotification.status)" />
+        @if (isFuture()) {
+          <p-tag [value]="copy().labels.scheduled" severity="warn" />
+        }
+        @if (isShifted(currentNotification)) {
+          <p-tag [value]="copy().labels.shifted" severity="contrast" />
+        }
       }
-    </div>
+    </app-console-detail-header>
 
     @if (error()?.detail) {
-      <section class="console-error">
-        <p>{{ error()?.detail }}</p>
-      </section>
+      <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
     }
 
     @if (loading() && !notification()) {
-      <p class="console-empty">Chargement de la notification...</p>
+      <p class="console-empty">{{ copy().loading }}</p>
     } @else if (notification(); as currentNotification) {
       <div class="console-detail-grid">
         <article class="console-detail-panel console-detail-panel--wide">
-          <h3>Message</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>Titre</dt>
-              <dd>{{ currentNotification.title }}</dd>
-            </div>
-            <div>
-              <dt>Application</dt>
-              <dd>{{ currentNotification.application_name }} (#{{ currentNotification.application_id }})</dd>
-            </div>
-            <div>
-              <dt>Contenu</dt>
-              <dd class="console-detail-message">{{ currentNotification.message }}</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article class="console-detail-panel">
-          <h3>Statut</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>Etat</dt>
-              <dd>
-                <p-tag
-                  [value]="isShifted(currentNotification) ? 'shifted' : currentNotification.status"
-                  [severity]="notificationSeverity(currentNotification)"
-                />
-              </dd>
-            </div>
-            <div>
-              <dt>Future</dt>
-              <dd>{{ isFuture() ? 'Oui' : 'Non' }}</dd>
-            </div>
-            <div>
-              <dt>Envoyee le</dt>
-              <dd>{{ currentNotification.sent_at ? (currentNotification.sent_at | date: 'dd/MM/yyyy HH:mm') : 'Pas encore' }}</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article class="console-detail-panel">
-          <h3>Planification</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>Creee le</dt>
-              <dd>{{ currentNotification.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
-            </div>
-            <div>
-              <dt>Demandee pour</dt>
-              <dd>{{ currentNotification.scheduled_for ? (currentNotification.scheduled_for | date: 'dd/MM/yyyy HH:mm') : 'Immediat' }}</dd>
-            </div>
-            <div>
-              <dt>Effective</dt>
-              <dd>{{ currentNotification.effective_scheduled_for ? (currentNotification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : 'Immediat' }}</dd>
-            </div>
-          </dl>
+          <h3>{{ copy().messageTitle }}</h3>
+          <p class="console-detail-message">{{ currentNotification.message }}</p>
         </article>
 
         <article class="console-detail-panel console-detail-panel--wide">
-          <h3>Ciblage</h3>
-          <dl class="console-detail-list">
-            <div>
-              <dt>Nombre de devices cibles</dt>
-              <dd>{{ currentNotification.device_ids.length }}</dd>
-            </div>
-            <div>
-              <dt>IDs devices</dt>
-              <dd>{{ currentNotification.device_ids.length ? currentNotification.device_ids.join(', ') : 'Non renseignes' }}</dd>
-            </div>
-          </dl>
+          <h3>{{ copy().devicesTitle }}</h3>
+          @if (targetedDevices().length) {
+            <p-table [value]="targetedDevices()" styleClass="p-datatable-sm notification-detail-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ copy().table.name }}</th>
+                  <th>{{ copy().table.platform }}</th>
+                  <th>{{ copy().table.pushStatus }}</th>
+                  <th>{{ copy().table.lastActivity }}</th>
+                  <th class="console-table__actions">{{ copy().table.actions }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-device>
+                <tr>
+                  <td class="console-table__name">
+                    <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
+                      <strong>{{ device.device_name }}</strong>
+                    </a>
+                  </td>
+                  <td>{{ device.platform }}</td>
+                  <td>
+                    <p-tag [value]="device.push_token_status" [severity]="deviceSeverity(device.push_token_status)" />
+                  </td>
+                  <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().labels.notYet }}</td>
+                  <td class="console-table__actions">
+                    <div class="console-icon-actions">
+                      <p-button
+                        icon="pi pi-eye"
+                        [text]="true"
+                        [rounded]="true"
+                        [pTooltip]="copy().actions.view"
+                        tooltipPosition="top"
+                        [routerLink]="['/dashboard/devices', device.id]"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <p class="console-muted">{{ copy().devicesEmpty }}</p>
+          }
+        </article>
+
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>{{ copy().statusTitle }}</h3>
+          <app-console-facts-table [items]="notificationFacts(currentNotification)" styleClass="p-datatable-sm notification-detail-table" />
         </article>
       </div>
 
-      <p class="console-note">
-        `effective_scheduled_for` tient compte uniquement des periodes blanches application. Les periodes device peuvent retarder une delivery sans changer cette date.
-      </p>
+      <p class="console-note">{{ copy().note }}</p>
     }
   </section>
+
+  <p-dialog
+    [header]="copy().dialog.title"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="isEditModalOpen()"
+    (visibleChange)="setEditModalVisible($event)"
+    [style]="{ width: '44rem' }"
+  >
+    <form class="console-form" [formGroup]="editForm" (ngSubmit)="saveNotification()">
+      <label>
+        <span>{{ copy().table.name }}</span>
+        <input pInputText type="text" formControlName="title" />
+      </label>
+
+      <label>
+        <span>{{ copy().dialog.message }}</span>
+        <textarea pTextarea rows="5" formControlName="message"></textarea>
+      </label>
+
+      <label>
+        <span>{{ copy().dialog.newDate }}</span>
+        <p-datepicker
+          formControlName="scheduled_for"
+          [showTime]="true"
+          [showIcon]="true"
+          iconDisplay="input"
+          hourFormat="24"
+          size="small"
+          appendTo="body"
+        ></p-datepicker>
+      </label>
+
+      @if (editError()?.detail) {
+        <app-alert [message]="editError()!.detail" tone="danger" (dismissed)="editError.set(null)" />
+      }
+
+      <app-console-dialog-actions (cancelled)="closeEditModal()">
+        <p-button type="submit" [label]="saving() ? copy().dialog.saving : copy().dialog.save" [loading]="saving()" />
+      </app-console-dialog-actions>
+    </form>
+  </p-dialog>
 </section>

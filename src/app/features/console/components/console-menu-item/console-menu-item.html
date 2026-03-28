@@ -1,0 +1,10 @@
+<a [routerLink]="link()" routerLinkActive="is-active">
+  <div class="console-menu-item__main">
+    <i [class]="icon()"></i>
+    <div class="console-menu-item__copy">
+      <strong>{{ label() }}</strong>
+      <span>{{ description() }}</span>
+    </div>
+  </div>
+  <span class="console-menu-item__badge">{{ count() }}</span>
+</a>

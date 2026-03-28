@@ -2,27 +2,6 @@
   display: block;
 }
 
-.quiet-periods-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.quiet-periods-header__title {
-  margin: 0;
-  flex: 0 1 auto;
-  white-space: nowrap;
-}
-
-.quiet-periods-header__toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-left: auto;
-  flex-wrap: nowrap;
-}
-
 .quiet-periods-weekdays {
   display: flex;
   flex-wrap: wrap;
@@ -44,33 +23,15 @@
   font-size: 0.9rem;
 }
 
-.quiet-periods-form__control {
+:host ::ng-deep .quiet-periods-form__control {
+  display: flex;
   width: 100%;
 }
 
-:host ::ng-deep .quiet-periods-form__control .p-inputtext {
+:host ::ng-deep .quiet-periods-form__control .p-datepicker {
   width: 100%;
 }
 
-@media (max-width: 1200px) {
-  .quiet-periods-header__toolbar {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 960px) {
-  .quiet-periods-header {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .quiet-periods-header__title {
-    white-space: normal;
-  }
-
-  .quiet-periods-header__toolbar {
-    width: 100%;
-    flex-wrap: wrap;
-    margin-left: 0;
-  }
+:host ::ng-deep .quiet-periods-form__control .p-datepicker-input {
+  width: 100%;
 }

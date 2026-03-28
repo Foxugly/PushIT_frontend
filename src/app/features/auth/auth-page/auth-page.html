@@ -1,68 +1,60 @@
-<section class="auth-shell">
-  <app-site-header [sticky]="true" />
-
-  <form class="auth-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
-    <div class="card-heading">
-      <div>
-        <span class="eyebrow">Connexion</span>
-        <h1>Acceder a votre espace.</h1>
-      </div>
+<form class="public-card public-card--compact public-form auth-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+  <div class="card-heading">
+    <div>
+      <span class="public-eyebrow">{{ copy().eyebrow }}</span>
+      <h1>{{ copy().title }}</h1>
     </div>
+  </div>
 
-    <p class="hero-copy">
-      Connectez-vous pour acceder au dashboard PushIT et gerer vos campagnes.
-    </p>
+  <p class="hero-copy">{{ copy().description }}</p>
 
-    <label>
-      <span>Email</span>
-      <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="auth-input" />
-    </label>
-    @for (message of fieldErrors(loginError(), 'email'); track message) {
-      <p class="field-error">{{ message }}</p>
-    }
+  <label>
+    <span>{{ copy().email }}</span>
+    <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
+  </label>
+  @for (message of fieldErrors(loginError(), 'email'); track message) {
+    <p class="public-field-error">{{ message }}</p>
+  }
 
-    <label>
-      <span>Mot de passe</span>
-      <p-password
-        formControlName="password"
-        [feedback]="false"
-        [toggleMask]="true"
-        placeholder="Mot de passe"
-        styleClass="auth-password"
-        inputStyleClass="auth-password__input"
-      />
-    </label>
-    @for (message of fieldErrors(loginError(), 'password'); track message) {
-      <p class="field-error">{{ message }}</p>
-    }
-    @for (message of fieldErrors(loginError(), 'non_field_errors'); track message) {
-      <p class="field-error">{{ message }}</p>
-    }
+  <label>
+    <span>{{ copy().password }}</span>
+    <p-password
+      formControlName="password"
+      [feedback]="false"
+      [toggleMask]="true"
+      [placeholder]="copy().passwordPlaceholder"
+      styleClass="public-password auth-password"
+      inputStyleClass="auth-password__input"
+    />
+  </label>
+  @for (message of fieldErrors(loginError(), 'password'); track message) {
+    <p class="public-field-error">{{ message }}</p>
+  }
+  @for (message of fieldErrors(loginError(), 'non_field_errors'); track message) {
+    <p class="public-field-error">{{ message }}</p>
+  }
 
-    <label class="checkbox">
-      <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
-      <span>Se souvenir de moi</span>
-    </label>
+  <label class="checkbox">
+    <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
+    <span>{{ copy().rememberMe }}</span>
+  </label>
 
-    @if (loginError()?.detail) {
-      <p class="api-error">{{ loginError()?.detail }}</p>
-    }
+  @if (loginError()?.detail) {
+    <app-alert [message]="loginError()!.detail" tone="danger" (dismissed)="loginError.set(null)" />
+  }
 
-    <div class="link-row">
-      <a routerLink="/forgot-password">Mot de passe oublie ?</a>
-      <a routerLink="/register">Inscription</a>
-    </div>
+  <div class="public-link-row link-row">
+    <a routerLink="/forgot-password">{{ copy().forgotPassword }}</a>
+    <a routerLink="/register">{{ copy().register }}</a>
+  </div>
 
-    <div class="auth-submit-row">
-      <p-button
-        type="submit"
-        [label]="loginPending() ? 'Connexion...' : 'Se connecter'"
-        [loading]="loginPending()"
-        [disabled]="loginPending()"
-        styleClass="auth-submit"
-      />
-    </div>
-  </form>
-
-  <app-site-footer />
-</section>
+  <div class="public-submit-row auth-submit-row">
+    <p-button
+      type="submit"
+      [label]="loginPending() ? copy().pending : copy().submit"
+      [loading]="loginPending()"
+      [disabled]="loginPending()"
+      styleClass="auth-submit"
+    />
+  </div>
+</form>

@@ -2,23 +2,24 @@
   <div class="console-shell__backdrop">
     <app-site-header
       [sticky]="true"
-      [showLoginButton]="false"
-      [showUserMenu]="true"
+      [maxWidth]="'var(--content-width)'"
       [username]="shell.user()?.username || 'Console'"
       [settingsSummary]="settings.apiBaseUrl()"
-      (logoutRequested)="shell.logout()"
     />
 
-    <div class="console-shell__body">
-      <aside class="console-shell__sidebar">
-        <app-console-navigation />
-      </aside>
+    <div class="console-shell__body" [class.console-shell__body--no-sidebar]="hideSidebar">
+      @if (!hideSidebar) {
+        <aside class="console-shell__sidebar">
+          <app-console-navigation />
+        </aside>
+      }
 
       <main class="console-shell__main">
         @if (shell.error()) {
-          <section class="console-card console-error">
-            <p>{{ shell.error() }}</p>
-          </section>
+          <app-alert
+            [message]="shell.error()!"
+            tone="danger"
+          />
         } @else if (shell.loading() && !shell.apps().length) {
           <section class="console-card">
             <p class="console-empty">Chargement de votre console...</p>

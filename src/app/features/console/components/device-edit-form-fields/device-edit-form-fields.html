@@ -1,0 +1,23 @@
+<div class="console-form" [formGroup]="form()">
+  <label>
+    <span>{{ copy().name }}</span>
+    <input pInputText type="text" formControlName="device_name" />
+  </label>
+
+  <div class="console-form-grid console-form-grid--2">
+    <label>
+      <span>{{ copy().platform }}</span>
+      <p-select formControlName="platform" [options]="platformOptions()" optionLabel="label" optionValue="value" />
+    </label>
+
+    <label>
+      <span>{{ copy().pushTokenStatus }}</span>
+      <p-select
+        formControlName="push_token_status"
+        [options]="statusOptions()"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </label>
+  </div>
+</div>

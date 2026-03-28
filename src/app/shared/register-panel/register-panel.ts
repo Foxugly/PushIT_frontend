@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, switchMap } from 'rxjs';
@@ -10,10 +10,12 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 
 import { ApiErrorResponse } from '../../core/models/api.models';
+import { AppCopyService } from '../../core/services/app-copy.service';
 import { LanguagePreferenceService } from '../../core/services/language-preference.service';
 import { PushitApiService } from '../../core/services/pushit-api.service';
 import { SessionService } from '../../core/services/session.service';
 import { coerceApiError, errorFieldMessages } from '../../core/utils/api-error.utils';
+import { AppAlert } from '../app-alert/app-alert';
 
 @Component({
   selector: 'app-register-panel',
@@ -21,6 +23,7 @@ import { coerceApiError, errorFieldMessages } from '../../core/utils/api-error.u
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
+    AppAlert,
     ButtonModule,
     InputTextModule,
     PasswordModule,
@@ -35,14 +38,18 @@ export class RegisterPanel {
   private readonly router = inject(Router);
   private readonly api = inject(PushitApiService);
   private readonly session = inject(SessionService);
+  private readonly appCopy = inject(AppCopyService);
   readonly languagePreference = inject(LanguagePreferenceService);
 
-  readonly title = input('Inscription');
-  readonly subtitle = input('Compte utilisateur');
+  readonly title = input('');
+  readonly subtitle = input('');
   readonly showLoginLink = input(true);
 
   readonly pending = signal(false);
   readonly registerError = signal<ApiErrorResponse | null>(null);
+  readonly copy = computed(() => this.appCopy.current().registerPanel);
+  readonly resolvedTitle = computed(() => this.title() || this.copy().defaultTitle);
+  readonly resolvedSubtitle = computed(() => this.subtitle() || this.copy().defaultSubtitle);
 
   readonly registerForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

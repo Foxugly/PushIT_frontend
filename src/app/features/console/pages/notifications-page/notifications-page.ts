@@ -1,12 +1,12 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
+import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
@@ -23,8 +23,13 @@ import {
   NotificationStatus,
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
+import { EmojiPickerPopover } from '../../../../shared/emoji-picker-popover/emoji-picker-popover';
+import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 
 @Component({
   selector: 'app-notifications-page',
@@ -33,6 +38,9 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
+    AppAlert,
+    ConsoleDialogActions,
+    EmojiPickerPopover,
     ButtonModule,
     DatePickerModule,
     DialogModule,
@@ -50,8 +58,11 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
 export class NotificationsPage {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
+  private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly confirm = inject(AppConfirmService);
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
+  readonly copy = computed(() => this.consoleCopy.current().notifications);
 
   readonly statusOptions: NotificationStatus[] = [
     'draft',
@@ -77,6 +88,7 @@ export class NotificationsPage {
   readonly banner = signal<string | null>(null);
   readonly modalMode = signal<'create' | 'edit' | null>(null);
   readonly editingFutureNotificationId = signal<number | null>(null);
+  readonly compactDatepickerPanelStyle = { minWidth: '20rem', width: '20rem' };
 
   readonly notificationForm = this.fb.nonNullable.group({
     application_id: ['', [Validators.required]],
@@ -118,6 +130,22 @@ export class NotificationsPage {
       .subscribe(() => {
         this.syncSelectedDevices();
       });
+
+    effect(() => {
+      const hasApplication = Boolean(this.notificationForm.controls.application_id.value);
+      const deviceIdsControl = this.notificationForm.controls.device_ids;
+
+      if (hasApplication) {
+        if (deviceIdsControl.disabled) {
+          deviceIdsControl.enable({ emitEvent: false });
+        }
+        return;
+      }
+
+      if (deviceIdsControl.enabled) {
+        deviceIdsControl.disable({ emitEvent: false });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -210,8 +238,8 @@ export class NotificationsPage {
         next: (notification) => {
           this.banner.set(
             notification.scheduled_for
-              ? 'Notification planifiee creee.'
-              : 'Notification immediate creee.',
+              ? this.copy().alerts.createdScheduled
+              : this.copy().alerts.createdImmediate,
           );
           this.closeModal();
           this.refreshNotifications();
@@ -246,7 +274,7 @@ export class NotificationsPage {
       .pipe(finalize(() => this.futurePending.set(false)))
       .subscribe({
         next: () => {
-          this.banner.set('Notification future mise a jour.');
+          this.banner.set(this.copy().alerts.updated);
           this.closeModal();
           this.refreshNotifications();
         },
@@ -256,8 +284,10 @@ export class NotificationsPage {
       });
   }
 
-  deleteFutureNotification(notification: NotificationRead): void {
-    const shouldDelete = window.confirm(`Supprimer la notification future "${notification.title}" ?`);
+  async deleteFutureNotification(notification: NotificationRead): Promise<void> {
+    const shouldDelete = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmDelete, { title: notification.title }),
+    });
     if (!shouldDelete) {
       return;
     }
@@ -270,7 +300,7 @@ export class NotificationsPage {
       .pipe(finalize(() => this.futurePending.set(false)))
       .subscribe({
         next: () => {
-          this.banner.set(`Notification future "${notification.title}" supprimee.`);
+          this.banner.set(this.interpolate(this.copy().alerts.deleted, { title: notification.title }));
           this.refreshNotifications();
         },
         error: (error) => {
@@ -290,7 +320,7 @@ export class NotificationsPage {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: (response) => {
-          this.banner.set(`Notification ${response.notification_id} placee dans la file ${response.task_id}.`);
+          this.banner.set(this.interpolate(this.copy().alerts.queued, { notificationId: response.notification_id, taskId: response.task_id }));
           this.refreshNotifications();
         },
         error: (error) => {
@@ -345,10 +375,12 @@ export class NotificationsPage {
   }
 
   statusOptionsSelect() {
-    return this.statusOptions.map((status) => ({ label: status, value: status }));
+    return this.statusOptions.map((status) => ({ label: this.copy().statusLabels[status], value: status }));
   }
 
-  notificationSeverity(notification: NotificationRead): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
+  notificationSeverity(
+    notification: NotificationRead,
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
     if (this.isShifted(notification)) {
       return 'warn';
     }
@@ -369,7 +401,9 @@ export class NotificationsPage {
     }
   }
 
-  statusBadgeSeverity(status: NotificationStatus): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+  statusBadgeSeverity(
+    status: NotificationStatus,
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     switch (status) {
       case 'sent':
         return 'success';
@@ -389,11 +423,39 @@ export class NotificationsPage {
   }
 
   isFutureNotification(notification: NotificationRead): boolean {
-    return this.futureNotifications().some((futureNotification) => futureNotification.id === notification.id);
+    return this.futureNotifications().some(
+      (futureNotification) => futureNotification.id === notification.id,
+    );
   }
 
   openDetails(notification: NotificationRead): void {
     void this.router.navigate(['/dashboard/notifications', notification.id]);
+  }
+
+  notificationStatusLabel(notification: NotificationRead): string {
+    return this.isShifted(notification)
+      ? this.copy().statusLabels.shifted
+      : this.copy().statusLabels[notification.status];
+  }
+
+  notificationTypeLabel(notification: NotificationRead): string {
+    return this.isFutureNotification(notification)
+      ? this.copy().typeLabels.future
+      : this.copy().typeLabels.history;
+  }
+
+  appendEmojiToCreateMessage(emoji: string): void {
+    const control = this.notificationForm.controls.message;
+    control.setValue(this.appendEmoji(control.value, emoji));
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
+  appendEmojiToFutureMessage(emoji: string): void {
+    const control = this.futureEditForm.controls.message;
+    control.setValue(this.appendEmoji(control.value, emoji));
+    control.markAsDirty();
+    control.markAsTouched();
   }
 
   fieldErrors(fieldName: string): string[] {
@@ -448,7 +510,8 @@ export class NotificationsPage {
 
     return this.devices().filter(
       (device) =>
-        device.push_token_status === 'active' && device.application_ids.includes(applicationId),
+        device.push_token_status === 'active' &&
+        device.application_ids.includes(applicationId),
     );
   }
 
@@ -460,5 +523,20 @@ export class NotificationsPage {
     if (nextSelection.length !== currentSelection.length) {
       this.notificationForm.patchValue({ device_ids: nextSelection }, { emitEvent: false });
     }
+  }
+
+  private appendEmoji(currentValue: string, emoji: string): string {
+    if (!currentValue.trim()) {
+      return emoji;
+    }
+
+    return `${currentValue} ${emoji}`;
+  }
+
+  private interpolate(template: string, values: Record<string, string | number>): string {
+    return Object.entries(values).reduce(
+      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
+      template,
+    );
   }
 }
