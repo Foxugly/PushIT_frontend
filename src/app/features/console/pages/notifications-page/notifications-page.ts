@@ -160,7 +160,7 @@ export class NotificationsPage {
       devices: this.api.listDevices(),
       notifications: this.api.listNotifications(this.buildNotificationFilters()),
       futureNotifications: this.api.listFutureNotifications(this.buildFutureNotificationFilters()),
-      stats: this.api.listNotificationStats(),
+      stats: this.api.listNotificationStats(this.buildStatsFilters()),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
@@ -472,6 +472,13 @@ export class NotificationsPage {
       effective_scheduled_to: this.toIsoOrNull(rawValue.effective_scheduled_to),
       has_quiet_period_shift: null,
       ordering: '-effective_scheduled_for' as const,
+    };
+  }
+
+  private buildStatsFilters() {
+    const rawValue = this.filtersForm.getRawValue();
+    return {
+      application_id: rawValue.application_id ? Number(rawValue.application_id) : null,
     };
   }
 

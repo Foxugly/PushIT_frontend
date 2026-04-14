@@ -26,6 +26,15 @@
       </div>
     </div>
 
+    <div class="notifications-status-badges">
+      @for (status of statusOptions; track status) {
+        <p-tag
+          [value]="copy().statusLabels[status] + ' ' + statusCount(status)"
+          [severity]="statusBadgeSeverity(status)"
+        />
+      }
+    </div>
+
     <form
       class="console-filter-grid notifications-filters"
       [formGroup]="filtersForm"

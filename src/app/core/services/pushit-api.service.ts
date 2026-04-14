@@ -236,8 +236,10 @@ export class PushitApiService {
     );
   }
 
-  listNotificationStats(): Observable<NotificationStats[]> {
-    return this.http.get<NotificationStats[]>(this.url('/notifications/stats/'));
+  listNotificationStats(filters?: { application_id?: number | null }): Observable<NotificationStats[]> {
+    return this.http.get<NotificationStats[]>(this.url('/notifications/stats/'), {
+      params: this.buildParams(filters ?? {}),
+    });
   }
 
   listAppNotifications(
