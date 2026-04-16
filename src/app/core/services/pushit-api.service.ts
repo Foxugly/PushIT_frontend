@@ -39,6 +39,12 @@ export class PushitApiService {
   private readonly http = inject(HttpClient);
   private readonly settings = inject(SettingsService);
 
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(this.url('/auth/forgot-password/'), { email }, {
+      context: new HttpContext().set(SKIP_AUTH, true),
+    });
+  }
+
   register(payload: RegisterRequest): Observable<UserMe> {
     return this.http.post<UserMe>(this.url('/auth/register/'), payload, {
       context: new HttpContext().set(SKIP_AUTH, true),

@@ -306,6 +306,6 @@ export class ConsoleCopyService {
   private readonly i18n = inject(PublicI18nService);
 
   readonly current = computed(
-    () => CONSOLE_COPY[this.i18n.language() as LanguageCode] ?? CONSOLE_COPY.fr,
+    () => CONSOLE_COPY[this.i18n.language()],
   );
 }

@@ -3,13 +3,15 @@ export function formatDateTimeFrBe(value: string | null): string {
     return '-';
   }
 
+  const normalized = value.includes('T') ? value : `${value}T00:00:00`;
+
   return new Intl.DateTimeFormat('fr-BE', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(value));
+  }).format(new Date(normalized));
 }
 
 export function formatTimeLabel(value: string | null): string {

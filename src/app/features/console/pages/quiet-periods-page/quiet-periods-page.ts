@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, forkJoin, Observable, of } from 'rxjs';
@@ -26,6 +26,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
@@ -55,7 +56,7 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
   templateUrl: './quiet-periods-page.html',
   styleUrl: './quiet-periods-page.scss',
 })
-export class QuietPeriodsPage {
+export class QuietPeriodsPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
@@ -130,7 +131,7 @@ export class QuietPeriodsPage {
     effect(() => {
       this.shell.apps();
       this.devices();
-      this.loadQuietPeriods();
+      untracked(() => this.loadQuietPeriods());
     });
 
     this.form.controls.period_type.valueChanges
@@ -569,12 +570,7 @@ export class QuietPeriodsPage {
     return `${pad(value.getHours())}:${pad(value.getMinutes())}:00`;
   }
 
-  private interpolate(template: string, values: Record<string, string | number>): string {
-    return Object.entries(values).reduce(
-      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
-      template,
-    );
-  }
+  private interpolate = interpolate;
 
   private toDateValue(value: string | null): Date | null {
     if (!value) {

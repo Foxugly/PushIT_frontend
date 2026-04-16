@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { mockConsoleApi, seedAuthenticatedSession } from './support/console-helpers';
 
 const user = {
   id: 1,
@@ -6,7 +7,7 @@ const user = {
   username: 'renaud',
   userkey: 'usr_123',
   is_active: true,
-  language: 'FR',
+  language: 'FR' as const,
 };
 
 const apps = [
@@ -28,8 +29,8 @@ const devices = [
   {
     id: 20,
     device_name: 'iPhone Marie',
-    platform: 'ios',
-    push_token_status: 'active',
+    platform: 'ios' as const,
+    push_token_status: 'active' as const,
     last_seen_at: '2026-03-27T18:00:00+01:00',
     created_at: '2026-03-27T10:00:00+01:00',
     application_ids: [10],
@@ -37,43 +38,13 @@ const devices = [
 ];
 
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(([storedUser]) => {
-    localStorage.setItem('pushit.accessToken', 'access-token');
-    localStorage.setItem('pushit.refreshToken', 'refresh-token');
-    localStorage.setItem('pushit.user', JSON.stringify(storedUser));
-  }, [user]);
-
-  await page.route('**/api/v1/**', async (route) => {
-    const url = new URL(route.request().url());
-    const path = url.pathname;
-
-    let body: unknown = null;
-
-    if (path.endsWith('/auth/me/')) {
-      body = user;
-    } else if (path.endsWith('/apps/')) {
-      body = apps;
-    } else if (path.endsWith('/devices/')) {
-      body = devices;
-    } else if (path.endsWith('/notifications/')) {
-      body = [];
-    } else if (path.endsWith('/notifications/future/')) {
-      body = [];
-    } else if (path.endsWith('/notifications/stats/')) {
-      body = [];
-    } else if (path.endsWith('/apps/10/quiet-periods/')) {
-      body = [];
-    } else if (path.endsWith('/devices/20/quiet-periods/')) {
-      body = [];
-    } else {
-      return route.fulfill({ status: 404, body: '{}' });
-    }
-
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(body),
-    });
+  await seedAuthenticatedSession(page, user);
+  await mockConsoleApi(page, {
+    user,
+    apps,
+    devices,
+    notifications: [],
+    futureNotifications: [],
   });
 });
 

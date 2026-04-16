@@ -8,9 +8,9 @@ import { LoginResponse, TokenRefreshResponse, UserMe } from '../models/api.model
 import { SettingsService } from './settings.service';
 import { StorageService } from './storage.service';
 
-const ACCESS_TOKEN_KEY = 'pushit.accessToken';
-const REFRESH_TOKEN_KEY = 'pushit.refreshToken';
-const USER_KEY = 'pushit.user';
+export const ACCESS_TOKEN_KEY = 'pushit.accessToken';
+export const REFRESH_TOKEN_KEY = 'pushit.refreshToken';
+export const USER_KEY = 'pushit.user';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
@@ -108,10 +108,10 @@ export class SessionService {
           this.updateAccessToken(accessToken);
           return accessToken;
         }),
+        shareReplay({ bufferSize: 1, refCount: true }),
         finalize(() => {
           this.refreshRequest$ = null;
         }),
-        shareReplay(1),
       );
 
     return this.refreshRequest$;

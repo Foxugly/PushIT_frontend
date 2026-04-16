@@ -162,6 +162,13 @@ const APP_COPY = {
       copyright: 'Copyright Foxugly 2026',
     },
     console: {
+      navigation: {
+        eyebrow: 'Navigation',
+        title: 'Menu console',
+        tokenEyebrow: 'Token genere',
+        copyButton: 'Copier',
+        tokenNote: "Le token brut n'est visible qu'une fois. Stockage cote serveur uniquement.",
+      },
       sections: [
         {
           label: 'Applications',
@@ -403,6 +410,13 @@ const APP_COPY = {
       copyright: 'Copyright Foxugly 2026',
     },
     console: {
+      navigation: {
+        eyebrow: 'Navigatie',
+        title: 'Consolemenu',
+        tokenEyebrow: 'Token gegenereerd',
+        copyButton: 'Kopieren',
+        tokenNote: 'Het ruwe token is slechts eenmaal zichtbaar. Opslag alleen aan serverzijde.',
+      },
       sections: [
         {
           label: 'Applicaties',
@@ -644,6 +658,13 @@ const APP_COPY = {
       copyright: 'Copyright Foxugly 2026',
     },
     console: {
+      navigation: {
+        eyebrow: 'Navigation',
+        title: 'Console menu',
+        tokenEyebrow: 'Token generated',
+        copyButton: 'Copy',
+        tokenNote: 'The raw token is only visible once. Server-side storage only.',
+      },
       sections: [
         {
           label: 'Applications',
@@ -732,5 +753,5 @@ const APP_COPY = {
 export class AppCopyService {
   private readonly i18n = inject(PublicI18nService);
 
-  readonly current = computed(() => APP_COPY[this.i18n.language() as LanguageCode] ?? APP_COPY.fr);
+  readonly current = computed(() => APP_COPY[this.i18n.language()]);
 }

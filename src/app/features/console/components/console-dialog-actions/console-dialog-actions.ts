@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './console-dialog-actions.scss',
 })
 export class ConsoleDialogActions {
-  @Input() cancelLabel = 'Annuler';
-  @Input() cancelSeverity: 'secondary' | 'contrast' | 'info' | 'success' | 'warn' | 'help' | 'danger' = 'secondary';
-  @Output() cancelled = new EventEmitter<void>();
+  readonly cancelLabel = input('Annuler');
+  readonly cancelSeverity = input<'secondary' | 'contrast' | 'info' | 'success' | 'warn' | 'help' | 'danger'>('secondary');
+  readonly cancelled = output<void>();
 }

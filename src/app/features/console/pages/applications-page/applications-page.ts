@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -16,6 +16,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
@@ -42,7 +43,7 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
   templateUrl: './applications-page.html',
   styleUrl: './applications-page.scss',
 })
-export class ApplicationsPage {
+export class ApplicationsPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
@@ -189,7 +190,7 @@ export class ApplicationsPage {
       app,
       () => {
         this.pending.set(false);
-        this.banner.set(app.is_active ? this.copy().alerts.deactivated : this.copy().alerts.activated);
+        this.banner.set(!app.is_active ? this.copy().alerts.deactivated : this.copy().alerts.activated);
       },
       () => {
         this.pending.set(false);
@@ -295,10 +296,5 @@ export class ApplicationsPage {
     void this.router.navigate(['/dashboard/applications', app.id]);
   }
 
-  private interpolate(template: string, values: Record<string, string | number>): string {
-    return Object.entries(values).reduce(
-      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
-      template,
-    );
-  }
+  private interpolate = interpolate;
 }

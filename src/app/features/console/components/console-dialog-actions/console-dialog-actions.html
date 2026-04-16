@@ -3,5 +3,5 @@
     <ng-content />
   </div>
 
-  <p-button type="button" [label]="cancelLabel" [severity]="cancelSeverity" (onClick)="cancelled.emit()" />
+  <p-button type="button" [label]="cancelLabel()" [severity]="cancelSeverity()" (onClick)="cancelled.emit()" />
 </div>

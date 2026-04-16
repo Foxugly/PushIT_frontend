@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 
 import { UserMe } from '../models/api.models';
+import { USER_KEY } from './session.service';
 import { StorageService } from './storage.service';
 
 export type LanguageCode = 'fr' | 'nl' | 'en';
 const LANGUAGE_KEY = 'pushit.language';
-const USER_KEY = 'pushit.user';
 
 @Injectable({ providedIn: 'root' })
 export class PublicI18nService {

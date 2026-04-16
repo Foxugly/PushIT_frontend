@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -24,7 +24,7 @@ import { SiteHeader } from '../../../shared/site-header/site-header';
   templateUrl: './console-layout-page.html',
   styleUrl: './console-layout-page.scss',
 })
-export class ConsoleLayoutPage {
+export class ConsoleLayoutPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);

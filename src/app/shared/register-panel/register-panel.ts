@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { finalize, switchMap } from 'rxjs';
+import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -79,20 +79,24 @@ export class RegisterPanel {
 
     this.api
       .register(registerPayload)
-      .pipe(
-        switchMap(() =>
-          this.api.login({
-            email: registerPayload.email,
-            password: registerPayload.password,
-          }),
-        ),
-        finalize(() => this.pending.set(false)),
-      )
+      .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
-        next: (response) => {
-          this.session.startSession(response, true);
-          this.languagePreference.applyBackendLanguage(response.user.language);
-          void this.router.navigate(['/dashboard']);
+        next: () => {
+          this.api
+            .login({
+              email: registerPayload.email,
+              password: registerPayload.password,
+            })
+            .subscribe({
+              next: (response) => {
+                this.session.startSession(response, true);
+                this.languagePreference.applyBackendLanguage(response.user.language);
+                void this.router.navigate(['/dashboard']);
+              },
+              error: () => {
+                void this.router.navigate(['/auth']);
+              },
+            });
         },
         error: (error) => {
           this.registerError.set(coerceApiError(error));

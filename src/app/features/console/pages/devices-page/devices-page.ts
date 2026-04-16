@@ -1,7 +1,8 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -21,6 +22,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
+import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
@@ -48,7 +50,7 @@ import { DeviceEditFormFields } from '../../components/device-edit-form-fields/d
   templateUrl: './devices-page.html',
   styleUrl: './devices-page.scss',
 })
-export class DevicesPage {
+export class DevicesPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
@@ -171,15 +173,14 @@ export class DevicesPage {
         platform: rawValue.platform,
         push_token_status: rawValue.push_token_status,
       })
+      .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
-        this.saving.set(false);
-        this.banner.set(this.copy().alerts.updated);
-        this.closeModal();
-        this.loadDevices();
+          this.banner.set(this.copy().alerts.updated);
+          this.closeModal();
+          this.loadDevices();
         },
         error: (error) => {
-          this.saving.set(false);
           this.error.set(coerceApiError(error));
         },
       });
@@ -203,20 +204,21 @@ export class DevicesPage {
     this.error.set(null);
     this.banner.set(null);
 
-    this.api.deleteDevice(deviceId).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.banner.set(this.copy().alerts.deleted);
-        this.selectedDeviceId.set(null);
-        this.closeModal();
-        this.shell.refreshNavigationCounts();
-        this.loadDevices();
-      },
-      error: (error) => {
-        this.saving.set(false);
-        this.error.set(coerceApiError(error));
-      },
-    });
+    this.api
+      .deleteDevice(deviceId)
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: () => {
+          this.banner.set(this.copy().alerts.deleted);
+          this.selectedDeviceId.set(null);
+          this.closeModal();
+          this.shell.refreshNavigationCounts();
+          this.loadDevices();
+        },
+        error: (error) => {
+          this.error.set(coerceApiError(error));
+        },
+      });
   }
 
   linkDevice(): void {
@@ -277,13 +279,13 @@ export class DevicesPage {
     return device.id;
   }
 
-  platformSelectOptions() {
-    return this.platformOptions.map((platform) => ({ label: platform, value: platform }));
-  }
+  readonly platformSelectOptions = computed(() =>
+    this.platformOptions.map((platform) => ({ label: platform, value: platform })),
+  );
 
-  statusSelectOptions() {
-    return this.statusOptions.map((status) => ({ label: status, value: status }));
-  }
+  readonly statusSelectOptions = computed(() =>
+    this.statusOptions.map((status) => ({ label: status, value: status })),
+  );
 
   statusSeverity(status: PushTokenStatus): 'success' | 'warn' | 'danger' | 'secondary' {
     switch (status) {
@@ -332,10 +334,5 @@ export class DevicesPage {
     });
   }
 
-  private interpolate(template: string, values: Record<string, string | number>): string {
-    return Object.entries(values).reduce(
-      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
-      template,
-    );
-  }
+  private interpolate = interpolate;
 }

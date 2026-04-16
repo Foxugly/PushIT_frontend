@@ -53,10 +53,14 @@ export class ConsoleShellService {
   }
 
   ensureLoaded(): void {
-    if ((this.user() || this.session.user()) && this.apps().length > 0 && !this.loading()) {
-      if (!this.user() && this.session.user()) {
-        this.user.set(this.session.user());
+    if (!this.user()) {
+      const sessionUser = this.session.user();
+      if (sessionUser) {
+        this.user.set(sessionUser);
       }
+    }
+
+    if (this.user() && this.apps().length > 0 && !this.loading()) {
       return;
     }
 

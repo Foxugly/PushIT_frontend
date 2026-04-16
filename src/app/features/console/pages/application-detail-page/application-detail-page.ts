@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -56,7 +56,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
   templateUrl: './application-detail-page.html',
   styleUrl: './application-detail-page.scss',
 })
-export class ApplicationDetailPage {
+export class ApplicationDetailPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
@@ -76,6 +76,34 @@ export class ApplicationDetailPage {
   readonly editError = signal<ApiErrorResponse | null>(null);
   readonly saving = signal(false);
   readonly isEditModalOpen = signal(false);
+
+  readonly applicationFactsComputed = computed(() => {
+    const app = this.application();
+    if (!app) {
+      return [];
+    }
+
+    return [
+      { label: this.copy().facts.id, value: String(app.id) },
+      { label: this.copy().facts.name, value: app.name },
+      { label: this.copy().facts.tokenPrefix, value: app.app_token_prefix, severity: 'info' as const },
+      {
+        label: this.copy().facts.status,
+        value: app.is_active ? this.copy().statusLabels.active : this.copy().statusLabels.inactive,
+        severity: this.appSeverity(app),
+      },
+      {
+        label: this.copy().facts.lastUsed,
+        value: app.last_used_at ? this.formatDateTime(app.last_used_at) : this.copy().statusLabels.never,
+      },
+      {
+        label: this.copy().facts.revokedToken,
+        value: app.revoked_at ? this.formatDateTime(app.revoked_at) : this.copy().statusLabels.no,
+        severity: app.revoked_at ? 'warn' as const : 'success' as const,
+      },
+      { label: this.copy().facts.createdAt, value: this.formatDateTime(app.created_at) },
+    ] as ConsoleFactItem[];
+  });
 
   readonly editForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -143,27 +171,8 @@ export class ApplicationDetailPage {
     return `${days} | ${this.formatTime(quietPeriod.start_time)} -> ${this.formatTime(quietPeriod.end_time)}`;
   }
 
-  applicationFacts(app: ApplicationRead): ConsoleFactItem[] {
-    return [
-      { label: this.copy().facts.id, value: String(app.id) },
-      { label: this.copy().facts.name, value: app.name },
-      { label: this.copy().facts.tokenPrefix, value: app.app_token_prefix, severity: 'info' },
-      {
-        label: this.copy().facts.status,
-        value: app.is_active ? this.copy().statusLabels.active : this.copy().statusLabels.inactive,
-        severity: this.appSeverity(app),
-      },
-      {
-        label: this.copy().facts.lastUsed,
-        value: app.last_used_at ? this.formatDateTime(app.last_used_at) : this.copy().statusLabels.never,
-      },
-      {
-        label: this.copy().facts.revokedToken,
-        value: app.revoked_at ? this.formatDateTime(app.revoked_at) : this.copy().statusLabels.no,
-        severity: app.revoked_at ? 'warn' : 'success',
-      },
-      { label: this.copy().facts.createdAt, value: this.formatDateTime(app.created_at) },
-    ];
+  applicationFacts(): ConsoleFactItem[] {
+    return this.applicationFactsComputed();
   }
 
   async copyInboundEmail(address: string): Promise<void> {

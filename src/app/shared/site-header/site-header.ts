@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -86,9 +86,7 @@ export class SiteHeader {
     return items;
   });
 
-  activeLanguage(): LanguageCode {
-    return this.i18n.language();
-  }
+  readonly activeLanguage: Signal<LanguageCode> = this.i18n.language;
 
   setLanguage(language: LanguageCode): void {
     this.languagePreference.updateLanguage(language);

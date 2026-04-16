@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -26,6 +26,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { EmojiPickerPopover } from '../../../../shared/emoji-picker-popover/emoji-picker-popover';
@@ -55,7 +56,7 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
   templateUrl: './notifications-page.html',
   styleUrl: './notifications-page.scss',
 })
-export class NotificationsPage {
+export class NotificationsPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
@@ -127,25 +128,20 @@ export class NotificationsPage {
 
     this.notificationForm.controls.application_id.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe(() => {
+      .subscribe((applicationId) => {
         this.syncSelectedDevices();
-      });
 
-    effect(() => {
-      const hasApplication = Boolean(this.notificationForm.controls.application_id.value);
-      const deviceIdsControl = this.notificationForm.controls.device_ids;
-
-      if (hasApplication) {
-        if (deviceIdsControl.disabled) {
-          deviceIdsControl.enable({ emitEvent: false });
+        const deviceIdsControl = this.notificationForm.controls.device_ids;
+        if (applicationId) {
+          if (deviceIdsControl.disabled) {
+            deviceIdsControl.enable({ emitEvent: false });
+          }
+        } else {
+          if (deviceIdsControl.enabled) {
+            deviceIdsControl.disable({ emitEvent: false });
+          }
         }
-        return;
-      }
-
-      if (deviceIdsControl.enabled) {
-        deviceIdsControl.disable({ emitEvent: false });
-      }
-    });
+      });
   }
 
   ngOnInit(): void {
@@ -363,9 +359,9 @@ export class NotificationsPage {
     return notification.id;
   }
 
-  appOptions() {
-    return this.shell.apps().map((app) => ({ label: app.name, value: app.id }));
-  }
+  readonly appOptions = computed(() =>
+    this.shell.apps().map((app) => ({ label: app.name, value: app.id })),
+  );
 
   availableDeviceOptions() {
     return this.availableDevices().map((device) => ({
@@ -374,9 +370,9 @@ export class NotificationsPage {
     }));
   }
 
-  statusOptionsSelect() {
-    return this.statusOptions.map((status) => ({ label: this.copy().statusLabels[status], value: status }));
-  }
+  readonly statusOptionsSelect = computed(() =>
+    this.statusOptions.map((status) => ({ label: this.copy().statusLabels[status], value: status })),
+  );
 
   notificationSeverity(
     notification: NotificationRead,
@@ -540,10 +536,5 @@ export class NotificationsPage {
     return `${currentValue} ${emoji}`;
   }
 
-  private interpolate(template: string, values: Record<string, string | number>): string {
-    return Object.entries(values).reduce(
-      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
-      template,
-    );
-  }
+  private interpolate = interpolate;
 }

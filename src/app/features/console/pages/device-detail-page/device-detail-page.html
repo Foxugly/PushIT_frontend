@@ -75,7 +75,7 @@
 
         <article class="console-detail-panel console-detail-panel--wide">
           <h3>{{ copy().statusTitle }}</h3>
-          <app-console-facts-table [items]="deviceFacts(currentDevice)" styleClass="p-datatable-sm device-detail-table" />
+          <app-console-facts-table [items]="deviceFactsComputed()" styleClass="p-datatable-sm device-detail-table" />
         </article>
       </div>
     }

@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
 
 import { RETRY_ON_AUTH_FAILURE, SKIP_AUTH } from '../http/http-context.tokens';
 import { SessionService } from '../services/session.service';
@@ -36,6 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       ) {
         if (httpError.status === 401 && usesUserAuth) {
           session.clear(true);
+          return EMPTY;
         }
 
         return throwError(() => error);

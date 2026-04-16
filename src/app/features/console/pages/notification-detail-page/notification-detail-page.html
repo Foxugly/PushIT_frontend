@@ -87,7 +87,7 @@
 
         <article class="console-detail-panel console-detail-panel--wide">
           <h3>{{ copy().statusTitle }}</h3>
-          <app-console-facts-table [items]="notificationFacts(currentNotification)" styleClass="p-datatable-sm notification-detail-table" />
+          <app-console-facts-table [items]="notificationFactsComputed()" styleClass="p-datatable-sm notification-detail-table" />
         </article>
       </div>
 

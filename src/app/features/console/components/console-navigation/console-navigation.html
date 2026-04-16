@@ -1,12 +1,12 @@
 <section class="console-card console-shell__sticky">
   <div class="console-shell__sidebar-header">
     <div>
-      <p class="console-shell__eyebrow">Navigation</p>
-      <h2>Menu console</h2>
+      <p class="console-shell__eyebrow">{{ copy().eyebrow }}</p>
+      <h2>{{ copy().title }}</h2>
     </div>
   </div>
 
-  <nav class="console-shell__nav">
+  <nav class="console-shell__nav" aria-label="Console navigation">
     @for (item of navigationItems(); track item.link) {
       <app-console-menu-item
         [link]="item.link"
@@ -22,12 +22,12 @@
     <div class="console-shell__token">
       <div class="console-card__header">
         <div>
-          <p class="console-shell__eyebrow">Token genere</p>
+          <p class="console-shell__eyebrow">{{ copy().tokenEyebrow }}</p>
           <h3>App #{{ tokenState.appId }}</h3>
         </div>
-        <p-button label="Copier" severity="secondary" (onClick)="copyLatestToken()" />
+        <p-button [label]="copy().copyButton" severity="secondary" (onClick)="copyLatestToken()" />
       </div>
-      <p class="console-note">Le token brut n'est visible qu'une fois. Stockage cote serveur uniquement.</p>
+      <p class="console-note">{{ copy().tokenNote }}</p>
       <textarea rows="4" readonly>{{ tokenState.token }}</textarea>
     </div>
   }

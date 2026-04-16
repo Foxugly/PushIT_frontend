@@ -9,17 +9,25 @@ export class StorageService {
   }
 
   setString(key: string, value: string, scope: StorageScope = 'local'): void {
-    this.resolveStorage(scope).setItem(key, value);
+    try {
+      this.resolveStorage(scope).setItem(key, value);
+    } catch {
+      // Storage unavailable (private browsing, quota exceeded)
+    }
   }
 
   remove(key: string, scope: StorageScope | 'both' = 'local'): void {
     if (scope === 'both') {
-      localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
+      try { localStorage.removeItem(key); } catch { /* noop */ }
+      try { sessionStorage.removeItem(key); } catch { /* noop */ }
       return;
     }
 
-    this.resolveStorage(scope).removeItem(key);
+    try {
+      this.resolveStorage(scope).removeItem(key);
+    } catch {
+      // Storage unavailable
+    }
   }
 
   getObject<T>(key: string, scope: StorageScope = 'local'): T | null {
@@ -36,18 +44,30 @@ export class StorageService {
   }
 
   setObject<T>(key: string, value: T, scope: StorageScope = 'local'): void {
-    this.resolveStorage(scope).setItem(key, JSON.stringify(value));
+    try {
+      this.resolveStorage(scope).setItem(key, JSON.stringify(value));
+    } catch {
+      // Storage unavailable (private browsing, quota exceeded)
+    }
   }
 
   findString(key: string): { value: string; scope: StorageScope } | null {
-    const localValue = localStorage.getItem(key);
-    if (localValue) {
-      return { value: localValue, scope: 'local' };
+    try {
+      const localValue = localStorage.getItem(key);
+      if (localValue) {
+        return { value: localValue, scope: 'local' };
+      }
+    } catch {
+      // localStorage unavailable
     }
 
-    const sessionValue = sessionStorage.getItem(key);
-    if (sessionValue) {
-      return { value: sessionValue, scope: 'session' };
+    try {
+      const sessionValue = sessionStorage.getItem(key);
+      if (sessionValue) {
+        return { value: sessionValue, scope: 'session' };
+      }
+    } catch {
+      // sessionStorage unavailable
     }
 
     return null;

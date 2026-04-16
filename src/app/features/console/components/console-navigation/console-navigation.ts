@@ -20,6 +20,7 @@ import { ConsoleMenuItem } from '../console-menu-item/console-menu-item';
 export class ConsoleNavigation {
   private readonly appCopy = inject(AppCopyService);
   readonly shell = inject(ConsoleShellService);
+  readonly copy = computed(() => this.appCopy.current().console.navigation);
   readonly sections = computed(() => buildConsoleSections(this.appCopy.current().console.sections));
   readonly navigationItems = computed(() =>
     this.sections().map((section) => ({

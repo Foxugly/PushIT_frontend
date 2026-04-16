@@ -151,16 +151,18 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     }
 
     const futureNotificationMatch = path.match(/\/api\/v1\/notifications\/future\/(\d+)\/$/);
-    if (futureNotificationMatch && method === 'GET') {
+    if (futureNotificationMatch) {
       const notificationId = Number(futureNotificationMatch[1]);
-      const notification = state.futureNotifications.find((item) => item.id === notificationId);
-      return fulfillJson(route, notification ? 200 : 404, notification ?? { detail: 'Not found.' });
-    }
 
-    if (futureNotificationMatch && method === 'DELETE') {
-      const notificationId = Number(futureNotificationMatch[1]);
-      state.futureNotifications = state.futureNotifications.filter((item) => item.id !== notificationId);
-      return route.fulfill({ status: 204, body: '' });
+      if (method === 'GET') {
+        const notification = state.futureNotifications.find((item) => item.id === notificationId);
+        return fulfillJson(route, notification ? 200 : 404, notification ?? { detail: 'Not found.' });
+      }
+
+      if (method === 'DELETE') {
+        state.futureNotifications = state.futureNotifications.filter((item) => item.id !== notificationId);
+        return route.fulfill({ status: 204, body: '' });
+      }
     }
 
     return route.fulfill({

@@ -23,6 +23,7 @@ export class AppAlert {
 
   private fadeTimer: ReturnType<typeof setTimeout> | null = null;
   private dismissTimer: ReturnType<typeof setTimeout> | null = null;
+  private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     effect((onCleanup) => {
@@ -52,7 +53,7 @@ export class AppAlert {
   close(): void {
     this.clearTimers();
     this.isFadingOut = true;
-    setTimeout(() => {
+    this.closeTimer = setTimeout(() => {
       this.isVisible = false;
       this.dismissed.emit();
     }, 180);
@@ -73,6 +74,11 @@ export class AppAlert {
     if (this.dismissTimer) {
       clearTimeout(this.dismissTimer);
       this.dismissTimer = null;
+    }
+
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
     }
   }
 }

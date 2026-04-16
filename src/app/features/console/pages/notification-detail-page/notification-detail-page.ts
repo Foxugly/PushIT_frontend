@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -52,7 +52,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
   templateUrl: './notification-detail-page.html',
   styleUrl: './notification-detail-page.scss',
 })
-export class NotificationDetailPage {
+export class NotificationDetailPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
@@ -67,6 +67,45 @@ export class NotificationDetailPage {
   readonly editError = signal<ApiErrorResponse | null>(null);
   readonly saving = signal(false);
   readonly isEditModalOpen = signal(false);
+
+  readonly notificationFactsComputed: Signal<ConsoleFactItem[]> = computed(() => {
+    const notification = this.notification();
+    if (!notification) {
+      return [];
+    }
+
+    return [
+      { label: this.copy().facts.application, value: notification.application_name, severity: 'info' as const },
+      {
+        label: this.copy().facts.status,
+        value: this.isShifted(notification)
+          ? this.copy().labels.shifted
+          : notification.status,
+        severity: this.notificationSeverity(notification),
+      },
+      { label: this.copy().facts.future, value: this.isFuture() ? this.copy().labels.yes : this.copy().labels.no, severity: this.isFuture() ? 'warn' as const : 'secondary' as const },
+      {
+        label: this.copy().facts.sentAt,
+        value: notification.sent_at ? this.formatDateTime(notification.sent_at) : this.copy().labels.notYet,
+      },
+      { label: this.copy().facts.createdAt, value: this.formatDateTime(notification.created_at) },
+      {
+        label: this.copy().facts.scheduledFor,
+        value: notification.scheduled_for ? this.formatDateTime(notification.scheduled_for) : this.copy().labels.immediate,
+      },
+      {
+        label: this.copy().facts.effective,
+        value: notification.effective_scheduled_for
+          ? this.formatDateTime(notification.effective_scheduled_for)
+          : this.copy().labels.immediate,
+      },
+      {
+        label: this.copy().facts.targetedDevices,
+        value: String(notification.device_ids.length),
+        severity: notification.device_ids.length ? 'contrast' as const : 'secondary' as const,
+      },
+    ] as ConsoleFactItem[];
+  });
 
   readonly editForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],
@@ -148,38 +187,8 @@ export class NotificationDetailPage {
     }
   }
 
-  notificationFacts(notification: NotificationRead): ConsoleFactItem[] {
-    return [
-      { label: this.copy().facts.application, value: notification.application_name, severity: 'info' },
-      {
-        label: this.copy().facts.status,
-        value: this.isShifted(notification)
-          ? this.copy().labels.shifted
-          : notification.status,
-        severity: this.notificationSeverity(notification),
-      },
-      { label: this.copy().facts.future, value: this.isFuture() ? this.copy().labels.yes : this.copy().labels.no, severity: this.isFuture() ? 'warn' : 'secondary' },
-      {
-        label: this.copy().facts.sentAt,
-        value: notification.sent_at ? this.formatDateTime(notification.sent_at) : this.copy().labels.notYet,
-      },
-      { label: this.copy().facts.createdAt, value: this.formatDateTime(notification.created_at) },
-      {
-        label: this.copy().facts.scheduledFor,
-        value: notification.scheduled_for ? this.formatDateTime(notification.scheduled_for) : this.copy().labels.immediate,
-      },
-      {
-        label: this.copy().facts.effective,
-        value: notification.effective_scheduled_for
-          ? this.formatDateTime(notification.effective_scheduled_for)
-          : this.copy().labels.immediate,
-      },
-      {
-        label: this.copy().facts.targetedDevices,
-        value: String(notification.device_ids.length),
-        severity: notification.device_ids.length ? 'contrast' : 'secondary',
-      },
-    ];
+  notificationFacts(): ConsoleFactItem[] {
+    return this.notificationFactsComputed();
   }
 
   openEditModal(): void {

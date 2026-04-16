@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -53,7 +53,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
   templateUrl: './device-detail-page.html',
   styleUrl: './device-detail-page.scss',
 })
-export class DeviceDetailPage {
+export class DeviceDetailPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
@@ -76,6 +76,28 @@ export class DeviceDetailPage {
     return currentDevice.application_ids
       .map((applicationId) => this.shell.apps().find((app) => app.id === applicationId) ?? null)
       .filter((application): application is NonNullable<typeof application> => Boolean(application));
+  });
+  readonly deviceFactsComputed = computed(() => {
+    const currentDevice = this.device();
+    if (!currentDevice) {
+      return [];
+    }
+
+    return [
+      { label: this.copy().facts.id, value: String(currentDevice.id) },
+      { label: this.copy().facts.name, value: currentDevice.device_name },
+      { label: this.copy().facts.platform, value: currentDevice.platform, severity: 'info' as const },
+      {
+        label: this.copy().facts.tokenStatus,
+        value: currentDevice.push_token_status,
+        severity: this.statusSeverity(currentDevice.push_token_status),
+      },
+      {
+        label: this.copy().facts.lastActivity,
+        value: currentDevice.last_seen_at ? this.formatDateTime(currentDevice.last_seen_at) : this.copy().labels.never,
+      },
+      { label: this.copy().facts.createdAt, value: this.formatDateTime(currentDevice.created_at) },
+    ] as ConsoleFactItem[];
   });
   readonly platformOptions: DevicePlatform[] = ['android', 'ios'];
   readonly statusOptions: PushTokenStatus[] = ['active', 'invalid', 'revoked'];
@@ -167,34 +189,20 @@ export class DeviceDetailPage {
       });
   }
 
-  platformSelectOptions() {
-    return this.platformOptions.map((platform) => ({ label: platform, value: platform }));
-  }
+  readonly platformSelectOptions = computed(() =>
+    this.platformOptions.map((platform) => ({ label: platform, value: platform })),
+  );
 
-  statusSelectOptions() {
-    return this.statusOptions.map((status) => ({ label: status, value: status }));
-  }
+  readonly statusSelectOptions = computed(() =>
+    this.statusOptions.map((status) => ({ label: status, value: status })),
+  );
 
   appSeverity(app: ApplicationRead): 'success' | 'secondary' {
     return app.is_active ? 'success' : 'secondary';
   }
 
-  deviceFacts(device: DeviceRead): ConsoleFactItem[] {
-    return [
-      { label: this.copy().facts.id, value: String(device.id) },
-      { label: this.copy().facts.name, value: device.device_name },
-      { label: this.copy().facts.platform, value: device.platform, severity: 'info' },
-      {
-        label: this.copy().facts.tokenStatus,
-        value: device.push_token_status,
-        severity: this.statusSeverity(device.push_token_status),
-      },
-      {
-        label: this.copy().facts.lastActivity,
-        value: device.last_seen_at ? this.formatDateTime(device.last_seen_at) : this.copy().labels.never,
-      },
-      { label: this.copy().facts.createdAt, value: this.formatDateTime(device.created_at) },
-    ];
+  deviceFacts(): ConsoleFactItem[] {
+    return this.deviceFactsComputed();
   }
 
   private loadDevice(deviceId: number): void {
