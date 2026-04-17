@@ -1,0 +1,63 @@
+name: Deploy frontend to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (production)
+        run: npm run build
+
+      - name: Verify build output
+        run: test -f dist/pushit-frontend/browser/index.html
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Add EC2 host to known_hosts
+        run: ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Rsync build to staging
+        run: |
+          rsync -az --delete \
+            dist/pushit-frontend/browser/ \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/pushit-frontend-staging/"
+
+      - name: Promote staging to live
+        run: |
+          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" bash -s <<'EOF'
+          set -euo pipefail
+          sudo -u django /usr/bin/rsync -a --delete \
+            /tmp/pushit-frontend-staging/ \
+            /var/www/django_websites/PushIT_frontend/
+          sudo /bin/chown -R django:www-data /var/www/django_websites/PushIT_frontend/
+          sudo /bin/chmod -R g+rX /var/www/django_websites/PushIT_frontend/
+          rm -rf /tmp/pushit-frontend-staging
+          EOF
+
+      - name: Smoke test
+        run: |
+          curl --fail --silent --show-error -I https://pushit.foxugly.com > /dev/null
+          echo "Deployment OK"
