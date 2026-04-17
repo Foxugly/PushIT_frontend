@@ -2,6 +2,8 @@
 
 Ce document liste les étapes **one-time** à exécuter manuellement sur le serveur pour activer le déploiement automatique du frontend Angular. Une fois faites, le déploiement se fait automatiquement via GitHub Actions sur push `main`.
 
+**Raccourci :** les étapes 2, 3, 5, 6, 7 sont automatisées par `deploy/setup-server.sh`. Pour l'utiliser : `scp -r deploy/ <EC2_USER>@<EC2_HOST>:/tmp/`, puis sur le serveur `sudo /tmp/deploy/setup-server.sh <EC2_USER>`. Les étapes 1 (secrets GitHub), 4 (Django ALLOWED_HOSTS), 8 (clé SSH) et 9 (premier déploiement) restent manuelles.
+
 ## Pré-requis
 
 - Serveur EC2 Ubuntu 24.04 avec Apache2 et certbot installés
