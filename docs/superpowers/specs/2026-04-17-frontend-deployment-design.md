@@ -13,7 +13,7 @@ Déployer automatiquement le frontend Angular sur le serveur EC2 Ubuntu 24.04 pa
 - EC2 Ubuntu 24.04 partagé, Apache2 déjà installé
 - Chemin cible : `/var/www/django_websites/PushIT_frontend/`
 - Propriétaire : `django:www-data`
-- Accès SSH : user `ubuntu`, opérations app en `sudo -u django`
+- Accès SSH : via les secrets GitHub `EC2_USER@EC2_HOST` avec la clé `EC2_SSH_KEY` ; les opérations app sont exécutées en `sudo -u django`
 - Backend PushIT API : `https://pushit-api.foxugly.com` (vhost Apache séparé, déjà en place) → proxifie vers `http://127.0.0.1:8000`
 - Certbot déjà installé
 - Node.js **non** disponible sur le serveur → le build se fait en CI
@@ -41,7 +41,7 @@ Le builder `@angular/build:application` produit `dist/pushit-frontend/browser/` 
 
 ### 4. CI : GitHub Actions sur push `main`
 
-- Réutilise les secrets existants du repo `PushIT_server` : `EC2_HOST`, `EC2_USER` (= `ubuntu`), `EC2_SSH_KEY`
+- Utilise exactement les 3 secrets du repository : `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY` (connexion `${EC2_USER}@${EC2_HOST}` avec la clé privée `EC2_SSH_KEY`)
 - À dupliquer manuellement depuis le repo `PushIT_server` vers ce repo
 
 ## Architecture
@@ -179,9 +179,9 @@ Document à la racine du repo listant les étapes **one-time** à exécuter sur 
 
 6. Dupliquer les secrets GitHub (`EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY`) depuis le repo `PushIT_server` vers ce repo.
 
-7. Ajouter la clé publique GitHub Actions à `~ubuntu/.ssh/authorized_keys` si la clé SSH utilisée est différente de celle du backend.
+7. S'assurer que la clé publique correspondant au secret `EC2_SSH_KEY` est bien dans `~${EC2_USER}/.ssh/authorized_keys` sur le serveur (déjà le cas si la clé est partagée avec le déploiement backend).
 
-8. Autoriser `ubuntu` à lancer les commandes de promotion en `sudo -u django` sans mot de passe (sudoers NOPASSWD ciblé sur `rsync`, `chown`, `chmod` vers `/var/www/django_websites/PushIT_frontend/`).
+8. Autoriser l'utilisateur `${EC2_USER}` à lancer les commandes de promotion en `sudo -u django` sans mot de passe (sudoers NOPASSWD ciblé sur `rsync`, `chown`, `chmod` vers `/var/www/django_websites/PushIT_frontend/`).
 
 ## Tests / validation
 
