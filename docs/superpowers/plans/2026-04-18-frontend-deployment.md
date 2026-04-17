@@ -51,6 +51,10 @@ Contenu de `deploy/pushit.foxugly.com.conf` :
     Redirect permanent / https://pushit.foxugly.com/
 </VirtualHost>
 
+# URL du backend centralisée : une seule ligne à modifier si le backend
+# déménage (port, host, ou scheme). Reste en tête de fichier pour visibilité.
+Define BACKEND_URL http://127.0.0.1:8000
+
 <VirtualHost *:443>
     ServerName pushit.foxugly.com
     DocumentRoot /var/www/django_websites/PushIT_frontend
@@ -74,8 +78,8 @@ Contenu de `deploy/pushit.foxugly.com.conf` :
 
     # Reverse-proxy vers le backend local (same-origin, pas de CORS)
     ProxyPreserveHost On
-    ProxyPass /api/v1 http://127.0.0.1:8000/api/v1
-    ProxyPassReverse /api/v1 http://127.0.0.1:8000/api/v1
+    ProxyPass /api/v1 ${BACKEND_URL}/api/v1
+    ProxyPassReverse /api/v1 ${BACKEND_URL}/api/v1
 
     SSLEngine on
     SSLCertificateFile /etc/letsencrypt/live/pushit.foxugly.com/fullchain.pem

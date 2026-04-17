@@ -109,8 +109,10 @@ Un fichier à déposer dans `/etc/apache2/sites-available/`. Deux VirtualHost :
 </VirtualHost>
 ```
 
-**:443** — sert les fichiers statiques + reverse-proxy API :
+**:443** — sert les fichiers statiques + reverse-proxy API. L'URL du backend est déclarée via `Define` en tête de vhost pour rester en un seul endroit configurable :
 ```apache
+Define BACKEND_URL http://127.0.0.1:8000
+
 <VirtualHost *:443>
     ServerName pushit.foxugly.com
     DocumentRoot /var/www/django_websites/PushIT_frontend
@@ -133,8 +135,8 @@ Un fichier à déposer dans `/etc/apache2/sites-available/`. Deux VirtualHost :
 
     # Reverse-proxy API vers backend local
     ProxyPreserveHost On
-    ProxyPass /api/v1 http://127.0.0.1:8000/api/v1
-    ProxyPassReverse /api/v1 http://127.0.0.1:8000/api/v1
+    ProxyPass /api/v1 ${BACKEND_URL}/api/v1
+    ProxyPassReverse /api/v1 ${BACKEND_URL}/api/v1
 
     SSLEngine on
     SSLCertificateFile /etc/letsencrypt/live/pushit.foxugly.com/fullchain.pem
