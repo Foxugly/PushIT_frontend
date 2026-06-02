@@ -31,6 +31,9 @@ jobs:
       - name: Verify build output
         run: test -f dist/pushit-frontend/browser/index.html
 
+      - name: Precompress assets (brotli + gzip)
+        run: node scripts/precompress.mjs
+
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
