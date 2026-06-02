@@ -36,6 +36,7 @@
     "@angular/router": "^20.3.0",
     "@ctrl/ngx-emoji-mart": "^9.3.0",
     "@primeuix/themes": "^2.0.3",
+    "@sentry/angular": "^10.55.0",
     "primeicons": "^7.0.0",
     "primeng": "^20.4.0",
     "rxjs": "~7.8.0",
@@ -43,10 +44,10 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.54.2",
     "@angular/build": "^20.3.9",
     "@angular/cli": "^20.3.9",
     "@angular/compiler-cli": "^20.3.0",
+    "@playwright/test": "^1.54.2",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
