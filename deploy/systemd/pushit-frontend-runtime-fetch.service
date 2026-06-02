@@ -1,0 +1,40 @@
+[Unit]
+Description=PushIT frontend — fetch runtime config from AWS SSM into nginx snippet
+# network-online + clock (SigV4), et nginx (le script fait `nginx -t` + reload).
+After=network-online.target nginx.service
+Wants=network-online.target
+
+[Service]
+# oneshot + RemainAfterExit : fetch au boot puis reste "active (exited)". Un
+# déploiement de code ne relance PAS l'unité tout seul ; c'est deploy.sh qui la
+# redémarre pour appliquer une rotation SSM. Restart manuel :
+#   sudo systemctl restart pushit-frontend-runtime-fetch
+Type=oneshot
+RemainAfterExit=yes
+User=root
+
+# Force l'authentification via le rôle d'instance EC2 (quizonline-ec2) sur IMDS
+# en blankant les fichiers credentials/config : sinon les clés statiques
+# certbot-route53 dans /root/.aws masqueraient le rôle. La config front étant en
+# String public, aucun kms:Decrypt n'est requis.
+Environment=AWS_SHARED_CREDENTIALS_FILE=/dev/null
+Environment=AWS_CONFIG_FILE=/dev/null
+Environment=AWS_REGION=eu-west-1
+
+# Durcissement : le script écrit /etc/nginx/snippets/ et a besoin de /run pour
+# `nginx -t` (pid) et `systemctl reload`. ProtectSystem=full garde /etc en
+# lecture seule SAUF les chemins de ReadWritePaths.
+PrivateTmp=yes
+ProtectSystem=full
+ReadWritePaths=/etc/nginx/snippets
+ProtectHome=yes
+NoNewPrivileges=yes
+RestrictSUIDSGID=yes
+TimeoutStartSec=120
+
+ExecStart=/var/www/django_websites/PushIT_frontend/deploy/fetch-frontend-runtime-from-ssm.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

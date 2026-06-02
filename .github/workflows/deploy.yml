@@ -48,13 +48,8 @@ jobs:
 
       - name: Promote staging to live
         run: |
-          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" bash -s <<'EOF'
-          set -euo pipefail
-          sudo -u django /usr/bin/rsync -a --delete /tmp/pushit-frontend-staging/ /var/www/django_websites/PushIT_frontend/
-          sudo /bin/chown -R django:www-data /var/www/django_websites/PushIT_frontend/
-          sudo /bin/chmod -R g+rX /var/www/django_websites/PushIT_frontend/
-          rm -rf /tmp/pushit-frontend-staging
-          EOF
+          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
+            'sudo /var/www/django_websites/PushIT_frontend/deploy/deploy.sh'
 
       - name: Smoke test
         run: |

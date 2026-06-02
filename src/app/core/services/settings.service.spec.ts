@@ -19,10 +19,22 @@ describe('SettingsService', () => {
 
   afterEach(() => TestBed.resetTestingModule());
 
-  it('uses the default relative API url when storage is empty', () => {
+  it('uses the runtime config api base url when storage is empty', () => {
     const service = createService();
 
+    // Aucun global injecté en test → défaut inline du runtime-config = '/api/v1'.
     expect(service.apiBaseUrl()).toBe('/api/v1');
+  });
+
+  it('prefers a runtime-injected api base url over the inline default', () => {
+    (globalThis as unknown as { __PUSHIT_API_BASE_URL?: string }).__PUSHIT_API_BASE_URL =
+      'https://pushit-api.foxugly.com/api/v1';
+    try {
+      const service = createService();
+      expect(service.apiBaseUrl()).toBe('https://pushit-api.foxugly.com/api/v1');
+    } finally {
+      delete (globalThis as unknown as { __PUSHIT_API_BASE_URL?: string }).__PUSHIT_API_BASE_URL;
+    }
   });
 
   it('normalizes localhost backend urls to the dev proxy path', () => {
