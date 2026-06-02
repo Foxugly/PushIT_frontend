@@ -1,0 +1,6 @@
+# Deploy artifacts run on the Ubuntu EC2 — force LF so they keep working even
+# when the repo is edited/checked out on Windows (CRLF would break the shebang
+# and nginx/systemd parsing).
+*.sh                          text eol=lf
+deploy/systemd/*.service      text eol=lf
+deploy/nginx/*.conf           text eol=lf
