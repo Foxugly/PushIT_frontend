@@ -1,14 +1,13 @@
 name: CI
 
-# Valide les tests e2e (Playwright) sur les PRs et les push sur main, pour
-# attraper les régressions UI (footer, layouts publics, parcours console…)
-# avant/au déploiement. La suite e2e est entièrement mockée (page.route sur
+# Valide les tests e2e (Playwright) sur les PRs, pour attraper les régressions
+# UI (footer, layouts publics, parcours console…) AVANT le merge. Sur main, c'est
+# le workflow de déploiement qui relance l'e2e en pré-requis du déploiement
+# (gate) — voir deploy.yml. La suite e2e est entièrement mockée (page.route sur
 # /api/v1/**), donc aucun backend n'est requis.
 
 on:
   pull_request:
-    branches: [main]
-  push:
     branches: [main]
 
 concurrency:
