@@ -1,0 +1,39 @@
+name: CI
+
+# Valide les tests e2e (Playwright) sur les PRs et les push sur main, pour
+# attraper les régressions UI (footer, layouts publics, parcours console…)
+# avant/au déploiement. La suite e2e est entièrement mockée (page.route sur
+# /api/v1/**), donc aucun backend n'est requis.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser (chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e tests
+        run: npm run test:e2e
