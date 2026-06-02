@@ -1,15 +1,16 @@
 import { Injectable, inject, signal } from '@angular/core';
 
+import { getRuntimeConfig } from '../runtime-config';
 import { StorageService } from './storage.service';
 
 const API_BASE_URL_KEY = 'pushit.apiBaseUrl';
-const DEFAULT_API_BASE_URL = '/api/v1';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   private readonly storage = inject(StorageService);
+  private readonly defaultApiBaseUrl = getRuntimeConfig().apiBaseUrl;
   private readonly apiBaseUrlSignal = signal(
-    this.normalizeApiBaseUrl(this.storage.getString(API_BASE_URL_KEY) ?? DEFAULT_API_BASE_URL),
+    this.normalizeApiBaseUrl(this.storage.getString(API_BASE_URL_KEY) ?? this.defaultApiBaseUrl),
   );
 
   apiBaseUrl(): string {
@@ -25,14 +26,14 @@ export class SettingsService {
   private normalizeApiBaseUrl(value: string): string {
     const trimmedValue = value.trim();
     if (!trimmedValue) {
-      return DEFAULT_API_BASE_URL;
+      return this.defaultApiBaseUrl;
     }
 
     if (
       trimmedValue === 'http://127.0.0.1:8000/api/v1' ||
       trimmedValue === 'http://localhost:8000/api/v1'
     ) {
-      return DEFAULT_API_BASE_URL;
+      return this.defaultApiBaseUrl;
     }
 
     return trimmedValue.replace(/\/+$/, '');
