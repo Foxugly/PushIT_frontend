@@ -30,7 +30,6 @@ ARTIFACT_DIR="$APP_DIR/dist/pushit-frontend/browser"
 REPO="https://github.com/Foxugly/PushIT_frontend.git"
 APP_OWNER="django"
 APP_GROUP="www-data"
-CERTBOT_EMAIL="rvilain@foxugly.com"
 
 if [ "$(id -u)" -ne 0 ]; then
     echo "ERREUR : lancer en root (sudo)." >&2
@@ -50,9 +49,11 @@ fi
 echo "=== Setup frontend ${DOMAIN} (deploy user: ${DEPLOY_USER}) ==="
 
 # ─── 1/6 Packages ────────────────────────────────────────────────────────────
-echo "[1/6] Packages (nginx, certbot, git, awscli)"
+echo "[1/6] Packages (nginx, git, awscli)"
+# TLS = wildcard *.foxugly.com déjà géré ailleurs (certbot DNS-01/route53) ; ce
+# setup ne lance pas certbot, on n'a donc pas besoin de python3-certbot-nginx.
 MISSING=()
-for pkg in nginx certbot python3-certbot-nginx git awscli; do
+for pkg in nginx git awscli; do
     dpkg -l "$pkg" >/dev/null 2>&1 || MISSING+=("$pkg")
 done
 if [ ${#MISSING[@]} -gt 0 ]; then
@@ -87,22 +88,26 @@ cp "$APP_DIR/deploy/systemd/pushit-frontend-runtime-fetch.service" /etc/systemd/
 systemctl daemon-reload
 echo "    OK"
 
-# ─── 4/6 Vhost nginx + premier fetch + certbot ───────────────────────────────
-echo "[4/6] nginx vhost + TLS"
+# ─── 4/6 Vhost nginx (TLS wildcard) + premier fetch ──────────────────────────
+echo "[4/6] nginx vhost (wildcard *.foxugly.com)"
+# Retire un éventuel ancien vhost pushit.foxugly.com (reste d'une install
+# précédente ou d'un certbot --nginx) qui revendiquerait le même server_name et
+# masquerait le nôtre. Notre fichier s'appelle pushit-frontend.conf, donc ceci
+# ne le supprime jamais.
+rm -f /etc/nginx/sites-enabled/pushit.foxugly.com /etc/nginx/sites-available/pushit.foxugly.com
 cp "$APP_DIR/deploy/nginx/pushit-frontend.conf" /etc/nginx/sites-available/pushit-frontend.conf
 ln -sf /etc/nginx/sites-available/pushit-frontend.conf /etc/nginx/sites-enabled/pushit-frontend.conf
-# Premier fetch : écrit le snippet, valide la conf (HTTP-only à ce stade) et
-# recharge nginx. Échoue si SSM non seedé / rôle non autorisé.
+# Premier fetch : écrit le snippet, valide la conf et recharge nginx. Échoue si
+# SSM non seedé / rôle non autorisé.
 systemctl enable pushit-frontend-runtime-fetch
 if ! systemctl start pushit-frontend-runtime-fetch; then
     echo "ERREUR : fetch SSM échoué — SSM /pushit-frontend/prod seedé ? rôle autorisé ?" >&2
     echo "         journalctl -u pushit-frontend-runtime-fetch" >&2
     exit 1
 fi
+# Le vhost référence directement le cert wildcard (pas de certbot ici).
 nginx -t
 systemctl reload nginx
-# certbot ajoute le bloc 443 + la redirection HTTP->HTTPS au vhost.
-certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m "$CERTBOT_EMAIL"
 echo "    OK"
 
 # ─── 5/6 Sudoers pour le déploiement ─────────────────────────────────────────
