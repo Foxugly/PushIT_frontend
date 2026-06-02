@@ -5,7 +5,7 @@ test('public pages render the shared shell and features sections', async ({ page
 
   await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Fonctionnalites|Functies|Features/ })).toBeVisible();
-  await expect(page.getByText('Copyright Foxugly 2026')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Foxugly' })).toBeVisible();
 
   await page.getByRole('link', { name: /Fonctionnalites|Functies|Features/ }).click();
 
