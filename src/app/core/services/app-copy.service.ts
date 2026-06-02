@@ -159,7 +159,7 @@ const APP_COPY = {
       registerLink: 'Inscription',
     },
     footer: {
-      copyright: 'Copyright Foxugly 2026',
+      rightsReserved: 'Tous droits réservés.',
     },
     console: {
       navigation: {
@@ -407,7 +407,7 @@ const APP_COPY = {
       registerLink: 'Registreren',
     },
     footer: {
-      copyright: 'Copyright Foxugly 2026',
+      rightsReserved: 'Alle rechten voorbehouden.',
     },
     console: {
       navigation: {
@@ -655,7 +655,7 @@ const APP_COPY = {
       registerLink: 'Sign up',
     },
     footer: {
-      copyright: 'Copyright Foxugly 2026',
+      rightsReserved: 'All rights reserved.',
     },
     console: {
       navigation: {

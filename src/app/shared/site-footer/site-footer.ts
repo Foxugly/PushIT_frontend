@@ -10,4 +10,6 @@ import { AppCopyService } from '../../core/services/app-copy.service';
 export class SiteFooter {
   private readonly appCopy = inject(AppCopyService);
   readonly copy = computed(() => this.appCopy.current().footer);
+  // Année calculée au runtime — jamais figée dans la copy.
+  readonly year = new Date().getFullYear();
 }

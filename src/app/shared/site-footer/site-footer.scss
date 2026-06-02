@@ -11,8 +11,28 @@
   text-align: center;
 }
 
-.site-footer p {
+.site-footer__credit {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.site-footer__author-link {
+  display: inline-flex; /* logo + mot alignés, cliquables ensemble */
+  align-items: center;
+  gap: 0.3em;
+  color: var(--accent-strong); /* lien identifiable, contraste AA */
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-footer__author-link:hover,
+.site-footer__author-link:focus-visible {
+  text-decoration: underline;
+}
+
+.site-footer__author-logo {
+  height: 1.05em; /* petit, aligné verticalement au texte */
+  width: auto;
 }
