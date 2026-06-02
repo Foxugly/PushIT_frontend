@@ -280,12 +280,23 @@ l'intérieur du repo cloné) :
 - La CI build en GitHub Actions (jamais sur l'EC2) et rsync le `browser/` dans ce
   `dist/`. `dist/` est gitignoré → le `git reset --hard` de `deploy.sh` ne le
   touche pas.
-- **Migration one-time** (dans `setup-server.sh`) : l'actuel
-  `/var/www/django_websites/PushIT_frontend/` ne contient que des artefacts (pas
-  de `.git`). Le setup le convertit en clone : déplacer l'ancien dossier
-  (`PushIT_frontend` → `old/` ou suppression), `git clone` du repo à sa place
-  (owner `django`), créer `dist/pushit-frontend/browser/`. Idempotent : si `.git`
-  est déjà présent, faire `git fetch/reset` au lieu de re-cloner.
+- **Migration one-time, en place** (dans `setup-server.sh`) : l'actuel
+  `/var/www/django_websites/PushIT_frontend/` ne contient que des artefacts
+  (pas de `.git`), **entièrement reproductibles** par le prochain déploiement.
+  On le convertit en clone **sans rien déplacer** et **sans dossier voisin**
+  (⚠️ ne pas toucher au dossier `old/`, réservé) :
+  ```bash
+  cd /var/www/django_websites/PushIT_frontend
+  git init -q
+  git remote add origin https://github.com/Foxugly/PushIT_frontend.git
+  git fetch origin main
+  git reset --hard origin/main      # pose src/, package.json, deploy/… à la racine
+  git clean -fd                     # retire les vieux artefacts racine (dist/ gitignoré → préservé)
+  mkdir -p dist/pushit-frontend/browser
+  ```
+  Le tout exécuté en tant que `django` (owner du clone). **Idempotent** : si
+  `.git` est déjà présent, sauter `init`/`remote` et ne faire que
+  `git fetch origin main` + `git reset --hard origin/main`.
 
 ### 4.4 Documentation (`CLAUDE.md`) (modifié)
 
