@@ -52,3 +52,76 @@ Enforced by `scripts/check-coverage.mjs`: statements 45%, branches 30%, function
 
 ### Component File Convention
 Components use single-file-name pattern (e.g., `about-page.ts` contains the component class, with co-located `about-page.html` and `about-page.scss`). No `.component` suffix in filenames.
+
+## Déploiement (prod : pushit.foxugly.com)
+
+Hébergé sur l'EC2 partagée (cohabite avec PushIT_server + QuizOnline), servi par
+**nginx**, TLS via `certbot --nginx`. Le repo est cloné dans
+`/var/www/django_websites/PushIT_frontend/` ; le SPA est servi depuis
+`dist/pushit-frontend/browser/` (artefacts rsync'és par la CI, gitignorés).
+
+### Config runtime (publique) via AWS SSM — Pattern A
+
+La config front (URL d'API, Sentry, feature flags) est **publique** et lue au
+**runtime**, pas au build. Source de vérité : **AWS SSM** `/pushit-frontend/prod/*`
+(région `eu-west-1`), **tout en `String`** (jamais de secret, jamais SecureString).
+
+Chaîne : `seed-parameter-store.{sh,ps1}` pousse un `.env` local dans SSM →
+`fetch-frontend-runtime-from-ssm.sh` lit SSM et écrit le snippet
+`/etc/nginx/snippets/pushit-frontend-runtime.conf` (`set $pushit_* "...";`) →
+nginx injecte `window.__PUSHIT_*` dans `index.html` via `sub_filter` →
+`src/app/core/runtime-config.ts` lit ces globals au démarrage (défauts inline en
+dev). Sentry est initialisé dans `src/sentry-init.ts` avant le bootstrap.
+
+Paramètres : `API_BASE_URL`, `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_RELEASE`,
+`FEATURES` (objet JSON, placeholder `{}`).
+
+### Appliquer un changement de config
+
+```bash
+# 1. pousser la nouvelle valeur dans SSM
+bash deploy/seed-parameter-store.sh ./prod.env        # ou .ps1 sous Windows
+# 2a. soit déclencher un déploiement : la CI relance le fetch automatiquement
+# 2b. soit, hors déploiement, sur l'EC2 :
+sudo systemctl restart pushit-frontend-runtime-fetch   # relit SSM + reload nginx
+```
+
+Un **déploiement de code applique** les changements SSM (`deploy.sh` relance
+l'unité de fetch). L'unité est `oneshot`+`RemainAfterExit` : elle ne re-fetch pas
+seule à l'exécution.
+
+### Pipeline de déploiement
+
+La CI (`.github/workflows/deploy.yml`) build en GitHub Actions, rsync les
+artefacts dans `/tmp/pushit-frontend-staging/`, puis `ssh EC2_USER@EC2_HOST 'sudo
+.../deploy/deploy.sh'`. `deploy.sh` tourne **en root** (une seule règle sudoers
+`EC2_USER ALL=(root) NOPASSWD: .../deploy/deploy.sh`) : il fait `git reset` (maj
+des scripts `deploy/`), promeut les artefacts vers `dist/pushit-frontend/browser/`,
+puis relance l'unité de fetch. Secrets CI : `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY`
+(accès SSH uniquement — aucun secret de config, SSM = source de vérité).
+
+### IAM (rôle d'instance quizonline-ec2)
+
+Autoriser `ssm:GetParametersByPath` sur les **deux** ARNs (le nœud nu ET le
+wildcard — sinon `AccessDenied`) :
+
+```
+arn:aws:ssm:eu-west-1:362629935151:parameter/pushit-frontend/prod
+arn:aws:ssm:eu-west-1:362629935151:parameter/pushit-frontend/prod/*
+```
+
+Pas de `kms:Decrypt` (config en String public).
+
+### Cross-origin / CORS
+
+Le front appelle `https://pushit-api.foxugly.com/api/v1` en **cross-origin**
+(auth JWT Bearer, pas de cookie). Prérequis backend (repo PushIT_server) :
+`CORS_ALLOWED_ORIGINS` doit inclure `https://pushit.foxugly.com`.
+
+### Setup initial (one-time)
+
+```bash
+sudo bash deploy/setup-server.sh <DEPLOY_USER>   # ex. ubuntu
+```
+(après avoir seedé SSM et étendu l'IAM). Voir
+`docs/superpowers/specs/2026-06-02-frontend-runtime-config-ssm-design.md`.
