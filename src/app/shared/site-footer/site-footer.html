@@ -1,3 +1,8 @@
 <footer class="site-footer">
-  <p>{{ copy().copyright }}</p>
+  <p class="site-footer__credit">
+    © {{ year }}
+    <a class="site-footer__author-link" href="https://www.foxugly.com" target="_blank" rel="noopener noreferrer">
+      <img class="site-footer__author-logo" src="foxugly-logo.svg" alt="" aria-hidden="true" /> Foxugly
+    </a>. {{ copy().rightsReserved }}
+  </p>
 </footer>
