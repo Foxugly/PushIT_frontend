@@ -29,6 +29,10 @@ export class SettingsService {
       return this.defaultApiBaseUrl;
     }
 
+    // Collapse the well-known local backend URLs back to the runtime default
+    // (the dev-proxy path '/api/v1' in dev, the cross-origin API URL in prod):
+    // a stored localhost value is a leftover dev convenience, never meaningful
+    // against a deployed backend.
     if (
       trimmedValue === 'http://127.0.0.1:8000/api/v1' ||
       trimmedValue === 'http://localhost:8000/api/v1'
