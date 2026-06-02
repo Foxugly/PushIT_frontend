@@ -26,7 +26,10 @@ sudo -u django git fetch origin main
 sudo -u django git reset --hard origin/main
 
 echo ">>> Promoting SPA artifacts..."
-mkdir -p "$ARTIFACT_DIR"
+# Créer le dossier en tant que django (pas root) : la promotion rsync juste
+# après écrit dedans en tant que django. Le staging (/tmp, créé par la CI sous
+# EC2_USER) est lu par django grâce au umask 022 world-readable par défaut.
+sudo -u django mkdir -p "$ARTIFACT_DIR"
 sudo -u django /usr/bin/rsync -a --delete "$STAGING_DIR/" "$ARTIFACT_DIR/"
 sudo /bin/chown -R django:www-data "$ARTIFACT_DIR/"
 sudo /bin/chmod -R g+rX "$ARTIFACT_DIR/"
