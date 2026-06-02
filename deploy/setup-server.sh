@@ -1,144 +1,135 @@
 #!/usr/bin/env bash
+# =============================================================================
+# PushIT frontend — Server setup (one-time) for the shared EC2.
 #
-# Setup one-shot du serveur pour le déploiement du frontend PushIT.
-# À exécuter UNE SEULE FOIS en root sur l'EC2 après avoir scp'é le dossier
-# deploy/ sur le serveur.
+# Cohabite avec PushIT_server + QuizOnline (nginx, rôle d'instance quizonline-ec2).
+# Convertit l'ancien dossier d'artefacts en clone git (Option A), installe le
+# vhost nginx + TLS, et l'unité oneshot qui fetch la config runtime depuis SSM.
 #
-# Usage (depuis le dossier deploy/ sur le serveur) :
-#   sudo ./setup-server.sh <DEPLOY_USER>
+# Prérequis AVANT de lancer :
+#   1. DNS A : pushit.foxugly.com -> IP publique EC2
+#   2. SSM seedé : bash deploy/seed-parameter-store.sh ./prod.env  (ou .ps1)
+#   3. Rôle quizonline-ec2 autorisé ssm:GetParametersByPath sur les DEUX ARNs :
+#        arn:aws:ssm:eu-west-1:362629935151:parameter/pushit-frontend/prod
+#        arn:aws:ssm:eu-west-1:362629935151:parameter/pushit-frontend/prod/*
+#      (pas de kms:Decrypt : config en String public)
 #
-# où DEPLOY_USER est le user SSH qui recevra les déploiements
-# (typiquement la valeur du secret GitHub EC2_USER, ex: ubuntu).
+# Usage (en tant que user sudo, ex. ubuntu) :
+#   sudo bash deploy/setup-server.sh <DEPLOY_USER>
 #
-# Idempotent : peut être relancé sans danger.
-
+# où DEPLOY_USER est le user SSH qui recevra les déploiements (= secret GitHub
+# EC2_USER). Il obtiendra le droit NOPASSWD de lancer deploy/deploy.sh en root.
+#
+# Idempotent.
+# =============================================================================
 set -euo pipefail
 
-# ─── Configuration ───────────────────────────────────────────────────────────
 DOMAIN="pushit.foxugly.com"
-TARGET_DIR="/var/www/django_websites/PushIT_frontend"
+APP_DIR="/var/www/django_websites/PushIT_frontend"
+ARTIFACT_DIR="$APP_DIR/dist/pushit-frontend/browser"
+REPO="https://github.com/Foxugly/PushIT_frontend.git"
 APP_OWNER="django"
 APP_GROUP="www-data"
 CERTBOT_EMAIL="rvilain@foxugly.com"
 
-# ─── Vérifications préalables ────────────────────────────────────────────────
 if [ "$(id -u)" -ne 0 ]; then
-    echo "ERREUR : ce script doit être lancé en root (utilise sudo)." >&2
+    echo "ERREUR : lancer en root (sudo)." >&2
     exit 1
 fi
 
 DEPLOY_USER="${1:-}"
 if [ -z "$DEPLOY_USER" ]; then
-    echo "Usage : sudo $0 <DEPLOY_USER>" >&2
-    echo "  ex : sudo $0 ubuntu" >&2
+    echo "Usage : sudo $0 <DEPLOY_USER>   (ex: sudo $0 ubuntu)" >&2
     exit 1
 fi
-
 if ! id "$DEPLOY_USER" >/dev/null 2>&1; then
-    echo "ERREUR : le user '$DEPLOY_USER' n'existe pas sur ce serveur." >&2
+    echo "ERREUR : user '$DEPLOY_USER' inexistant." >&2
     exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
-VHOST_SRC="${SCRIPT_DIR}/pushit.foxugly.com.conf"
+echo "=== Setup frontend ${DOMAIN} (deploy user: ${DEPLOY_USER}) ==="
 
-if [ ! -f "$VHOST_SRC" ]; then
-    echo "ERREUR : fichier vhost introuvable : $VHOST_SRC" >&2
-    echo "(scp le dossier deploy/ complet sur le serveur d'abord)" >&2
-    exit 1
+# ─── 1/6 Packages ────────────────────────────────────────────────────────────
+echo "[1/6] Packages (nginx, certbot, git, awscli)"
+MISSING=()
+for pkg in nginx certbot python3-certbot-nginx git awscli; do
+    dpkg -l "$pkg" >/dev/null 2>&1 || MISSING+=("$pkg")
+done
+if [ ${#MISSING[@]} -gt 0 ]; then
+    apt update && apt install -y "${MISSING[@]}"
 fi
-
-echo "=== Setup serveur pour ${DOMAIN} ==="
-echo "Deploy user : ${DEPLOY_USER}"
-echo "Target dir  : ${TARGET_DIR}"
-echo ""
-
-# ─── Étape 1 : dossier cible ─────────────────────────────────────────────────
-echo "[1/7] Dossier cible"
-mkdir -p "$TARGET_DIR"
-chown "${APP_OWNER}:${APP_GROUP}" "$TARGET_DIR"
-chmod 750 "$TARGET_DIR"
 echo "    OK"
 
-# ─── Étape 2 : modules Apache ────────────────────────────────────────────────
-echo "[2/7] Modules Apache (proxy, proxy_http, headers, rewrite, ssl)"
-a2enmod proxy proxy_http headers rewrite ssl >/dev/null
-echo "    OK"
-
-# ─── Étape 3 : vhost bootstrap pour certbot ──────────────────────────────────
-echo "[3/7] Vhost bootstrap HTTP-only (pour challenge certbot)"
-# Désactive le vrai vhost si déjà installé, sinon certbot va re-échouer sur
-# une config avec SSL sans cert.
-a2dissite "${DOMAIN}" >/dev/null 2>&1 || true
-cat > "/etc/apache2/sites-available/pushit-bootstrap.conf" <<EOF
-<VirtualHost *:80>
-    ServerName ${DOMAIN}
-    DocumentRoot /var/www/html
-</VirtualHost>
-EOF
-a2ensite pushit-bootstrap >/dev/null
-systemctl reload apache2
-echo "    OK"
-
-# ─── Étape 4 : certificat SSL ────────────────────────────────────────────────
-echo "[4/7] Certificat SSL via certbot"
-if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
-    echo "    certificat déjà présent, skip"
+# ─── 2/6 Clone git en place (Option A) ───────────────────────────────────────
+echo "[2/6] Repo clone in $APP_DIR"
+mkdir -p "$APP_DIR"
+chown "${APP_OWNER}:${APP_GROUP}" "$APP_DIR"
+if [ -d "$APP_DIR/.git" ]; then
+    echo "    déjà un clone, git reset"
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" fetch origin main
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" reset --hard origin/main
 else
-    certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" \
-        --non-interactive --agree-tos --email "${CERTBOT_EMAIL}"
-    echo "    OK"
+    # Conversion in-place du dossier d'artefacts existant en clone, sans rien
+    # déplacer (artefacts reproductibles ; dist/ est gitignoré). Ne touche PAS
+    # au dossier voisin old/.
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" init -q
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" remote add origin "$REPO"
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" fetch origin main
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" reset --hard origin/main
+    sudo -u "$APP_OWNER" git -C "$APP_DIR" clean -fd
 fi
-
-# ─── Étape 5 : vrai vhost ────────────────────────────────────────────────────
-echo "[5/7] Installation du vhost final"
-a2dissite pushit-bootstrap >/dev/null
-rm -f "/etc/apache2/sites-available/pushit-bootstrap.conf"
-cp "$VHOST_SRC" "/etc/apache2/sites-available/${DOMAIN}.conf"
-a2ensite "${DOMAIN}" >/dev/null
-apache2ctl configtest
-systemctl reload apache2
+sudo -u "$APP_OWNER" mkdir -p "$ARTIFACT_DIR"
 echo "    OK"
 
-# ─── Étape 6 : sudoers pour le déploiement ───────────────────────────────────
-echo "[6/7] Sudoers NOPASSWD pour ${DEPLOY_USER}"
+# ─── 3/6 Unité systemd de fetch ──────────────────────────────────────────────
+echo "[3/6] systemd unit pushit-frontend-runtime-fetch"
+cp "$APP_DIR/deploy/systemd/pushit-frontend-runtime-fetch.service" /etc/systemd/system/
+systemctl daemon-reload
+echo "    OK"
+
+# ─── 4/6 Vhost nginx + premier fetch + certbot ───────────────────────────────
+echo "[4/6] nginx vhost + TLS"
+cp "$APP_DIR/deploy/nginx/pushit-frontend.conf" /etc/nginx/sites-available/pushit-frontend.conf
+ln -sf /etc/nginx/sites-available/pushit-frontend.conf /etc/nginx/sites-enabled/pushit-frontend.conf
+# Premier fetch : écrit le snippet, valide la conf (HTTP-only à ce stade) et
+# recharge nginx. Échoue si SSM non seedé / rôle non autorisé.
+systemctl enable pushit-frontend-runtime-fetch
+if ! systemctl start pushit-frontend-runtime-fetch; then
+    echo "ERREUR : fetch SSM échoué — SSM /pushit-frontend/prod seedé ? rôle autorisé ?" >&2
+    echo "         journalctl -u pushit-frontend-runtime-fetch" >&2
+    exit 1
+fi
+nginx -t
+systemctl reload nginx
+# certbot ajoute le bloc 443 + la redirection HTTP->HTTPS au vhost.
+certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m "$CERTBOT_EMAIL"
+echo "    OK"
+
+# ─── 5/6 Sudoers pour le déploiement ─────────────────────────────────────────
+echo "[5/6] sudoers pour ${DEPLOY_USER}"
+# Modèle : la CI lance `sudo deploy.sh` ; tout le script tourne en root, donc
+# une seule règle suffit (les `sudo -u django` / `sudo systemctl` internes ne
+# requièrent alors aucun mot de passe).
 SUDOERS_FILE="/etc/sudoers.d/pushit-frontend-deploy"
-cat > "${SUDOERS_FILE}" <<EOF
-${DEPLOY_USER} ALL=(django) NOPASSWD: /usr/bin/rsync -a --delete /tmp/pushit-frontend-staging/ ${TARGET_DIR}/
-${DEPLOY_USER} ALL=(root) NOPASSWD: /bin/chown -R django\:www-data ${TARGET_DIR}/, /bin/chmod -R g+rX ${TARGET_DIR}/
+cat > "$SUDOERS_FILE" <<EOF
+${DEPLOY_USER} ALL=(root) NOPASSWD: ${APP_DIR}/deploy/deploy.sh
 EOF
-chmod 440 "${SUDOERS_FILE}"
-visudo -c -f "${SUDOERS_FILE}" >/dev/null
+chmod 440 "$SUDOERS_FILE"
+visudo -c -f "$SUDOERS_FILE" >/dev/null
 echo "    OK"
 
-# ─── Étape 7 : smoke test ────────────────────────────────────────────────────
-echo "[7/7] Smoke test HTTPS"
+# ─── 6/6 Smoke test ──────────────────────────────────────────────────────────
+echo "[6/6] Smoke test HTTPS"
 if curl --fail --silent --show-error --max-time 30 -I "https://${DOMAIN}" >/dev/null; then
-    echo "    https://${DOMAIN} répond (normal: 200 ou 404 selon si index.html est déjà déployé)"
+    echo "    https://${DOMAIN} répond"
 else
-    echo "    pas de réponse (normal avant le premier déploiement de contenu)"
+    echo "    pas encore de réponse (normal avant le 1er déploiement de contenu)"
 fi
 
-# ─── Récapitulatif ───────────────────────────────────────────────────────────
 echo ""
 echo "=== Setup terminé ==="
-echo ""
-echo "Il reste à faire manuellement (une fois) :"
-echo ""
-echo "  1. Ajouter les secrets GitHub sur le repo PushIT_frontend"
-echo "     (Settings > Secrets and variables > Actions) :"
-echo "       - EC2_HOST"
-echo "       - EC2_USER  (= '${DEPLOY_USER}')"
-echo "       - EC2_SSH_KEY"
-echo "     Dupliquer depuis le repo PushIT_server."
-echo ""
-echo "  2. Ajouter 'pushit.foxugly.com' à ALLOWED_HOSTS dans la config"
-echo "     Django, puis redémarrer gunicorn/uwsgi."
-echo ""
-echo "  3. Vérifier que la clé publique correspondant à EC2_SSH_KEY est"
-echo "     dans ~${DEPLOY_USER}/.ssh/authorized_keys"
-echo ""
-echo "  4. Déclencher le workflow :"
-echo "     https://github.com/Foxugly/PushIT_frontend/actions"
-echo "     > Deploy frontend to EC2 > Run workflow"
-echo ""
+echo "Il reste :"
+echo "  - Secrets GitHub : EC2_HOST, EC2_USER (= '${DEPLOY_USER}'), EC2_SSH_KEY"
+echo "  - Clé publique de EC2_SSH_KEY dans ~${DEPLOY_USER}/.ssh/authorized_keys"
+echo "  - CORS backend : CORS_ALLOWED_ORIGINS += https://${DOMAIN} (repo PushIT_server)"
+echo "  - Déclencher le workflow : https://github.com/Foxugly/PushIT_frontend/actions"
