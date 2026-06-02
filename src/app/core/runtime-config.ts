@@ -43,9 +43,11 @@ function trimmedOr(value: string | undefined, fallback: string): string {
 export function getRuntimeConfig(): RuntimeConfig {
   const globals = globalThis as unknown as RuntimeGlobals;
 
+  // Shallow-copied so a consumer mutating config.features never reaches back
+  // into the injected window.__PUSHIT_FEATURES global.
   const features =
     globals.__PUSHIT_FEATURES && typeof globals.__PUSHIT_FEATURES === 'object'
-      ? globals.__PUSHIT_FEATURES
+      ? { ...globals.__PUSHIT_FEATURES }
       : {};
 
   return {
