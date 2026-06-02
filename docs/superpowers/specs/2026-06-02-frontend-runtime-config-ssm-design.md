@@ -189,13 +189,13 @@ Pas de `kms:Decrypt` nécessaire (valeurs en `String`, pas `SecureString`).
 - Durcissement : `PrivateTmp=yes`, `ProtectSystem=full`,
   `ReadWritePaths=/etc/nginx/snippets`, `ProtectHome=yes`, `NoNewPrivileges=yes`,
   `RestrictSUIDSGID=yes`, `TimeoutStartSec=120`.
-- `ExecStart=/var/www/django_websites/PushIT_frontend_src/deploy/fetch-frontend-runtime-from-ssm.sh`
-  (voir note 4.3 sur l'emplacement du repo serveur).
+- `ExecStart=/var/www/django_websites/PushIT_frontend/deploy/fetch-frontend-runtime-from-ssm.sh`.
 - `WantedBy=multi-user.target`.
 
 **`deploy/nginx/pushit-frontend.conf`** (nouveau — remplace l'Apache)
 - `server` :80 → redirect 301 vers https (certbot complète le bloc 443).
-- `root /var/www/django_websites/PushIT_frontend;` (dossier des artefacts SPA).
+- `root /var/www/django_websites/PushIT_frontend/dist/pushit-frontend/browser;`
+  (artefacts SPA, à l'intérieur du repo cloné — cf. §4.5).
 - Défauts vides + include du snippet :
   ```nginx
   set $pushit_api_base       "";
@@ -226,15 +226,21 @@ Pas de `kms:Decrypt` nécessaire (valeurs en `String`, pas `SecureString`).
 
 **`deploy/deploy.sh`** (nouveau — promotion côté serveur)
 - Appelé par la CI en SSH (remplace le heredoc inline de `deploy.yml`).
-- Promeut le SPA : `rsync -a --delete /tmp/pushit-frontend-staging/ <TARGET>/`,
-  `chown -R django:www-data`, `chmod -R g+rX`, `rm -rf` du staging.
+- `cd /var/www/django_websites/PushIT_frontend` ; `git fetch origin main` +
+  `git reset --hard origin/main` (met à jour les scripts `deploy/` versionnés —
+  `dist/` étant gitignoré, le reset ne touche pas les artefacts).
+- Promeut le SPA : `rsync -a --delete /tmp/pushit-frontend-staging/
+  dist/pushit-frontend/browser/`, `chown -R django:www-data`, `chmod -R g+rX`,
+  `rm -rf` du staging.
 - **Re-fetch de la conf** : `sudo systemctl restart pushit-frontend-runtime-fetch`
   (relit SSM → réécrit le snippet → reload nginx). Une rotation SSM est ainsi
   appliquée à chaque deploy.
 
 **`deploy/setup-server.sh`** (réécrit — nginx, remplace la version Apache)
-- Crée le dossier cible `/var/www/django_websites/PushIT_frontend`
-  (`django:www-data`, traversable).
+- **Migration vers le clone git** (cf. §4.5) : convertit l'ancien dossier
+  d'artefacts en clone du repo `PushIT_frontend` (`django:www-data`), crée
+  `dist/pushit-frontend/browser/` (traversable). Idempotent (`git reset` si déjà
+  cloné).
 - Installe le vhost nginx, `nginx -t`, `reload`.
 - `certbot --nginx -d pushit.foxugly.com` (non-interactif).
 - Installe + `enable` + `start` `pushit-frontend-runtime-fetch.service` (premier
@@ -253,15 +259,33 @@ Pas de `kms:Decrypt` nécessaire (valeurs en `String`, pas `SecureString`).
 - `ssh … 'sudo /…/deploy/deploy.sh'` (au lieu du heredoc inline) → promotion
   **+ re-fetch de la conf**.
 - Smoke test HTTPS (inchangé).
+- Rsync `dist/pushit-frontend/browser/` → `/tmp/pushit-frontend-staging/` puis
+  `ssh … deploy.sh` (qui promeut vers `…/PushIT_frontend/dist/pushit-frontend/browser/`).
 - **Aucun secret de config** dans la CI (SSM = source de vérité). Secrets CI
   conservés : `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY` (accès SSH uniquement).
-- **Note d'emplacement repo serveur :** `deploy.sh` doit être présent sur l'EC2
-  pour être appelé en SSH. Deux options à trancher au plan d'implémentation :
-  (a) cloner le repo `PushIT_frontend` sur l'EC2 (comme le backend, chemin ex.
-  `/var/www/django_websites/PushIT_frontend_src/`) et y exécuter `deploy.sh` /
-  l'unité systemd ; (b) `scp` le dossier `deploy/` lors du setup. Le backend
-  utilise (a) ; on s'aligne sur (a) pour la cohérence (le chemin `ExecStart` de
-  l'unité et le `TARGET_DIR` des artefacts sont alors deux dossiers distincts).
+
+### 4.5 Arborescence serveur (décision : Option A)
+
+Le dossier au nom du repo héberge le **clone git**, symétrique avec
+`PushIT_server/` et avec QuizOnline (qui sert depuis `dist/…/browser/` à
+l'intérieur du repo cloné) :
+
+```
+/var/www/django_websites/PushIT_frontend/            ← clone git du repo (django:www-data)
+        deploy/                                       ← scripts + unité systemd (ExecStart pointe ici)
+        dist/pushit-frontend/browser/                 ← artefacts SPA (gitignorés, cible rsync, root nginx)
+```
+
+- nginx `root` = `…/PushIT_frontend/dist/pushit-frontend/browser`.
+- La CI build en GitHub Actions (jamais sur l'EC2) et rsync le `browser/` dans ce
+  `dist/`. `dist/` est gitignoré → le `git reset --hard` de `deploy.sh` ne le
+  touche pas.
+- **Migration one-time** (dans `setup-server.sh`) : l'actuel
+  `/var/www/django_websites/PushIT_frontend/` ne contient que des artefacts (pas
+  de `.git`). Le setup le convertit en clone : déplacer l'ancien dossier
+  (`PushIT_frontend` → `old/` ou suppression), `git clone` du repo à sa place
+  (owner `django`), créer `dist/pushit-frontend/browser/`. Idempotent : si `.git`
+  est déjà présent, faire `git fetch/reset` au lieu de re-cloner.
 
 ### 4.4 Documentation (`CLAUDE.md`) (modifié)
 
