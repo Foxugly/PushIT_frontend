@@ -17,8 +17,9 @@ Ce document liste les étapes **one-time** à exécuter manuellement sur le serv
 Dupliquer les 3 secrets depuis le repo `PushIT_server` vers ce repo (Settings → Secrets and variables → Actions) :
 
 - `EC2_HOST`
-- `EC2_USER`
-- `EC2_SSH_KEY`
+- `EC2_USER` — **doit valoir `django`** (le déploiement se connecte et tourne en
+  `django`, plus en `ubuntu` ; cf. §7 sécurité)
+- `EC2_SSH_KEY` (sa clé publique doit être dans `~django/.ssh/authorized_keys`)
 
 ### 2. Dossier cible sur le serveur
 
@@ -66,20 +67,35 @@ Puis :
 sudo systemctl reload apache2
 ```
 
-### 7. Sudoers pour la promotion en sudo -u django
+### 7. Sudoers least-privilege (django)
 
-Autoriser `${EC2_USER}` à exécuter les commandes de promotion sans mot de passe. Créer `/etc/sudoers.d/pushit-frontend-deploy` :
+⚠️ **Sécurité** — `deploy.sh` vit dans un arbre inscriptible par `django` : il ne
+doit donc **jamais** tourner en root (sinon un RCE du process web `django`
+réécrirait `deploy.sh` et obtiendrait root). La CI se connecte donc **en `django`**
+et lance `deploy.sh` **sans sudo** ; le script ne fait qu'**une** action root :
+redémarrer l'unité de fetch SSM. Le drop-in est versionné dans
+`deploy/sudoers/pushit-frontend-deploy` et installé (root:root 0440) par
+`setup-server.sh`. Pour l'installer/valider à la main :
 
 ```bash
-sudo visudo -f /etc/sudoers.d/pushit-frontend-deploy
+sudo visudo -cf deploy/sudoers/pushit-frontend-deploy           # valide la SOURCE
+sudo install -o root -g root -m 0440 \
+  deploy/sudoers/pushit-frontend-deploy /etc/sudoers.d/pushit-frontend-deploy
+sudo visudo -cf /etc/sudoers.d/pushit-frontend-deploy           # valide la CIBLE
 ```
 
-Contenu (remplacer `<EC2_USER>` par la valeur réelle du secret, p.ex. `ubuntu`) :
+Contenu (cf. `deploy/sudoers/pushit-frontend-deploy`) :
 
 ```
-<EC2_USER> ALL=(django) NOPASSWD: /usr/bin/rsync -a --delete /tmp/pushit-frontend-staging/ /var/www/django_websites/PushIT_frontend/
-<EC2_USER> ALL=(root) NOPASSWD: /bin/chown -R django\:www-data /var/www/django_websites/PushIT_frontend/, /bin/chmod -R g+rX /var/www/django_websites/PushIT_frontend/
+Cmnd_Alias PUSHIT_FRONTEND_DEPLOY = /usr/bin/systemctl restart pushit-frontend-runtime-fetch
+Defaults!PUSHIT_FRONTEND_DEPLOY !setenv, !env_keep
+django ALL=(root) NOPASSWD: PUSHIT_FRONTEND_DEPLOY
 ```
+
+L'unité de fetch exécute `/usr/local/sbin/pushit-frontend-runtime-fetch.sh`
+(root:root 0755, **hors de l'arbre applicatif**), de sorte qu'aucun chemin ne
+permet à `django` d'influencer du code exécuté en root. Vérifier :
+`sudo -l -U django` ne doit lister que ce `systemctl restart`.
 
 ### 8. Clé SSH
 

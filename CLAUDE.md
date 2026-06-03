@@ -93,12 +93,20 @@ seule à l'exécution.
 ### Pipeline de déploiement
 
 La CI (`.github/workflows/deploy.yml`) build en GitHub Actions, rsync les
-artefacts dans `/tmp/pushit-frontend-staging/`, puis `ssh EC2_USER@EC2_HOST 'sudo
-.../deploy/deploy.sh'`. `deploy.sh` tourne **en root** (une seule règle sudoers
-`EC2_USER ALL=(root) NOPASSWD: .../deploy/deploy.sh`) : il fait `git reset` (maj
-des scripts `deploy/`), promeut les artefacts vers `dist/pushit-frontend/browser/`,
-puis relance l'unité de fetch. Secrets CI : `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY`
-(accès SSH uniquement — aucun secret de config, SSM = source de vérité).
+artefacts dans `/tmp/pushit-frontend-staging/`, puis `ssh django@EC2_HOST
+'.../deploy/deploy.sh'` (**sans sudo**). `deploy.sh` tourne **en tant que
+`django`** (jamais root) : `git reset` (maj des sources `deploy/`), rsync de
+promotion vers `dist/pushit-frontend/browser/`, `chgrp/chmod` (django ∈
+`www-data`), puis **une seule** commande privilégiée `sudo systemctl restart
+pushit-frontend-runtime-fetch`. Sudoers least-privilege
+(`/etc/sudoers.d/pushit-frontend-deploy`, versionné dans `deploy/sudoers/`) :
+`Cmnd_Alias` n'autorisant QUE ce restart, accordé à `django`,
+`Defaults!… !setenv,!env_keep`. L'unité de fetch exécute
+`/usr/local/sbin/pushit-frontend-runtime-fetch.sh` (**root:root, hors arbre
+applicatif**), donc un RCE du process web (`django`) ne peut influencer aucun
+code exécuté en root. Secrets CI : `EC2_HOST`, `EC2_USER` (= `django`),
+`EC2_SSH_KEY` (accès SSH uniquement — aucun secret de config, SSM = source de
+vérité).
 
 ### IAM (rôle d'instance quizonline-ec2)
 
