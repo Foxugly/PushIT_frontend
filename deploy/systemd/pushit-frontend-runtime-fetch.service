@@ -21,6 +21,11 @@ Environment=AWS_SHARED_CREDENTIALS_FILE=/dev/null
 Environment=AWS_CONFIG_FILE=/dev/null
 Environment=AWS_REGION=eu-west-1
 
+# Le script tourne en root → il vit HORS de l'arbre applicatif inscriptible par
+# django (/usr/local/sbin, root:root 0755 ; installé par setup-server.sh). Une
+# modif du script source dans le repo n'a AUCUN effet root tant que setup n'est
+# pas relancé en root — c'est voulu (ferme le chemin django→root).
+#
 # Durcissement : le script écrit /etc/nginx/snippets/ et a besoin de /run pour
 # `nginx -t` (pid) et `systemctl reload`. ProtectSystem=full garde /etc en
 # lecture seule SAUF les chemins de ReadWritePaths.
@@ -32,7 +37,7 @@ NoNewPrivileges=yes
 RestrictSUIDSGID=yes
 TimeoutStartSec=120
 
-ExecStart=/var/www/django_websites/PushIT_frontend/deploy/fetch-frontend-runtime-from-ssm.sh
+ExecStart=/usr/local/sbin/pushit-frontend-runtime-fetch.sh
 StandardOutput=journal
 StandardError=journal
 

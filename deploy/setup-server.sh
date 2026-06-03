@@ -65,6 +65,9 @@ echo "    OK"
 echo "[2/6] Repo clone in $APP_DIR"
 mkdir -p "$APP_DIR"
 chown "${APP_OWNER}:${APP_GROUP}" "$APP_DIR"
+# django publie le docroot (rsync + chgrp/chmod) SANS root → il doit être membre
+# de www-data. Indispensable pour que deploy.sh tourne entièrement non privilégié.
+usermod -aG www-data "$APP_OWNER"
 if [ -d "$APP_DIR/.git" ]; then
     echo "    déjà un clone, git reset"
     sudo -u "$APP_OWNER" git -C "$APP_DIR" fetch origin main
@@ -83,7 +86,13 @@ sudo -u "$APP_OWNER" mkdir -p "$ARTIFACT_DIR"
 echo "    OK"
 
 # ─── 3/6 Unité systemd de fetch ──────────────────────────────────────────────
-echo "[3/6] systemd unit pushit-frontend-runtime-fetch"
+echo "[3/6] fetch script root-owned (hors arbre django) + systemd unit"
+# Le script de fetch tourne en root via l'unité → il DOIT vivre hors de l'arbre
+# applicatif inscriptible par django, sinon django→root. Installé root:root 0755
+# dans /usr/local/sbin (dossier non inscriptible par django).
+install -o root -g root -m 0755 \
+    "$APP_DIR/deploy/fetch-frontend-runtime-from-ssm.sh" \
+    /usr/local/sbin/pushit-frontend-runtime-fetch.sh
 cp "$APP_DIR/deploy/systemd/pushit-frontend-runtime-fetch.service" /etc/systemd/system/
 systemctl daemon-reload
 echo "    OK"
@@ -111,16 +120,16 @@ systemctl reload nginx
 echo "    OK"
 
 # ─── 5/6 Sudoers pour le déploiement ─────────────────────────────────────────
-echo "[5/6] sudoers pour ${DEPLOY_USER}"
-# Modèle : la CI lance `sudo deploy.sh` ; tout le script tourne en root, donc
-# une seule règle suffit (les `sudo -u django` / `sudo systemctl` internes ne
-# requièrent alors aucun mot de passe).
-SUDOERS_FILE="/etc/sudoers.d/pushit-frontend-deploy"
-cat > "$SUDOERS_FILE" <<EOF
-${DEPLOY_USER} ALL=(root) NOPASSWD: ${APP_DIR}/deploy/deploy.sh
-EOF
-chmod 440 "$SUDOERS_FILE"
-visudo -c -f "$SUDOERS_FILE" >/dev/null
+echo "[5/6] sudoers least-privilege (django)"
+# Modèle : la CI se connecte en `django` et lance deploy.sh SANS sudo. Le seul
+# droit root accordé est le redémarrage de l'unité de fetch (commande précise,
+# chemin absolu, cf. deploy/sudoers/pushit-frontend-deploy). On valide la SOURCE
+# avant d'installer, puis la CIBLE (une erreur de syntaxe casserait tout sudo).
+SUDOERS_SRC="$APP_DIR/deploy/sudoers/pushit-frontend-deploy"
+SUDOERS_DST="/etc/sudoers.d/pushit-frontend-deploy"
+visudo -cf "$SUDOERS_SRC"
+install -o root -g root -m 0440 "$SUDOERS_SRC" "$SUDOERS_DST"
+visudo -cf "$SUDOERS_DST" >/dev/null
 echo "    OK"
 
 # ─── 6/6 Smoke test ──────────────────────────────────────────────────────────
@@ -134,7 +143,8 @@ fi
 echo ""
 echo "=== Setup terminé ==="
 echo "Il reste :"
-echo "  - Secrets GitHub : EC2_HOST, EC2_USER (= '${DEPLOY_USER}'), EC2_SSH_KEY"
-echo "  - Clé publique de EC2_SSH_KEY dans ~${DEPLOY_USER}/.ssh/authorized_keys"
+echo "  - Secrets GitHub : EC2_HOST, EC2_USER (= 'django'), EC2_SSH_KEY"
+echo "  - Clé publique de EC2_SSH_KEY dans ~django/.ssh/authorized_keys"
+echo "    (le déploiement se connecte et tourne en 'django', plus en '${DEPLOY_USER}')"
 echo "  - CORS backend : CORS_ALLOWED_ORIGINS += https://${DOMAIN} (repo PushIT_server)"
 echo "  - Déclencher le workflow : https://github.com/Foxugly/PushIT_frontend/actions"

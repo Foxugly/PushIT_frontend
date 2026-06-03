@@ -75,8 +75,11 @@ jobs:
 
       - name: Promote staging to live
         run: |
+          # EC2_USER doit être `django` (plus `ubuntu`). deploy.sh tourne en
+          # django SANS sudo ; il sudo en interne UNE seule commande précise
+          # (restart de l'unité de fetch). Voir deploy/sudoers/pushit-frontend-deploy.
           ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            'sudo /var/www/django_websites/PushIT_frontend/deploy/deploy.sh'
+            '/var/www/django_websites/PushIT_frontend/deploy/deploy.sh'
 
       - name: Smoke test
         run: |
