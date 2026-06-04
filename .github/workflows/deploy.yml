@@ -36,6 +36,15 @@ jobs:
   build-and-deploy:
     needs: e2e
     runs-on: ubuntu-latest
+    # OIDC → SSM + S3-bundle (no long-lived SSH key). Mirrors the fleet model
+    # (trainingmanager_frontend / OPERATIONS.md §3.11): build in CI → upload the
+    # bundle to S3 → SSM (root) installs the unit / fetch-script / nginx vhost
+    # from the COMMITTED git blob, pulls the bundle from S3 via the instance
+    # role, and atomic-swaps it into the docroot.
+    environment: production
+    permissions:
+      id-token: write    # mint the OIDC token to assume the deploy role
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -58,28 +67,83 @@ jobs:
       - name: Precompress assets (brotli + gzip)
         run: node scripts/precompress.mjs
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.10.0
+      - name: Package bundle
+        id: pkg
+        run: |
+          tar -czf frontend-build.tar.gz -C dist/pushit-frontend/browser .
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-west-1
+          role-session-name: gh-actions-${{ github.run_id }}
 
-      - name: Add EC2 host to known_hosts
+      - name: Upload bundle to S3
+        # Namespaced under builds/pushit-frontend/ so the app can share the fleet
+        # deploy bucket (foxugly-deploy) without colliding with other builds.
         run: |
-          ssh-keyscan -H "${{ secrets.EC2_HOST }}" | tee -a ~/.ssh/known_hosts | grep -q .
+          aws s3 cp frontend-build.tar.gz \
+            "s3://${{ secrets.S3_DEPLOY_BUCKET }}/builds/pushit-frontend/${{ steps.pkg.outputs.sha }}.tar.gz"
 
-      - name: Rsync build to staging
+      - name: Deploy on EC2 via SSM
+        id: ssm
+        env:
+          INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          BUCKET: ${{ secrets.S3_DEPLOY_BUCKET }}
+          SHA: ${{ steps.pkg.outputs.sha }}
         run: |
-          rsync -az --delete \
-            dist/pushit-frontend/browser/ \
-            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/pushit-frontend-staging/"
+          # AWS-RunShellScript runs as ROOT. Steps: heal ownership; (django,
+          # umask 027) git reset → refresh deploy artifacts; install unit / root
+          # fetch-script / nginx vhost from the COMMITTED git blob (never the
+          # django tree → §3.10); enable unit; pull the bundle from S3 via the
+          # instance role (blank the certbot creds) and atomic-swap into the
+          # docroot; restart the runtime-fetch unit (writes the SSM snippet +
+          # nginx -t + reload); normalise perms.
+          APP=/var/www/django_websites/PushIT_frontend
+          DOC="$APP/dist/pushit-frontend/browser"
+          GB="git -C $APP -c safe.directory=$APP show origin/main"
+          cat > /tmp/ssm-params.json <<EOF
+          { "commands": [
+            "chown -R django:www-data $APP",
+            "sudo -u django bash -c 'umask 027; cd $APP && git fetch --quiet origin main && git reset --hard --quiet origin/main'",
+            "$GB:deploy/systemd/pushit-frontend-runtime-fetch.service > /etc/systemd/system/pushit-frontend-runtime-fetch.service",
+            "$GB:deploy/fetch-frontend-runtime-from-ssm.sh > /usr/local/sbin/pushit-frontend-runtime-fetch.sh && chmod 0755 /usr/local/sbin/pushit-frontend-runtime-fetch.sh && chown root:root /usr/local/sbin/pushit-frontend-runtime-fetch.sh",
+            "$GB:deploy/nginx/pushit-frontend.conf > /etc/nginx/sites-available/pushit-frontend.conf && ln -sf /etc/nginx/sites-available/pushit-frontend.conf /etc/nginx/sites-enabled/pushit-frontend.conf",
+            "systemctl daemon-reload && systemctl enable --quiet pushit-frontend-runtime-fetch",
+            "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/pushit-frontend/$SHA.tar.gz /tmp/pfe.tar.gz --region eu-west-1",
+            "rm -rf /tmp/pfe && mkdir -p /tmp/pfe && tar -xzf /tmp/pfe.tar.gz -C /tmp/pfe && mkdir -p $DOC && rsync -a --delete /tmp/pfe/ $DOC/ && rm -rf /tmp/pfe /tmp/pfe.tar.gz",
+            "systemctl restart pushit-frontend-runtime-fetch",
+            "chown -R django:www-data $APP && chmod -R g-w,o-rwx $APP"
+          ], "executionTimeout": ["900"] }
+          EOF
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name AWS-RunShellScript \
+            --comment "Deploy pushit-frontend ${{ github.sha }}" \
+            --cloud-watch-output-config CloudWatchOutputEnabled=true \
+            --parameters file:///tmp/ssm-params.json \
+            --query Command.CommandId --output text)
+          echo "cmd_id=$CMD_ID" >> "$GITHUB_OUTPUT"
 
-      - name: Promote staging to live
+      - name: Wait for SSM command
+        env:
+          INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          CMD_ID: ${{ steps.ssm.outputs.cmd_id }}
         run: |
-          # EC2_USER doit être `django` (plus `ubuntu`). deploy.sh tourne en
-          # django SANS sudo ; il sudo en interne UNE seule commande précise
-          # (restart de l'unité de fetch). Voir deploy/sudoers/pushit-frontend-deploy.
-          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            '/var/www/django_websites/PushIT_frontend/deploy/deploy.sh'
+          for _ in $(seq 1 180); do
+            STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query Status --output text 2>/dev/null || echo Pending)
+            case "$STATUS" in
+              Success) aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query StandardOutputContent --output text; exit 0 ;;
+              Failed|Cancelled|TimedOut)
+                echo "Deploy $STATUS"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query StandardErrorContent --output text
+                exit 1 ;;
+              *) sleep 5 ;;
+            esac
+          done
+          echo "Timed out"; exit 1
 
       - name: Smoke test
         run: |

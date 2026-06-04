@@ -92,33 +92,41 @@ seule à l'exécution.
 
 ### Pipeline de déploiement
 
-La CI (`.github/workflows/deploy.yml`) build en GitHub Actions, rsync les
-artefacts dans `/tmp/pushit-frontend-staging/`, puis `ssh django@EC2_HOST
-'.../deploy/deploy.sh'` (**sans sudo**). `deploy.sh` tourne **en tant que
-`django`** (jamais root) : `git reset` (maj des sources `deploy/`), rsync de
-promotion vers `dist/pushit-frontend/browser/`, `chgrp/chmod` (django ∈
-`www-data`), puis **une seule** commande privilégiée `sudo systemctl restart
-pushit-frontend-runtime-fetch`. Sudoers least-privilege
-(`/etc/sudoers.d/pushit-frontend-deploy`, versionné dans `deploy/sudoers/`) :
-`Cmnd_Alias` n'autorisant QUE ce restart, accordé à `django`,
-`Defaults!… !setenv,!env_keep`. L'unité de fetch exécute
-`/usr/local/sbin/pushit-frontend-runtime-fetch.sh` (**root:root, hors arbre
-applicatif**), donc un RCE du process web (`django`) ne peut influencer aucun
-code exécuté en root. Secrets CI : `EC2_HOST`, `EC2_USER` (= `django`),
-`EC2_SSH_KEY` (accès SSH uniquement — aucun secret de config, SSM = source de
-vérité).
+La CI (`.github/workflows/deploy.yml`) build en GitHub Actions puis déploie via
+**GitHub OIDC → SSM + bundle S3** (aucune clé SSH longue durée), comme le reste
+de la fleet (OPERATIONS.md §3.11) : le job `build-and-deploy` (gated par l'e2e,
+`environment: production`) build + precompress, **tar le bundle → S3**
+(`s3://<bucket>/builds/pushit-frontend/<sha>.tar.gz`, via un rôle OIDC), puis
+`aws ssm send-command` (AWS-RunShellScript, **root**) qui : (1) `git reset` en
+`django` (maj des sources `deploy/`), (2) installe l'unité / le script de fetch
+root / le vhost nginx **depuis le blob git committé** (jamais l'arbre django →
+§3.10), (3) **pull le bundle depuis S3** via le rôle d'instance (creds certbot
+blankées) et l'**atomic-swap** dans `dist/pushit-frontend/browser/`, (4) restart
+`pushit-frontend-runtime-fetch` (relit SSM + `nginx -t` + reload), (5) normalise
+les perms. L'unité de fetch exécute `/usr/local/sbin/pushit-frontend-runtime-fetch.sh`
+(**root:root, hors arbre applicatif**) — un RCE du process web (`django`) ne peut
+influencer aucun code exécuté en root. **Secrets CI** : `AWS_DEPLOY_ROLE_ARN`,
+`EC2_INSTANCE_ID`, `S3_DEPLOY_BUCKET` (plus de `EC2_SSH_KEY`/`EC2_HOST`/`EC2_USER`).
+`deploy/deploy.sh` (modèle rsync, et le sudoers `pushit-frontend-deploy` /
+l'authorized_keys de django) sont **obsolètes** depuis la bascule OIDC.
 
-### IAM (rôle d'instance quizonline-ec2)
+### IAM
 
-Autoriser `ssm:GetParametersByPath` sur les **deux** ARNs (le nœud nu ET le
-wildcard — sinon `AccessDenied`) :
+**Rôle d'instance `quizonline-ec2`** — `ssm:GetParametersByPath` sur les **deux**
+ARNs (le nœud nu ET le wildcard — sinon `AccessDenied`), + `s3:GetObject` pour
+pull le bundle (depuis la bascule OIDC) :
 
 ```
 arn:aws:ssm:eu-west-1:362629935151:parameter/pushit-frontend/prod
 arn:aws:ssm:eu-west-1:362629935151:parameter/pushit-frontend/prod/*
+arn:aws:s3:::<bucket>/builds/pushit-frontend/*        (s3:GetObject)
 ```
-
 Pas de `kms:Decrypt` (config en String public).
+
+**Rôle OIDC `pushit-frontend-deploy`** (déploiement, off-box) — trust pinné à
+`repo:Foxugly/PushIT_frontend:environment:production` ; perms : `ssm:SendCommand`
+(instance + doc `AWS-RunShellScript`), `ssm:GetCommandInvocation`, `s3:PutObject`
+sur `<bucket>/builds/pushit-frontend/*`.
 
 ### Cross-origin / CORS
 
