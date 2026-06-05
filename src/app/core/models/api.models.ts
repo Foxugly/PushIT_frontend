@@ -41,6 +41,8 @@ export interface RegisterRequest {
   username: string;
   password: string;
   language: UserLanguage;
+  /** Cloudflare Turnstile token; sent only when the widget is provisioned. */
+  turnstile_token?: string;
 }
 
 export interface UserMeUpdateRequest {

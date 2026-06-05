@@ -59,6 +59,10 @@
     <app-alert [message]="registerError()!.detail" tone="danger" (dismissed)="registerError.set(null)" />
   }
 
+  @if (turnstileEnabled) {
+    <div #turnstile class="register-turnstile"></div>
+  }
+
   <div class="public-submit-row register-submit-row">
     <p-button
       type="submit"

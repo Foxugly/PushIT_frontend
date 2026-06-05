@@ -73,8 +73,11 @@ nginx injecte `window.__PUSHIT_*` dans `index.html` via `sub_filter` →
 `src/app/core/runtime-config.ts` lit ces globals au démarrage (défauts inline en
 dev). Sentry est initialisé dans `src/sentry-init.ts` avant le bootstrap.
 
-Paramètres : `API_BASE_URL`, `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_RELEASE`,
-`FEATURES` (objet JSON, placeholder `{}`).
+Paramètres : `API_BASE_URL`, `TURNSTILE_SITE_KEY` (clé publique du widget
+Cloudflare Turnstile — captcha sur l'inscription ; vide = widget masqué et
+captcha non requis, le backend étant gated sur son secret de la même façon),
+`SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_RELEASE`, `FEATURES` (objet JSON,
+placeholder `{}`).
 
 ### Appliquer un changement de config
 

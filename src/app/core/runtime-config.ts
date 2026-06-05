@@ -15,12 +15,14 @@ export interface RuntimeSentryConfig {
 
 export interface RuntimeConfig {
   apiBaseUrl: string;
+  turnstileSiteKey: string;
   sentry: RuntimeSentryConfig;
   features: Record<string, boolean>;
 }
 
 interface RuntimeGlobals {
   __PUSHIT_API_BASE_URL?: string;
+  __PUSHIT_TURNSTILE_SITE_KEY?: string;
   __PUSHIT_SENTRY_DSN?: string;
   __PUSHIT_SENTRY_ENV?: string;
   __PUSHIT_SENTRY_RELEASE?: string;
@@ -52,6 +54,11 @@ export function getRuntimeConfig(): RuntimeConfig {
 
   return {
     apiBaseUrl: trimmedOr(globals.__PUSHIT_API_BASE_URL, DEFAULT_API_BASE_URL),
+    // Cloudflare Turnstile public site key (captcha on register). Empty when not
+    // provisioned → the register panel skips the widget and the captcha is not
+    // enforced (the backend is gated on its secret the same way). Prod value:
+    // SSM /pushit-frontend/prod/TURNSTILE_SITE_KEY.
+    turnstileSiteKey: (globals.__PUSHIT_TURNSTILE_SITE_KEY ?? '').trim(),
     sentry: {
       dsn: (globals.__PUSHIT_SENTRY_DSN ?? '').trim(),
       environment: trimmedOr(globals.__PUSHIT_SENTRY_ENV, DEFAULT_SENTRY_ENV),

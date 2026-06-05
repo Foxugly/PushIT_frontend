@@ -145,6 +145,8 @@ const APP_COPY = {
       pending: 'Creation...',
       loginPrompt: 'Deja un compte ?',
       loginLink: 'Se connecter',
+      captchaRequired: 'Merci de valider le captcha anti-robot.',
+      captchaFailed: 'Echec de la verification anti-robot. Reessayez.',
     },
     forgotPassword: {
       eyebrow: 'Mot de passe oublie',
@@ -393,6 +395,8 @@ const APP_COPY = {
       pending: 'Bezig met aanmaken...',
       loginPrompt: 'Al een account?',
       loginLink: 'Inloggen',
+      captchaRequired: 'Bevestig de anti-robotcaptcha.',
+      captchaFailed: 'Anti-robotverificatie mislukt. Probeer opnieuw.',
     },
     forgotPassword: {
       eyebrow: 'Wachtwoord vergeten',
@@ -641,6 +645,8 @@ const APP_COPY = {
       pending: 'Creating...',
       loginPrompt: 'Already have an account?',
       loginLink: 'Log in',
+      captchaRequired: 'Please complete the anti-bot captcha.',
+      captchaFailed: 'Anti-bot verification failed. Please try again.',
     },
     forgotPassword: {
       eyebrow: 'Forgot password',

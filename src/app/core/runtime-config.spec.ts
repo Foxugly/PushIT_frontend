@@ -2,6 +2,7 @@ import { getRuntimeConfig } from './runtime-config';
 
 interface MutableGlobals {
   __PUSHIT_API_BASE_URL?: string;
+  __PUSHIT_TURNSTILE_SITE_KEY?: string;
   __PUSHIT_SENTRY_DSN?: string;
   __PUSHIT_SENTRY_ENV?: string;
   __PUSHIT_SENTRY_RELEASE?: string;
@@ -15,6 +16,7 @@ function globals(): MutableGlobals {
 describe('getRuntimeConfig', () => {
   const keys: (keyof MutableGlobals)[] = [
     '__PUSHIT_API_BASE_URL',
+    '__PUSHIT_TURNSTILE_SITE_KEY',
     '__PUSHIT_SENTRY_DSN',
     '__PUSHIT_SENTRY_ENV',
     '__PUSHIT_SENTRY_RELEASE',
@@ -31,12 +33,14 @@ describe('getRuntimeConfig', () => {
     const config = getRuntimeConfig();
 
     expect(config.apiBaseUrl).toBe('/api/v1');
+    expect(config.turnstileSiteKey).toBe('');
     expect(config.sentry).toEqual({ dsn: '', environment: 'production', release: '' });
     expect(config.features).toEqual({});
   });
 
   it('reads injected runtime globals and trims them', () => {
     globals().__PUSHIT_API_BASE_URL = '  https://pushit-api.foxugly.com/api/v1  ';
+    globals().__PUSHIT_TURNSTILE_SITE_KEY = '  0x4AAAAAAA_sitekey  ';
     globals().__PUSHIT_SENTRY_DSN = ' https://abc@sentry.io/1 ';
     globals().__PUSHIT_SENTRY_ENV = 'staging';
     globals().__PUSHIT_SENTRY_RELEASE = 'pushit-frontend-1.2.3';
@@ -45,6 +49,7 @@ describe('getRuntimeConfig', () => {
     const config = getRuntimeConfig();
 
     expect(config.apiBaseUrl).toBe('https://pushit-api.foxugly.com/api/v1');
+    expect(config.turnstileSiteKey).toBe('0x4AAAAAAA_sitekey');
     expect(config.sentry).toEqual({
       dsn: 'https://abc@sentry.io/1',
       environment: 'staging',
