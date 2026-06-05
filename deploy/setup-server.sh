@@ -16,7 +16,7 @@
 # Run as 'ubuntu' (needs sudo), AFTER:
 #   - DNS A record  pushit.foxugly.com → EC2 public IP
 #   - SSM /pushit-frontend/prod/* seeded (deploy/seed-parameter-store.sh)
-#   - instance role quizonline-ec2 granted ssm:GetParametersByPath on BOTH
+#   - instance role foxugly-fleet-ec2 granted ssm:GetParametersByPath on BOTH
 #     /pushit-frontend/prod and /pushit-frontend/prod/* (no kms: config is
 #     public String) + s3:GetObject on the deploy bucket builds/pushit-frontend/*
 #
