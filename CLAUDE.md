@@ -115,7 +115,7 @@ l'authorized_keys de django) sont **obsolètes** depuis la bascule OIDC.
 
 ### IAM
 
-**Rôle d'instance `quizonline-ec2`** — `ssm:GetParametersByPath` sur les **deux**
+**Rôle d'instance `foxugly-fleet-ec2`** — `ssm:GetParametersByPath` sur les **deux**
 ARNs (le nœud nu ET le wildcard — sinon `AccessDenied`), + `s3:GetObject` pour
 pull le bundle (depuis la bascule OIDC) :
 
