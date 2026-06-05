@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -10,6 +19,7 @@ import { AppCopyService } from '../../../core/services/app-copy.service';
 import { PushitApiService } from '../../../core/services/pushit-api.service';
 import { coerceApiError } from '../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
+import { TurnstileController } from '../../../shared/turnstile/turnstile';
 
 @Component({
   selector: 'app-forgot-password-page',
@@ -17,10 +27,12 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
   templateUrl: './forgot-password-page.html',
   styleUrl: './forgot-password-page.scss',
 })
-export class ForgotPasswordPage {
+export class ForgotPasswordPage implements AfterViewInit, OnDestroy {
   private readonly appCopy = inject(AppCopyService);
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
+
+  protected readonly turnstile = new TurnstileController();
 
   readonly submitted = signal(false);
   readonly pending = signal(false);
@@ -31,23 +43,48 @@ export class ForgotPasswordPage {
     email: ['', [Validators.required, Validators.email]],
   });
 
+  @ViewChild('turnstile', { static: false })
+  protected turnstileContainer?: ElementRef<HTMLDivElement>;
+
+  ngAfterViewInit(): void {
+    this.turnstile.render(this.turnstileContainer?.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.turnstile.destroy();
+  }
+
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
+    let turnstileToken = '';
+    if (this.turnstile.enabled) {
+      turnstileToken = this.turnstile.readToken();
+      if (!turnstileToken) {
+        this.error.set({ code: 'captcha_required', detail: this.copy().captchaRequired });
+        return;
+      }
+    }
+
     this.pending.set(true);
     this.error.set(null);
 
-    this.api.forgotPassword(this.form.getRawValue().email).subscribe({
+    this.api.forgotPassword(this.form.getRawValue().email, turnstileToken || undefined).subscribe({
       next: () => {
         this.pending.set(false);
         this.submitted.set(true);
       },
       error: (err) => {
         this.pending.set(false);
-        this.error.set(coerceApiError(err));
+        const apiError = coerceApiError(err);
+        if (this.turnstile.enabled && apiError.code === 'captcha_failed') {
+          this.turnstile.reset();
+          apiError.detail = this.copy().captchaFailed;
+        }
+        this.error.set(apiError);
       },
     });
   }

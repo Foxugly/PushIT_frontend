@@ -59,7 +59,7 @@
     <app-alert [message]="registerError()!.detail" tone="danger" (dismissed)="registerError.set(null)" />
   }
 
-  @if (turnstileEnabled) {
+  @if (turnstile.enabled) {
     <div #turnstile class="register-turnstile"></div>
   }
 
