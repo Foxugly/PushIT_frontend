@@ -3,7 +3,7 @@
     <app-site-header
       [sticky]="true"
       [maxWidth]="'var(--content-width)'"
-      [username]="shell.user()?.username || 'Console'"
+      [username]="shell.user()?.email || 'Console'"
       [settingsSummary]="settings.apiBaseUrl()"
     />
 

@@ -25,7 +25,6 @@ export interface ApiErrorResponse {
 export interface UserMe {
   id: number;
   email: string;
-  username: string;
   userkey: string;
   is_active: boolean;
   language: UserLanguage;
@@ -38,7 +37,6 @@ export interface LoginRequest {
 
 export interface RegisterRequest {
   email: string;
-  username: string;
   password: string;
   language: UserLanguage;
   /** Cloudflare Turnstile token; sent only when the widget is provisioned. */

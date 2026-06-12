@@ -25,7 +25,6 @@ describe('AuthPage', () => {
     user: {
       id: 1,
       email: 'renaud@example.com',
-      username: 'renaud',
       userkey: 'usr_123',
       is_active: true,
       language: 'FR',

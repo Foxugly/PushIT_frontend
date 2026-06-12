@@ -72,7 +72,6 @@ export class RegisterPanel implements AfterViewInit, OnDestroy {
 
   readonly registerForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    username: ['', [Validators.required, Validators.maxLength(150)]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     language: [this.languagePreference.currentBackendLanguage(), [Validators.required]],
   });

@@ -4,7 +4,6 @@ import { mockConsoleApi, seedAuthenticatedSession } from './support/console-help
 const user = {
   id: 1,
   email: 'renaud@example.com',
-  username: 'renaud',
   userkey: 'usr_123',
   is_active: true,
   language: 'FR' as const,

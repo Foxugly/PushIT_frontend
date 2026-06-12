@@ -15,14 +15,6 @@
   }
 
   <label>
-    <span>{{ copy().username }}</span>
-    <input pInputText type="text" formControlName="username" placeholder="pushit-admin" class="public-input" />
-  </label>
-  @for (message of fieldErrors('username'); track message) {
-    <p class="public-field-error">{{ message }}</p>
-  }
-
-  <label>
     <span>{{ copy().password }}</span>
     <p-password
       formControlName="password"

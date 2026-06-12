@@ -3,7 +3,6 @@ import { Page } from '@playwright/test';
 type User = {
   id: number;
   email: string;
-  username: string;
   userkey: string;
   is_active: boolean;
   language: 'FR' | 'NL' | 'EN';

@@ -47,7 +47,7 @@ export class SiteHeader {
   ];
   readonly labels = computed(() => this.appCopy.current().header);
   readonly displayUsername = computed(
-    () => this.username() || this.session.user()?.username || 'Compte',
+    () => this.username() || this.session.user()?.email || 'Compte',
   );
   readonly userMenuItems = computed<MenuItem[]>(() => {
     const items: MenuItem[] = [

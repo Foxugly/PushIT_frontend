@@ -153,13 +153,13 @@ describe('ConsoleShellService', () => {
   });
 
   it('ensureLoaded reuses the stored session user when apps are already available', () => {
-    session.user.set(makeUser({ username: 'cached-user' }));
+    session.user.set(makeUser({ email: 'cached-user@example.com' }));
     service.apps.set([makeApplication()]);
     service.user.set(null);
 
     service.ensureLoaded();
 
-    expect(service.user()?.username).toBe('cached-user');
+    expect(service.user()?.email).toBe('cached-user@example.com');
     expect(api.me).not.toHaveBeenCalled();
   });
 

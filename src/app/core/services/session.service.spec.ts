@@ -15,7 +15,6 @@ describe('SessionService', () => {
   const user: UserMe = {
     id: 1,
     email: 'renaud@example.com',
-    username: 'renaud',
     userkey: 'usr_123',
     is_active: true,
     language: 'FR',
@@ -60,7 +59,7 @@ describe('SessionService', () => {
 
     expect(localStorage.getItem('pushit.accessToken')).toBe('access-token');
     expect(localStorage.getItem('pushit.refreshToken')).toBe('refresh-token');
-    expect(localStorage.getItem('pushit.user')).toContain('"username":"renaud"');
+    expect(localStorage.getItem('pushit.user')).toContain('"email":"renaud@example.com"');
     expect(sessionStorage.getItem('pushit.accessToken')).toBeNull();
   });
 

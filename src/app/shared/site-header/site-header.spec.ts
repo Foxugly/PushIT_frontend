@@ -76,12 +76,11 @@ describe('SiteHeader', () => {
     expect(text).not.toContain('Dashboard');
   });
 
-  it('shows dashboard and username when the user is authenticated', () => {
+  it('shows dashboard and the user email when the user is authenticated', () => {
     session.isAuthenticated.set(true);
     session.user.set({
       id: 1,
       email: 'renaud@example.com',
-      username: 'renaud',
       userkey: 'usr_123',
       is_active: true,
       language: 'FR',
@@ -91,7 +90,7 @@ describe('SiteHeader', () => {
 
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('Dashboard');
-    expect(text).toContain('renaud');
+    expect(text).toContain('renaud@example.com');
     expect(text).not.toContain('Se connecter');
   });
 

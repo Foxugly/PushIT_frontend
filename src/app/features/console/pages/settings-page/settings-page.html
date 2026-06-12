@@ -49,8 +49,8 @@
       </div>
 
       <div class="console-list-item__content">
-        <strong>{{ shell.user()?.username || copy().fallbackUser }}</strong>
-        <p class="console-muted">{{ shell.user()?.email || copy().fallbackEmail }}</p>
+        <strong>{{ shell.user()?.email || copy().fallbackEmail }}</strong>
+        <p class="console-muted">{{ shell.user()?.userkey }}</p>
         <p class="console-note">{{ copy().activePrefix }}: {{ settings.apiBaseUrl() }}</p>
         <p class="console-note">{{ copy().activeLanguage }}: {{ shell.user()?.language || form.getRawValue().language }}</p>
       </div>

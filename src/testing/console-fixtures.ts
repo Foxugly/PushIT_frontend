@@ -11,7 +11,6 @@ export function makeUser(overrides: Partial<UserMe> = {}): UserMe {
   return {
     id: 1,
     email: 'renaud@example.com',
-    username: 'renaud',
     userkey: 'usr_123456',
     is_active: true,
     language: 'FR',
