@@ -8,27 +8,29 @@
 
 :root {
   color-scheme: light;
-  font-family: Aptos, "Segoe UI", sans-serif;
+  // Fleet charte: Segoe UI / system stack (QuizOnline/TM).
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  // Soft slate page with a faint emerald/sky tint (fleet look — no more blue wash).
   --page-bg:
-    radial-gradient(circle at top left, rgba(160, 213, 255, 0.35), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(205, 233, 255, 0.8), transparent 30%),
-    linear-gradient(180deg, #f6fbff 0%, #eef6ff 100%);
-  --card-bg: rgba(255, 255, 255, 0.82);
-  --card-border: rgba(35, 83, 135, 0.1);
-  --card-shadow: 0 18px 48px rgba(65, 111, 170, 0.1);
-  --text-main: #18324a;
-  --text-muted: #5f7890;
-  --accent: #2a7fff;
-  --accent-soft: #dcecff;
-  --accent-strong: #0d5ed7;
-  --success-soft: #e9f7ef;
-  --success-text: #2e6a4f;
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.06), transparent 40%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  // Brand emerald (replaces the old blue accent).
+  --accent: #10b981;
+  --accent-soft: #d1fae5;
+  --accent-strong: #059669;
+  --success-soft: #d1fae5;
+  --success-text: #047857;
   --control-radius: 8px;
   --field-radius: 8px;
   --field-padding-y: 0.5rem;
@@ -44,7 +46,7 @@ body {
 
 body {
   margin: 0;
-  background: #eef6ff;
+  background: #f8fafc;
   color: var(--text-main);
 }
 
@@ -54,8 +56,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: Bahnschrift, "Trebuchet MS", sans-serif;
-  letter-spacing: -0.03em;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.02em;
+  font-weight: 650;
 }
 
 button,
@@ -330,7 +333,7 @@ a {
 
 .console-card__picker select {
   width: 100%;
-  border: 1px solid rgba(42, 127, 255, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.16);
   border-radius: var(--field-radius);
   padding: var(--field-padding-y) var(--field-padding-x);
   background: rgba(255, 255, 255, 0.88);
@@ -395,7 +398,7 @@ a {
 .console-filter-grid textarea,
 .console-filter-grid select {
   width: 100%;
-  border: 1px solid rgba(42, 127, 255, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.16);
   border-radius: var(--field-radius);
   padding: var(--field-padding-y) var(--field-padding-x);
   background: rgba(255, 255, 255, 0.88);
@@ -418,8 +421,8 @@ a {
 .console-filter-grid input:not(.p-datepicker-input):focus,
 .console-filter-grid textarea:focus,
 .console-filter-grid select:focus {
-  border-color: rgba(42, 127, 255, 0.45);
-  box-shadow: 0 0 0 4px rgba(42, 127, 255, 0.12);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
 }
 
 :where(.console-form, .console-form-grid, .console-filter-grid) textarea {
@@ -435,8 +438,8 @@ a {
 }
 
 :where(.console-form, .console-form-grid, .console-filter-grid) .p-inputtext:not(.p-datepicker-input):enabled:focus {
-  border-color: rgba(42, 127, 255, 0.45);
-  box-shadow: 0 0 0 4px rgba(42, 127, 255, 0.12);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
 }
 
 .console-checkbox {
@@ -466,9 +469,9 @@ a {
 }
 
 .console-button {
-  background: linear-gradient(135deg, #2a7fff 0%, #6bb2ff 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
   color: #fff;
-  box-shadow: 0 16px 30px rgba(42, 127, 255, 0.22);
+  box-shadow: 0 16px 30px rgba(16, 185, 129, 0.22);
 }
 
 .console-button:hover,
@@ -531,7 +534,7 @@ a {
   padding: 1rem 1.1rem;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(42, 127, 255, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
 .console-list-item__content {
@@ -576,7 +579,7 @@ a {
   padding: 1rem;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(42, 127, 255, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.08);
 }
 
 .console-stat strong {
@@ -611,7 +614,7 @@ a {
 .console-table-wrap {
   overflow: auto;
   border-radius: 24px;
-  border: 1px solid rgba(42, 127, 255, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.08);
   background: rgba(255, 255, 255, 0.6);
 }
 
@@ -626,7 +629,7 @@ a {
   padding: 0.95rem 1rem;
   text-align: left;
   vertical-align: top;
-  border-bottom: 1px solid rgba(42, 127, 255, 0.08);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.08);
 }
 
 .console-table th {
@@ -675,7 +678,9 @@ a {
 }
 
 .console-table__actions {
-  width: 240px;
+  // Size to the 6 action buttons instead of clipping them in a fixed 240px.
+  width: 1%;
+  white-space: nowrap;
   text-align: right;
 }
 
@@ -694,9 +699,9 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(42, 127, 255, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.18);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
+  background: #ffffff;
   color: var(--accent-strong);
   cursor: pointer;
   transition:
@@ -707,8 +712,8 @@ a {
 
 .console-icon-button:hover {
   transform: translateY(-1px);
-  background: rgba(220, 236, 255, 0.92);
-  box-shadow: 0 10px 18px rgba(42, 127, 255, 0.12);
+  background: var(--accent-soft);
+  box-shadow: 0 10px 18px rgba(16, 185, 129, 0.12);
 }
 
 .console-icon-button:disabled {
@@ -734,7 +739,7 @@ a {
   padding: 1rem;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(42, 127, 255, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.08);
 }
 
 .console-metric strong {
@@ -778,7 +783,7 @@ a {
   display: grid;
   gap: 0.9rem;
   padding: 1.1rem 1.2rem;
-  border: 1px solid rgba(42, 127, 255, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.72);
 }

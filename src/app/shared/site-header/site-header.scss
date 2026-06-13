@@ -9,20 +9,23 @@
   align-items: center;
   gap: 1rem;
   width: min(100%, var(--site-header-max-width, 1120px));
-  min-height: 4.75rem;
+  min-height: 3.75rem;
   margin-inline: auto;
-  padding: 1rem 1.2rem;
-  border: 1px solid var(--card-border);
-  border-radius: 1.4rem;
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: var(--card-shadow);
-  backdrop-filter: blur(16px);
+  padding: 0.55rem 1.2rem;
+  // Fleet signature: navy gradient with a sky→emerald overlay (QuizOnline/TM).
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(15, 23, 42, 0.98)),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.18), rgba(16, 185, 129, 0.12));
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+  color: #f8fafc;
 }
 
 .site-header--sticky {
   position: sticky;
-  top: 1rem;
-  z-index: 10;
+  top: 0.75rem;
+  z-index: 50;
 }
 
 .site-nav,
@@ -33,15 +36,23 @@
   min-height: 2.75rem;
 }
 
-.site-nav a,
-.login-link {
-  color: var(--text-main);
+.site-nav a {
+  color: rgba(226, 232, 240, 0.88);
   text-decoration: none;
   font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.site-nav a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .site-nav a.is-active {
-  color: var(--accent-strong);
+  color: #fff;
+  background: rgba(16, 185, 129, 0.22);
 }
 
 :host ::ng-deep .p-selectbutton .p-button {
