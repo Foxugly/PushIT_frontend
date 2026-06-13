@@ -2,14 +2,27 @@
   <div class="site-header__inner">
   <nav class="site-nav" aria-label="Main navigation">
     <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+      <i class="pi pi-home" aria-hidden="true"></i>
       {{ labels().home }}
     </a>
     @if (session.isAuthenticated()) {
-      <a routerLink="/dashboard" routerLinkActive="is-active">{{ labels().dashboard }}</a>
+      <a routerLink="/dashboard" routerLinkActive="is-active">
+        <i class="pi pi-th-large" aria-hidden="true"></i>
+        {{ labels().dashboard }}
+      </a>
     }
-    <a routerLink="/features" routerLinkActive="is-active">{{ labels().features }}</a>
-    <a routerLink="/donate" routerLinkActive="is-active">{{ labels().donate }}</a>
-    <a routerLink="/about" routerLinkActive="is-active">{{ labels().about }}</a>
+    <a routerLink="/features" routerLinkActive="is-active">
+      <i class="pi pi-bolt" aria-hidden="true"></i>
+      {{ labels().features }}
+    </a>
+    <a routerLink="/donate" routerLinkActive="is-active" class="site-nav__accent">
+      <i class="pi pi-heart" aria-hidden="true"></i>
+      {{ labels().donate }}
+    </a>
+    <a routerLink="/about" routerLinkActive="is-active">
+      <i class="pi pi-info-circle" aria-hidden="true"></i>
+      {{ labels().about }}
+    </a>
   </nav>
 
   <div class="header-actions">

@@ -42,6 +42,9 @@
 }
 
 .site-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   color: rgba(226, 232, 240, 0.88);
   text-decoration: none;
   font-weight: 600;
@@ -50,12 +53,26 @@
   transition: background 0.15s, color 0.15s;
 }
 
+.site-nav a i {
+  font-size: 0.85rem;
+}
+
 .site-nav a:hover {
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .site-nav a.is-active {
+  color: #fff;
+  background: rgba(16, 185, 129, 0.22);
+}
+
+// Accent (emerald) for the "Soutenir" call-to-action, mirroring QuizOnline.
+.site-nav a.site-nav__accent {
+  color: #6ee7b7;
+}
+
+.site-nav a.site-nav__accent:hover {
   color: #fff;
   background: rgba(16, 185, 129, 0.22);
 }
