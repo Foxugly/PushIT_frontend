@@ -52,6 +52,14 @@
                   (onClick)="openDetails(app)"
                 />
                 <p-button
+                  icon="pi pi-qrcode"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="copy().actions.qrCode"
+                  tooltipPosition="top"
+                  (onClick)="openQr(app)"
+                />
+                <p-button
                   icon="pi pi-pencil"
                   [text]="true"
                   [rounded]="true"
@@ -134,5 +142,37 @@
         />
       </app-console-dialog-actions>
     </form>
+  </p-dialog>
+
+  <p-dialog
+    [header]="copy().qr.title"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="qrApp() !== null"
+    (visibleChange)="setQrVisible($event)"
+    [style]="{ width: '24rem' }"
+  >
+    @if (qrApp(); as app) {
+      <div class="app-qr">
+        @if (qrImageUrl(); as url) {
+          <img class="app-qr__img" [src]="url" [alt]="copy().qr.title" />
+          <p class="app-qr__hint">{{ copy().qr.scanHint }}</p>
+        } @else if (qrLoading()) {
+          <p class="console-muted">{{ copy().qr.loading }}</p>
+        } @else {
+          @if (qrError(); as err) {
+            <app-alert [message]="err" tone="danger" (dismissed)="qrError.set(null)" />
+          }
+          <p class="console-muted">{{ copy().qr.tokenOnce }}</p>
+          <p-button
+            [label]="copy().qr.regenerate"
+            icon="pi pi-refresh"
+            severity="secondary"
+            (onClick)="regenerateForQr(app)"
+          />
+        }
+      </div>
+    }
   </p-dialog>
 </section>

@@ -140,6 +140,20 @@ export class PushitApiService {
     return this.http.post<ApplicationRevokeTokenResponse>(this.url(`/apps/${appId}/revoke-token/`), {});
   }
 
+  /**
+   * QR-code PNG encoding the raw app token (the same string the mobile app
+   * scans to link a device). The backend verifies `app_token` against the
+   * application's current token, so the caller must hold the raw token — only
+   * available right after create/regenerate (it's stored hashed server-side).
+   */
+  getAppQrCode(appId: number, appToken: string): Observable<Blob> {
+    return this.http.post(
+      this.url(`/apps/${appId}/qrcode/`),
+      { app_token: appToken },
+      { responseType: 'blob' },
+    );
+  }
+
   listAppQuietPeriods(appId: number): Observable<ApplicationQuietPeriod[]> {
     return this.http.get<ApplicationQuietPeriod[]>(this.url(`/apps/${appId}/quiet-periods/`));
   }

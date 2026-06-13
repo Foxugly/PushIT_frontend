@@ -1,3 +1,25 @@
 :host {
   display: block;
 }
+
+.app-qr {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.app-qr__img {
+  width: 14rem;
+  height: 14rem;
+  image-rendering: pixelated;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.app-qr__hint {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}

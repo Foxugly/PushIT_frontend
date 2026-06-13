@@ -95,6 +95,15 @@ describe('ApplicationsPage', () => {
             regenerate: 'Regenerer',
             revoke: 'Revoquer',
             delete: 'Supprimer',
+            qrCode: 'QR code',
+          },
+          qr: {
+            title: 'QR code',
+            scanHint: 'Scan',
+            tokenOnce: 'Once',
+            regenerate: 'Regen',
+            error: 'Erreur QR',
+            loading: 'Generation...',
           },
           alerts: {
             created: 'Application creee.',

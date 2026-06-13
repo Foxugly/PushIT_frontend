@@ -66,6 +66,21 @@ export class ApplicationsPage implements OnInit {
   readonly editingAppId = signal<number | null>(null);
   readonly activeAppsCount = computed(() => this.shell.apps().filter((app) => app.is_active).length);
 
+  // QR dialog: shows the app token as a scannable QR (for the mobile app to
+  // link a device). The raw token is only available right after create/
+  // regenerate (it's stored hashed), so the dialog falls back to a regenerate
+  // affordance when we don't hold it.
+  readonly qrApp = signal<ApplicationRead | null>(null);
+  readonly qrImageUrl = signal<string | null>(null);
+  readonly qrLoading = signal(false);
+  readonly qrError = signal<string | null>(null);
+  /** Raw token for the dialog's app, iff it was just (re)generated this session. */
+  readonly qrToken = computed(() => {
+    const app = this.qrApp();
+    const last = this.shell.lastGeneratedToken();
+    return app && last && last.appId === app.id ? last.token : null;
+  });
+
   ngOnInit(): void {
     const editAppId = Number(this.route.snapshot.queryParamMap.get('edit'));
     if (!Number.isFinite(editAppId) || editAppId <= 0) {
@@ -221,6 +236,74 @@ export class ApplicationsPage implements OnInit {
         });
       },
     );
+  }
+
+  openQr(app: ApplicationRead): void {
+    this.qrApp.set(app);
+    this.qrError.set(null);
+    this.clearQrImage();
+    const token = this.qrToken();
+    if (token) {
+      this.loadQr(app.id, token);
+    }
+  }
+
+  setQrVisible(visible: boolean): void {
+    if (!visible) {
+      this.closeQr();
+    }
+  }
+
+  closeQr(): void {
+    this.clearQrImage();
+    this.qrApp.set(null);
+    this.qrError.set(null);
+    this.qrLoading.set(false);
+  }
+
+  /** Regenerate the token (rotating it) so we hold the raw value, then show its QR. */
+  regenerateForQr(app: ApplicationRead): void {
+    this.qrError.set(null);
+    this.qrLoading.set(true);
+    this.shell.regenerateToken(
+      app,
+      () => {
+        const token = this.qrToken();
+        if (token) {
+          this.loadQr(app.id, token);
+        } else {
+          this.qrLoading.set(false);
+          this.qrError.set(this.copy().qr.error);
+        }
+      },
+      () => {
+        this.qrLoading.set(false);
+        this.qrError.set(this.copy().errors.regenerate);
+      },
+    );
+  }
+
+  private loadQr(appId: number, token: string): void {
+    this.qrLoading.set(true);
+    this.qrError.set(null);
+    this.api
+      .getAppQrCode(appId, token)
+      .pipe(finalize(() => this.qrLoading.set(false)))
+      .subscribe({
+        next: (blob) => {
+          this.clearQrImage();
+          this.qrImageUrl.set(URL.createObjectURL(blob));
+        },
+        error: () => this.qrError.set(this.copy().qr.error),
+      });
+  }
+
+  private clearQrImage(): void {
+    const url = this.qrImageUrl();
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
+    this.qrImageUrl.set(null);
   }
 
   revokeToken(app: ApplicationRead): void {
