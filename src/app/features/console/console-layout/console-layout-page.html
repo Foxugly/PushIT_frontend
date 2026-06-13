@@ -1,12 +1,12 @@
-<section class="console-shell">
-  <div class="console-shell__backdrop">
-    <app-site-header
-      [sticky]="true"
-      [maxWidth]="'var(--content-width)'"
-      [username]="shell.user()?.email || 'Console'"
-      [settingsSummary]="settings.apiBaseUrl()"
-    />
+<div class="app-layout">
+  <app-site-header
+    [sticky]="true"
+    [maxWidth]="'var(--content-width)'"
+    [username]="shell.user()?.email || 'Console'"
+    [settingsSummary]="settings.apiBaseUrl()"
+  />
 
+  <main class="app-layout__main">
     <div class="console-shell__body" [class.console-shell__body--no-sidebar]="hideSidebar">
       @if (!hideSidebar) {
         <aside class="console-shell__sidebar">
@@ -29,7 +29,7 @@
         }
       </main>
     </div>
+  </main>
 
-    <app-site-footer />
-  </div>
-</section>
+  <app-site-footer />
+</div>

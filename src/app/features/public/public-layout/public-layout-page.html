@@ -1,11 +1,9 @@
-<section class="public-shell">
+<div class="app-layout">
   <app-site-header [sticky]="true" />
 
-  <div class="public-shell__main">
+  <main class="app-layout__main">
     <router-outlet />
-  </div>
+  </main>
 
-  <div class="public-shell__footer">
-    <app-site-footer />
-  </div>
-</section>
+  <app-site-footer />
+</div>

@@ -3,28 +3,33 @@
   width: 100%;
 }
 
+// Full-width bar flush to the top (QuizOnline/TM): the gradient spans edge-to-edge,
+// the content is centered inside via .site-header__inner.
 .site-header {
+  width: 100%;
+  // Fleet signature: navy gradient with a sky→emerald overlay.
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(15, 23, 42, 0.98)),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.18), rgba(16, 185, 129, 0.12));
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+  color: #f8fafc;
+}
+
+.site-header__inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  width: min(100%, var(--site-header-max-width, 1120px));
-  min-height: 3.75rem;
+  width: min(100%, var(--site-header-max-width, var(--content-width)));
+  min-height: 3.5rem;
   margin-inline: auto;
-  padding: 0.55rem 1.2rem;
-  // Fleet signature: navy gradient with a sky→emerald overlay (QuizOnline/TM).
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  background:
-    linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(15, 23, 42, 0.98)),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.18), rgba(16, 185, 129, 0.12));
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
-  color: #f8fafc;
+  padding: 0.5rem 1.25rem;
 }
 
 .site-header--sticky {
   position: sticky;
-  top: 0.75rem;
+  top: 0;
   z-index: 50;
 }
 
@@ -81,7 +86,7 @@
 }
 
 @media (max-width: 800px) {
-  .site-header,
+  .site-header__inner,
   .site-nav,
   .header-actions {
     flex-direction: column;

@@ -1,4 +1,5 @@
 <header class="site-header" [class.site-header--sticky]="sticky()" [style.--site-header-max-width]="maxWidth()">
+  <div class="site-header__inner">
   <nav class="site-nav" aria-label="Main navigation">
     <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
       {{ labels().home }}
@@ -34,5 +35,6 @@
     } @else {
       <a routerLink="/auth" pButton [label]="labels().login" rounded="true" class="login-link"></a>
     }
+  </div>
   </div>
 </header>
