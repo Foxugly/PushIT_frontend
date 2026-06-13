@@ -11,9 +11,12 @@
       }
     </div>
 
-    <div class="feature-list">
-      @for (section of copy().sections; track section.title) {
-        <article class="feature-row">
+    <div class="features-grid">
+      @for (section of copy().sections; track section.title; let i = $index) {
+        <article class="feature-card">
+          <span class="feature-card__icon">
+            <i class="pi {{ sectionIcons[i] }}" aria-hidden="true"></i>
+          </span>
           <h2>{{ section.title }}</h2>
           <ul class="feature-points">
             @for (item of section.items; track item) {

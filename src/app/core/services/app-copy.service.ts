@@ -109,9 +109,24 @@ const APP_COPY = {
     about: {
       badge: 'À propos',
       title: 'À propos de PushIT.',
-      description:
-        "Cette page sert de point d'ancrage pour présenter le produit, l'équipe et la vision.",
-      placeholder: 'Contenu à venir.',
+      description: 'PushIT est une console simple pour gérer vos notifications push.',
+      sections: [
+        {
+          icon: 'pi-bolt',
+          title: 'Le produit',
+          body: 'PushIT centralise la gestion de vos applications, de vos devices et de vos campagnes de notifications push dans une console claire et moderne.',
+        },
+        {
+          icon: 'pi-building',
+          title: "L'éditeur",
+          body: 'PushIT est conçu et maintenu par Foxugly, qui développe une petite famille d\'outils web soignés.',
+        },
+        {
+          icon: 'pi-code',
+          title: 'Technologie',
+          body: 'Un backend Django REST, un frontend Angular et l\'envoi des notifications via Firebase Cloud Messaging.',
+        },
+      ],
     },
     auth: {
       eyebrow: 'Connexion',
@@ -392,9 +407,24 @@ const APP_COPY = {
     about: {
       badge: 'Over',
       title: 'Over PushIT.',
-      description:
-        'Deze pagina is bedoeld om later het product, het team en de visie voor te stellen.',
-      placeholder: 'Inhoud volgt binnenkort.',
+      description: 'PushIT is een eenvoudige console om je pushmeldingen te beheren.',
+      sections: [
+        {
+          icon: 'pi-bolt',
+          title: 'Het product',
+          body: 'PushIT centraliseert het beheer van je applicaties, devices en pushcampagnes in een heldere, moderne console.',
+        },
+        {
+          icon: 'pi-building',
+          title: 'De uitgever',
+          body: 'PushIT wordt ontworpen en onderhouden door Foxugly, dat een kleine familie van verzorgde webtools bouwt.',
+        },
+        {
+          icon: 'pi-code',
+          title: 'Technologie',
+          body: 'Een Django REST-backend, een Angular-frontend en notificaties via Firebase Cloud Messaging.',
+        },
+      ],
     },
     auth: {
       eyebrow: 'Inloggen',
@@ -675,9 +705,24 @@ const APP_COPY = {
     about: {
       badge: 'About',
       title: 'About PushIT.',
-      description:
-        'This page is a placeholder for future product, team and vision content.',
-      placeholder: 'Content coming soon.',
+      description: 'PushIT is a simple console to manage your push notifications.',
+      sections: [
+        {
+          icon: 'pi-bolt',
+          title: 'The product',
+          body: 'PushIT centralizes the management of your applications, devices and push campaigns in a clear, modern console.',
+        },
+        {
+          icon: 'pi-building',
+          title: 'The publisher',
+          body: 'PushIT is designed and maintained by Foxugly, which builds a small family of polished web tools.',
+        },
+        {
+          icon: 'pi-code',
+          title: 'Technology',
+          body: 'A Django REST backend, an Angular frontend and notifications delivered through Firebase Cloud Messaging.',
+        },
+      ],
     },
     auth: {
       eyebrow: 'Log in',

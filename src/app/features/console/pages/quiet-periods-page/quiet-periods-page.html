@@ -12,7 +12,12 @@
       <h2 class="console-resource-header__title">{{ copy().title }}</h2>
       <div class="console-card__toolbar console-resource-header__toolbar">
         <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
-        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+        <span
+          [pTooltip]="(!shell.apps().length && !devices().length) ? copy().missingTargets : ''"
+          tooltipPosition="top"
+        >
+          <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+        </span>
       </div>
     </div>
     @if (loading()) {

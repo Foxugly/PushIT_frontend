@@ -21,7 +21,7 @@ a {
 
 a:hover,
 a.is-active {
-  background: rgba(220, 236, 255, 0.96);
+  background: rgba(209, 250, 229, 0.96);
   color: var(--accent-strong);
   transform: translateX(-2px);
 }
@@ -41,7 +41,7 @@ a.is-active {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 999px;
-  background: rgba(220, 236, 255, 0.92);
+  background: rgba(209, 250, 229, 0.92);
   color: var(--accent-strong);
 }
 
@@ -63,7 +63,7 @@ a.is-active {
 
 a.is-active .console-menu-item__copy span,
 a:hover .console-menu-item__copy span {
-  color: rgba(13, 94, 215, 0.82);
+  color: rgba(5, 150, 105, 0.82);
 }
 
 .console-menu-item__badge {

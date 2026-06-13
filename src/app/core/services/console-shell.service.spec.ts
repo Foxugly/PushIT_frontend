@@ -187,7 +187,7 @@ describe('ConsoleShellService', () => {
 
     service.refreshNavigationCounts();
 
-    expect(service.error()).toBe("Impossible de rafraichir les compteurs de navigation.");
+    expect(service.error()).toBe("Impossible de rafraîchir les compteurs de navigation.");
   });
 
   it('stores generated token information when creating an app', () => {

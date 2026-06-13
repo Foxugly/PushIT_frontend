@@ -92,7 +92,7 @@ export class ConsoleShellService {
           this.refreshSupplementaryCounts(apps, devices);
         },
         error: () => {
-          this.error.set("Impossible de rafraichir les compteurs de navigation.");
+          this.error.set("Impossible de rafraîchir les compteurs de navigation.");
         },
       });
   }

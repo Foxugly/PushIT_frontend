@@ -35,8 +35,9 @@
         [label]="displayUsername()"
         icon="pi pi-angle-down"
         iconPos="right"
-        severity="contrast"
+        [text]="true"
         rounded="true"
+        styleClass="site-header__account"
         (onClick)="userMenu.toggle($event)"
       />
     } @else {

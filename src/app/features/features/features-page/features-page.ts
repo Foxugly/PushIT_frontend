@@ -18,6 +18,16 @@ export class FeaturesPage {
 
   readonly saved = signal(false);
   readonly copy = computed(() => this.appCopy.current().features);
+  // One icon per feature section (matched by index to copy().sections):
+  // general, applications, devices, notifications, quiet periods, inbound email.
+  readonly sectionIcons = [
+    'pi-sliders-h',
+    'pi-briefcase',
+    'pi-mobile',
+    'pi-bell',
+    'pi-moon',
+    'pi-envelope',
+  ];
   readonly form = this.fb.nonNullable.group({
     apiBaseUrl: [this.settings.apiBaseUrl(), [Validators.required]],
   });

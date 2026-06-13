@@ -2,6 +2,14 @@
   align-items: center;
 }
 
+// The "Applications" CTA is an <a pButton> — keep it button-styled, never the
+// browser's default underlined link (incl. on hover/focus).
+.dashboard-home__hero a,
+.dashboard-home__hero a:hover,
+.dashboard-home__hero a:focus {
+  text-decoration: none;
+}
+
 .dashboard-home__metrics {
   display: grid;
   gap: 0.85rem;
@@ -33,7 +41,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 999px;
-  background: rgba(220, 236, 255, 0.92);
+  background: rgba(209, 250, 229, 0.92);
   color: var(--accent-strong);
 }
 

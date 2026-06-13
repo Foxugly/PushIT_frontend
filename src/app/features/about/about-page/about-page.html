@@ -3,6 +3,17 @@
     <span class="public-badge">{{ copy().badge }}</span>
     <h1>{{ copy().title }}</h1>
     <p>{{ copy().description }}</p>
-    <p class="public-muted">{{ copy().placeholder }}</p>
+
+    <div class="about-grid">
+      @for (section of copy().sections; track section.title) {
+        <article class="about-card">
+          <span class="about-card__icon">
+            <i class="pi {{ section.icon }}" aria-hidden="true"></i>
+          </span>
+          <h2>{{ section.title }}</h2>
+          <p>{{ section.body }}</p>
+        </article>
+      }
+    </div>
   </section>
 </main>
