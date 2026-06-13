@@ -2,14 +2,96 @@
   display: contents;
 }
 
-.about-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
+.about-tabs {
+  margin-top: 1.25rem;
 }
 
-.about-card {
+.tab-icon {
+  margin-right: 0.5rem;
+}
+
+.tab-content {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.tab-content h2 {
+  margin: 0;
+}
+
+.tab-intro {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.mono {
+  font-family: ui-monospace, "SFMono-Regular", "Consolas", monospace;
+}
+
+.mono-link {
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+.mono-link:hover {
+  text-decoration: underline;
+}
+
+/* Company tab — definition list */
+.company-list {
+  display: grid;
+  grid-template-columns: minmax(8rem, max-content) 1fr;
+  gap: 0.6rem 1.25rem;
+  margin: 0;
+}
+
+.company-list dt {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.company-list dd {
+  margin: 0;
+}
+
+.contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Legal tab */
+.legal-sections {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.legal-block h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.legal-block ul,
+.tech-card ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+/* Technical tab — cards */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.tech-card {
   display: grid;
   gap: 0.6rem;
   align-content: start;
@@ -19,31 +101,38 @@
   background: rgba(255, 255, 255, 0.7);
 }
 
-.about-card__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 999px;
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--accent-strong);
-  font-size: 1.05rem;
-}
-
-.about-card h2 {
+.tech-card h3 {
   margin: 0;
   font-size: 1.05rem;
 }
 
-.about-card p {
+.tech-card > p {
   margin: 0;
   color: var(--text-soft);
-  line-height: 1.5;
+}
+
+.meta-block {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.meta-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 @media (max-width: 720px) {
-  .about-grid {
+  .company-list {
+    grid-template-columns: 1fr;
+    gap: 0.2rem 0;
+  }
+
+  .company-list dd {
+    margin-bottom: 0.6rem;
+  }
+
+  .tech-grid {
     grid-template-columns: 1fr;
   }
 }

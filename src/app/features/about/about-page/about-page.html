@@ -1,19 +1,118 @@
 <main class="public-content about-content">
   <section class="public-card">
-    <span class="public-badge">{{ copy().badge }}</span>
-    <h1>{{ copy().title }}</h1>
-    <p>{{ copy().description }}</p>
+    <span class="public-badge">{{ hero().badge }}</span>
+    <h1>{{ hero().title }}</h1>
 
-    <div class="about-grid">
-      @for (section of copy().sections; track section.title) {
-        <article class="about-card">
-          <span class="about-card__icon">
-            <i class="pi {{ section.icon }}" aria-hidden="true"></i>
-          </span>
-          <h2>{{ section.title }}</h2>
-          <p>{{ section.body }}</p>
-        </article>
-      }
-    </div>
+    <p-tabs [(value)]="activeTab" class="about-tabs">
+      <p-tablist>
+        <p-tab value="company">
+          <i class="pi pi-building tab-icon" aria-hidden="true"></i>
+          <span>{{ copy().tabs.company }}</span>
+        </p-tab>
+        <p-tab value="legal">
+          <i class="pi pi-shield tab-icon" aria-hidden="true"></i>
+          <span>{{ copy().tabs.legal }}</span>
+        </p-tab>
+        <p-tab value="technical">
+          <i class="pi pi-code tab-icon" aria-hidden="true"></i>
+          <span>{{ copy().tabs.technical }}</span>
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Société -->
+        <p-tabpanel value="company">
+          <article class="tab-content">
+            <h2>{{ copy().companyTitle }}</h2>
+            <p class="tab-intro">{{ copy().companyIntro }}</p>
+            <dl class="company-list">
+              <dt>{{ copy().company.companyLabel }}</dt>
+              <dd>{{ contact.company }}</dd>
+
+              <dt>{{ copy().company.vatLabel }}</dt>
+              <dd class="mono">{{ contact.vat }}</dd>
+
+              <dt>{{ copy().company.addressLabel }}</dt>
+              <dd>
+                @for (line of contact.addressLines; track line; let last = $last) {
+                  <span>{{ line }}</span>@if (!last) {<br />}
+                }
+              </dd>
+
+              <dt>{{ copy().company.emailLabel }}</dt>
+              <dd class="contact-row">
+                <span class="mono">{{ emailDisplay }}</span>
+                <p-button
+                  [label]="copy().company.emailButton"
+                  icon="pi pi-envelope"
+                  severity="secondary"
+                  size="small"
+                  (onClick)="emailClick()"
+                />
+              </dd>
+
+              <dt>{{ copy().company.phoneLabel }}</dt>
+              <dd class="mono">{{ phoneDisplay }}</dd>
+
+              <dt>{{ copy().company.websiteLabel }}</dt>
+              <dd>
+                <a [href]="contact.websiteUrl" class="mono mono-link" rel="noreferrer noopener" target="_blank">
+                  {{ contact.websiteLabel }}
+                </a>
+              </dd>
+            </dl>
+          </article>
+        </p-tabpanel>
+
+        <!-- Mentions légales -->
+        <p-tabpanel value="legal">
+          <article class="tab-content">
+            <h2>{{ copy().legalTitle }}</h2>
+            <p class="tab-intro">{{ copy().legalIntro }}</p>
+            <div class="legal-sections">
+              @for (section of copy().legalSections; track section.title) {
+                <div class="legal-block">
+                  <h3>{{ section.title }}</h3>
+                  <ul>
+                    @for (line of section.content; track line) {
+                      <li>{{ line }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </article>
+        </p-tabpanel>
+
+        <!-- Technique -->
+        <p-tabpanel value="technical">
+          <article class="tab-content">
+            <h2>{{ copy().technicalTitle }}</h2>
+            <p class="tab-intro">{{ copy().technicalIntro }}</p>
+            <div class="tech-grid">
+              @for (key of technicalCardKeys; track key) {
+                <div class="tech-card">
+                  <h3>{{ copy().cards[key].title }}</h3>
+                  <p>{{ copy().cards[key].description }}</p>
+                  @if (key === 'repository') {
+                    <div class="meta-block">
+                      <span class="meta-label">{{ copy().repositoryUrlLabel }}</span>
+                      <a class="mono mono-link" [href]="repositoryUrl" rel="noreferrer noopener" target="_blank">
+                        {{ repositoryUrl }}
+                      </a>
+                    </div>
+                  }
+                  <ul>
+                    @for (item of copy().cards[key].items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </article>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
   </section>
 </main>

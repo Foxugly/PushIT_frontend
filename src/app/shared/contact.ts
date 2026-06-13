@@ -1,0 +1,31 @@
+// Foxugly company contact info — shared across the fleet (mirrors QuizOnline /
+// TrainingManager). The email is split with [at]/[dot] markers so it isn't
+// harvested verbatim; the real address is only reassembled at click time.
+const EMAIL_USER = 'info';
+const EMAIL_HOST = 'foxugly';
+const EMAIL_TLD = 'com';
+const PHONE_PREFIX = '+32';
+const PHONE_PARTS = ['478', '811988'];
+
+export const CONTACT_INFO = {
+  name: 'Renaud Vilain',
+  company: 'Foxugly SRL',
+  vat: 'BE 1004.770.045',
+  addressLines: ['rue Nicolas Defrêcheux 22', '1030 Schaerbeek', 'Belgium'],
+  websiteLabel: 'www.foxugly.com',
+  websiteUrl: 'https://www.foxugly.com',
+} as const;
+
+export function emailDisplay(): string {
+  return `${EMAIL_USER} [at] ${EMAIL_HOST} [dot] ${EMAIL_TLD}`;
+}
+
+export function phoneDisplay(): string {
+  return `${PHONE_PREFIX} ${PHONE_PARTS.join(' ')}`;
+}
+
+export function openContactEmail(subject: string): void {
+  const address = `${EMAIL_USER}@${EMAIL_HOST}.${EMAIL_TLD}`;
+  const params = new URLSearchParams({ subject });
+  window.location.href = `mailto:${address}?${params.toString()}`;
+}
