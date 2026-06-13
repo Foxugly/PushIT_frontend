@@ -13,14 +13,8 @@
   </nav>
 
   <div class="header-actions">
-    <p-selectbutton
-      [options]="languages"
-      optionLabel="label"
-      optionValue="code"
-      [ngModel]="activeLanguage()"
-      (ngModelChange)="setLanguage($event)"
-      ariaLabel="Language switcher"
-    />
+    <app-language-menu />
+
 
     @if (session.isAuthenticated()) {
       <p-menu #userMenu [model]="userMenuItems()" [popup]="true" appendTo="body" />
