@@ -50,6 +50,20 @@ export const routes: Routes = [
           ),
         canActivate: [guestGuard],
       },
+      {
+        path: 'auth/check-email',
+        loadComponent: () =>
+          import('./features/check-email/check-email-page/check-email-page').then((m) => m.CheckEmailPage),
+        canActivate: [guestGuard],
+      },
+      {
+        path: 'auth/confirm-email/:uid/:token',
+        loadComponent: () =>
+          import('./features/confirm-email/confirm-email-page/confirm-email-page').then(
+            (m) => m.ConfirmEmailPage,
+          ),
+        canActivate: [guestGuard],
+      },
     ],
   },
   {

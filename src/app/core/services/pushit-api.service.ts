@@ -28,6 +28,7 @@ import {
   NotificationRead,
   NotificationStats,
   QuietPeriodWrite,
+  RegisterPendingResponse,
   RegisterRequest,
   UserMe,
   UserMeUpdateRequest,
@@ -55,10 +56,31 @@ export class PushitApiService {
     );
   }
 
-  register(payload: RegisterRequest): Observable<UserMe> {
-    return this.http.post<UserMe>(this.url('/auth/register/'), payload, {
+  register(payload: RegisterRequest): Observable<RegisterPendingResponse> {
+    // Account is created pending email confirmation — returns {code, detail, email},
+    // no tokens. The user confirms via the emailed link before they can log in.
+    return this.http.post<RegisterPendingResponse>(this.url('/auth/register/'), payload, {
       context: new HttpContext().set(SKIP_AUTH, true),
     });
+  }
+
+  /** Confirm an email from the uid+token in the emailed link → returns JWT
+   * tokens + user (auto-login). */
+  confirmEmail(uid: string, token: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      this.url('/auth/email/confirm/'),
+      { uid, token },
+      { context: new HttpContext().set(SKIP_AUTH, true) },
+    );
+  }
+
+  /** Re-send the confirmation link (anti-leak: always 200). */
+  resendConfirmation(email: string): Observable<void> {
+    return this.http.post<void>(
+      this.url('/auth/email/resend/'),
+      { email },
+      { context: new HttpContext().set(SKIP_AUTH, true) },
+    );
   }
 
   login(payload: LoginRequest): Observable<LoginResponse> {

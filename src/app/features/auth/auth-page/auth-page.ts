@@ -71,7 +71,16 @@ export class AuthPage {
           void this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.loginError.set(coerceApiError(error));
+          const apiError = coerceApiError(error);
+          // Unconfirmed email: send them to the "check your email" page (with resend)
+          // instead of a dead-end error.
+          if (apiError.code === 'email_not_verified') {
+            void this.router.navigate(['/auth/check-email'], {
+              state: { email: this.loginForm.getRawValue().email },
+            });
+            return;
+          }
+          this.loginError.set(apiError);
         },
       });
   }

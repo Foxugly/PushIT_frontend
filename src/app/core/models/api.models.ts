@@ -27,7 +27,16 @@ export interface UserMe {
   email: string;
   userkey: string;
   is_active: boolean;
+  email_confirmed?: boolean;
   language: UserLanguage;
+}
+
+/** Response of POST /auth/register/ — the account is created but pending email
+ * confirmation (no tokens). The user must click the emailed link before login. */
+export interface RegisterPendingResponse {
+  code: string;
+  detail: string;
+  email: string;
 }
 
 export interface LoginRequest {

@@ -117,22 +117,12 @@ export class RegisterPanel implements AfterViewInit, OnDestroy {
       .register({ ...registerPayload, ...(this.turnstile.enabled ? { turnstile_token: turnstileToken } : {}) })
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
-        next: () => {
-          this.api
-            .login({
-              email: registerPayload.email,
-              password: registerPayload.password,
-            })
-            .subscribe({
-              next: (response) => {
-                this.session.startSession(response, true);
-                this.languagePreference.applyBackendLanguage(response.user.language);
-                void this.router.navigate(['/dashboard']);
-              },
-              error: () => {
-                void this.router.navigate(['/auth']);
-              },
-            });
+        next: (pending) => {
+          // Account created, pending email confirmation — no auto-login anymore.
+          // Send the user to the "check your email" page so they click the link.
+          void this.router.navigate(['/auth/check-email'], {
+            state: { email: pending.email ?? registerPayload.email },
+          });
         },
         error: (error) => {
           const apiError = coerceApiError(error);

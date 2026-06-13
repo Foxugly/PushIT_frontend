@@ -1,0 +1,25 @@
+<section class="public-shell">
+  <div class="public-card public-card--compact public-copy">
+    <h1>{{ copy().title }}</h1>
+    <p class="public-muted">
+      {{ copy().intro }}
+      @if (email()) {
+        <strong>{{ email() }}</strong>
+      }
+    </p>
+    <p class="public-muted">{{ copy().hint }}</p>
+
+    @if (resent()) {
+      <app-alert [message]="copy().resent" tone="success" />
+    }
+
+    <div class="public-submit-row">
+      @if (email()) {
+        <p-button [label]="copy().resend" [loading]="resendPending()" severity="secondary" (onClick)="resend()" />
+      }
+    </div>
+    <div class="public-link-row">
+      <a routerLink="/auth">{{ copy().backToLogin }}</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,30 @@
+<section class="public-shell">
+  <div class="public-card public-card--compact public-copy">
+    <h1>{{ copy().title }}</h1>
+
+    @if (confirming()) {
+      <p class="public-muted">{{ copy().confirming }}</p>
+    } @else if (error()) {
+      <app-alert [message]="copy().invalid" tone="danger" />
+
+      @if (resent()) {
+        <app-alert [message]="copy().resent" tone="success" />
+      } @else {
+        <p class="public-muted">{{ copy().resendHint }}</p>
+        <form class="public-form" [formGroup]="resendForm" (ngSubmit)="resend()">
+          <label>
+            <span>{{ copy().emailLabel }}</span>
+            <input pInputText type="email" formControlName="email" class="public-input" autocomplete="email" />
+          </label>
+          <div class="public-submit-row">
+            <p-button type="submit" [label]="copy().resend" [loading]="resendPending()" />
+          </div>
+        </form>
+      }
+
+      <div class="public-link-row">
+        <a routerLink="/auth">{{ copy().backToLogin }}</a>
+      </div>
+    }
+  </div>
+</section>

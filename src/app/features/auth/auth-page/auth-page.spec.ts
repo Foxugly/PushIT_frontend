@@ -130,4 +130,28 @@ describe('AuthPage', () => {
     );
     expect(component.loginPending()).toBeFalse();
   });
+
+  it('redirects an unconfirmed account to the check-email page (no dead-end error)', () => {
+    api.login.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 403,
+            error: { code: 'email_not_verified', detail: 'Confirm your email first.' },
+          }),
+      ),
+    );
+    component.loginForm.setValue({
+      email: 'pending@example.com',
+      password: 'secret123',
+      rememberMe: false,
+    });
+
+    component.submitLogin();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/auth/check-email'], {
+      state: { email: 'pending@example.com' },
+    });
+    expect(component.loginError()).toBeNull();
+  });
 });
