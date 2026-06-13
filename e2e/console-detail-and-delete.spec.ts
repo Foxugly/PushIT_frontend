@@ -86,7 +86,7 @@ test('notification detail view renders targeted devices', async ({ page }) => {
   await page.goto('/dashboard/notifications/30');
 
   await expect(page.getByRole('heading', { name: 'Promo flash' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Devices cibles' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Devices ciblés' })).toBeVisible();
   await expect(page.getByText('iPhone Marie')).toBeVisible();
   await expect(page.getByText('Pixel QA')).toBeVisible();
 });
@@ -102,6 +102,6 @@ test('application deletion uses the shared confirmation dialog', async ({ page }
   await expect(page.getByText('Supprimer l\'application "PushIT Mobile" ?')).toBeVisible();
   await page.getByRole('button', { name: 'Confirmer' }).click();
 
-  await expect(page.getByText('Application PushIT Mobile supprimee.')).toBeVisible();
+  await expect(page.getByText('Application PushIT Mobile supprimée.')).toBeVisible();
   await expect(page.locator('tr', { hasText: 'PushIT Mobile Application mobile' })).toHaveCount(0);
 });

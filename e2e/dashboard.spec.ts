@@ -50,7 +50,7 @@ test.beforeEach(async ({ page }) => {
 test('authenticated user can open the applications dashboard', async ({ page }) => {
   await page.goto('/dashboard/applications');
 
-  await expect(page.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Tableau de bord|Dashboard/ })).toBeVisible();
   await expect(page.getByText('PushIT Mobile')).toBeVisible();
   await expect(page.getByText('renaud')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Ajouter' })).toBeVisible();
