@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
@@ -132,17 +132,19 @@ export class NotificationsPage implements OnInit {
       this.shell.setNotificationsCount(this.notificationsTotal() + this.futureNotifications().length);
     });
 
-    effect(() => {
-      const selectedAppId = this.shell.selectedAppId();
-      if (!this.notificationForm.controls.application_id.dirty) {
-        this.notificationForm.patchValue(
-          {
-            application_id: selectedAppId ? String(selectedAppId) : '',
-          },
-          { emitEvent: false },
-        );
-      }
-    });
+    // Sync the create-form's application to the shell selection — an explicit
+    // subscription (toObservable) rather than an effect, so the side-effect on
+    // the form is easy to follow.
+    toObservable(this.shell.selectedAppId)
+      .pipe(takeUntilDestroyed())
+      .subscribe((selectedAppId) => {
+        if (!this.notificationForm.controls.application_id.dirty) {
+          this.notificationForm.patchValue(
+            { application_id: selectedAppId ? String(selectedAppId) : '' },
+            { emitEvent: false },
+          );
+        }
+      });
 
     this.notificationForm.controls.application_id.valueChanges
       .pipe(takeUntilDestroyed())

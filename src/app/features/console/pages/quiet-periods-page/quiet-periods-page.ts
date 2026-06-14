@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize, forkJoin, Observable, of } from 'rxjs';
+import { combineLatest, finalize, forkJoin, Observable, of } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -129,11 +129,13 @@ export class QuietPeriodsPage implements OnInit {
   });
 
   constructor() {
-    effect(() => {
-      this.shell.apps();
-      this.devices();
-      untracked(() => this.loadQuietPeriods());
-    });
+    // (Re)load quiet periods once BOTH the apps (from the shell) and this page's
+    // devices are available, and again whenever either changes. combineLatest is
+    // explicit and waits for both sources — unlike the previous effect, which
+    // could fire with one side still empty.
+    combineLatest([toObservable(this.shell.apps), toObservable(this.devices)])
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.loadQuietPeriods());
 
     this.form.controls.period_type.valueChanges
       .pipe(takeUntilDestroyed())
