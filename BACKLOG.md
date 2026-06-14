@@ -58,10 +58,12 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
   pipe `apiError` (impur) appliqué à toutes les bannières d'erreur (console + auth/forgot/reset) :
   les statuts HTTP / validation / unexpected → message FR/NL/EN ; plus de fuite de `error.message`.
 - [x] **P2 — i18n : 2 messages du `console-shell`** *(fait)* — viennent de `API_ERROR_COPY`.
-- [ ] **P2 — `effect()` pour l'état de formulaire** *(différé : borderline)* — le cas notifications est
-  un sync **signal→form** (idiomatique en effect) ; seul le déclencheur de chargement quiet-periods est
-  discutable mais fonctionne. Faible valeur / risque de régression.
+- [x] **P2 — effects d'orchestration** *(fait 2026-06-14)* — convertis en flux explicites via
+  `toObservable` + `takeUntilDestroyed` : notifications (selectedApp→form) ; quiet-periods
+  (`combineLatest(apps, devices)` qui attend les deux sources, vs l'effect + `untracked`).
 - [x] **P2 — a11y : `[ariaLabel]` sur les boutons-icônes** *(fait 2026-06-14)* — 24 boutons (listes +
   détails) ont un `[ariaLabel]` miroir du `[pTooltip]`. *(N.B. `alt=""` des vignettes logo à côté du nom
   est correct — décoratif, pas un bug.)*
-- [ ] **P2 — `application-detail` : erreur/retry par section** *(différé : refactor modéré, valeur moyenne)*.
+- [x] **P2 — `application-detail` : charge découplée + retry** *(fait 2026-06-14)* — charge primaire
+  (l'application) séparée de la charge des données liées (devices/notifs/quiet-periods) avec sa propre
+  bannière d'erreur + bouton retry : un échec de section ne vide plus la page.
