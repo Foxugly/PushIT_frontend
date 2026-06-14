@@ -25,12 +25,19 @@ describe('DeviceDetailPage', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['getDevice', 'updateDevice']);
+    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', [
+      'getDevice',
+      'updateDevice',
+      'listDeviceNotifications',
+    ]);
     api.getDevice.and.returnValue(
       of(makeDevice({ id: 201, application_ids: [101, 102], push_token_status: 'invalid' })),
     );
     api.updateDevice.and.returnValue(
       of(makeDevice({ id: 201, device_name: 'Pixel QA', platform: 'android' })),
+    );
+    api.listDeviceNotifications.and.returnValue(
+      of({ count: 0, next: null, previous: null, results: [] }),
     );
 
     shell = {
@@ -78,6 +85,14 @@ describe('DeviceDetailPage', () => {
             createdAt: 'Creation',
           },
           labels: { never: 'Jamais', active: 'active', inactive: 'inactive' },
+          notifications: {
+            title: 'Notifications reçues',
+            allApps: 'Toutes',
+            filterLabel: 'Filtrer',
+            empty: 'Aucune notification.',
+            unknown: 'inconnu',
+            table: { title: 'Titre', application: 'Application', delivery: 'Livraison', sentAt: 'Envoyée le', actions: 'Actions' },
+          },
         },
       }),
     };

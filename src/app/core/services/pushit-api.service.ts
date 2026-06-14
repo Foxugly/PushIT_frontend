@@ -14,11 +14,14 @@ import {
   ApplicationRevokeTokenResponse,
   ApplicationTokenRegenerateResponse,
   ApplicationUpdateRequest,
+  DeviceNotificationFilters,
+  DeviceNotificationRead,
   DeviceQuietPeriod,
   DeviceLinkRequest,
   DeviceLinkResponse,
   DeviceRead,
   DeviceUpdateRequest,
+  Paginated,
   LoginRequest,
   LoginResponse,
   NotificationCreateRequest,
@@ -251,6 +254,17 @@ export class PushitApiService {
     return this.http.post<DeviceLinkResponse>(this.url('/devices/link/'), payload, {
       headers: new HttpHeaders({ 'X-App-Token': appToken }),
     });
+  }
+
+  // Notifications delivered to a device (owner reverse view). Paginated.
+  listDeviceNotifications(
+    deviceId: number,
+    filters: DeviceNotificationFilters = {},
+  ): Observable<Paginated<DeviceNotificationRead>> {
+    return this.http.get<Paginated<DeviceNotificationRead>>(
+      this.url(`/devices/${deviceId}/notifications/`),
+      { params: this.buildParams(filters) },
+    );
   }
 
   listNotifications(filters: NotificationFilters): Observable<NotificationRead[]> {

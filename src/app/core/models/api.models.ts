@@ -234,3 +234,34 @@ export interface AppNotificationFilters {
   has_quiet_period_shift?: boolean | null;
   ordering?: NotificationOrdering | '' | null;
 }
+
+export type DeliveryStatus = 'pending' | 'sent' | 'failed';
+
+/** A notification as delivered to one device (owner reverse view). */
+export interface DeviceNotificationRead {
+  id: number;
+  application_id: number;
+  application_name: string;
+  application_logo: string | null;
+  title: string;
+  message: string;
+  status: NotificationStatus;
+  created_at: string;
+  sent_at: string | null;
+  delivery_status: DeliveryStatus | null;
+  delivery_sent_at: string | null;
+  delivery_attempt_count: number;
+}
+
+/** DRF PageNumberPagination envelope. */
+export interface Paginated<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface DeviceNotificationFilters {
+  application_id?: number | null;
+  page?: number | null;
+}

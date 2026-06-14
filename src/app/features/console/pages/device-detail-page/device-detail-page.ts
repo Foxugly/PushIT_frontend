@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -11,9 +11,13 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { finalize } from 'rxjs';
 
+import { TableLazyLoadEvent } from 'primeng/table';
+
 import {
   ApplicationRead,
   ApiErrorResponse,
+  DeliveryStatus,
+  DeviceNotificationRead,
   DevicePlatform,
   DeviceRead,
   PushTokenStatus,
@@ -36,6 +40,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     CommonModule,
     RouterLink,
     ReactiveFormsModule,
+    FormsModule,
     DatePipe,
     AppAlert,
     ConsoleDetailHeader,
@@ -101,6 +106,19 @@ export class DeviceDetailPage implements OnInit {
   });
   readonly platformOptions: DevicePlatform[] = ['android', 'ios'];
   readonly statusOptions: PushTokenStatus[] = ['active', 'invalid', 'revoked'];
+
+  // Notifications delivered to this device (paginated, owner reverse view).
+  readonly deviceNotifications = signal<DeviceNotificationRead[]>([]);
+  readonly notifTotal = signal(0);
+  readonly notifLoading = signal(false);
+  readonly notifError = signal<ApiErrorResponse | null>(null);
+  readonly notifAppFilter = signal<number | null>(null);
+  readonly notifRows = 50; // matches the backend PAGE_SIZE
+  private notifFirst = 0;
+  readonly notifAppFilterOptions = computed(() => [
+    { label: this.copy().notifications.allApps, value: null as number | null },
+    ...this.linkedApplications().map((app) => ({ label: app.name, value: app.id as number | null })),
+  ]);
 
   readonly editForm = this.fb.nonNullable.group({
     device_name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -199,6 +217,52 @@ export class DeviceDetailPage implements OnInit {
 
   appSeverity(app: ApplicationRead): 'success' | 'secondary' {
     return app.is_active ? 'success' : 'secondary';
+  }
+
+  deliveryStatusSeverity(status: DeliveryStatus | null): 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'sent':
+        return 'success';
+      case 'pending':
+        return 'warn';
+      case 'failed':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  }
+
+  loadDeviceNotifications(event?: TableLazyLoadEvent): void {
+    const currentDevice = this.device();
+    if (!currentDevice) {
+      return;
+    }
+    if (event) {
+      this.notifFirst = event.first ?? 0;
+    }
+    const page = Math.floor(this.notifFirst / this.notifRows) + 1;
+    this.notifLoading.set(true);
+    this.notifError.set(null);
+    this.api
+      .listDeviceNotifications(currentDevice.id, { page, application_id: this.notifAppFilter() })
+      .pipe(finalize(() => this.notifLoading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.deviceNotifications.set(response.results);
+          this.notifTotal.set(response.count);
+        },
+        error: (error) => {
+          this.notifError.set(coerceApiError(error));
+          this.deviceNotifications.set([]);
+          this.notifTotal.set(0);
+        },
+      });
+  }
+
+  onNotifAppFilterChange(applicationId: number | null): void {
+    this.notifAppFilter.set(applicationId);
+    this.notifFirst = 0; // back to the first page when the filter changes
+    this.loadDeviceNotifications();
   }
 
   deviceFacts(): ConsoleFactItem[] {
