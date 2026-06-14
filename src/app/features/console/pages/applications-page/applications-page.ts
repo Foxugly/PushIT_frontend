@@ -291,18 +291,19 @@ export class ApplicationsPage implements OnInit {
       .pipe(finalize(() => this.qrLoading.set(false)))
       .subscribe({
         next: (blob) => {
-          this.clearQrImage();
-          this.qrImageUrl.set(URL.createObjectURL(blob));
+          // Read as a data: URL rather than a blob: object URL — the enforced
+          // CSP allows `img-src data:` but not `blob:`, so a blob URL would be
+          // silently blocked and the QR would never render.
+          const reader = new FileReader();
+          reader.onloadend = () => this.qrImageUrl.set(reader.result as string);
+          reader.onerror = () => this.qrError.set(this.copy().qr.error);
+          reader.readAsDataURL(blob);
         },
         error: () => this.qrError.set(this.copy().qr.error),
       });
   }
 
   private clearQrImage(): void {
-    const url = this.qrImageUrl();
-    if (url) {
-      URL.revokeObjectURL(url);
-    }
     this.qrImageUrl.set(null);
   }
 
