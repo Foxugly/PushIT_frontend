@@ -143,6 +143,15 @@ export interface QuietPeriodWrite {
   is_active: boolean;
 }
 
+export type UnlinkSource = 'device_button' | 'inbox' | 'takeover' | '';
+
+export interface DeviceUnlinkedApplication {
+  application_id: number;
+  application_name: string;
+  unlinked_at: string | null;
+  unlink_source: UnlinkSource;
+}
+
 export interface DeviceRead {
   id: number;
   device_name: string;
@@ -151,6 +160,9 @@ export interface DeviceRead {
   last_seen_at: string | null;
   created_at: string;
   application_ids: number[];
+  // Past (deactivated) links, with audit — lets the console explain a device that
+  // received notifications from an app it's no longer linked to.
+  unlinked_applications: DeviceUnlinkedApplication[];
 }
 
 export interface DeviceUpdateRequest {

@@ -18,3 +18,26 @@
     margin: 0;
   }
 }
+
+// Past (unlinked) applications — muted, below the active linked-apps table.
+.device-unlinked {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
+}
+
+.device-unlinked__title {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.device-unlinked__list {
+  margin: 0;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}

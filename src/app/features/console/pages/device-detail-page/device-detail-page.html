@@ -73,6 +73,24 @@
           } @else {
             <p class="console-muted">{{ copy().applicationsEmpty }}</p>
           }
+
+          @if (currentDevice.unlinked_applications.length) {
+            <div class="device-unlinked">
+              <h4 class="device-unlinked__title">{{ copy().unlinkedTitle }}</h4>
+              <ul class="device-unlinked__list">
+                @for (u of currentDevice.unlinked_applications; track u.application_id) {
+                  <li class="device-unlinked__item">
+                    <a class="console-table__link" [routerLink]="['/dashboard/applications', u.application_id]">{{ u.application_name }}</a>
+                    <span class="console-muted">
+                      — {{ copy().unlinkedOn }}
+                      {{ u.unlinked_at ? (u.unlinked_at | date: 'dd/MM/yyyy HH:mm') : copy().unlinkedUnknownDate }}
+                      · {{ unlinkSourceLabel(u.unlink_source) }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
         </article>
 
         <article class="console-detail-panel console-detail-panel--wide">

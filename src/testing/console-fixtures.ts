@@ -44,6 +44,7 @@ export function makeDevice(overrides: Partial<DeviceRead> = {}): DeviceRead {
     last_seen_at: '2026-03-27T18:00:00Z',
     created_at: '2026-03-26T10:00:00Z',
     application_ids: [101],
+    unlinked_applications: [],
     ...overrides,
   };
 }

@@ -21,6 +21,7 @@ import {
   DevicePlatform,
   DeviceRead,
   PushTokenStatus,
+  UnlinkSource,
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
@@ -218,6 +219,20 @@ export class DeviceDetailPage implements OnInit {
 
   appSeverity(app: ApplicationRead): 'success' | 'secondary' {
     return app.is_active ? 'success' : 'secondary';
+  }
+
+  unlinkSourceLabel(source: UnlinkSource): string {
+    const sources = this.copy().unlinkSources;
+    switch (source) {
+      case 'device_button':
+        return sources.deviceButton;
+      case 'inbox':
+        return sources.inbox;
+      case 'takeover':
+        return sources.takeover;
+      default:
+        return sources.unknown;
+    }
   }
 
   deliveryStatusSeverity(status: DeliveryStatus | null): 'success' | 'warn' | 'danger' | 'secondary' {
