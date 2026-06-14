@@ -54,10 +54,10 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 - [x] **P2 — Souscriptions sans `takeUntilDestroyed()`** *(fait)* — `devices-page` (linkDevice),
   `applications-page` (upload/delete logo).
 - [x] **P2 — État de chargement manquant** sur `applications-page` *(fait)* — spinner pendant le fetch initial.
-- [ ] **P2 — Erreurs API brutes non traduites** *(différé : refactor transverse)* — `coerceApiError()`
-  relaie surtout `body.detail` (message serveur, localisable côté backend) ; seuls des fallbacks rares
-  sont FR en dur. Mapper « code → clé i18n » touche ~7 call sites et demande une décision de design.
-- [ ] **P2 — i18n : 2 messages FR en dur dans `console-shell.service.ts`** *(différé avec le refactor i18n d'erreurs)*.
+- [x] **P2 — Erreurs API localisées** *(fait 2026-06-14)* — `API_ERROR_COPY` + `localizeApiError()` +
+  pipe `apiError` (impur) appliqué à toutes les bannières d'erreur (console + auth/forgot/reset) :
+  les statuts HTTP / validation / unexpected → message FR/NL/EN ; plus de fuite de `error.message`.
+- [x] **P2 — i18n : 2 messages du `console-shell`** *(fait)* — viennent de `API_ERROR_COPY`.
 - [ ] **P2 — `effect()` pour l'état de formulaire** *(différé : borderline)* — le cas notifications est
   un sync **signal→form** (idiomatique en effect) ; seul le déclencheur de chargement quiet-periods est
   discutable mais fonctionne. Faible valeur / risque de régression.
