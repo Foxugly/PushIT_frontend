@@ -15,9 +15,8 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 
 ## À faire
 
-- [ ] **P2 — Pagination de la liste notifications** : `/dashboard/notifications` charge **tout**
-  d'un coup (historique + futures), sans pagination. Reprendre le pattern paginé lazy fait pour
-  les notifs-par-device (nécessite de paginer aussi côté backend `/notifications/`).
+- [x] **P2 — Pagination de la liste notifications** *(fait 2026-06-14)* — historique en pagination
+  serveur lazy (split historique/futures). Voir la section « Audit » → cluster pagination.
 - [ ] **P3 — Logo d'app en avatar** : on a le logo, ne l'afficher que sur le mobile est dommage.
   L'ajouter en avatar dans la liste des applications / des notifications pour la cohérence visuelle.
 - [ ] **P3 — Filtre par device sur la liste notifications** : symétrique du filtre par app existant.
