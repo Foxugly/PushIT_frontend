@@ -19,8 +19,10 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
   serveur lazy (split historique/futures). Voir la section « Audit » → cluster pagination.
 - [x] **P2 — Sync des locales i18n** *(fait 2026-06-14)* — `copy-locale-parity.spec.ts` : échec CI si
   FR/NL/EN n'ont pas exactement les mêmes clés (`CONSOLE_COPY`/`APP_COPY` exportés).
-- [ ] **P3 — Logo d'app en avatar** dans les listes web *(différé : polish ; le logo est déjà sur mobile + détail)*.
-- [ ] **P3 — Filtre par device sur la liste notifications** *(différé : symétrie, faible valeur)*.
+- [x] **P3 — Logo d'app en avatar** *(fait 2026-06-14)* — avatar dans la liste applications (déjà présent)
+  + ajouté à la liste notifications (`NotificationRead.application_logo`).
+- [ ] **P3 — Filtre par device sur la liste notifications** *(différé : nécessite un filtre `device_id`
+  côté backend `/notifications/` — donc pas « frontend » ; faible valeur)*.
 
 ## Audit multi-agents (2026-06-14) — constats confirmés
 
@@ -37,9 +39,13 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
   (`pushit.foxugly.com` → `pushit-api.foxugly.com`) — un cookie httpOnly compliquerait SameSite/CSRF/partage.
   Passer en cookies serait un écart au standard, pas un alignement. Risque résiduel XSS atténué par la CSP
   forte (durcie : `script-src-attr 'unsafe-inline'` retiré). Cf. CLAUDE.md (« JWT Bearer, pas de cookie »).
-- [ ] **P2 — uid/token e-mail/reset dans l'URL** *(différé : surtout « documenter » ; envisager un token signé unique)*.
-- [ ] **P3 — Refresh token dans le body du logout** *(différé : le backend en a besoin pour révoquer ; nginx ne logge pas les bodies)*.
-- [ ] **P3 — Pas de meta CSP fallback** *(différé : l'app est liée à nginx+SSM ; servir sans casserait déjà le runtime-config)*.
+- [x] **P2 — uid/token e-mail/reset dans l'URL** *(fait 2026-06-14)* — `Location.replaceState()` après
+  capture sur confirm-email + reset-password → retirés de la barre d'URL / historique / referer.
+- [x] **P3 — Refresh token dans le body du logout** → **accepté (won't-fix)** : le backend en a besoin
+  pour révoquer le refresh token, et nginx ne logge pas les bodies de requête. Pas de fuite réelle.
+- [x] **P3 — Pas de meta CSP fallback** → **accepté (won't-fix)** : l'app est liée à nginx+SSM (servir
+  sans casserait déjà le runtime-config) ; un `<meta>` CSP statique sans le nonce du header entrerait en
+  conflit avec le script de config inline nonce'd. La CSP via header nginx reste la source unique.
 
 ### Qualité / UX
 - [~] **P1 — Pagination (cluster, 2026-06-14)** : backend `OptionalPageNumberPagination` (opt-in via
