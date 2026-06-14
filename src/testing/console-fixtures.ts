@@ -26,6 +26,7 @@ export function makeApplication(overrides: Partial<ApplicationRead> = {}): Appli
     app_token_prefix: 'apt_12345678',
     inbound_email_alias: 'apt_fc4471fe12345678',
     inbound_email_address: 'apt_fc4471fe12345678@pushit.com',
+    logo: null,
     is_active: true,
     revoked_at: null,
     last_used_at: null,

@@ -238,6 +238,52 @@ export class ApplicationsPage implements OnInit {
     );
   }
 
+  // Logo of the app currently open in the edit dialog (reflects shell updates).
+  readonly editingApp = computed(() =>
+    this.shell.apps().find((a) => a.id === this.editingAppId()) ?? null,
+  );
+  readonly logoPending = signal(false);
+
+  onLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const appId = this.editingAppId();
+    if (!file || !appId) {
+      return;
+    }
+    this.logoPending.set(true);
+    this.error.set(null);
+    this.api.uploadAppLogo(appId, file).subscribe({
+      next: () => {
+        this.logoPending.set(false);
+        input.value = '';
+        this.shell.loadShell(appId);
+      },
+      error: (err) => {
+        this.logoPending.set(false);
+        this.error.set(coerceApiError(err));
+      },
+    });
+  }
+
+  removeLogo(): void {
+    const appId = this.editingAppId();
+    if (!appId) {
+      return;
+    }
+    this.logoPending.set(true);
+    this.api.deleteAppLogo(appId).subscribe({
+      next: () => {
+        this.logoPending.set(false);
+        this.shell.loadShell(appId);
+      },
+      error: (err) => {
+        this.logoPending.set(false);
+        this.error.set(coerceApiError(err));
+      },
+    });
+  }
+
   openQr(app: ApplicationRead): void {
     this.qrApp.set(app);
     this.qrError.set(null);

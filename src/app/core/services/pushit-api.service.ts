@@ -154,6 +154,16 @@ export class PushitApiService {
     );
   }
 
+  uploadAppLogo(appId: number, file: File): Observable<ApplicationRead> {
+    const form = new FormData();
+    form.append('logo', file);
+    return this.http.post<ApplicationRead>(this.url(`/apps/${appId}/logo/`), form);
+  }
+
+  deleteAppLogo(appId: number): Observable<void> {
+    return this.http.delete<void>(this.url(`/apps/${appId}/logo/`));
+  }
+
   listAppQuietPeriods(appId: number): Observable<ApplicationQuietPeriod[]> {
     return this.http.get<ApplicationQuietPeriod[]>(this.url(`/apps/${appId}/quiet-periods/`));
   }

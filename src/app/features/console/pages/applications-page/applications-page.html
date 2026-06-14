@@ -31,9 +31,14 @@
         <ng-template pTemplate="body" let-app>
           <tr>
             <td class="console-table__name">
-              <a class="console-table__link" [routerLink]="['/dashboard/applications', app.id]">
-                <strong>{{ app.name }}</strong>
-              </a>
+              <div class="app-name-cell">
+                @if (app.logo) {
+                  <img class="app-logo-thumb" [src]="app.logo" alt="" />
+                }
+                <a class="console-table__link" [routerLink]="['/dashboard/applications', app.id]">
+                  <strong>{{ app.name }}</strong>
+                </a>
+              </div>
             </td>
             <td>{{ app.description || copy().noDescription }}</td>
             <td>{{ app.app_token_prefix }}</td>
@@ -129,6 +134,34 @@
         [nameMessages]="fieldErrors('name')"
         [descriptionMessages]="fieldErrors('description')"
       />
+
+      @if (modalMode() === 'edit') {
+        <div class="app-logo-field">
+          <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+          <div class="app-logo-field__row">
+            @if (editingApp()?.logo) {
+              <img class="app-logo-preview" [src]="editingApp()!.logo!" alt="" />
+            } @else {
+              <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+            }
+            <input
+              type="file"
+              accept="image/*"
+              [disabled]="logoPending()"
+              (change)="onLogoSelected($event)"
+            />
+            @if (editingApp()?.logo) {
+              <p-button
+                [label]="copy().logo.remove"
+                [text]="true"
+                severity="danger"
+                [disabled]="logoPending()"
+                (onClick)="removeLogo()"
+              />
+            }
+          </div>
+        </div>
+      }
 
       @if (error()?.detail) {
         <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />

@@ -105,6 +105,11 @@ describe('ApplicationsPage', () => {
             error: 'Erreur QR',
             loading: 'Generation...',
           },
+          logo: {
+            label: 'Logo',
+            none: 'Aucun logo',
+            remove: 'Supprimer le logo',
+          },
           alerts: {
             created: 'Application creee.',
             updated: 'Application {name} mise a jour.',

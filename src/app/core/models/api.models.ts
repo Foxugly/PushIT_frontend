@@ -73,6 +73,7 @@ export interface ApplicationRead {
   app_token_prefix: string;
   inbound_email_alias: string;
   inbound_email_address: string;
+  logo: string | null;
   is_active: boolean;
   revoked_at: string | null;
   last_used_at: string | null;
