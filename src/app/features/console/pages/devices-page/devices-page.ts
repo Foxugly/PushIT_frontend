@@ -25,6 +25,7 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { DeviceEditFormFields } from '../../components/device-edit-form-fields/device-edit-form-fields';
@@ -36,7 +37,7 @@ import { DeviceEditFormFields } from '../../components/device-edit-form-fields/d
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
-    AppAlert,
+    AppAlert, ApiErrorMessagePipe,
     ConsoleDialogActions,
     DeviceEditFormFields,
     ButtonModule,

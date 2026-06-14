@@ -28,7 +28,7 @@
     </app-console-detail-header>
 
     @if (error()?.detail) {
-      <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
+      <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
     }
 
     @if (loading() && !notification()) {
@@ -136,7 +136,7 @@
       </label>
 
       @if (editError()?.detail) {
-        <app-alert [message]="editError()!.detail" tone="danger" (dismissed)="editError.set(null)" />
+        <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
       }
 
       <app-console-dialog-actions (cancelled)="closeEditModal()">

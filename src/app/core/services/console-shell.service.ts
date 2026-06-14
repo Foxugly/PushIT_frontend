@@ -3,7 +3,9 @@ import { finalize, forkJoin, map, of, retry, switchMap } from 'rxjs';
 import * as Sentry from '@sentry/angular';
 
 import { ApplicationCreateRequest, ApplicationRead, UserMe } from '../models/api.models';
+import { API_ERROR_COPY } from '../utils/api-error-copy';
 import { LanguagePreferenceService } from './language-preference.service';
+import { PublicI18nService } from './public-i18n.service';
 import { PushitApiService } from './pushit-api.service';
 import { SessionService } from './session.service';
 
@@ -12,6 +14,7 @@ export class ConsoleShellService {
   private readonly api = inject(PushitApiService);
   private readonly session = inject(SessionService);
   private readonly languagePreference = inject(LanguagePreferenceService);
+  private readonly i18n = inject(PublicI18nService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -58,7 +61,7 @@ export class ConsoleShellService {
           this.refreshSupplementaryCounts(apps, devices);
         },
         error: (error) => {
-          this.error.set("Impossible de charger l'espace console.");
+          this.error.set(API_ERROR_COPY[this.i18n.language()].shellLoadFailed);
           Sentry.captureException(error);
         },
       });
@@ -110,7 +113,7 @@ export class ConsoleShellService {
           this.refreshSupplementaryCounts(apps, devices);
         },
         error: (error) => {
-          this.error.set("Impossible de rafraîchir les compteurs de navigation.");
+          this.error.set(API_ERROR_COPY[this.i18n.language()].shellRefreshFailed);
           Sentry.captureException(error);
         },
       });

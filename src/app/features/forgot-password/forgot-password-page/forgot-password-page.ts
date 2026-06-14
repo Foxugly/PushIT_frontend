@@ -19,11 +19,12 @@ import { AppCopyService } from '../../../core/services/app-copy.service';
 import { PushitApiService } from '../../../core/services/pushit-api.service';
 import { coerceApiError } from '../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../core/pipes/api-error-message.pipe';
 import { TurnstileController } from '../../../shared/turnstile/turnstile';
 
 @Component({
   selector: 'app-forgot-password-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ButtonModule, InputTextModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, InputTextModule],
   templateUrl: './forgot-password-page.html',
   styleUrl: './forgot-password-page.scss',
 })

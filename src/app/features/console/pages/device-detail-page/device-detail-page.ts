@@ -28,6 +28,7 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { DeviceEditFormFields } from '../../components/device-edit-form-fields/device-edit-form-fields';
@@ -42,7 +43,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     ReactiveFormsModule,
     FormsModule,
     DatePipe,
-    AppAlert,
+    AppAlert, ApiErrorMessagePipe,
     ConsoleDetailHeader,
     ConsoleDialogActions,
     DeviceEditFormFields,

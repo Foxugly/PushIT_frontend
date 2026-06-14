@@ -17,6 +17,7 @@ import { AppCopyService } from '../../../core/services/app-copy.service';
 import { PushitApiService } from '../../../core/services/pushit-api.service';
 import { coerceApiError } from '../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../core/pipes/api-error-message.pipe';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const pwd = group.get('password')?.value as string;
@@ -27,7 +28,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-reset-password-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ButtonModule, PasswordModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, PasswordModule],
   templateUrl: './reset-password-page.html',
   styleUrl: './reset-password-page.scss',
 })

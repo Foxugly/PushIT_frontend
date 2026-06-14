@@ -30,6 +30,7 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { EmojiPickerPopover } from '../../../../shared/emoji-picker-popover/emoji-picker-popover';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
@@ -41,7 +42,7 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
-    AppAlert,
+    AppAlert, ApiErrorMessagePipe,
     ConsoleDialogActions,
     EmojiPickerPopover,
     ButtonModule,

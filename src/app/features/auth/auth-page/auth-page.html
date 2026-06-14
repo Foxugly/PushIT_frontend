@@ -40,7 +40,7 @@
   </label>
 
   @if (loginError()?.detail) {
-    <app-alert [message]="loginError()!.detail" tone="danger" (dismissed)="loginError.set(null)" />
+    <app-alert [message]="loginError()! | apiError" tone="danger" (dismissed)="loginError.set(null)" />
   }
 
   <div class="public-link-row link-row">

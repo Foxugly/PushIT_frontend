@@ -26,6 +26,7 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 import { formatDateTimeFrBe, formatTimeLabel, weekdayShortLabel } from '../../../../core/utils/date-format.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppAlertTone } from '../../../../shared/app-alert/app-alert';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
 import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
@@ -40,7 +41,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
-    AppAlert,
+    AppAlert, ApiErrorMessagePipe,
     ApplicationFormFields,
     ConsoleDetailHeader,
     ConsoleDialogActions,

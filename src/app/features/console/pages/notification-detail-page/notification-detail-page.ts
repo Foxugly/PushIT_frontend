@@ -25,6 +25,7 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
@@ -37,7 +38,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     RouterLink,
     ReactiveFormsModule,
     DatePipe,
-    AppAlert,
+    AppAlert, ApiErrorMessagePipe,
     ConsoleDetailHeader,
     ConsoleDialogActions,
     ConsoleFactsTable,

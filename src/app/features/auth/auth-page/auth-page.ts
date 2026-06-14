@@ -15,6 +15,7 @@ import { PushitApiService } from '../../../core/services/pushit-api.service';
 import { SessionService } from '../../../core/services/session.service';
 import { coerceApiError, errorFieldMessages } from '../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
+import { ApiErrorMessagePipe } from '../../../core/pipes/api-error-message.pipe';
 
 @Component({
   selector: 'app-auth-page',
@@ -22,7 +23,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    AppAlert,
+    AppAlert, ApiErrorMessagePipe,
     ButtonModule,
     CheckboxModule,
     InputTextModule,

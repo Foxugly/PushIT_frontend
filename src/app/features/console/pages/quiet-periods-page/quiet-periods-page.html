@@ -4,7 +4,7 @@
   }
 
   @if (error()?.detail) {
-    <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
+    <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
   }
 
   <section class="console-card">

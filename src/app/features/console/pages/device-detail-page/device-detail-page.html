@@ -21,7 +21,7 @@
     </app-console-detail-header>
 
     @if (error()?.detail) {
-      <app-alert [message]="error()!.detail" tone="danger" (dismissed)="error.set(null)" />
+      <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
     }
 
     @if (loading() && !device()) {
@@ -93,7 +93,7 @@
           </div>
 
           @if (notifError()?.detail) {
-            <app-alert [message]="notifError()!.detail" tone="danger" (dismissed)="notifError.set(null)" />
+            <app-alert [message]="notifError()! | apiError" tone="danger" (dismissed)="notifError.set(null)" />
           }
 
           <p-table
@@ -172,7 +172,7 @@
       />
 
       @if (editError()?.detail) {
-        <app-alert [message]="editError()!.detail" tone="danger" (dismissed)="editError.set(null)" />
+        <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
       }
 
       <app-console-dialog-actions (cancelled)="closeEditModal()">
