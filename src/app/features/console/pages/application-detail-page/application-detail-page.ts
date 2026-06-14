@@ -72,6 +72,11 @@ export class ApplicationDetailPage implements OnInit {
   readonly quietPeriods = signal<ApplicationQuietPeriod[]>([]);
   readonly loading = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
+  // Related data (devices / notifications / quiet periods) loads independently
+  // of the application itself, so one failing section no longer blanks the page.
+  readonly relatedError = signal<ApiErrorResponse | null>(null);
+  readonly relatedLoading = signal(false);
+  private appId = 0;
   readonly banner = signal<string | null>(null);
   readonly bannerTone = signal<AppAlertTone>('success');
   readonly editError = signal<ApiErrorResponse | null>(null);
@@ -121,9 +126,15 @@ export class ApplicationDetailPage implements OnInit {
       return;
     }
 
+    this.appId = appId;
     const cachedApplication = this.shell.apps().find((app) => app.id === appId) ?? null;
     this.application.set(cachedApplication);
     this.loadApplication(appId);
+    this.loadRelated(appId);
+  }
+
+  retryRelated(): void {
+    this.loadRelated(this.appId);
   }
 
   appSeverity(app: ApplicationRead): 'success' | 'secondary' {
@@ -250,12 +261,27 @@ export class ApplicationDetailPage implements OnInit {
       });
   }
 
+  /** Primary load: the application itself (drives the header/title). */
   private loadApplication(appId: number): void {
     this.loading.set(true);
     this.error.set(null);
 
+    this.api
+      .getApp(appId)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (application) => this.application.set(application),
+        error: (error) => this.error.set(coerceApiError(error)),
+      });
+  }
+
+  /** Secondary load: the related panels. Failures surface a dismissible banner
+   * with a retry, without blanking the page or the application header. */
+  private loadRelated(appId: number): void {
+    this.relatedLoading.set(true);
+    this.relatedError.set(null);
+
     forkJoin({
-      application: this.api.getApp(appId),
       devices: this.api.listDevices(),
       notifications: this.api.listNotifications({
         application_id: appId,
@@ -267,17 +293,16 @@ export class ApplicationDetailPage implements OnInit {
       }),
       quietPeriods: this.api.listAppQuietPeriods(appId),
     })
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(finalize(() => this.relatedLoading.set(false)))
       .subscribe({
-        next: ({ application, devices, notifications, futureNotifications, quietPeriods }) => {
-          this.application.set(application);
+        next: ({ devices, notifications, futureNotifications, quietPeriods }) => {
           this.devices.set(devices.filter((device) => device.application_ids.includes(appId)));
           this.notifications.set(notifications);
           this.futureNotifications.set(futureNotifications);
           this.quietPeriods.set(quietPeriods);
         },
         error: (error) => {
-          this.error.set(coerceApiError(error));
+          this.relatedError.set(coerceApiError(error));
         },
       });
   }

@@ -32,6 +32,16 @@
     @if (loading() && !application()) {
       <p class="console-empty">{{ copy().loading }}</p>
     } @else if (application(); as app) {
+      @if (relatedError(); as relErr) {
+        <app-alert [message]="relErr | apiError" tone="danger" (dismissed)="relatedError.set(null)" />
+        <p-button
+          [label]="copy().retry"
+          icon="pi pi-refresh"
+          severity="secondary"
+          [loading]="relatedLoading()"
+          (onClick)="retryRelated()"
+        />
+      }
       <div class="console-detail-grid">
         <article class="console-detail-panel console-detail-panel--wide">
           <div class="application-detail-section__header application-detail-email__header">
