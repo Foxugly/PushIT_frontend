@@ -114,7 +114,13 @@
     @if (loading()) {
       <p class="console-empty">{{ copy().loading }}</p>
     } @else {
-      <p-table [value]="notifications().concat(futureNotifications())" styleClass="p-datatable-sm">
+      <p-table
+        [value]="notifications().concat(futureNotifications())"
+        [paginator]="true"
+        [rows]="25"
+        [rowsPerPageOptions]="[25, 50, 100]"
+        styleClass="p-datatable-sm"
+      >
         <ng-template pTemplate="header">
           <tr>
             <th>{{ copy().table.name }}</th>

@@ -19,6 +19,13 @@
             [message]="shell.error()!"
             tone="danger"
           />
+          <p-button
+            label="Réessayer"
+            icon="pi pi-refresh"
+            [loading]="shell.loading()"
+            (onClick)="shell.reload()"
+            styleClass="console-shell__retry"
+          />
         } @else if (shell.loading() && !shell.apps().length) {
           <section class="console-card">
             <p class="console-empty">Chargement de votre console...</p>

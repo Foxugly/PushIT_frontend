@@ -3,6 +3,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { ButtonModule } from 'primeng/button';
 
 import { ConsoleShellService } from '../../../core/services/console-shell.service';
 import { SettingsService } from '../../../core/services/settings.service';
@@ -17,6 +18,7 @@ import { SiteHeader } from '../../../shared/site-header/site-header';
     CommonModule,
     RouterOutlet,
     AppAlert,
+    ButtonModule,
     ConsoleNavigation,
     SiteFooter,
     SiteHeader,

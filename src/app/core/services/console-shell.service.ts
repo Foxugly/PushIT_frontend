@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { finalize, forkJoin, map, of, switchMap } from 'rxjs';
+import { finalize, forkJoin, map, of, retry, switchMap } from 'rxjs';
+import * as Sentry from '@sentry/angular';
 
 import { ApplicationCreateRequest, ApplicationRead, UserMe } from '../models/api.models';
 import { LanguagePreferenceService } from './language-preference.service';
@@ -35,7 +36,12 @@ export class ConsoleShellService {
       apps: this.api.listApps(),
       devices: this.api.listDevices(),
     })
-      .pipe(finalize(() => this.loading.set(false)))
+      // Transient network/5xx hiccups shouldn't blank the whole console: retry a
+      // couple of times before surfacing the error.
+      .pipe(
+        retry({ count: 2, delay: 800 }),
+        finalize(() => this.loading.set(false)),
+      )
       .subscribe({
         next: ({ user, apps, devices }) => {
           this.session.updateUser(user);
@@ -46,10 +52,16 @@ export class ConsoleShellService {
           this.syncSelectedApp(apps, preferredAppId);
           this.refreshSupplementaryCounts(apps, devices);
         },
-        error: () => {
+        error: (error) => {
           this.error.set("Impossible de charger l'espace console.");
+          Sentry.captureException(error);
         },
       });
+  }
+
+  /** Re-run the shell load — wired to the retry button on the error banner. */
+  reload(): void {
+    this.loadShell(this.selectedAppId() ?? undefined);
   }
 
   ensureLoaded(): void {
@@ -84,6 +96,7 @@ export class ConsoleShellService {
       apps: this.api.listApps(),
       devices: this.api.listDevices(),
     })
+      .pipe(retry({ count: 2, delay: 800 }))
       .subscribe({
         next: ({ apps, devices }) => {
           this.apps.set(apps);
@@ -91,8 +104,9 @@ export class ConsoleShellService {
           this.devicesCount.set(devices.length);
           this.refreshSupplementaryCounts(apps, devices);
         },
-        error: () => {
+        error: (error) => {
           this.error.set("Impossible de rafraîchir les compteurs de navigation.");
+          Sentry.captureException(error);
         },
       });
   }
@@ -101,8 +115,10 @@ export class ConsoleShellService {
     apps: ApplicationRead[] = this.apps(),
     devices: Array<{ id: number }> = [],
   ): void {
+    // Counts only — fetch the paginated `count` (page_size=1) instead of loading
+    // every notification into memory just to read .length.
     forkJoin({
-      notifications: this.api.listNotifications({
+      notifications: this.api.countNotifications({
         application_id: null,
         status: null,
         effective_scheduled_from: null,
@@ -110,7 +126,9 @@ export class ConsoleShellService {
         has_quiet_period_shift: null,
         ordering: '-effective_scheduled_for',
       }),
-      futureNotifications: this.api.listFutureNotifications({
+      futureNotifications: this.api.countFutureNotifications({
+        application_id: null,
+        status: null,
         effective_scheduled_from: null,
         effective_scheduled_to: null,
         has_quiet_period_shift: null,
@@ -119,7 +137,7 @@ export class ConsoleShellService {
     })
       .pipe(
         switchMap(({ notifications, futureNotifications }) => {
-          this.notificationsCount.set(notifications.length + futureNotifications.length);
+          this.notificationsCount.set(notifications + futureNotifications);
 
           return this.loadQuietPeriodsCount(apps, devices);
         }),

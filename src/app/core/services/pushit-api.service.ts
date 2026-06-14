@@ -1,6 +1,6 @@
 import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { SKIP_AUTH } from '../http/http-context.tokens';
 import {
@@ -310,6 +310,24 @@ export class PushitApiService {
       this.url(`/notifications/${notificationId}/send/`),
       {},
     );
+  }
+
+  // Cheap counts via opt-in pagination: page_size=1 returns just the envelope's
+  // `count`, avoiding loading the whole list into memory just to call .length.
+  countNotifications(filters: NotificationFilters): Observable<number> {
+    return this.http
+      .get<Paginated<unknown>>(this.url('/notifications/'), {
+        params: this.buildParams({ ...filters, page: 1, page_size: 1 }),
+      })
+      .pipe(map((response) => response.count));
+  }
+
+  countFutureNotifications(filters: NotificationFilters): Observable<number> {
+    return this.http
+      .get<Paginated<unknown>>(this.url('/notifications/future/'), {
+        params: this.buildParams({ ...filters, page: 1, page_size: 1 }),
+      })
+      .pipe(map((response) => response.count));
   }
 
   listNotificationStats(filters?: { application_id?: number | null }): Observable<NotificationStats[]> {

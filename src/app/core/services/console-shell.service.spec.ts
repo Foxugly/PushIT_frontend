@@ -1,5 +1,5 @@
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import {
@@ -31,6 +31,8 @@ describe('ConsoleShellService', () => {
       'listDevices',
       'listNotifications',
       'listFutureNotifications',
+      'countNotifications',
+      'countFutureNotifications',
       'listAppQuietPeriods',
       'listDeviceQuietPeriods',
       'createApp',
@@ -55,6 +57,8 @@ describe('ConsoleShellService', () => {
     api.listDevices.and.returnValue(of([makeDevice()]));
     api.listNotifications.and.returnValue(of([]));
     api.listFutureNotifications.and.returnValue(of([]));
+    api.countNotifications.and.returnValue(of(0));
+    api.countFutureNotifications.and.returnValue(of(0));
     api.listAppQuietPeriods.and.returnValue(of([]));
     api.listDeviceQuietPeriods.and.returnValue(of([]));
     api.createApp.and.returnValue(
@@ -88,8 +92,8 @@ describe('ConsoleShellService', () => {
   });
 
   it('loads shell data and supplementary counts', () => {
-    api.listNotifications.and.returnValue(of([{}] as never[]));
-    api.listFutureNotifications.and.returnValue(of([{}, {}] as never[]));
+    api.countNotifications.and.returnValue(of(1));
+    api.countFutureNotifications.and.returnValue(of(2));
     api.listAppQuietPeriods.and.returnValue(
       of([
         {
@@ -182,13 +186,14 @@ describe('ConsoleShellService', () => {
     expect(service.devicesCount()).toBe(1);
   });
 
-  it('sets an error when refreshNavigationCounts fails', () => {
+  it('sets an error when refreshNavigationCounts fails', fakeAsync(() => {
     api.listApps.and.returnValue(throwError(() => new Error('boom')));
 
     service.refreshNavigationCounts();
+    tick(2000); // let the retry({ delay: 800 }) attempts elapse before erroring
 
     expect(service.error()).toBe("Impossible de rafraîchir les compteurs de navigation.");
-  });
+  }));
 
   it('stores generated token information when creating an app', () => {
     const onDone = jasmine.createSpy('onDone');
