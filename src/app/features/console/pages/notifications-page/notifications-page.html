@@ -1,4 +1,5 @@
 <section class="console-page">
+  <p-toast position="top-right" />
   @if (banner()) {
     <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }

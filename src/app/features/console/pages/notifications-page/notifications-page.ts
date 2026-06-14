@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
@@ -13,6 +14,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
+import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 
 import {
@@ -51,8 +53,10 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
     TableModule,
     TagModule,
     TextareaModule,
+    ToastModule,
     TooltipModule,
   ],
+  providers: [MessageService],
   templateUrl: './notifications-page.html',
   styleUrl: './notifications-page.scss',
 })
@@ -61,6 +65,7 @@ export class NotificationsPage implements OnInit {
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly confirm = inject(AppConfirmService);
+  private readonly messages = inject(MessageService);
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().notifications);
@@ -210,9 +215,19 @@ export class NotificationsPage implements OnInit {
     }
   }
 
+  /** Toast shown when a submit is blocked by missing/invalid required fields. */
+  private warnInvalidForm(): void {
+    this.messages.add({
+      severity: 'warn',
+      summary: this.copy().validation.title,
+      detail: this.copy().validation.detail,
+    });
+  }
+
   createNotification(): void {
     if (this.notificationForm.invalid) {
       this.notificationForm.markAllAsTouched();
+      this.warnInvalidForm();
       return;
     }
 
@@ -254,6 +269,7 @@ export class NotificationsPage implements OnInit {
 
     if (this.futureEditForm.invalid) {
       this.futureEditForm.markAllAsTouched();
+      this.warnInvalidForm();
       return;
     }
 
