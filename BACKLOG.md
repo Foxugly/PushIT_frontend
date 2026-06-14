@@ -46,10 +46,17 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 - [ ] **P3 — Pas de meta CSP fallback** dans `index.html` (CSP uniquement via header nginx).
 
 ### Qualité / UX
-- [ ] **P1 — Pagination manquante (confirmé, élargi)** : pas seulement `/notifications/` — aussi
-  `listDevices()` et `listApps()` chargent tout en mémoire. Cf. le pattern lazy déjà fait pour les notifs-par-device.
-- [ ] **P1 — Pas de retry sur le chargement console** (`console-shell.service` `forkJoin`) : tout-ou-rien,
-  aucun `retry()`, pas de bouton réessayer. Ajouter `retry({count,delay})` + bouton + succès partiel.
+- [~] **P1 — Pagination (cluster, 2026-06-14)** : backend `OptionalPageNumberPagination` (opt-in via
+  `?page`/`?page_size`, tableau nu par défaut) sur `/notifications`, `/notifications/future`, `/devices`.
+  Le shell ne charge plus toutes les notifs pour les compter (`countNotifications`/`countFutureNotifications`
+  → `count`). Table notifications paginée côté client (DOM). **Reste :** (a) pagination **serveur lazy**
+  de la table notifications — bloquée par la fusion historique+futures dans une seule table → nécessite
+  un split UI (historique vs futures) ; (b) `devices-page` en lazy serveur (le compteur shell devices reste
+  chargé en entier car couplé au comptage des quiet-periods par device — à découpler) ; (c) `apps` reste
+  chargé en entier (borné, la nav en a besoin).
+- [x] **P1 — Retry + Sentry sur le chargement console (2026-06-14)** : `retry({count:2,delay:800})` sur
+  `loadShell`/`refreshNavigationCounts`, `Sentry.captureException` sur les échecs (avant : avalés dans le
+  signal d'erreur, invisibles), bouton « Réessayer » sur la bannière (`shell.reload()`).
 - [ ] **P2 — Erreurs API brutes non traduites** : `coerceApiError()` renvoie des messages FR en dur +
   `error.detail` brut affiché. Mapper vers des clés i18n par code.
 - [ ] **P2 — i18n manquant** : 2 messages d'erreur FR en dur dans `console-shell.service.ts` (l.50, 95).
