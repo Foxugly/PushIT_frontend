@@ -196,6 +196,11 @@ export interface NotificationDelivery {
   device_name: string;
   status: DeliveryStatus;
   sent_at: string | null;
+  // Recipient-side receipts (null until the device reports them). opened_at is
+  // reliable (the user opened the message in the app); delivered_at is best-effort
+  // OS-level receipt (currently only backfilled from opened_at — see Phase 2).
+  delivered_at: string | null;
+  opened_at: string | null;
   attempt_count: number;
 }
 

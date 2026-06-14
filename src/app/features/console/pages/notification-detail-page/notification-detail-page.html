@@ -50,6 +50,7 @@
                   <th>{{ copy().table.name }}</th>
                   <th>{{ copy().table.platform }}</th>
                   <th>{{ copy().table.delivery }}</th>
+                  <th>{{ copy().table.opened }}</th>
                   <th>{{ copy().table.pushStatus }}</th>
                   <th>{{ copy().table.lastActivity }}</th>
                   <th class="console-table__actions">{{ copy().table.actions }}</th>
@@ -69,6 +70,7 @@
                       [severity]="deliverySeverity(deliveryStatusFor(device.id))"
                     />
                   </td>
+                  <td>{{ openedAtFor(device.id) ? (openedAtFor(device.id) | date: 'dd/MM/yyyy HH:mm') : copy().labels.notYet }}</td>
                   <td>
                     <p-tag [value]="device.push_token_status" [severity]="deviceSeverity(device.push_token_status)" />
                   </td>

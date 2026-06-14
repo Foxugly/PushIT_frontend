@@ -16,6 +16,7 @@ import {
   ApiErrorResponse,
   DeliveryStatus,
   DeviceRead,
+  NotificationDelivery,
   NotificationRead,
   NotificationStatus,
   PushTokenStatus,
@@ -109,17 +110,22 @@ export class NotificationDetailPage implements OnInit {
     ] as ConsoleFactItem[];
   });
 
-  // device_id → delivery status, from the detail endpoint's `deliveries`.
-  readonly deliveryByDevice = computed<Map<number, DeliveryStatus>>(() => {
-    const map = new Map<number, DeliveryStatus>();
+  // device_id → delivery record, from the detail endpoint's `deliveries`.
+  readonly deliveryByDevice = computed<Map<number, NotificationDelivery>>(() => {
+    const map = new Map<number, NotificationDelivery>();
     for (const delivery of this.notification()?.deliveries ?? []) {
-      map.set(delivery.device_id, delivery.status);
+      map.set(delivery.device_id, delivery);
     }
     return map;
   });
 
   deliveryStatusFor(deviceId: number): DeliveryStatus | null {
-    return this.deliveryByDevice().get(deviceId) ?? null;
+    return this.deliveryByDevice().get(deviceId)?.status ?? null;
+  }
+
+  /** When the recipient opened this notification on the device, or null. */
+  openedAtFor(deviceId: number): string | null {
+    return this.deliveryByDevice().get(deviceId)?.opened_at ?? null;
   }
 
   deliverySeverity(status: DeliveryStatus | null): 'success' | 'warn' | 'danger' | 'secondary' {
