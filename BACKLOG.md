@@ -61,6 +61,7 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 - [ ] **P2 — `effect()` pour l'état de formulaire** *(différé : borderline)* — le cas notifications est
   un sync **signal→form** (idiomatique en effect) ; seul le déclencheur de chargement quiet-periods est
   discutable mais fonctionne. Faible valeur / risque de régression.
-- [ ] **P2 — a11y : `[ariaLabel]` sur les boutons-icônes** *(différé : sweep mécanique ~30+ boutons sur 5
-  pages)*. *(N.B. `alt=""` sur les vignettes logo à côté du nom est correct — décoratif, pas un bug.)*
+- [x] **P2 — a11y : `[ariaLabel]` sur les boutons-icônes** *(fait 2026-06-14)* — 24 boutons (listes +
+  détails) ont un `[ariaLabel]` miroir du `[pTooltip]`. *(N.B. `alt=""` des vignettes logo à côté du nom
+  est correct — décoratif, pas un bug.)*
 - [ ] **P2 — `application-detail` : erreur/retry par section** *(différé : refactor modéré, valeur moyenne)*.
