@@ -32,9 +32,11 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 - [x] **P2 — `script-src-attr 'unsafe-inline'`** *(fait)* — retiré du CSP nginx (sera live au prochain déploiement).
 - [x] **P2 — `authGuard` expiration** *(fait)* — `accessTokenExpired()` (décodage `exp`) ; session morte
   (expiré + sans refresh) → `/auth` ; expiré + refresh présent → laissé passer (intercepteur rafraîchit).
-- [ ] **P2 — Refresh token en `localStorage`** *(différé : architectural)* — passer en cookie httpOnly est
-  un changement cross-stack (le backend doit poser/lire le cookie, CSRF, CORS). Risque atténué par la CSP
-  forte en place. À traiter comme un chantier dédié, pas un fix ponctuel.
+- [x] **P2 — Refresh token en `localStorage`** → **accepté (won't-fix), 2026-06-14**. Décision de flotte :
+  JWT en **Bearer, pas de cookies** (QuizOnline réf. + TM), car l'auth est cross-subdomain
+  (`pushit.foxugly.com` → `pushit-api.foxugly.com`) — un cookie httpOnly compliquerait SameSite/CSRF/partage.
+  Passer en cookies serait un écart au standard, pas un alignement. Risque résiduel XSS atténué par la CSP
+  forte (durcie : `script-src-attr 'unsafe-inline'` retiré). Cf. CLAUDE.md (« JWT Bearer, pas de cookie »).
 - [ ] **P2 — uid/token e-mail/reset dans l'URL** *(différé : surtout « documenter » ; envisager un token signé unique)*.
 - [ ] **P3 — Refresh token dans le body du logout** *(différé : le backend en a besoin pour révoquer ; nginx ne logge pas les bodies)*.
 - [ ] **P3 — Pas de meta CSP fallback** *(différé : l'app est liée à nginx+SSM ; servir sans casserait déjà le runtime-config)*.
