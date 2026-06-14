@@ -46,9 +46,12 @@
             <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().never }}</td>
             <td class="console-table__actions">
               <div class="console-icon-actions">
-                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
-                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
-                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
+                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.view"
+          [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
+                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
+          [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
+                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+          [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
               </div>
             </td>
           </tr>

@@ -58,8 +58,10 @@
             </td>
             <td class="console-table__actions">
               <div class="console-icon-actions">
-                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
-                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [pTooltip]="copy().actions.delete" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
+                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
+          [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
+                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+          [pTooltip]="copy().actions.delete" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
               </div>
             </td>
           </tr>
