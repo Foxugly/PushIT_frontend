@@ -185,6 +185,17 @@ export interface NotificationRead {
   scheduled_for: string | null;
   effective_scheduled_for: string | null;
   sent_at: string | null;
+  // Per-device delivery breakdown — only the single-notification detail endpoint
+  // populates it; absent on list responses.
+  deliveries?: NotificationDelivery[];
+}
+
+export interface NotificationDelivery {
+  device_id: number;
+  device_name: string;
+  status: DeliveryStatus;
+  sent_at: string | null;
+  attempt_count: number;
 }
 
 export interface NotificationCreateRequest {

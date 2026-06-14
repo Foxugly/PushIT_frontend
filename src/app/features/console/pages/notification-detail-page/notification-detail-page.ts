@@ -14,6 +14,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import {
   ApiErrorResponse,
+  DeliveryStatus,
   DeviceRead,
   NotificationRead,
   NotificationStatus,
@@ -106,6 +107,32 @@ export class NotificationDetailPage implements OnInit {
       },
     ] as ConsoleFactItem[];
   });
+
+  // device_id → delivery status, from the detail endpoint's `deliveries`.
+  readonly deliveryByDevice = computed<Map<number, DeliveryStatus>>(() => {
+    const map = new Map<number, DeliveryStatus>();
+    for (const delivery of this.notification()?.deliveries ?? []) {
+      map.set(delivery.device_id, delivery.status);
+    }
+    return map;
+  });
+
+  deliveryStatusFor(deviceId: number): DeliveryStatus | null {
+    return this.deliveryByDevice().get(deviceId) ?? null;
+  }
+
+  deliverySeverity(status: DeliveryStatus | null): 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'sent':
+        return 'success';
+      case 'pending':
+        return 'warn';
+      case 'failed':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  }
 
   readonly editForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],
