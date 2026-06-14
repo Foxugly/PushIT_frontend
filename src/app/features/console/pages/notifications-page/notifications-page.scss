@@ -2,6 +2,20 @@
   display: block;
 }
 
+.notif-app-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notif-app-logo {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.3rem;
+  object-fit: cover;
+  flex: none;
+}
+
 .notifications-status-badges {
   display: flex;
   align-items: center;

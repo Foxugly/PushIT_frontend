@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import {
   AbstractControl,
@@ -38,9 +38,16 @@ export class ResetPasswordPage {
   private readonly api = inject(PushitApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   private readonly uid = this.route.snapshot.paramMap.get('uid') ?? '';
   private readonly token = this.route.snapshot.paramMap.get('token') ?? '';
+
+  constructor() {
+    // uid/token captured above — strip them from the URL bar + history so the
+    // single-use reset credentials don't linger in history / referer headers.
+    this.location.replaceState('/reset-password');
+  }
 
   readonly pending = signal(false);
   readonly succeeded = signal(false);

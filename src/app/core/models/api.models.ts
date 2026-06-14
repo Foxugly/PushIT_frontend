@@ -177,6 +177,7 @@ export interface NotificationRead {
   id: number;
   application_id: number;
   application_name: string;
+  application_logo: string | null;
   device_ids: number[];
   title: string;
   message: string;

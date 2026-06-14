@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -27,6 +27,7 @@ export class ConfirmEmailPage implements OnInit {
   private readonly languagePreference = inject(LanguagePreferenceService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly fb = inject(FormBuilder);
 
   private readonly uid = this.route.snapshot.paramMap.get('uid') ?? '';
@@ -43,6 +44,10 @@ export class ConfirmEmailPage implements OnInit {
   });
 
   ngOnInit(): void {
+    // The uid/token are captured above; strip them from the URL bar + history
+    // so the single-use credentials don't linger in history / referer headers.
+    this.location.replaceState('/auth/confirm-email');
+
     this.api
       .confirmEmail(this.uid, this.token)
       .pipe(finalize(() => this.confirming.set(false)))

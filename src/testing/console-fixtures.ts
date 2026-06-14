@@ -53,6 +53,7 @@ export function makeNotification(overrides: Partial<NotificationRead> = {}): Not
     id: 301,
     application_id: 101,
     application_name: 'PushIT Mobile',
+    application_logo: null,
     device_ids: [201],
     title: 'Promo flash',
     message: 'Disponible maintenant.',

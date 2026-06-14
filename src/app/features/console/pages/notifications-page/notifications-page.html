@@ -128,7 +128,14 @@
               <p class="console-table__subtext">{{ copy().scheduledSubtext }}</p>
             }
           </td>
-          <td>{{ notification.application_name }}</td>
+          <td>
+            <span class="notif-app-cell">
+              @if (notification.application_logo) {
+                <img class="notif-app-logo" [src]="notification.application_logo" alt="" />
+              }
+              {{ notification.application_name }}
+            </span>
+          </td>
           <td>{{ notification.message }}</td>
           <td>
             <p-tag
