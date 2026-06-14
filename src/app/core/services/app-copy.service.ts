@@ -2,7 +2,7 @@ import { computed, inject, Injectable } from '@angular/core';
 
 import { LanguageCode, PublicI18nService } from './public-i18n.service';
 
-const APP_COPY = {
+export const APP_COPY = {
   fr: {
     header: {
       home: 'Accueil',
