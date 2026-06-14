@@ -232,6 +232,7 @@ export interface NotificationStats {
 
 export interface NotificationFilters {
   application_id?: number | null;
+  device_id?: number | null;
   status?: NotificationStatus | '' | null;
   effective_scheduled_from?: string | null;
   effective_scheduled_to?: string | null;

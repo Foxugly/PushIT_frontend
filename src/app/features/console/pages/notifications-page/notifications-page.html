@@ -55,6 +55,20 @@
       </label>
 
       <label>
+        <span>{{ copy().filters.device }}</span>
+        <p-select
+          formControlName="device_id"
+          [options]="deviceFilterOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="copy().filters.allDevices"
+          [showClear]="true"
+          size="small"
+          styleClass="notifications-filters__select notifications-filters__select--app"
+        />
+      </label>
+
+      <label>
         <span>{{ copy().filters.status }}</span>
         <p-select
           formControlName="status"

@@ -113,10 +113,15 @@ export class NotificationsPage implements OnInit {
 
   readonly filtersForm = this.fb.nonNullable.group({
     application_id: [''],
+    device_id: [''],
     status: [''],
     effective_scheduled_from: [null as Date | null],
     effective_scheduled_to: [null as Date | null],
   });
+
+  readonly deviceFilterOptions = computed(() =>
+    this.devices().map((device) => ({ label: `${device.device_name} (${device.platform})`, value: device.id })),
+  );
 
   readonly futureEditForm = this.fb.nonNullable.group({
     id: [0],
@@ -402,6 +407,7 @@ export class NotificationsPage implements OnInit {
   clearFilters(): void {
     this.filtersForm.reset({
       application_id: '',
+      device_id: '',
       status: '',
       effective_scheduled_from: null,
       effective_scheduled_to: null,
@@ -533,6 +539,7 @@ export class NotificationsPage implements OnInit {
 
     return {
       application_id: rawValue.application_id ? Number(rawValue.application_id) : null,
+      device_id: rawValue.device_id ? Number(rawValue.device_id) : null,
       status: rawValue.status ? (rawValue.status as NotificationStatus) : null,
       effective_scheduled_from: this.toIsoOrNull(rawValue.effective_scheduled_from),
       effective_scheduled_to: this.toIsoOrNull(rawValue.effective_scheduled_to),

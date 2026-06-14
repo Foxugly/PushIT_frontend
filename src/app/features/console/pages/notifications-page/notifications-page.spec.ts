@@ -318,6 +318,7 @@ describe('NotificationsPage', () => {
 
     expect(component.filtersForm.getRawValue()).toEqual({
       application_id: '',
+      device_id: '',
       status: '',
       effective_scheduled_from: null,
       effective_scheduled_to: null,
@@ -325,6 +326,7 @@ describe('NotificationsPage', () => {
     expect(api.listNotificationsPage).toHaveBeenCalledWith(
       {
         application_id: null,
+        device_id: null,
         status: null,
         effective_scheduled_from: null,
         effective_scheduled_to: null,

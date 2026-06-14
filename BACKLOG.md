@@ -21,8 +21,8 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
   FR/NL/EN n'ont pas exactement les mêmes clés (`CONSOLE_COPY`/`APP_COPY` exportés).
 - [x] **P3 — Logo d'app en avatar** *(fait 2026-06-14)* — avatar dans la liste applications (déjà présent)
   + ajouté à la liste notifications (`NotificationRead.application_logo`).
-- [ ] **P3 — Filtre par device sur la liste notifications** *(différé : nécessite un filtre `device_id`
-  côté backend `/notifications/` — donc pas « frontend » ; faible valeur)*.
+- [x] **P3 — Filtre par device sur la liste notifications** *(fait 2026-06-14)* — filtre backend
+  `?device_id=` (opt-in, owner-scoped) + sélecteur device dans les filtres de la page notifications.
 
 ## Audit multi-agents (2026-06-14) — constats confirmés
 
