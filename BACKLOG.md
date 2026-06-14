@@ -17,32 +17,27 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 
 - [x] **P2 — Pagination de la liste notifications** *(fait 2026-06-14)* — historique en pagination
   serveur lazy (split historique/futures). Voir la section « Audit » → cluster pagination.
-- [ ] **P3 — Logo d'app en avatar** : on a le logo, ne l'afficher que sur le mobile est dommage.
-  L'ajouter en avatar dans la liste des applications / des notifications pour la cohérence visuelle.
-- [ ] **P3 — Filtre par device sur la liste notifications** : symétrique du filtre par app existant.
-- [ ] **P2 — Sync des locales i18n** : `console-copy.service.ts` = gros objets mono-ligne FR/NL/EN,
-  fragiles à désynchroniser (édition manuelle en 3 endroits). Ajouter un test qui vérifie que les
-  trois locales ont **exactement les mêmes clés** (et envisager un découpage par feature).
+- [x] **P2 — Sync des locales i18n** *(fait 2026-06-14)* — `copy-locale-parity.spec.ts` : échec CI si
+  FR/NL/EN n'ont pas exactement les mêmes clés (`CONSOLE_COPY`/`APP_COPY` exportés).
+- [ ] **P3 — Logo d'app en avatar** dans les listes web *(différé : polish ; le logo est déjà sur mobile + détail)*.
+- [ ] **P3 — Filtre par device sur la liste notifications** *(différé : symétrie, faible valeur)*.
 
 ## Audit multi-agents (2026-06-14) — constats confirmés
 
 ### Sécurité
-- [ ] **P2 — Refresh token en `localStorage`** (`session.service.ts`) quand `rememberSession` : fenêtre
-  d'exfiltration en cas de XSS. Envisager cookie httpOnly, ou documenter l'hypothèse (CSP forte en place).
-- [ ] **P2 — App-token en clair dans la sidebar** (`console-navigation`) : `lastGeneratedToken` jamais
-  effacé (aucun `.set(null)`), reste en DOM/mémoire toute la session. Effacer après copie / timeout / au logout.
-- [ ] **P2 — « Use latest token » sans confirmation** (`devices-page`) : colle le token en clair sans
-  indiquer l'app, et reste après le link réussi (seul `linkForm` est reset). Confirmer + effacer après usage.
-- [ ] **P2 — QR data-URL persistante** (`applications-page`) : `qrImageUrl` non effacé à la destruction /
-  navigation (seulement à la fermeture du dialog). Effacer + timeout.
-- [ ] **P2 — uid/token de confirmation e-mail & reset dans l'URL** : visibles dans l'historique / logs
-  nginx / referer. Documenter (ouvrir en privé) ou repenser (token signé unique).
-- [ ] **P2 — `script-src-attr 'unsafe-inline'`** (nginx CSP) : non requis par l'implémentation Turnstile
-  actuelle (rendu programmatique) → point d'escalade XSS inutile. Le retirer.
-- [ ] **P2 — `authGuard` ne vérifie que la présence du token**, pas son expiration (pas de décodage JWT).
-  Un token expiré en mémoire passe (l'intercepteur rattrape en 401). Vérifier `exp` en amont.
-- [ ] **P3 — Refresh token dans le body du logout** : potentiellement loggé si nginx logge les bodies (non par défaut).
-- [ ] **P3 — Pas de meta CSP fallback** dans `index.html` (CSP uniquement via header nginx).
+- [x] **P2 — App-token en clair dans la sidebar** *(fait)* — `lastGeneratedToken` auto-clear 120s +
+  clear au logout + après copie + bouton « Masquer ».
+- [x] **P2 — « Use latest token »** *(fait)* — `appTokenForm` effacé après un link réussi.
+- [x] **P2 — QR data-URL persistante** *(fait)* — `clearQrImage()` à `ngOnDestroy`.
+- [x] **P2 — `script-src-attr 'unsafe-inline'`** *(fait)* — retiré du CSP nginx (sera live au prochain déploiement).
+- [x] **P2 — `authGuard` expiration** *(fait)* — `accessTokenExpired()` (décodage `exp`) ; session morte
+  (expiré + sans refresh) → `/auth` ; expiré + refresh présent → laissé passer (intercepteur rafraîchit).
+- [ ] **P2 — Refresh token en `localStorage`** *(différé : architectural)* — passer en cookie httpOnly est
+  un changement cross-stack (le backend doit poser/lire le cookie, CSRF, CORS). Risque atténué par la CSP
+  forte en place. À traiter comme un chantier dédié, pas un fix ponctuel.
+- [ ] **P2 — uid/token e-mail/reset dans l'URL** *(différé : surtout « documenter » ; envisager un token signé unique)*.
+- [ ] **P3 — Refresh token dans le body du logout** *(différé : le backend en a besoin pour révoquer ; nginx ne logge pas les bodies)*.
+- [ ] **P3 — Pas de meta CSP fallback** *(différé : l'app est liée à nginx+SSM ; servir sans casserait déjà le runtime-config)*.
 
 ### Qualité / UX
 - [~] **P1 — Pagination (cluster, 2026-06-14)** : backend `OptionalPageNumberPagination` (opt-in via
@@ -56,13 +51,16 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 - [x] **P1 — Retry + Sentry sur le chargement console (2026-06-14)** : `retry({count:2,delay:800})` sur
   `loadShell`/`refreshNavigationCounts`, `Sentry.captureException` sur les échecs (avant : avalés dans le
   signal d'erreur, invisibles), bouton « Réessayer » sur la bannière (`shell.reload()`).
-- [ ] **P2 — Erreurs API brutes non traduites** : `coerceApiError()` renvoie des messages FR en dur +
-  `error.detail` brut affiché. Mapper vers des clés i18n par code.
-- [ ] **P2 — i18n manquant** : 2 messages d'erreur FR en dur dans `console-shell.service.ts` (l.50, 95).
-- [ ] **P2 — Souscriptions sans `takeUntilDestroyed()`** : `devices-page` (linkDevice), `applications-page`
-  (uploadAppLogo/deleteAppLogo).
-- [ ] **P2 — `effect()` détourné pour l'état de formulaire** (`notifications-page`, `quiet-periods-page`) :
-  préférer `valueChanges` (déjà utilisé correctement ailleurs).
-- [ ] **P2 — État de chargement manquant** sur `applications-page` (affiche l'état vide pendant le fetch).
-- [ ] **P2 — a11y** : `alt=""` sur les vignettes logo ; nombreux `p-button` icône sans `[ariaLabel]` (tooltip ≠ nom accessible).
-- [ ] **P2 — `application-detail` : erreur globale unique** (forkJoin 5 requêtes) sans erreur/retry par section.
+- [x] **P2 — Souscriptions sans `takeUntilDestroyed()`** *(fait)* — `devices-page` (linkDevice),
+  `applications-page` (upload/delete logo).
+- [x] **P2 — État de chargement manquant** sur `applications-page` *(fait)* — spinner pendant le fetch initial.
+- [ ] **P2 — Erreurs API brutes non traduites** *(différé : refactor transverse)* — `coerceApiError()`
+  relaie surtout `body.detail` (message serveur, localisable côté backend) ; seuls des fallbacks rares
+  sont FR en dur. Mapper « code → clé i18n » touche ~7 call sites et demande une décision de design.
+- [ ] **P2 — i18n : 2 messages FR en dur dans `console-shell.service.ts`** *(différé avec le refactor i18n d'erreurs)*.
+- [ ] **P2 — `effect()` pour l'état de formulaire** *(différé : borderline)* — le cas notifications est
+  un sync **signal→form** (idiomatique en effect) ; seul le déclencheur de chargement quiet-periods est
+  discutable mais fonctionne. Faible valeur / risque de régression.
+- [ ] **P2 — a11y : `[ariaLabel]` sur les boutons-icônes** *(différé : sweep mécanique ~30+ boutons sur 5
+  pages)*. *(N.B. `alt=""` sur les vignettes logo à côté du nom est correct — décoratif, pas un bug.)*
+- [ ] **P2 — `application-detail` : erreur/retry par section** *(différé : refactor modéré, valeur moyenne)*.
