@@ -11,7 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
@@ -81,12 +81,18 @@ export class NotificationsPage implements OnInit {
     'no_target',
   ];
 
+  // notifications() holds the CURRENT history page (server-paginated); future
+  // notifications are bounded so they stay fully loaded.
   readonly notifications = signal<NotificationRead[]>([]);
+  readonly notificationsTotal = signal(0);
   readonly futureNotifications = signal<NotificationRead[]>([]);
   readonly stats = signal<NotificationStats[]>([]);
   readonly devices = signal<DeviceRead[]>([]);
   readonly selectedNotificationId = signal<number | null>(null);
   readonly loading = signal(false);
+  readonly historyLoading = signal(false);
+  readonly notifRows = 25;
+  readonly notifFirst = signal(0);
   readonly pending = signal(false);
   readonly futurePending = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
@@ -119,6 +125,12 @@ export class NotificationsPage implements OnInit {
   });
 
   constructor() {
+    // Keep the nav count in sync regardless of which load (history page / future
+    // list) resolves first.
+    effect(() => {
+      this.shell.setNotificationsCount(this.notificationsTotal() + this.futureNotifications().length);
+    });
+
     effect(() => {
       const selectedAppId = this.shell.selectedAppId();
       if (!this.notificationForm.controls.application_id.dirty) {
@@ -153,24 +165,63 @@ export class NotificationsPage implements OnInit {
     this.refreshNotifications();
   }
 
+  /**
+   * Reloads the page-level data: devices, the (bounded) future list and stats.
+   * The history list is server-paginated and loaded separately by the lazy
+   * table via [loadHistory]; hiding the table while this runs remounts it, so
+   * onLazyLoad re-fires and refreshes the history page too.
+   */
   refreshNotifications(): void {
+    this.loadAux();
+    this.reloadHistory();
+  }
+
+  /** Page-level data that isn't server-paginated: devices, the bounded future
+   * list, and per-status stats. */
+  private loadAux(): void {
     this.loading.set(true);
     this.error.set(null);
 
     forkJoin({
       devices: this.api.listDevices(),
-      notifications: this.api.listNotifications(this.buildNotificationFilters()),
       futureNotifications: this.api.listFutureNotifications(this.buildFutureNotificationFilters()),
       stats: this.api.listNotificationStats(this.buildStatsFilters()),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: ({ devices, notifications, futureNotifications, stats }) => {
+        next: ({ devices, futureNotifications, stats }) => {
           this.devices.set(devices);
-          this.notifications.set(notifications);
           this.futureNotifications.set(futureNotifications);
           this.stats.set(stats);
-          this.shell.setNotificationsCount(notifications.length + futureNotifications.length);
+        },
+        error: (error) => {
+          this.error.set(coerceApiError(error));
+        },
+      });
+  }
+
+  /** Reset the history table to its first page and reload (filter/refresh). */
+  reloadHistory(): void {
+    this.notifFirst.set(0);
+    this.loadHistory();
+  }
+
+  /** Load one page of history from the server (the unbounded list). Driven by
+   * reloadHistory() on init/filter and by the table's onLazyLoad on paging. */
+  loadHistory(event?: TableLazyLoadEvent): void {
+    const rows = event?.rows ?? this.notifRows;
+    if (event && event.first != null) {
+      this.notifFirst.set(event.first);
+    }
+    const page = Math.floor(this.notifFirst() / rows) + 1;
+    this.historyLoading.set(true);
+    this.api
+      .listNotificationsPage(this.buildNotificationFilters(), page, rows)
+      .pipe(finalize(() => this.historyLoading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.notifications.set(response.results);
+          this.notificationsTotal.set(response.count);
         },
         error: (error) => {
           this.error.set(coerceApiError(error));

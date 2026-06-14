@@ -49,11 +49,11 @@ Le travail coché est commité/poussé sur `Foxugly/PushIT_frontend` (`main`, CI
 - [~] **P1 — Pagination (cluster, 2026-06-14)** : backend `OptionalPageNumberPagination` (opt-in via
   `?page`/`?page_size`, tableau nu par défaut) sur `/notifications`, `/notifications/future`, `/devices`.
   Le shell ne charge plus toutes les notifs pour les compter (`countNotifications`/`countFutureNotifications`
-  → `count`). Table notifications paginée côté client (DOM). **Reste :** (a) pagination **serveur lazy**
-  de la table notifications — bloquée par la fusion historique+futures dans une seule table → nécessite
-  un split UI (historique vs futures) ; (b) `devices-page` en lazy serveur (le compteur shell devices reste
-  chargé en entier car couplé au comptage des quiet-periods par device — à découpler) ; (c) `apps` reste
-  chargé en entier (borné, la nav en a besoin).
+  → `count`). **Page notifications : historique en pagination SERVEUR lazy** (split UI historique vs
+  futures, row partagé via `ngTemplateOutlet` ; futures bornées → chargées en entier). **Reste :**
+  (a) `devices-page` en lazy serveur (le compteur shell devices reste chargé en entier car couplé au
+  comptage des quiet-periods par device — à découpler) ; (b) `apps` reste chargé en entier (borné, la nav
+  en a besoin).
 - [x] **P1 — Retry + Sentry sur le chargement console (2026-06-14)** : `retry({count:2,delay:800})` sur
   `loadShell`/`refreshNavigationCounts`, `Sentry.captureException` sur les échecs (avant : avalés dans le
   signal d'erreur, invisibles), bouton « Réessayer » sur la bannière (`shell.reload()`).

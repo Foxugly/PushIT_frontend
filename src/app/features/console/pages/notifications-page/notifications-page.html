@@ -13,7 +13,7 @@
       <h2 class="console-resource-header__title">{{ copy().title }}</h2>
       <div class="console-card__toolbar console-resource-header__toolbar">
         <div class="console-resource-header__badges">
-          <p-tag [value]="copy().history + ' ' + notifications().length" severity="info" />
+          <p-tag [value]="copy().history + ' ' + notificationsTotal()" severity="info" />
           <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
           <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
         </div>
@@ -114,10 +114,111 @@
     @if (loading()) {
       <p class="console-empty">{{ copy().loading }}</p>
     } @else {
+      <!-- Shared row template, reused by the future + history tables. -->
+      <ng-template #notificationRow let-notification>
+        <tr [class.console-row-selected]="selectedNotificationId() === notification.id">
+          <td class="console-table__name">
+            <a
+              class="console-table__link"
+              [routerLink]="['/dashboard/notifications', notification.id]"
+            >
+              <strong>{{ notification.title }}</strong>
+            </a>
+            @if (isFutureNotification(notification)) {
+              <p class="console-table__subtext">{{ copy().scheduledSubtext }}</p>
+            }
+          </td>
+          <td>{{ notification.application_name }}</td>
+          <td>{{ notification.message }}</td>
+          <td>
+            <p-tag
+              [value]="notificationStatusLabel(notification)"
+              [severity]="notificationSeverity(notification)"
+            />
+          </td>
+          <td>
+            {{
+              notification.effective_scheduled_for
+                ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm')
+                : copy().immediate
+            }}
+          </td>
+          <td class="console-table__actions">
+            <div class="console-icon-actions">
+              <p-button
+                icon="pi pi-eye"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="copy().actions.view"
+                tooltipPosition="top"
+                (onClick)="openDetails(notification)"
+              />
+              @if (notification.status === 'draft' && !notification.scheduled_for) {
+                <p-button
+                  icon="pi pi-send"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="copy().actions.send"
+                  tooltipPosition="top"
+                  (onClick)="sendNotification(notification)"
+                />
+              }
+              @if (isFutureNotification(notification)) {
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="copy().actions.edit"
+                  tooltipPosition="top"
+                  (onClick)="openEditModal(notification)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="copy().actions.delete"
+                  tooltipPosition="top"
+                  (onClick)="deleteFutureNotification(notification)"
+                />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      @if (futureNotifications().length) {
+        <h3 class="notifications-section__title">{{ copy().future }}</h3>
+        <p-table [value]="futureNotifications()" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{ copy().table.name }}</th>
+              <th>{{ copy().table.application }}</th>
+              <th>{{ copy().table.message }}</th>
+              <th>{{ copy().table.status }}</th>
+              <th>{{ copy().table.effective }}</th>
+              <th class="console-table__actions">{{ copy().table.actions }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-notification>
+            <ng-container
+              [ngTemplateOutlet]="notificationRow"
+              [ngTemplateOutletContext]="{ $implicit: notification }"
+            />
+          </ng-template>
+        </p-table>
+      }
+
+      <h3 class="notifications-section__title">{{ copy().history }}</h3>
       <p-table
-        [value]="notifications().concat(futureNotifications())"
+        [value]="notifications()"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        (onLazyLoad)="loadHistory($event)"
         [paginator]="true"
-        [rows]="25"
+        [rows]="notifRows"
+        [first]="notifFirst()"
+        [totalRecords]="notificationsTotal()"
+        [loading]="historyLoading()"
         [rowsPerPageOptions]="[25, 50, 100]"
         styleClass="p-datatable-sm"
       >
@@ -132,80 +233,17 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-notification>
-          <tr [class.console-row-selected]="selectedNotificationId() === notification.id">
-            <td class="console-table__name">
-              <a
-                class="console-table__link"
-                [routerLink]="['/dashboard/notifications', notification.id]"
-              >
-                <strong>{{ notification.title }}</strong>
-              </a>
-              @if (isFutureNotification(notification)) {
-                <p class="console-table__subtext">{{ copy().scheduledSubtext }}</p>
-              }
-            </td>
-            <td>{{ notification.application_name }}</td>
-            <td>{{ notification.message }}</td>
-            <td>
-              <p-tag
-                [value]="notificationStatusLabel(notification)"
-                [severity]="notificationSeverity(notification)"
-              />
-            </td>
-            <td>
-              {{
-                notification.effective_scheduled_for
-                  ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm')
-                  : copy().immediate
-              }}
-            </td>
-            <td class="console-table__actions">
-              <div class="console-icon-actions">
-                <p-button
-                  icon="pi pi-eye"
-                  [text]="true"
-                  [rounded]="true"
-                  [pTooltip]="copy().actions.view"
-                  tooltipPosition="top"
-                  (onClick)="openDetails(notification)"
-                />
-                @if (notification.status === 'draft' && !notification.scheduled_for) {
-                  <p-button
-                    icon="pi pi-send"
-                    [text]="true"
-                    [rounded]="true"
-                    [pTooltip]="copy().actions.send"
-                    tooltipPosition="top"
-                    (onClick)="sendNotification(notification)"
-                  />
-                }
-                @if (isFutureNotification(notification)) {
-                  <p-button
-                    icon="pi pi-pencil"
-                    [text]="true"
-                    [rounded]="true"
-                    [pTooltip]="copy().actions.edit"
-                    tooltipPosition="top"
-                    (onClick)="openEditModal(notification)"
-                  />
-                  <p-button
-                    icon="pi pi-trash"
-                    [text]="true"
-                    [rounded]="true"
-                    [pTooltip]="copy().actions.delete"
-                    tooltipPosition="top"
-                    (onClick)="deleteFutureNotification(notification)"
-                  />
-                }
-              </div>
-            </td>
+          <ng-container
+            [ngTemplateOutlet]="notificationRow"
+            [ngTemplateOutletContext]="{ $implicit: notification }"
+          />
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="console-empty">{{ copy().empty }}</td>
           </tr>
         </ng-template>
       </p-table>
-
-      @if (!notifications().length && !futureNotifications().length) {
-        <p class="console-empty">{{ copy().empty }}</p>
-      }
     }
   </section>
 

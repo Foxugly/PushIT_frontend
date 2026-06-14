@@ -133,11 +133,11 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     }
 
     if (path.endsWith('/notifications/') && method === 'GET') {
-      return fulfillJson(route, 200, state.notifications);
+      return fulfillJson(route, 200, paginatedOrBare(url, state.notifications));
     }
 
     if (path.endsWith('/notifications/future/') && method === 'GET') {
-      return fulfillJson(route, 200, state.futureNotifications);
+      return fulfillJson(route, 200, paginatedOrBare(url, state.futureNotifications));
     }
 
     const notificationMatch = path.match(/\/api\/v1\/notifications\/(\d+)\/$/);
@@ -172,6 +172,25 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
   });
 
   return state;
+}
+
+// Mirrors the backend's OptionalPageNumberPagination: bare array by default,
+// {count,next,previous,results} envelope when ?page / ?page_size is present.
+function paginatedOrBare(url: URL, items: unknown[]): unknown {
+  const params = url.searchParams;
+  if (!params.has('page') && !params.has('page_size')) {
+    return items;
+  }
+  const pageSize = Number(params.get('page_size') ?? '50') || 50;
+  const page = Number(params.get('page') ?? '1') || 1;
+  const start = (page - 1) * pageSize;
+  const results = items.slice(start, start + pageSize);
+  return {
+    count: items.length,
+    next: start + pageSize < items.length ? 'next' : null,
+    previous: page > 1 ? 'prev' : null,
+    results,
+  };
 }
 
 async function fulfillJson(route: Parameters<Page['route']>[1] extends (route: infer T) => unknown ? T : never, status: number, body: unknown) {

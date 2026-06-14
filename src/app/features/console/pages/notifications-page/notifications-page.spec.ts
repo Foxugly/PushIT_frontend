@@ -31,6 +31,7 @@ describe('NotificationsPage', () => {
     api = jasmine.createSpyObj<PushitApiService>('PushitApiService', [
       'listDevices',
       'listNotifications',
+      'listNotificationsPage',
       'listFutureNotifications',
       'listNotificationStats',
       'createNotification',
@@ -50,6 +51,14 @@ describe('NotificationsPage', () => {
       of<NotificationRead[]>([
         makeNotification({ id: 301, status: 'draft', scheduled_for: null }),
       ]),
+    );
+    api.listNotificationsPage.and.returnValue(
+      of({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [makeNotification({ id: 301, status: 'draft', scheduled_for: null })],
+      }),
     );
     api.listFutureNotifications.and.returnValue(
       of<NotificationRead[]>([
@@ -203,10 +212,11 @@ describe('NotificationsPage', () => {
     fixture.detectChanges();
 
     expect(api.listDevices).toHaveBeenCalled();
-    expect(api.listNotifications).toHaveBeenCalled();
+    expect(api.listNotificationsPage).toHaveBeenCalled();
     expect(api.listFutureNotifications).toHaveBeenCalled();
     expect(api.listNotificationStats).toHaveBeenCalled();
     expect(component.notifications().length).toBe(1);
+    expect(component.notificationsTotal()).toBe(1);
     expect(component.futureNotifications().length).toBe(1);
     expect(shell.setNotificationsCount).toHaveBeenCalledWith(2);
   });
@@ -312,13 +322,17 @@ describe('NotificationsPage', () => {
       effective_scheduled_from: null,
       effective_scheduled_to: null,
     });
-    expect(api.listNotifications).toHaveBeenCalledWith({
-      application_id: null,
-      status: null,
-      effective_scheduled_from: null,
-      effective_scheduled_to: null,
-      has_quiet_period_shift: null,
-      ordering: '-effective_scheduled_for',
-    });
+    expect(api.listNotificationsPage).toHaveBeenCalledWith(
+      {
+        application_id: null,
+        status: null,
+        effective_scheduled_from: null,
+        effective_scheduled_to: null,
+        has_quiet_period_shift: null,
+        ordering: '-effective_scheduled_for',
+      },
+      1,
+      25,
+    );
   });
 });

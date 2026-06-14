@@ -279,6 +279,18 @@ export class PushitApiService {
     });
   }
 
+  // Server-paginated history (the unbounded list) for the notifications page's
+  // lazy table — opt-in via ?page (the bare-array call above stays for counts/SPA).
+  listNotificationsPage(
+    filters: NotificationFilters,
+    page: number,
+    pageSize: number,
+  ): Observable<Paginated<NotificationRead>> {
+    return this.http.get<Paginated<NotificationRead>>(this.url('/notifications/'), {
+      params: this.buildParams({ ...filters, page, page_size: pageSize }),
+    });
+  }
+
   createNotification(payload: NotificationCreateRequest): Observable<NotificationRead> {
     return this.http.post<NotificationRead>(this.url('/notifications/'), payload);
   }
