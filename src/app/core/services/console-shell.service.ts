@@ -21,7 +21,12 @@ export class ConsoleShellService {
   readonly notificationsCount = signal(0);
   readonly quietPeriodsCount = signal(0);
   readonly selectedAppId = signal<number | null>(null);
+  // One-time raw app token shown right after create/regenerate. It's a secret,
+  // so it auto-clears after a short delay and is cleared on logout (don't leave
+  // it lingering in the DOM/memory for the whole session).
   readonly lastGeneratedToken = signal<{ appId: number; token: string; prefix: string } | null>(null);
+  private tokenClearTimer: ReturnType<typeof setTimeout> | null = null;
+  private static readonly TOKEN_TTL_MS = 120_000;
 
   readonly selectedApp = computed(
     () => this.apps().find((app) => app.id === this.selectedAppId()) ?? null,
@@ -155,7 +160,7 @@ export class ConsoleShellService {
   createApp(payload: ApplicationCreateRequest, onDone?: () => void, onError?: () => void): void {
     this.api.createApp(payload).subscribe({
       next: (response) => {
-        this.lastGeneratedToken.set({
+        this.rememberGeneratedToken({
           appId: response.id,
           token: response.app_token,
           prefix: response.app_token_prefix,
@@ -185,7 +190,7 @@ export class ConsoleShellService {
   regenerateToken(app: ApplicationRead, onDone?: () => void, onError?: () => void): void {
     this.api.regenerateAppToken(app.id).subscribe({
       next: (response) => {
-        this.lastGeneratedToken.set({
+        this.rememberGeneratedToken({
           appId: response.app_id,
           token: response.new_app_token,
           prefix: response.app_token_prefix,
@@ -211,7 +216,29 @@ export class ConsoleShellService {
     });
   }
 
+  /** Store the one-time token and schedule it to auto-clear after a short TTL. */
+  private rememberGeneratedToken(value: { appId: number; token: string; prefix: string }): void {
+    this.lastGeneratedToken.set(value);
+    if (this.tokenClearTimer) {
+      clearTimeout(this.tokenClearTimer);
+    }
+    this.tokenClearTimer = setTimeout(
+      () => this.lastGeneratedToken.set(null),
+      ConsoleShellService.TOKEN_TTL_MS,
+    );
+  }
+
+  /** Discard the one-time token (after copy, on logout, or on demand). */
+  clearGeneratedToken(): void {
+    if (this.tokenClearTimer) {
+      clearTimeout(this.tokenClearTimer);
+      this.tokenClearTimer = null;
+    }
+    this.lastGeneratedToken.set(null);
+  }
+
   logout(): void {
+    this.clearGeneratedToken();
     const refreshToken = this.session.refreshToken();
     if (!refreshToken) {
       this.session.clear(true);

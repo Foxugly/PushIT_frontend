@@ -217,6 +217,7 @@ const APP_COPY = {
         title: 'Menu console',
         tokenEyebrow: 'Token généré',
         copyButton: 'Copier',
+        dismissButton: 'Masquer',
         tokenNote: "Le token brut n'est visible qu'une fois. Stockage côté serveur uniquement.",
       },
       sections: [
@@ -515,6 +516,7 @@ const APP_COPY = {
         title: 'Consolemenu',
         tokenEyebrow: 'Token gegenereerd',
         copyButton: 'Kopieren',
+        dismissButton: 'Verbergen',
         tokenNote: 'Het ruwe token is slechts eenmaal zichtbaar. Opslag alleen aan serverzijde.',
       },
       sections: [
@@ -813,6 +815,7 @@ const APP_COPY = {
         title: 'Console menu',
         tokenEyebrow: 'Token generated',
         copyButton: 'Copy',
+        dismissButton: 'Hide',
         tokenNote: 'The raw token is only visible once. Server-side storage only.',
       },
       sections: [

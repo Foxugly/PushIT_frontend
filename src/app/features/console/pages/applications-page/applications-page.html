@@ -16,7 +16,9 @@
       </div>
     </div>
 
-    @if (shell.apps().length) {
+    @if (shell.loading() && !shell.apps().length) {
+      <p class="console-empty">{{ copy().loading }}</p>
+    } @else if (shell.apps().length) {
       <p-table [value]="shell.apps()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>

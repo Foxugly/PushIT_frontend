@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -43,13 +44,14 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
   templateUrl: './applications-page.html',
   styleUrl: './applications-page.scss',
 })
-export class ApplicationsPage implements OnInit {
+export class ApplicationsPage implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly confirm = inject(AppConfirmService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().applications);
 
@@ -253,7 +255,7 @@ export class ApplicationsPage implements OnInit {
     }
     this.logoPending.set(true);
     this.error.set(null);
-    this.api.uploadAppLogo(appId, file).subscribe({
+    this.api.uploadAppLogo(appId, file).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.logoPending.set(false);
         input.value = '';
@@ -272,7 +274,7 @@ export class ApplicationsPage implements OnInit {
       return;
     }
     this.logoPending.set(true);
-    this.api.deleteAppLogo(appId).subscribe({
+    this.api.deleteAppLogo(appId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.logoPending.set(false);
         this.shell.loadShell(appId);
@@ -347,6 +349,12 @@ export class ApplicationsPage implements OnInit {
         },
         error: () => this.qrError.set(this.copy().qr.error),
       });
+  }
+
+  ngOnDestroy(): void {
+    // Don't leave the QR data-URL (encoding a token) lingering in memory after
+    // navigating away; the raw token in the shell auto-clears on its own.
+    this.clearQrImage();
   }
 
   private clearQrImage(): void {

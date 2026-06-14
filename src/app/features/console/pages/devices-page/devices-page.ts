@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -56,6 +57,7 @@ export class DevicesPage implements OnInit {
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly confirm = inject(AppConfirmService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().devices);
 
@@ -241,7 +243,7 @@ export class DevicesPage implements OnInit {
     this.error.set(null);
     this.banner.set(null);
 
-    this.api.linkDevice(appToken, this.linkForm.getRawValue()).subscribe({
+    this.api.linkDevice(appToken, this.linkForm.getRawValue()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.linking.set(false);
         this.linkForm.reset({
@@ -249,6 +251,8 @@ export class DevicesPage implements OnInit {
           platform: 'android',
           push_token: '',
         });
+        // Don't leave the app token (a secret) sitting in the form after use.
+        this.appTokenForm.reset({ app_token: '' });
         this.banner.set(
           this.interpolate(this.copy().alerts.linked, {
             deviceId: response.device_id,

@@ -42,6 +42,38 @@ export class SessionService {
     return this.refreshTokenSignal();
   }
 
+  /**
+   * Whether the access token's `exp` is in the past. Evaluated fresh on each
+   * call (NOT a computed — it depends on the wall clock, not a signal). Returns
+   * false when there's no token or the payload can't be decoded (don't lock the
+   * user out on a parsing quirk; the 401 interceptor remains the backstop).
+   */
+  accessTokenExpired(): boolean {
+    const token = this.accessTokenSignal();
+    if (!token) {
+      return false;
+    }
+    const exp = this.decodeJwtExp(token);
+    if (exp === null) {
+      return false;
+    }
+    // 5s skew tolerance.
+    return exp * 1000 <= Date.now() - 5000;
+  }
+
+  private decodeJwtExp(token: string): number | null {
+    const payload = token.split('.')[1];
+    if (!payload) {
+      return null;
+    }
+    try {
+      const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+      return typeof json.exp === 'number' ? json.exp : null;
+    } catch {
+      return null;
+    }
+  }
+
   user(): UserMe | null {
     return this.userSignal();
   }

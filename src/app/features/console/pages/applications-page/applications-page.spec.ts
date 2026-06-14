@@ -25,6 +25,7 @@ describe('ApplicationsPage', () => {
   };
   let shell: {
     apps: ReturnType<typeof signal<ApplicationRead[]>>;
+    loading: ReturnType<typeof signal<boolean>>;
     selectedAppId: ReturnType<typeof signal<number | null>>;
     createApp: jasmine.Spy;
     loadShell: jasmine.Spy;
@@ -45,6 +46,7 @@ describe('ApplicationsPage', () => {
         makeApplication(),
         makeApplication({ id: 102, name: 'Backoffice', is_active: false }),
       ]),
+      loading: signal<boolean>(false),
       selectedAppId: signal<number | null>(101),
       createApp: jasmine.createSpy('createApp').and.callFake(
         (_payload: unknown, onDone?: () => void) => onDone?.(),
