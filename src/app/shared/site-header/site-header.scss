@@ -33,6 +33,30 @@
   z-index: 50;
 }
 
+// Brand: logo on a white rounded tile (like TrainingManager / QuizOnline) so the
+// black-and-emerald mark pops on the navy bar, + the wordmark.
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+
+.site-brand__mark {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  object-fit: contain;
+  background: #fff;
+  padding: 4px;
+}
+
 .site-nav,
 .header-actions {
   display: flex;
