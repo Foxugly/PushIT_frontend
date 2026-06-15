@@ -175,13 +175,13 @@
                 tooltipPosition="top"
                 (onClick)="openDetails(notification)"
               />
-              @if (notification.status === 'draft' && !notification.scheduled_for) {
+              @if (canSend(notification)) {
                 <p-button
-                  icon="pi pi-send"
+                  [icon]="isResend(notification) ? 'pi pi-refresh' : 'pi pi-send'"
                   [text]="true"
                   [rounded]="true"
-                  [ariaLabel]="copy().actions.send"
-                  [pTooltip]="copy().actions.send"
+                  [ariaLabel]="isResend(notification) ? copy().actions.resend : copy().actions.send"
+                  [pTooltip]="isResend(notification) ? copy().actions.resend : copy().actions.send"
                   tooltipPosition="top"
                   (onClick)="sendNotification(notification)"
                 />

@@ -382,6 +382,19 @@ export class NotificationsPage implements OnInit {
       });
   }
 
+  // A draft can be sent; a failed/partial one can be re-sent (the backend only
+  // re-dispatches the deliveries that didn't succeed — no double-notification).
+  canSend(notification: NotificationRead): boolean {
+    return (
+      (notification.status === 'draft' && !notification.scheduled_for) ||
+      this.isResend(notification)
+    );
+  }
+
+  isResend(notification: NotificationRead): boolean {
+    return notification.status === 'failed' || notification.status === 'partial';
+  }
+
   sendNotification(notification: NotificationRead): void {
     this.selectedNotificationId.set(notification.id);
     this.pending.set(true);
