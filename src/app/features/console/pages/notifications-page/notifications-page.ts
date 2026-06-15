@@ -291,33 +291,35 @@ export class NotificationsPage implements OnInit {
     }
 
     const rawValue = this.notificationForm.getRawValue();
+    const scheduledFor = this.toIsoOrNull(rawValue.scheduled_for);
+    const base = {
+      application_id: Number(rawValue.application_id),
+      device_ids: rawValue.device_ids,
+      title: rawValue.title,
+      message: rawValue.message,
+    };
     this.pending.set(true);
     this.error.set(null);
     this.banner.set(null);
 
-    this.api
-      .createNotification({
-        application_id: Number(rawValue.application_id),
-        device_ids: rawValue.device_ids,
-        title: rawValue.title,
-        message: rawValue.message,
-        scheduled_for: this.toIsoOrNull(rawValue.scheduled_for),
-      })
-      .pipe(finalize(() => this.pending.set(false)))
-      .subscribe({
-        next: (notification) => {
-          this.banner.set(
-            notification.scheduled_for
-              ? this.copy().alerts.createdScheduled
-              : this.copy().alerts.createdImmediate,
-          );
-          this.closeModal();
-          this.refreshNotifications();
-        },
-        error: (error) => {
-          this.error.set(coerceApiError(error));
-        },
-      });
+    // Immediate → one call that creates AND sends; scheduled → create (the
+    // scheduler dispatches at the due date, and it stays editable as a future).
+    const request$ = scheduledFor
+      ? this.api.createNotification({ ...base, scheduled_for: scheduledFor })
+      : this.api.sendNotificationNow(base);
+
+    request$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      next: () => {
+        this.banner.set(
+          scheduledFor ? this.copy().alerts.createdScheduled : this.copy().alerts.sentImmediate,
+        );
+        this.closeModal();
+        this.refreshNotifications();
+      },
+      error: (error) => {
+        this.error.set(coerceApiError(error));
+      },
+    });
   }
 
   saveFutureNotification(): void {

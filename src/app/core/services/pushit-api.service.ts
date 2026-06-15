@@ -295,6 +295,14 @@ export class PushitApiService {
     return this.http.post<NotificationRead>(this.url('/notifications/'), payload);
   }
 
+  // One-call "create and send now" (immediate). Scheduling stays on createNotification
+  // (with scheduled_for). No scheduled_for is sent here — the endpoint rejects it.
+  sendNotificationNow(
+    payload: Omit<NotificationCreateRequest, 'scheduled_for'>,
+  ): Observable<NotificationRead> {
+    return this.http.post<NotificationRead>(this.url('/notifications/send/'), payload);
+  }
+
   getNotification(notificationId: number): Observable<NotificationRead> {
     return this.http.get<NotificationRead>(this.url(`/notifications/${notificationId}/`));
   }
