@@ -64,6 +64,10 @@ export interface LoginResponse {
 
 export interface TokenRefreshResponse {
   access: string;
+  // The backend rotates + blacklists refresh tokens (ROTATE_REFRESH_TOKENS +
+  // BLACKLIST_AFTER_ROTATION), so a fresh refresh is returned and MUST be
+  // persisted — otherwise the next refresh presents a blacklisted token.
+  refresh?: string;
 }
 
 export interface ApplicationRead {

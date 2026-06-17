@@ -241,11 +241,15 @@
             />
           }
         </div>
-        <app-avatar-cropper
-          [labels]="copy().logo"
-          [pending]="logoPending()"
-          (cropped)="onLogoCropped($event)"
-        />
+        @defer (when isEditModalOpen()) {
+          <app-avatar-cropper
+            [labels]="copy().logo"
+            [pending]="logoPending()"
+            (cropped)="onLogoCropped($event)"
+          />
+        } @placeholder {
+          <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
+        }
       </div>
 
       @if (application(); as app) {

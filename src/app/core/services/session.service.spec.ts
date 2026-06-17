@@ -92,6 +92,31 @@ describe('SessionService', () => {
     expect(localStorage.getItem('pushit.accessToken')).toBe('new-access-token');
   });
 
+  it('persists the rotated refresh token returned by /auth/refresh/', () => {
+    service.startSession(loginResponse, true);
+
+    let result: string | null = null;
+    service.refreshAccessToken().subscribe((token) => (result = token));
+
+    const request = httpMock.expectOne('/api/v1/auth/refresh/');
+    // Backend rotates + blacklists: it returns a fresh refresh that must be stored.
+    request.flush({ access: 'new-access-token', refresh: 'rotated-refresh-token' });
+
+    expect(result as string | null).toBe('new-access-token');
+    expect(service.refreshToken()).toBe('rotated-refresh-token');
+    expect(localStorage.getItem('pushit.refreshToken')).toBe('rotated-refresh-token');
+  });
+
+  it('keeps the existing refresh token when the response omits a rotated one', () => {
+    service.startSession(loginResponse, true);
+
+    service.refreshAccessToken().subscribe();
+    httpMock.expectOne('/api/v1/auth/refresh/').flush({ access: 'new-access-token' });
+
+    expect(service.refreshToken()).toBe('refresh-token');
+    expect(localStorage.getItem('pushit.refreshToken')).toBe('refresh-token');
+  });
+
   it('clears the session and redirects to auth when requested', () => {
     service.startSession(loginResponse, true);
 

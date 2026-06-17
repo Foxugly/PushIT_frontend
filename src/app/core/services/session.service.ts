@@ -104,6 +104,11 @@ export class SessionService {
     this.storage.setString(ACCESS_TOKEN_KEY, accessToken, this.currentScope());
   }
 
+  updateRefreshToken(refreshToken: string): void {
+    this.refreshTokenSignal.set(refreshToken);
+    this.storage.setString(REFRESH_TOKEN_KEY, refreshToken, this.currentScope());
+  }
+
   clear(redirectToAuth = false): void {
     this.accessTokenSignal.set(null);
     this.refreshTokenSignal.set(null);
@@ -135,10 +140,15 @@ export class SessionService {
         { context: new HttpContext().set(SKIP_AUTH, true) },
       )
       .pipe(
-        map((response) => response.access),
-        map((accessToken) => {
-          this.updateAccessToken(accessToken);
-          return accessToken;
+        map((response) => {
+          this.updateAccessToken(response.access);
+          // The backend rotates + blacklists the refresh token on every refresh;
+          // persist the rotated one so the *next* refresh doesn't present a now
+          // blacklisted token (which would 401 and silently log the user out).
+          if (response.refresh) {
+            this.updateRefreshToken(response.refresh);
+          }
+          return response.access;
         }),
         shareReplay({ bufferSize: 1, refCount: true }),
         finalize(() => {

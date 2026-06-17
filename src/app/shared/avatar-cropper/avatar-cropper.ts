@@ -39,6 +39,9 @@ export class AvatarCropper {
   readonly sourceFile = signal<File | null>(null);
   readonly scale = signal(1);
   readonly transform = computed<ImageTransform>(() => ({ scale: this.scale() }));
+  /** True once a fresh crop has been received for the current transform. Apply
+   * is disabled until then, so we never emit a stale (pre-zoom) or null blob. */
+  readonly hasCrop = signal(false);
 
   private lastBlob: Blob | null = null;
 
@@ -52,14 +55,17 @@ export class AvatarCropper {
 
   onCropped(event: ImageCroppedEvent): void {
     this.lastBlob = event.blob ?? null;
+    this.hasCrop.set(this.lastBlob !== null);
   }
 
   zoomIn(): void {
     this.scale.update((s) => Math.min(3, Math.round((s + 0.1) * 10) / 10));
+    this.invalidateCrop();
   }
 
   zoomOut(): void {
     this.scale.update((s) => Math.max(1, Math.round((s - 0.1) * 10) / 10));
+    this.invalidateCrop();
   }
 
   /** Discard the current image and go back to the file picker. */
@@ -69,7 +75,7 @@ export class AvatarCropper {
   }
 
   apply(): void {
-    if (!this.lastBlob) {
+    if (!this.hasCrop() || !this.lastBlob) {
       return;
     }
     const type = this.lastBlob.type || 'image/png';
@@ -77,8 +83,14 @@ export class AvatarCropper {
     this.changeImage();
   }
 
+  /** A transform changed: the held blob is now stale until the cropper re-emits. */
+  private invalidateCrop(): void {
+    this.lastBlob = null;
+    this.hasCrop.set(false);
+  }
+
   private reset(): void {
     this.scale.set(1);
-    this.lastBlob = null;
+    this.invalidateCrop();
   }
 }

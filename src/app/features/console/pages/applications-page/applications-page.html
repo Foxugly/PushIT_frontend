@@ -168,11 +168,15 @@
             <img class="app-logo-preview" [src]="pendingLogoUrl()!" alt="" />
           </div>
         }
-        <app-avatar-cropper
-          [labels]="copy().logo"
-          [pending]="logoPending()"
-          (cropped)="onLogoCropped($event)"
-        />
+        @defer (when isModalOpen()) {
+          <app-avatar-cropper
+            [labels]="copy().logo"
+            [pending]="logoPending()"
+            (cropped)="onLogoCropped($event)"
+          />
+        } @placeholder {
+          <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
+        }
       </div>
 
       @if (error()?.detail) {

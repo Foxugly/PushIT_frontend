@@ -59,7 +59,13 @@
         [disabled]="pending()"
         (onClick)="changeImage()"
       />
-      <p-button [label]="labels().apply" icon="pi pi-check" [loading]="pending()" (onClick)="apply()" />
+      <p-button
+        [label]="labels().apply"
+        icon="pi pi-check"
+        [loading]="pending()"
+        [disabled]="!hasCrop()"
+        (onClick)="apply()"
+      />
     </div>
   </div>
 }
