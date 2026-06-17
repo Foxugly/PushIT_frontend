@@ -10,7 +10,6 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
-import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { finalize } from 'rxjs';
 
 import { ApiErrorResponse, ApplicationRead } from '../../../../core/models/api.models';
@@ -24,6 +23,7 @@ import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pi
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
+import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
 
 @Component({
   selector: 'app-applications-page',
@@ -42,7 +42,7 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
     TagModule,
     TextareaModule,
     TooltipModule,
-    FileUploadModule,
+    AvatarCropper,
   ],
   templateUrl: './applications-page.html',
   styleUrl: './applications-page.scss',
@@ -100,7 +100,7 @@ export class ApplicationsPage implements OnInit, OnDestroy {
 
   openCreateModal(): void {
     this.error.set(null);
-    this.pendingLogo.set(null);
+    this.setPendingLogo(null);
     this.form.reset({ name: '', description: '' });
     this.editingAppId.set(null);
     this.modalMode.set('create');
@@ -122,7 +122,7 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     this.isModalOpen.set(false);
     this.editingAppId.set(null);
     this.modalMode.set('create');
-    this.pendingLogo.set(null);
+    this.setPendingLogo(null);
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { edit: null },
@@ -182,7 +182,7 @@ export class ApplicationsPage implements OnInit, OnDestroy {
 
   private finishCreate(appId: number): void {
     this.pending.set(false);
-    this.pendingLogo.set(null);
+    this.setPendingLogo(null);
     this.form.reset({ name: '', description: '' });
     this.banner.set(this.copy().alerts.created);
     this.shell.loadShell(appId);
@@ -272,18 +272,19 @@ export class ApplicationsPage implements OnInit, OnDestroy {
   );
   readonly logoPending = signal(false);
   // Create mode: the chosen logo is held here and uploaded right after the app
-  // is created (the upload endpoint needs an existing app id).
+  // is created (the upload endpoint needs an existing app id). pendingLogoUrl is
+  // an object URL for the staged preview — always revoked before being replaced.
   readonly pendingLogo = signal<File | null>(null);
+  readonly pendingLogoUrl = signal<string | null>(null);
 
-  onLogoSelect(event: FileSelectEvent): void {
-    const file = event.currentFiles?.[0] ?? event.files?.[0];
+  onLogoCropped(file: File): void {
     if (!file) {
       return;
     }
     const appId = this.editingAppId();
     if (!appId) {
       // Create mode — defer: uploaded once the app exists (see createApp).
-      this.pendingLogo.set(file);
+      this.setPendingLogo(file);
       return;
     }
     // Edit mode — upload immediately.
@@ -297,8 +298,14 @@ export class ApplicationsPage implements OnInit, OnDestroy {
       });
   }
 
-  onLogoClear(): void {
-    this.pendingLogo.set(null);
+  /** Stage a create-mode logo and (re)build its preview object URL. */
+  private setPendingLogo(file: File | null): void {
+    const previous = this.pendingLogoUrl();
+    if (previous) {
+      URL.revokeObjectURL(previous);
+    }
+    this.pendingLogo.set(file);
+    this.pendingLogoUrl.set(file ? URL.createObjectURL(file) : null);
   }
 
   removeLogo(): void {
@@ -419,6 +426,7 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     // Don't leave the QR data-URL (encoding a token) lingering in memory after
     // navigating away; the raw token in the shell auto-clears on its own.
     this.clearQrImage();
+    this.setPendingLogo(null);
   }
 
   private clearQrImage(): void {

@@ -10,7 +10,6 @@ import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
-import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { finalize, forkJoin } from 'rxjs';
 
 import {
@@ -37,6 +36,7 @@ import { ConsoleDetailHeader } from '../../components/console-detail-header/cons
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
 import { ConsoleFactsTable } from '../../components/console-facts-table/console-facts-table';
+import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
 
 @Component({
   selector: 'app-application-detail-page',
@@ -57,7 +57,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     TableModule,
     TextareaModule,
     TooltipModule,
-    FileUploadModule,
+    AvatarCropper,
   ],
   templateUrl: './application-detail-page.html',
   styleUrl: './application-detail-page.scss',
@@ -270,8 +270,7 @@ export class ApplicationDetailPage implements OnInit {
       });
   }
 
-  onLogoSelect(event: FileSelectEvent): void {
-    const file = event.currentFiles?.[0] ?? event.files?.[0];
+  onLogoCropped(file: File): void {
     const app = this.application();
     if (!file || !app) {
       return;

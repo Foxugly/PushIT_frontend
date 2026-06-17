@@ -1,0 +1,65 @@
+@if (!sourceFile()) {
+  <p-fileupload
+    mode="advanced"
+    [customUpload]="true"
+    [auto]="false"
+    [showUploadButton]="false"
+    [showCancelButton]="false"
+    accept="image/*"
+    [maxFileSize]="2000000"
+    [chooseLabel]="labels().choose"
+    (onSelect)="onSelect($event)"
+  />
+  <p class="console-muted avatar-cropper__hint">{{ labels().hint }}</p>
+} @else {
+  <div class="avatar-cropper">
+    <image-cropper
+      class="avatar-cropper__canvas"
+      [imageFile]="sourceFile()!"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="1"
+      [roundCropper]="true"
+      [onlyScaleDown]="false"
+      [transform]="transform()"
+      [resizeToWidth]="256"
+      format="png"
+      [imageQuality]="92"
+      (imageCropped)="onCropped($event)"
+    />
+
+    <div class="avatar-cropper__controls">
+      <p-button
+        icon="pi pi-search-minus"
+        [rounded]="true"
+        [text]="true"
+        [ariaLabel]="labels().zoomOut"
+        [pTooltip]="labels().zoomOut"
+        tooltipPosition="top"
+        [disabled]="pending() || scale() <= 1"
+        (onClick)="zoomOut()"
+      />
+      <p-button
+        icon="pi pi-search-plus"
+        [rounded]="true"
+        [text]="true"
+        [ariaLabel]="labels().zoomIn"
+        [pTooltip]="labels().zoomIn"
+        tooltipPosition="top"
+        [disabled]="pending() || scale() >= 3"
+        (onClick)="zoomIn()"
+      />
+      <span class="avatar-cropper__hint">{{ labels().cropHint }}</span>
+    </div>
+
+    <div class="avatar-cropper__actions">
+      <p-button
+        [label]="labels().change"
+        severity="secondary"
+        [text]="true"
+        [disabled]="pending()"
+        (onClick)="changeImage()"
+      />
+      <p-button [label]="labels().apply" icon="pi pi-check" [loading]="pending()" (onClick)="apply()" />
+    </div>
+  </div>
+}

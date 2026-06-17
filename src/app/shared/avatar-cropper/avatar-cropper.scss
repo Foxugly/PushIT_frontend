@@ -1,0 +1,29 @@
+.avatar-cropper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.avatar-cropper__canvas {
+  display: block;
+  max-height: 320px;
+}
+
+.avatar-cropper__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.avatar-cropper__hint {
+  font-size: 0.8125rem;
+  color: var(--p-text-muted-color, #6b7280);
+  margin: 0;
+}
+
+.avatar-cropper__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

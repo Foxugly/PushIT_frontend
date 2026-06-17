@@ -37,6 +37,7 @@
     "@ctrl/ngx-emoji-mart": "^9.3.0",
     "@primeuix/themes": "^2.0.3",
     "@sentry/angular": "^10.55.0",
+    "ngx-image-cropper": "^9.1.6",
     "primeicons": "^7.0.0",
     "primeng": "^20.4.0",
     "rxjs": "~7.8.0",

@@ -241,18 +241,11 @@
             />
           }
         </div>
-        <p-fileupload
-          mode="advanced"
-          [customUpload]="true"
-          [auto]="false"
-          [showUploadButton]="false"
-          [showCancelButton]="false"
-          accept="image/*"
-          [maxFileSize]="2000000"
-          [chooseLabel]="copy().logo.choose"
-          (onSelect)="onLogoSelect($event)"
+        <app-avatar-cropper
+          [labels]="copy().logo"
+          [pending]="logoPending()"
+          (cropped)="onLogoCropped($event)"
         />
-        <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
       </div>
 
       @if (application(); as app) {
