@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 
 import { makeApplication } from '../../../../../testing/console-fixtures';
@@ -49,7 +50,7 @@ describe('ApplicationsPage', () => {
       loading: signal<boolean>(false),
       selectedAppId: signal<number | null>(101),
       createApp: jasmine.createSpy('createApp').and.callFake(
-        (_payload: unknown, onDone?: () => void) => onDone?.(),
+        (_payload: unknown, onDone?: (app: { id: number }) => void) => onDone?.({ id: 999 }),
       ),
       loadShell: jasmine.createSpy('loadShell'),
       toggleAppState: jasmine.createSpy('toggleAppState'),
@@ -111,6 +112,8 @@ describe('ApplicationsPage', () => {
             label: 'Logo',
             none: 'Aucun logo',
             remove: 'Supprimer le logo',
+            choose: 'Choisir une image',
+            hint: 'Glissez une image ici.',
           },
           alerts: {
             created: 'Application creee.',
@@ -141,6 +144,7 @@ describe('ApplicationsPage', () => {
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
+        provideHttpClient(),
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },

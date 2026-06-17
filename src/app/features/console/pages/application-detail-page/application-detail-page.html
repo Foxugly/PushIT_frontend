@@ -231,7 +231,6 @@
           } @else {
             <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
           }
-          <input type="file" accept="image/*" [disabled]="logoPending()" (change)="onLogoSelected($event)" />
           @if (application()?.logo) {
             <p-button
               [label]="copy().logo.remove"
@@ -242,6 +241,18 @@
             />
           }
         </div>
+        <p-fileupload
+          mode="advanced"
+          [customUpload]="true"
+          [auto]="false"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          accept="image/*"
+          [maxFileSize]="2000000"
+          [chooseLabel]="copy().logo.choose"
+          (onSelect)="onLogoSelect($event)"
+        />
+        <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
       </div>
 
       @if (application(); as app) {

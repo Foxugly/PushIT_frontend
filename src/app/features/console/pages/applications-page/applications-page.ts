@@ -10,6 +10,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
+import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { finalize } from 'rxjs';
 
 import { ApiErrorResponse, ApplicationRead } from '../../../../core/models/api.models';
@@ -41,6 +42,7 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
     TagModule,
     TextareaModule,
     TooltipModule,
+    FileUploadModule,
   ],
   templateUrl: './applications-page.html',
   styleUrl: './applications-page.scss',
@@ -98,6 +100,7 @@ export class ApplicationsPage implements OnInit, OnDestroy {
 
   openCreateModal(): void {
     this.error.set(null);
+    this.pendingLogo.set(null);
     this.form.reset({ name: '', description: '' });
     this.editingAppId.set(null);
     this.modalMode.set('create');
@@ -119,6 +122,7 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     this.isModalOpen.set(false);
     this.editingAppId.set(null);
     this.modalMode.set('create');
+    this.pendingLogo.set(null);
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { edit: null },
@@ -148,11 +152,23 @@ export class ApplicationsPage implements OnInit, OnDestroy {
 
     this.shell.createApp(
       this.form.getRawValue(),
-      () => {
-        this.pending.set(false);
-        this.form.reset({ name: '', description: '' });
-        this.banner.set(this.copy().alerts.created);
-        this.closeModal();
+      (app) => {
+        const file = this.pendingLogo();
+        if (!file) {
+          this.finishCreate(app.id);
+          return;
+        }
+        // App created — now upload the logo chosen at creation time.
+        this.api.uploadAppLogo(app.id, file)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => this.finishCreate(app.id),
+            // The app exists; surface the logo error but still finish (don't lose the app).
+            error: (err) => {
+              this.error.set(coerceApiError(err));
+              this.finishCreate(app.id);
+            },
+          });
       },
       () => {
         this.pending.set(false);
@@ -162,6 +178,15 @@ export class ApplicationsPage implements OnInit, OnDestroy {
         });
       },
     );
+  }
+
+  private finishCreate(appId: number): void {
+    this.pending.set(false);
+    this.pendingLogo.set(null);
+    this.form.reset({ name: '', description: '' });
+    this.banner.set(this.copy().alerts.created);
+    this.shell.loadShell(appId);
+    this.closeModal();
   }
 
   saveApp(): void {
@@ -246,27 +271,34 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     this.shell.apps().find((a) => a.id === this.editingAppId()) ?? null,
   );
   readonly logoPending = signal(false);
+  // Create mode: the chosen logo is held here and uploaded right after the app
+  // is created (the upload endpoint needs an existing app id).
+  readonly pendingLogo = signal<File | null>(null);
 
-  onLogoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    const appId = this.editingAppId();
-    if (!file || !appId) {
+  onLogoSelect(event: FileSelectEvent): void {
+    const file = event.currentFiles?.[0] ?? event.files?.[0];
+    if (!file) {
       return;
     }
+    const appId = this.editingAppId();
+    if (!appId) {
+      // Create mode — defer: uploaded once the app exists (see createApp).
+      this.pendingLogo.set(file);
+      return;
+    }
+    // Edit mode — upload immediately.
     this.logoPending.set(true);
     this.error.set(null);
-    this.api.uploadAppLogo(appId, file).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.logoPending.set(false);
-        input.value = '';
-        this.shell.loadShell(appId);
-      },
-      error: (err) => {
-        this.logoPending.set(false);
-        this.error.set(coerceApiError(err));
-      },
-    });
+    this.api.uploadAppLogo(appId, file)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
+      .subscribe({
+        next: () => this.shell.loadShell(appId),
+        error: (err) => this.error.set(coerceApiError(err)),
+      });
+  }
+
+  onLogoClear(): void {
+    this.pendingLogo.set(null);
   }
 
   removeLogo(): void {

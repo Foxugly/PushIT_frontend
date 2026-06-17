@@ -10,6 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
+import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { finalize, forkJoin } from 'rxjs';
 
 import {
@@ -56,6 +57,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     TableModule,
     TextareaModule,
     TooltipModule,
+    FileUploadModule,
   ],
   templateUrl: './application-detail-page.html',
   styleUrl: './application-detail-page.scss',
@@ -268,9 +270,8 @@ export class ApplicationDetailPage implements OnInit {
       });
   }
 
-  onLogoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+  onLogoSelect(event: FileSelectEvent): void {
+    const file = event.currentFiles?.[0] ?? event.files?.[0];
     const app = this.application();
     if (!file || !app) {
       return;
@@ -283,7 +284,6 @@ export class ApplicationDetailPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
       .subscribe({
         next: (updatedApp) => {
-          input.value = '';
           this.application.set(updatedApp);
           this.bannerTone.set('success');
           this.banner.set(this.copy().logo.updated);

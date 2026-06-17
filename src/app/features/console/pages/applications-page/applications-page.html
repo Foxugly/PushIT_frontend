@@ -143,21 +143,15 @@
         [descriptionMessages]="fieldErrors('description')"
       />
 
-      @if (modalMode() === 'edit') {
-        <div class="app-logo-field">
-          <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+      <div class="app-logo-field">
+        <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+        @if (modalMode() === 'edit') {
           <div class="app-logo-field__row">
             @if (editingApp()?.logo) {
               <img class="app-logo-preview" [src]="editingApp()!.logo!" alt="" />
             } @else {
               <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
             }
-            <input
-              type="file"
-              accept="image/*"
-              [disabled]="logoPending()"
-              (change)="onLogoSelected($event)"
-            />
             @if (editingApp()?.logo) {
               <p-button
                 [label]="copy().logo.remove"
@@ -168,8 +162,22 @@
               />
             }
           </div>
-        </div>
-      }
+        }
+        <p-fileupload
+          mode="advanced"
+          [customUpload]="true"
+          [auto]="false"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          accept="image/*"
+          [maxFileSize]="2000000"
+          [chooseLabel]="copy().logo.choose"
+          (onSelect)="onLogoSelect($event)"
+          (onClear)="onLogoClear()"
+          (onRemove)="onLogoClear()"
+        />
+        <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
+      </div>
 
       @if (error()?.detail) {
         <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />

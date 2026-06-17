@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
@@ -125,7 +126,7 @@ describe('ApplicationDetailPage', () => {
             save: 'Enregistrer',
             saving: 'Enregistrement...',
           },
-          logo: { label: 'Logo', none: 'Aucun logo', remove: 'Supprimer le logo', updated: 'Logo mis a jour.', removed: 'Logo supprime.' },
+          logo: { label: 'Logo', none: 'Aucun logo', remove: 'Supprimer le logo', updated: 'Logo mis a jour.', removed: 'Logo supprime.', choose: 'Choisir une image', hint: 'Glissez une image ici.' },
           regenerateEmail: {
             label: 'Adresse email',
             button: 'Regenerer',
@@ -163,6 +164,7 @@ describe('ApplicationDetailPage', () => {
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
+        provideHttpClient(),
         { provide: ActivatedRoute, useValue: routeStub },
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },

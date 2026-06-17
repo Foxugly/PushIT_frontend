@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { finalize, forkJoin, map, of, retry, switchMap } from 'rxjs';
 import * as Sentry from '@sentry/angular';
 
-import { ApplicationCreateRequest, ApplicationRead, UserMe } from '../models/api.models';
+import { ApplicationCreateRequest, ApplicationCreateResponse, ApplicationRead, UserMe } from '../models/api.models';
 import { API_ERROR_COPY } from '../utils/api-error-copy';
 import { LanguagePreferenceService } from './language-preference.service';
 import { PublicI18nService } from './public-i18n.service';
@@ -160,7 +160,11 @@ export class ConsoleShellService {
       });
   }
 
-  createApp(payload: ApplicationCreateRequest, onDone?: () => void, onError?: () => void): void {
+  createApp(
+    payload: ApplicationCreateRequest,
+    onDone?: (app: ApplicationCreateResponse) => void,
+    onError?: () => void,
+  ): void {
     this.api.createApp(payload).subscribe({
       next: (response) => {
         this.rememberGeneratedToken({
@@ -169,7 +173,7 @@ export class ConsoleShellService {
           prefix: response.app_token_prefix,
         });
         this.loadShell(response.id);
-        onDone?.();
+        onDone?.(response);
       },
       error: () => {
         onError?.();
