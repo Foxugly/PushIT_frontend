@@ -319,6 +319,37 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     });
   }
 
+  async copyToken(token: string): Promise<void> {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(token);
+      } else {
+        this.copyWithFallback(token);
+      }
+      this.banner.set(this.copy().qr.copied);
+    } catch {
+      this.error.set({ code: 'clipboard_failed', detail: this.copy().qr.copyFailed });
+    }
+  }
+
+  private copyWithFallback(value: string): void {
+    if (typeof document === 'undefined') {
+      throw new Error('Clipboard unavailable');
+    }
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    if (!copied) {
+      throw new Error('Copy failed');
+    }
+  }
+
   openQr(app: ApplicationRead): void {
     this.qrApp.set(app);
     this.qrError.set(null);

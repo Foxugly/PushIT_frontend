@@ -207,6 +207,20 @@
         @if (qrImageUrl(); as url) {
           <img class="app-qr__img" [src]="url" [alt]="copy().qr.title" />
           <p class="app-qr__hint">{{ copy().qr.scanHint }}</p>
+          @if (qrToken(); as token) {
+            <div class="app-qr__token">
+              <code>{{ token }}</code>
+              <p-button
+                icon="pi pi-copy"
+                [text]="true"
+                [rounded]="true"
+                [ariaLabel]="copy().qr.copyToken"
+                [pTooltip]="copy().qr.copyToken"
+                tooltipPosition="top"
+                (onClick)="copyToken(token)"
+              />
+            </div>
+          }
         } @else if (qrLoading()) {
           <p class="console-muted">{{ copy().qr.loading }}</p>
         } @else {
