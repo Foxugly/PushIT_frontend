@@ -29,6 +29,10 @@ export interface UserMe {
   is_active: boolean;
   email_confirmed?: boolean;
   language: UserLanguage;
+  // Staff/superuser flags now surfaced by /me/ so the SPA can gate the admin
+  // console entry. Optional + defensive: an older backend may omit them.
+  is_staff?: boolean;
+  is_superuser?: boolean;
 }
 
 /** Response of POST /auth/register/ — the account is created but pending email
@@ -291,6 +295,44 @@ export interface DeviceNotificationRead {
   delivery_status: DeliveryStatus | null;
   delivery_sent_at: string | null;
   delivery_attempt_count: number;
+}
+
+export type AdminCheckStatus = 'ok' | 'error' | 'degraded';
+
+/** One health check in the admin status payload. Be defensive: the backend may
+ * omit `status`/`detail` on some checks (e.g. Exchange when not configured). */
+export interface AdminCheck {
+  status?: AdminCheckStatus;
+  detail?: string;
+  configured?: boolean;
+}
+
+export interface AdminStatusMetrics {
+  applications?: { total?: number; active?: number };
+  devices?: { total?: number };
+  notifications?: Record<string, number>;
+  processing_stuck?: number;
+}
+
+/** GET /admin/status/ (admin only). All fields are optional/defensive so a
+ * partial payload renders gracefully rather than throwing. */
+export interface AdminStatus {
+  status?: 'ok' | 'degraded';
+  checks?: {
+    database?: AdminCheck;
+    celery_broker?: AdminCheck;
+    celery_workers?: AdminCheck;
+    exchange?: AdminCheck;
+  };
+  metrics?: AdminStatusMetrics;
+}
+
+/** GET /apps/{id}/alias-status/ (owner only). */
+export interface AliasStatus {
+  alias: string;
+  configured: boolean;
+  provisioned: boolean | null;
+  detail: string;
 }
 
 /** DRF PageNumberPagination envelope. */

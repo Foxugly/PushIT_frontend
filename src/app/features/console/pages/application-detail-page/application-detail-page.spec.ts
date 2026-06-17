@@ -41,6 +41,7 @@ describe('ApplicationDetailPage', () => {
       'uploadAppLogo',
       'deleteAppLogo',
       'regenerateAppEmail',
+      'getAliasStatus',
     ]);
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
@@ -135,6 +136,17 @@ describe('ApplicationDetailPage', () => {
             confirm: 'Regenerer {name} ?',
             success: 'Nouvelle adresse generee.',
             error: 'Regeneration impossible.',
+          },
+          aliasStatus: {
+            title: 'Verifier alias',
+            button: 'Verifier',
+            pending: 'Verification...',
+            active: 'Alias actif',
+            missing: 'Alias absent',
+            missingHint: 'Regenerez ou contactez ops.',
+            unavailable: 'Verification indisponible',
+            unverifiable: 'Impossible de verifier',
+            error: 'Verification impossible.',
           },
           errors: { invalidId: 'ID application invalide.', logo: 'Logo impossible.' },
           facts: {
@@ -247,5 +259,54 @@ describe('ApplicationDetailPage', () => {
     expect(component.banner()).toBe('Nouvelle adresse generee.');
     expect(component.bannerTone()).toBe('success');
     expect(shell.loadShell).toHaveBeenCalledWith(101);
+  });
+
+  it('shows an active alias when provisioned is true', () => {
+    fixture.detectChanges();
+    api.getAliasStatus.and.returnValue(
+      of({ alias: 'apt_x', configured: true, provisioned: true, detail: 'ok' }),
+    );
+
+    component.verifyAlias();
+
+    expect(api.getAliasStatus).toHaveBeenCalledWith(101);
+    expect(component.aliasStatusView()?.severity).toBe('success');
+    expect(component.aliasStatusView()?.label).toBe('Alias actif');
+  });
+
+  it('flags a missing alias when provisioned is false', () => {
+    fixture.detectChanges();
+    api.getAliasStatus.and.returnValue(
+      of({ alias: 'apt_x', configured: true, provisioned: false, detail: 'absent' }),
+    );
+
+    component.verifyAlias();
+
+    expect(component.aliasStatusView()?.severity).toBe('danger');
+    expect(component.aliasStatusView()?.hint).toBe('Regenerez ou contactez ops.');
+  });
+
+  it('reports unavailable when Exchange is not configured', () => {
+    fixture.detectChanges();
+    api.getAliasStatus.and.returnValue(
+      of({ alias: 'apt_x', configured: false, provisioned: null, detail: '' }),
+    );
+
+    component.verifyAlias();
+
+    expect(component.aliasStatusView()?.severity).toBe('secondary');
+    expect(component.aliasStatusView()?.label).toBe('Verification indisponible');
+  });
+
+  it('warns when the alias cannot be verified despite being configured', () => {
+    fixture.detectChanges();
+    api.getAliasStatus.and.returnValue(
+      of({ alias: 'apt_x', configured: true, provisioned: null, detail: 'timeout' }),
+    );
+
+    component.verifyAlias();
+
+    expect(component.aliasStatusView()?.severity).toBe('warn');
+    expect(component.aliasStatusView()?.hint).toBe('timeout');
   });
 });

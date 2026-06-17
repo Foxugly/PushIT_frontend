@@ -6,5 +6,7 @@
       <span>{{ description() }}</span>
     </div>
   </div>
-  <span class="console-menu-item__badge">{{ count() }}</span>
+  @if (count() !== undefined) {
+    <span class="console-menu-item__badge">{{ count() }}</span>
+  }
 </a>

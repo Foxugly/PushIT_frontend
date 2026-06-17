@@ -16,5 +16,14 @@
         [count]="item.count"
       />
     }
+
+    @if (session.isAdmin()) {
+      <app-console-menu-item
+        link="/dashboard/admin"
+        [label]="adminCopy().label"
+        [description]="adminCopy().description"
+        icon="pi pi-shield"
+      />
+    }
   </nav>
 </section>

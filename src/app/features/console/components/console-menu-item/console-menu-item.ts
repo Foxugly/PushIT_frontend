@@ -13,5 +13,7 @@ export class ConsoleMenuItem {
   readonly label = input.required<string>();
   readonly description = input.required<string>();
   readonly icon = input.required<string>();
-  readonly count = input.required<number>();
+  // Optional: entries like the admin link have no count, so the badge is hidden
+  // when this is left undefined.
+  readonly count = input<number | undefined>(undefined);
 }

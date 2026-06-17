@@ -14,6 +14,7 @@ import { finalize, forkJoin } from 'rxjs';
 
 import {
   ApiErrorResponse,
+  AliasStatus,
   ApplicationQuietPeriod,
   ApplicationRead,
   DeviceRead,
@@ -91,6 +92,35 @@ export class ApplicationDetailPage implements OnInit {
   readonly isEditModalOpen = signal(false);
   readonly logoPending = signal(false);
   readonly emailRegenerating = signal(false);
+  readonly aliasChecking = signal(false);
+  readonly aliasStatus = signal<AliasStatus | null>(null);
+
+  // Maps an alias-status payload to a tag tone + message. provisioned is the
+  // authoritative signal; null means the check could not run (Exchange off or
+  // an upstream error), in which case `configured` disambiguates the reason.
+  readonly aliasStatusView = computed<{
+    severity: 'success' | 'danger' | 'warn' | 'secondary';
+    label: string;
+    hint: string | null;
+  } | null>(() => {
+    const status = this.aliasStatus();
+    if (!status) {
+      return null;
+    }
+    const copy = this.copy().aliasStatus;
+    if (status.provisioned === true) {
+      return { severity: 'success', label: copy.active, hint: null };
+    }
+    if (status.provisioned === false) {
+      return { severity: 'danger', label: copy.missing, hint: copy.missingHint };
+    }
+    // provisioned === null: distinguish "Exchange not configured" from an actual
+    // verification failure.
+    if (!status.configured) {
+      return { severity: 'secondary', label: copy.unavailable, hint: null };
+    }
+    return { severity: 'warn', label: copy.unverifiable, hint: status.detail || null };
+  });
 
   readonly applicationFactsComputed = computed(() => {
     const app = this.application();
@@ -210,6 +240,25 @@ export class ApplicationDetailPage implements OnInit {
       this.bannerTone.set('danger');
       this.banner.set(this.copy().inboundEmailCopyFailed);
     }
+  }
+
+  verifyAlias(): void {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+
+    this.aliasChecking.set(true);
+    this.api
+      .getAliasStatus(app.id)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.aliasChecking.set(false)))
+      .subscribe({
+        next: (status) => this.aliasStatus.set(status),
+        error: () => {
+          this.bannerTone.set('danger');
+          this.banner.set(this.copy().aliasStatus.error);
+        },
+      });
   }
 
   isFutureNotification(notification: NotificationRead): boolean {

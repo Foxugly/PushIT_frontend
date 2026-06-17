@@ -1,0 +1,73 @@
+.admin-status__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-status__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+// The Django-admin button is an <a pButton> — never the browser's default link.
+.admin-status__actions a,
+.admin-status__actions a:hover,
+.admin-status__actions a:focus {
+  text-decoration: none;
+}
+
+.admin-status__panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.admin-status__detail {
+  color: var(--text-muted, #6b7280);
+}
+
+.admin-status__error {
+  color: var(--p-red-500, #ef4444);
+}
+
+.admin-status__metrics {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-status__stat--alert {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(254, 226, 226, 0.7);
+}
+
+.admin-status__stat--alert strong {
+  color: var(--p-red-600, #dc2626);
+}
+
+.admin-status__notifications {
+  margin-top: 1.1rem;
+}
+
+.admin-status__notification-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+@media (max-width: 960px) {
+  .admin-status__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-status__metrics {
+    grid-template-columns: 1fr;
+  }
+}

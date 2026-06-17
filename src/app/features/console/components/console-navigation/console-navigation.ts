@@ -3,6 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 
 import { AppCopyService } from '../../../../core/services/app-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
+import { SessionService } from '../../../../core/services/session.service';
 import { buildConsoleSections, ConsoleSection } from '../../console-sections';
 import { ConsoleMenuItem } from '../console-menu-item/console-menu-item';
 
@@ -18,7 +19,9 @@ import { ConsoleMenuItem } from '../console-menu-item/console-menu-item';
 export class ConsoleNavigation {
   private readonly appCopy = inject(AppCopyService);
   readonly shell = inject(ConsoleShellService);
+  readonly session = inject(SessionService);
   readonly copy = computed(() => this.appCopy.current().console.navigation);
+  readonly adminCopy = computed(() => this.appCopy.current().console.navigation.admin);
   readonly sections = computed(() => buildConsoleSections(this.appCopy.current().console.sections));
   readonly navigationItems = computed(() =>
     this.sections().map((section) => ({

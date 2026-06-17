@@ -219,6 +219,10 @@ export const APP_COPY = {
         copyButton: 'Copier',
         dismissButton: 'Masquer',
         tokenNote: "Le token brut n'est visible qu'une fois. Stockage côté serveur uniquement.",
+        admin: {
+          label: 'Administration',
+          description: "Superviser l'état du backend et accéder à l'admin Django.",
+        },
       },
       sections: [
         {
@@ -518,6 +522,10 @@ export const APP_COPY = {
         copyButton: 'Kopieren',
         dismissButton: 'Verbergen',
         tokenNote: 'Het ruwe token is slechts eenmaal zichtbaar. Opslag alleen aan serverzijde.',
+        admin: {
+          label: 'Beheer',
+          description: 'De status van de backend bewaken en de Django-admin openen.',
+        },
       },
       sections: [
         {
@@ -817,6 +825,10 @@ export const APP_COPY = {
         copyButton: 'Copy',
         dismissButton: 'Hide',
         tokenNote: 'The raw token is only visible once. Server-side storage only.',
+        admin: {
+          label: 'Administration',
+          description: 'Monitor backend health and open the Django admin.',
+        },
       },
       sections: [
         {

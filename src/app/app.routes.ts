@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { adminGuard, authGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -128,6 +128,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/console/pages/change-password-page/change-password-page').then(
             (m) => m.ChangePasswordPage,
+          ),
+      },
+      {
+        path: 'admin',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/console/pages/admin-status-page/admin-status-page').then(
+            (m) => m.AdminStatusPage,
           ),
       },
     ],

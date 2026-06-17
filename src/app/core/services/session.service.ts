@@ -34,6 +34,10 @@ export class SessionService {
 
   readonly isAuthenticated = computed(() => Boolean(this.accessTokenSignal() && this.userSignal()));
 
+  // Drives the admin-only console nav entry / adminGuard. Defaults to false when
+  // the flag is absent (older backend) — never grant admin on a missing field.
+  readonly isAdmin = computed(() => Boolean(this.userSignal()?.is_staff));
+
   accessToken(): string | null {
     return this.accessTokenSignal();
   }

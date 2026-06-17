@@ -22,6 +22,18 @@ export const authGuard: CanActivateFn = () => {
   return true;
 };
 
+/**
+ * Admin-only routes. Composed after `authGuard` (which guarantees a live
+ * session); here we only check the staff flag. Non-staff users are bounced
+ * back to the dashboard rather than the login screen.
+ */
+export const adminGuard: CanActivateFn = () => {
+  const session = inject(SessionService);
+  const router = inject(Router);
+
+  return session.isAdmin() ? true : router.createUrlTree(['/dashboard']);
+};
+
 export const guestGuard: CanActivateFn = () => {
   const session = inject(SessionService);
   const router = inject(Router);

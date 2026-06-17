@@ -1,0 +1,108 @@
+<section class="console-page">
+  <section class="console-card">
+    <app-console-detail-header
+      [backLink]="['/dashboard']"
+      [backLabel]="copy().back"
+      [eyebrow]="copy().eyebrow"
+      [title]="copy().title"
+    >
+      @if (status(); as snapshot) {
+        <p-tag [value]="overallLabel()" [severity]="overallSeverity()" />
+      }
+    </app-console-detail-header>
+
+    <div class="admin-status__toolbar">
+      <p class="console-muted">{{ copy().description }}</p>
+      <div class="admin-status__actions">
+        <a
+          pButton
+          class="p-button-outlined"
+          [href]="djangoAdminUrl()"
+          target="_blank"
+          rel="noopener noreferrer"
+          icon="pi pi-external-link"
+          [label]="copy().djangoAdmin"
+        ></a>
+        <p-button
+          icon="pi pi-refresh"
+          severity="secondary"
+          [label]="copy().refresh"
+          [loading]="loading()"
+          (onClick)="refresh()"
+        />
+      </div>
+    </div>
+
+    @if (error(); as err) {
+      <p class="console-empty admin-status__error">{{ err | apiError }}</p>
+    } @else if (loading() && !status()) {
+      <p class="console-empty">{{ copy().loading }}</p>
+    } @else if (status(); as snapshot) {
+      <div class="console-detail-grid">
+        <article class="console-detail-panel console-detail-panel--wide">
+          <div class="admin-status__panel-header">
+            <h3>{{ copy().checksTitle }}</h3>
+            <p-tag [value]="overallLabel()" [severity]="overallSeverity()" />
+          </div>
+          <p-table [value]="checkRows()" styleClass="p-datatable-sm admin-status__table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ copy().overallTitle }}</th>
+                <th>{{ copy().checksTitle }}</th>
+                <th></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td class="console-table__name"><strong>{{ row.label }}</strong></td>
+                <td><p-tag [value]="row.statusLabel" [severity]="row.severity" /></td>
+                <td class="admin-status__detail">{{ row.detail }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </article>
+
+        <article class="console-detail-panel console-detail-panel--wide">
+          <h3>{{ copy().metricsTitle }}</h3>
+          <div class="admin-status__metrics">
+            <article class="console-stat">
+              <span class="console-muted">{{ copy().metrics.applications }}</span>
+              <strong>{{ snapshot.metrics?.applications?.total ?? 0 }}</strong>
+            </article>
+            <article class="console-stat">
+              <span class="console-muted">{{ copy().metrics.applicationsActive }}</span>
+              <strong>{{ snapshot.metrics?.applications?.active ?? 0 }}</strong>
+            </article>
+            <article class="console-stat">
+              <span class="console-muted">{{ copy().metrics.devices }}</span>
+              <strong>{{ snapshot.metrics?.devices?.total ?? 0 }}</strong>
+            </article>
+            <article
+              class="console-stat"
+              [class.admin-status__stat--alert]="processingStuck() > 0"
+            >
+              <span class="console-muted">{{ copy().metrics.processingStuck }}</span>
+              <strong>{{ processingStuck() }}</strong>
+            </article>
+          </div>
+
+          <div class="admin-status__notifications">
+            <h4 class="console-muted">{{ copy().metrics.notifications }}</h4>
+            @if (notificationMetrics().length) {
+              <div class="admin-status__notification-tags">
+                @for (metric of notificationMetrics(); track metric.status) {
+                  <p-tag
+                    [value]="metric.status + ' · ' + metric.count"
+                    severity="contrast"
+                  />
+                }
+              </div>
+            } @else {
+              <p class="console-muted">{{ copy().metrics.none }}</p>
+            }
+          </div>
+        </article>
+      </div>
+    }
+  </section>
+</section>

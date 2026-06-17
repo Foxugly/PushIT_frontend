@@ -2,13 +2,14 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 
-import { authGuard, guestGuard } from './auth.guard';
+import { adminGuard, authGuard, guestGuard } from './auth.guard';
 import { SessionService } from '../services/session.service';
 
 describe('auth guards', () => {
   let router: jasmine.SpyObj<Router>;
   let session: {
     isAuthenticated: ReturnType<typeof signal<boolean>>;
+    isAdmin: ReturnType<typeof signal<boolean>>;
     accessTokenExpired: jasmine.Spy<() => boolean>;
     refreshToken: jasmine.Spy<() => string | null>;
     clear: jasmine.Spy;
@@ -21,6 +22,7 @@ describe('auth guards', () => {
     router.createUrlTree.and.callFake((commands) => ({ commands } as unknown as UrlTree));
     session = {
       isAuthenticated: signal(false),
+      isAdmin: signal(false),
       accessTokenExpired: jasmine.createSpy('accessTokenExpired').and.returnValue(false),
       refreshToken: jasmine.createSpy('refreshToken').and.returnValue('refresh-token'),
       clear: jasmine.createSpy('clear'),
@@ -83,5 +85,22 @@ describe('auth guards', () => {
     const result = TestBed.runInInjectionContext(() => guestGuard(route, state));
 
     expect(result).toBeTrue();
+  });
+
+  it('adminGuard allows staff users', () => {
+    session.isAdmin.set(true);
+
+    const result = TestBed.runInInjectionContext(() => adminGuard(route, state));
+
+    expect(result).toBeTrue();
+  });
+
+  it('adminGuard redirects non-staff users to /dashboard', () => {
+    session.isAdmin.set(false);
+
+    const result = TestBed.runInInjectionContext(() => adminGuard(route, state));
+
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/dashboard']);
+    expect(result).toEqual(jasmine.objectContaining({ commands: ['/dashboard'] }));
   });
 });

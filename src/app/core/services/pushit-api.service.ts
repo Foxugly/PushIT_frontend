@@ -4,6 +4,8 @@ import { Observable, map } from 'rxjs';
 
 import { SKIP_AUTH } from '../http/http-context.tokens';
 import {
+  AdminStatus,
+  AliasStatus,
   AppNotificationCreateRequest,
   AppNotificationFilters,
   ApplicationActivationResponse,
@@ -115,6 +117,11 @@ export class PushitApiService {
 
   getApp(appId: number): Observable<ApplicationRead> {
     return this.http.get<ApplicationRead>(this.url(`/apps/${appId}/`));
+  }
+
+  /** Owner-only probe of the application's inbound email alias (Exchange). */
+  getAliasStatus(appId: number): Observable<AliasStatus> {
+    return this.http.get<AliasStatus>(this.url(`/apps/${appId}/alias-status/`));
   }
 
   updateApp(appId: number, payload: ApplicationUpdateRequest): Observable<ApplicationRead> {
@@ -385,6 +392,11 @@ export class PushitApiService {
         'Idempotency-Key': idempotencyKey,
       }),
     });
+  }
+
+  /** Admin-only backend health + metrics snapshot. */
+  getAdminStatus(): Observable<AdminStatus> {
+    return this.http.get<AdminStatus>(this.url('/admin/status/'));
   }
 
   private url(path: string): string {

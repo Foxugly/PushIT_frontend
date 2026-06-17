@@ -67,6 +67,29 @@
             <li>{{ copy().inboundEmailHelp.schedule }}</li>
             <li>{{ copy().inboundEmailHelp.sender }}</li>
           </ul>
+
+          <div class="application-detail-email__alias">
+            <div class="application-detail-section__header">
+              <h4>{{ copy().aliasStatus.title }}</h4>
+              <p-button
+                icon="pi pi-verified"
+                size="small"
+                severity="secondary"
+                [outlined]="true"
+                [label]="aliasChecking() ? copy().aliasStatus.pending : copy().aliasStatus.button"
+                [loading]="aliasChecking()"
+                (onClick)="verifyAlias()"
+              />
+            </div>
+            @if (aliasStatusView(); as alias) {
+              <div class="application-detail-email__alias-result">
+                <p-tag [value]="alias.label" [severity]="alias.severity" />
+                @if (alias.hint) {
+                  <p class="console-table__subtext">{{ alias.hint }}</p>
+                }
+              </div>
+            }
+          </div>
         </article>
 
         <article class="console-detail-panel console-detail-panel--wide">
