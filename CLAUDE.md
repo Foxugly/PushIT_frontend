@@ -46,7 +46,8 @@ Enforced by `scripts/check-coverage.mjs`: statements 45%, branches 30%, function
 - **All components are standalone** — use `imports` array in `@Component`, no shared modules
 - **Signals-based state** — services use Angular signals (`signal()`, `computed()`) rather than BehaviorSubject
 - **Lazy loading** — all routes use `loadComponent` with dynamic imports
-- **Auth flow** — JWT with access/refresh tokens; interceptor auto-refreshes on 401; `SKIP_AUTH` HttpContext token bypasses auth for login/register endpoints
+- **Auth flow** — JWT with access/refresh tokens; interceptor auto-refreshes on 401; `SKIP_AUTH` HttpContext token bypasses auth for login/register endpoints. The backend **rotates + blacklists** the refresh token on every `auth/refresh/`, so `SessionService.refreshAccessToken` MUST persist the returned `refresh` (it does) — otherwise the next refresh 401s and silently logs the user out. Refresh lifetime is long (365 d) → sessions stay alive like a native app as long as the SPA is opened within the window.
+- **Admin area** — `dashboard/admin` (lazy, `canActivate: [adminGuard]`) is staff-only. `SessionService.isAdmin` reads `user().is_staff` (surfaced by `/me/`); the nav entry and route are both gated on it. The page renders the backend health panel from `GET /admin/status/` (DB / Celery broker+workers / Exchange + metrics) and links to the Django admin. The **Django admin URL** is derived from `SettingsService.apiBaseUrl()` by stripping `/api/v1` → backend origin + `/admin/`. Owners can also verify an app's inbound-email alias from the application detail page (`GET apps/<id>/alias-status/`).
 - **i18n** — Trilingual (FR/NL/EN), default French; `PublicI18nService` manages language; `ConsoleCopyService` and `AppCopyService` provide translated strings via signals
 - **API service** — `PushitApiService` is the single point of contact for all HTTP calls; all endpoints return typed `Observable`s
 
@@ -59,6 +60,15 @@ Hébergé sur l'EC2 partagée (cohabite avec PushIT_server + QuizOnline), servi 
 **nginx**, TLS via `certbot --nginx`. Le repo est cloné dans
 `/var/www/django_websites/PushIT_frontend/` ; le SPA est servi depuis
 `dist/pushit-frontend/browser/` (artefacts rsync'és par la CI, gitignorés).
+
+**Admin Django** : le vhost (`deploy/nginx/pushit-frontend.conf`) redirige (301)
+`pushit.foxugly.com/admin` → `https://pushit-api.foxugly.com/admin/` (l'admin
+canonique du backend, où ses cookies de session/CSRF et `/static/admin/` sont
+déjà servis). On redirige plutôt qu'on ne reverse-proxy pour ne pas éclater les
+cookies de l'admin sur deux hôtes. ⚠️ Le deploy installe le vhost depuis le blob
+git mais **ne recharge pas toujours nginx** — après un changement de template,
+vérifier la conf live et `sudo systemctl reload nginx` au besoin (drift connu,
+cf. l'historique `/media/`).
 
 ### Config runtime (publique) via AWS SSM — Pattern A
 
