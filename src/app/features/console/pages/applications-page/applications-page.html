@@ -203,6 +203,13 @@
         @if (qrImageUrl(); as url) {
           <img class="app-qr__img" [src]="url" [alt]="copy().qr.title" />
           <p class="app-qr__hint">{{ copy().qr.scanHint }}</p>
+          <p-button
+            icon="pi pi-download"
+            [label]="copy().qr.downloadQr"
+            severity="secondary"
+            size="small"
+            (onClick)="downloadQr()"
+          />
           @if (qrToken(); as token) {
             <div class="app-qr__token">
               <code>{{ token }}</code>
@@ -214,6 +221,15 @@
                 [pTooltip]="copy().qr.copyToken"
                 tooltipPosition="top"
                 (onClick)="copyToken(token)"
+              />
+              <p-button
+                icon="pi pi-download"
+                [text]="true"
+                [rounded]="true"
+                [ariaLabel]="copy().qr.downloadToken"
+                [pTooltip]="copy().qr.downloadToken"
+                tooltipPosition="top"
+                (onClick)="downloadToken(token)"
               />
             </div>
           }

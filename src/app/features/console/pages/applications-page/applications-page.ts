@@ -357,6 +357,55 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     }
   }
 
+  /** Download the QR image as `<ts>_qrcode_token_<app>.<ext>` (ext from the
+   * blob's mime). The QR is held as a data: URL, so an anchor download works
+   * under the enforced CSP (no blob: needed). */
+  downloadQr(): void {
+    const url = this.qrImageUrl();
+    const app = this.qrApp();
+    if (!url || !app) {
+      return;
+    }
+    const mime = url.slice(5, url.indexOf(';')); // "image/png" from "data:image/png;base64,…"
+    const sub = (mime.split('/')[1] ?? 'png').split('+')[0]; // svg+xml -> svg
+    const ext = sub === 'jpeg' ? 'jpg' : sub;
+    this.triggerDownload(url, `${this.fileStamp()}_qrcode_token_${this.appSlug(app.name)}.${ext}`);
+  }
+
+  /** Download the raw token as `<ts>_token_<app>.txt` via a text data: URL. */
+  downloadToken(token: string): void {
+    const app = this.qrApp();
+    if (!token || !app) {
+      return;
+    }
+    const url = `data:text/plain;charset=utf-8,${encodeURIComponent(token)}`;
+    this.triggerDownload(url, `${this.fileStamp()}_token_${this.appSlug(app.name)}.txt`);
+  }
+
+  private triggerDownload(href: string, filename: string): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+    const anchor = document.createElement('a');
+    anchor.href = href;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  }
+
+  /** `YYMMDDHHmm` timestamp for filenames. */
+  private fileStamp(): string {
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, '0');
+    return `${p(d.getFullYear() % 100)}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}`;
+  }
+
+  /** Filename-safe app name: keep word chars, collapse the rest to single `_`. */
+  private appSlug(name: string): string {
+    return name.trim().replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_+|_+$/g, '') || 'app';
+  }
+
   openQr(app: ApplicationRead): void {
     this.qrApp.set(app);
     this.qrError.set(null);

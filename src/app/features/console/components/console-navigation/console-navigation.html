@@ -17,30 +17,4 @@
       />
     }
   </nav>
-
-  @if (shell.lastGeneratedToken(); as tokenState) {
-    <div class="console-shell__token">
-      <div class="console-card__header">
-        <div>
-          <p class="console-shell__eyebrow">{{ copy().tokenEyebrow }}</p>
-          <h3>App #{{ tokenState.appId }}</h3>
-        </div>
-        <div class="console-shell__token-actions">
-          <p-button [label]="copy().copyButton" severity="secondary" (onClick)="copyLatestToken()" />
-          <p-button
-            icon="pi pi-times"
-            severity="secondary"
-            [text]="true"
-            [rounded]="true"
-            [ariaLabel]="copy().dismissButton"
-            [pTooltip]="copy().dismissButton"
-            tooltipPosition="top"
-            (onClick)="dismissLatestToken()"
-          />
-        </div>
-      </div>
-      <p class="console-note">{{ copy().tokenNote }}</p>
-      <textarea rows="4" readonly>{{ tokenState.token }}</textarea>
-    </div>
-  }
 </section>

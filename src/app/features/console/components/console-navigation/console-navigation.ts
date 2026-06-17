@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
 
 import { AppCopyService } from '../../../../core/services/app-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
@@ -12,8 +10,6 @@ import { ConsoleMenuItem } from '../console-menu-item/console-menu-item';
   selector: 'app-console-navigation',
   imports: [
     CommonModule,
-    ButtonModule,
-    TooltipModule,
     ConsoleMenuItem,
   ],
   templateUrl: './console-navigation.html',
@@ -30,24 +26,6 @@ export class ConsoleNavigation {
       count: this.countFor(section),
     })),
   );
-
-  copyLatestToken(): void {
-    const token = this.shell.lastGeneratedToken()?.token;
-    if (!token) {
-      return;
-    }
-
-    // Copy then discard: the token is a one-time secret, no need to keep it on
-    // screen / in memory once the user has it.
-    navigator.clipboard
-      .writeText(token)
-      .then(() => this.shell.clearGeneratedToken())
-      .catch(() => undefined);
-  }
-
-  dismissLatestToken(): void {
-    this.shell.clearGeneratedToken();
-  }
 
   private countFor(section: ConsoleSection): number {
     switch (section.countKey) {
