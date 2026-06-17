@@ -394,11 +394,11 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     document.body.removeChild(anchor);
   }
 
-  /** `YYMMDDHHmm` timestamp for filenames. */
+  /** `YYYYMMDDHHmmSS` timestamp for filenames. */
   private fileStamp(): string {
     const d = new Date();
     const p = (n: number) => String(n).padStart(2, '0');
-    return `${p(d.getFullYear() % 100)}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}`;
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
   }
 
   /** Filename-safe app name: keep word chars, collapse the rest to single `_`. */
