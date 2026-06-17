@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -25,9 +26,11 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { formatDateTimeFrBe, formatTimeLabel, weekdayShortLabel } from '../../../../core/utils/date-format.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
+import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppAlertTone } from '../../../../shared/app-alert/app-alert';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
 import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
@@ -62,6 +65,8 @@ export class ApplicationDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly confirm = inject(AppConfirmService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().applicationDetail);
 
@@ -82,6 +87,8 @@ export class ApplicationDetailPage implements OnInit {
   readonly editError = signal<ApiErrorResponse | null>(null);
   readonly saving = signal(false);
   readonly isEditModalOpen = signal(false);
+  readonly logoPending = signal(false);
+  readonly emailRegenerating = signal(false);
 
   readonly applicationFactsComputed = computed(() => {
     const app = this.application();
@@ -257,6 +264,89 @@ export class ApplicationDetailPage implements OnInit {
         },
         error: (error) => {
           this.editError.set(coerceApiError(error));
+        },
+      });
+  }
+
+  onLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const app = this.application();
+    if (!file || !app) {
+      return;
+    }
+
+    this.logoPending.set(true);
+    this.editError.set(null);
+    this.api
+      .uploadAppLogo(app.id, file)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
+      .subscribe({
+        next: (updatedApp) => {
+          input.value = '';
+          this.application.set(updatedApp);
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().logo.updated);
+          this.shell.loadShell(updatedApp.id);
+        },
+        error: (error) => this.editError.set(coerceApiError(error)),
+      });
+  }
+
+  removeLogo(): void {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+
+    this.logoPending.set(true);
+    this.editError.set(null);
+    this.api
+      .deleteAppLogo(app.id)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
+      .subscribe({
+        next: () => {
+          this.application.set({ ...app, logo: null });
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().logo.removed);
+          this.shell.loadShell(app.id);
+        },
+        error: (error) => this.editError.set(coerceApiError(error)),
+      });
+  }
+
+  async regenerateInboundEmail(): Promise<void> {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+
+    const confirmed = await this.confirm.ask({
+      message: interpolate(this.copy().regenerateEmail.confirm, { name: app.name }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    this.emailRegenerating.set(true);
+    this.editError.set(null);
+    this.api
+      .regenerateAppEmail(app.id)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.emailRegenerating.set(false)))
+      .subscribe({
+        next: (result) => {
+          this.application.set({
+            ...app,
+            inbound_email_alias: result.inbound_email_alias,
+            inbound_email_address: result.inbound_email_address,
+          });
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().regenerateEmail.success);
+          this.shell.loadShell(app.id);
+        },
+        error: () => {
+          this.bannerTone.set('danger');
+          this.banner.set(this.copy().regenerateEmail.error);
         },
       });
   }

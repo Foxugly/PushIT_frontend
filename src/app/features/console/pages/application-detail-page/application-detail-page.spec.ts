@@ -12,6 +12,7 @@ import {
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationDetailPage } from './application-detail-page';
 
 describe('ApplicationDetailPage', () => {
@@ -36,6 +37,9 @@ describe('ApplicationDetailPage', () => {
       'listFutureNotifications',
       'listAppQuietPeriods',
       'updateApp',
+      'uploadAppLogo',
+      'deleteAppLogo',
+      'regenerateAppEmail',
     ]);
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
@@ -121,7 +125,17 @@ describe('ApplicationDetailPage', () => {
             save: 'Enregistrer',
             saving: 'Enregistrement...',
           },
-          errors: { invalidId: 'ID application invalide.' },
+          logo: { label: 'Logo', none: 'Aucun logo', remove: 'Supprimer le logo', updated: 'Logo mis a jour.', removed: 'Logo supprime.' },
+          regenerateEmail: {
+            label: 'Adresse email',
+            button: 'Regenerer',
+            pending: 'Regeneration...',
+            hint: 'Nouvelle adresse.',
+            confirm: 'Regenerer {name} ?',
+            success: 'Nouvelle adresse generee.',
+            error: 'Regeneration impossible.',
+          },
+          errors: { invalidId: 'ID application invalide.', logo: 'Logo impossible.' },
           facts: {
             id: 'ID',
             name: 'Nom',
@@ -153,6 +167,7 @@ describe('ApplicationDetailPage', () => {
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },
+        { provide: AppConfirmService, useValue: { ask: () => Promise.resolve(true) } },
       ],
     }).compileComponents();
 
@@ -210,5 +225,25 @@ describe('ApplicationDetailPage', () => {
     expect(clipboard.writeText).toHaveBeenCalledWith('apt_fc4471fe12345678@pushit.com');
     expect(component.banner()).toBe('Adresse copiee.');
     expect(component.bannerTone()).toBe('success');
+  });
+
+  it('regenerates the inbound email address and shows a success banner', async () => {
+    fixture.detectChanges();
+    api.regenerateAppEmail.and.returnValue(
+      of({
+        app_id: 101,
+        inbound_email_alias: 'app_pushit_abcd1234',
+        inbound_email_address: 'app_pushit_abcd1234@pushit.com',
+      }),
+    );
+
+    await component.regenerateInboundEmail();
+
+    expect(api.regenerateAppEmail).toHaveBeenCalledWith(101);
+    expect(component.application()?.inbound_email_address).toBe('app_pushit_abcd1234@pushit.com');
+    expect(component.application()?.inbound_email_alias).toBe('app_pushit_abcd1234');
+    expect(component.banner()).toBe('Nouvelle adresse generee.');
+    expect(component.bannerTone()).toBe('success');
+    expect(shell.loadShell).toHaveBeenCalledWith(101);
   });
 });

@@ -56,6 +56,53 @@
   margin-top: 0.25rem;
 }
 
+// Logo + inbound-email controls inside the edit dialog.
+.app-logo-field,
+.app-email-field {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.app-logo-field__label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.app-logo-field__row,
+.app-email-field__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.app-logo-preview {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+}
+
+.app-logo-preview--empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  text-align: center;
+  color: var(--text-muted);
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.app-email-field__row code {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+  flex: 1 1 12rem;
+}
+
 .application-detail-list {
   display: grid;
   gap: 0.75rem;

@@ -11,6 +11,7 @@ import {
   ApplicationCreateResponse,
   ApplicationQuietPeriod,
   ApplicationRead,
+  ApplicationRegenerateEmailResponse,
   ApplicationRevokeTokenResponse,
   ApplicationTokenRegenerateResponse,
   ApplicationUpdateRequest,
@@ -141,6 +142,13 @@ export class PushitApiService {
 
   revokeAppToken(appId: number): Observable<ApplicationRevokeTokenResponse> {
     return this.http.post<ApplicationRevokeTokenResponse>(this.url(`/apps/${appId}/revoke-token/`), {});
+  }
+
+  regenerateAppEmail(appId: number): Observable<ApplicationRegenerateEmailResponse> {
+    return this.http.post<ApplicationRegenerateEmailResponse>(
+      this.url(`/apps/${appId}/regenerate-email/`),
+      {},
+    );
   }
 
   /**

@@ -110,6 +110,12 @@ export interface ApplicationRevokeTokenResponse {
   revoked_at: string | null;
 }
 
+export interface ApplicationRegenerateEmailResponse {
+  app_id: number;
+  inbound_email_alias: string;
+  inbound_email_address: string;
+}
+
 export interface QuietPeriod {
   id: number;
   name: string;

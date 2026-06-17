@@ -9,6 +9,7 @@
       @if (application(); as app) {
         <p-button
           icon="pi pi-pencil"
+          severity="info"
           [text]="true"
           [rounded]="true"
           [ariaLabel]="copy().editTooltip"
@@ -221,6 +222,45 @@
   >
     <form class="console-form" [formGroup]="editForm" (ngSubmit)="saveApplication()">
       <app-application-form-fields [form]="editForm" [usePlaceholders]="false" />
+
+      <div class="app-logo-field">
+        <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+        <div class="app-logo-field__row">
+          @if (application()?.logo) {
+            <img class="app-logo-preview" [src]="application()!.logo!" alt="" />
+          } @else {
+            <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+          }
+          <input type="file" accept="image/*" [disabled]="logoPending()" (change)="onLogoSelected($event)" />
+          @if (application()?.logo) {
+            <p-button
+              [label]="copy().logo.remove"
+              [text]="true"
+              severity="danger"
+              [disabled]="logoPending()"
+              (onClick)="removeLogo()"
+            />
+          }
+        </div>
+      </div>
+
+      @if (application(); as app) {
+        <div class="app-email-field">
+          <span class="app-logo-field__label">{{ copy().regenerateEmail.label }}</span>
+          <div class="app-email-field__row">
+            <code>{{ app.inbound_email_address }}</code>
+            <p-button
+              icon="pi pi-refresh"
+              severity="warn"
+              [outlined]="true"
+              [label]="emailRegenerating() ? copy().regenerateEmail.pending : copy().regenerateEmail.button"
+              [loading]="emailRegenerating()"
+              (onClick)="regenerateInboundEmail()"
+            />
+          </div>
+          <p class="console-table__subtext">{{ copy().regenerateEmail.hint }}</p>
+        </div>
+      }
 
       @if (editError()?.detail) {
         <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
