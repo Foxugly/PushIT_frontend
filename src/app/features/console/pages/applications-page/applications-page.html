@@ -215,6 +215,7 @@
             (onClick)="downloadQr()"
           />
           @if (qrToken(); as token) {
+            <p class="app-qr__save-notice" role="status">{{ copy().qr.saveNotice }}</p>
             <div class="app-qr__token">
               <code>{{ token }}</code>
               <p-button
