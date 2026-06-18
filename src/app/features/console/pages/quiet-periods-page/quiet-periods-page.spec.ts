@@ -16,6 +16,7 @@ describe('QuietPeriodsPage', () => {
   let shell: {
     apps: ReturnType<typeof signal<any[]>>;
     refreshNavigationCounts: jasmine.Spy<() => void>;
+    invalidateQuietPeriodsCount: jasmine.Spy<() => void>;
   };
 
   beforeEach(async () => {
@@ -43,6 +44,7 @@ describe('QuietPeriodsPage', () => {
     shell = {
       apps: signal<any[]>([]),
       refreshNavigationCounts: jasmine.createSpy('refreshNavigationCounts'),
+      invalidateQuietPeriodsCount: jasmine.createSpy('invalidateQuietPeriodsCount'),
     };
     const consoleCopy = {
       current: signal({

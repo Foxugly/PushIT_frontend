@@ -27,6 +27,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
+import { pushTokenStatusSeverity } from '../../../../core/utils/device.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
@@ -142,16 +143,7 @@ export class DeviceDetailPage implements OnInit {
   }
 
   statusSeverity(status: PushTokenStatus): 'success' | 'warn' | 'danger' | 'secondary' {
-    switch (status) {
-      case 'active':
-        return 'success';
-      case 'invalid':
-        return 'warn';
-      case 'revoked':
-        return 'danger';
-      default:
-        return 'secondary';
-    }
+    return pushTokenStatusSeverity(status);
   }
 
   openEditModal(): void {

@@ -245,7 +245,14 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     );
   }
 
-  regenerateToken(app: ApplicationRead): void {
+  async regenerateToken(app: ApplicationRead): Promise<void> {
+    const confirmed = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmRegenerate, { name: app.name }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
     this.pending.set(true);
     this.error.set(null);
     this.banner.set(null);
@@ -482,7 +489,14 @@ export class ApplicationsPage implements OnInit, OnDestroy {
     this.qrImageUrl.set(null);
   }
 
-  revokeToken(app: ApplicationRead): void {
+  async revokeToken(app: ApplicationRead): Promise<void> {
+    const confirmed = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmRevoke, { name: app.name }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
     this.pending.set(true);
     this.error.set(null);
     this.banner.set(null);

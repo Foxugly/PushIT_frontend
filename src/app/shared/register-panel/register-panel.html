@@ -10,6 +10,13 @@
     <span>{{ copy().email }}</span>
     <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
   </label>
+  @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
+    @if (registerForm.controls.email.errors?.['required']) {
+      <p class="public-field-error">{{ copy().validation.emailRequired }}</p>
+    } @else if (registerForm.controls.email.errors?.['email']) {
+      <p class="public-field-error">{{ copy().validation.emailInvalid }}</p>
+    }
+  }
   @for (message of fieldErrors('email'); track message) {
     <p class="public-field-error">{{ message }}</p>
   }
@@ -25,6 +32,13 @@
       inputStyleClass="register-password__input"
     />
   </label>
+  @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
+    @if (registerForm.controls.password.errors?.['required']) {
+      <p class="public-field-error">{{ copy().validation.passwordRequired }}</p>
+    } @else if (registerForm.controls.password.errors?.['minlength']) {
+      <p class="public-field-error">{{ copy().validation.passwordTooShort }}</p>
+    }
+  }
   @for (message of fieldErrors('password'); track message) {
     <p class="public-field-error">{{ message }}</p>
   }
@@ -39,6 +53,12 @@
       [placeholder]="copy().languagePlaceholder"
     />
   </label>
+  @if (
+    registerForm.controls.language.touched &&
+    registerForm.controls.language.errors?.['required']
+  ) {
+    <p class="public-field-error">{{ copy().validation.languageRequired }}</p>
+  }
   @for (message of fieldErrors('language'); track message) {
     <p class="public-field-error">{{ message }}</p>
   }
@@ -48,7 +68,7 @@
   }
 
   @if (registerError()?.detail) {
-    <app-alert [message]="registerError()!.detail" tone="danger" (dismissed)="registerError.set(null)" />
+    <app-alert [message]="registerError()! | apiError" tone="danger" (dismissed)="registerError.set(null)" />
   }
 
   @if (turnstile.enabled) {

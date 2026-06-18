@@ -1,5 +1,6 @@
 import { APP_COPY } from './app-copy.service';
 import { CONSOLE_COPY } from './console-copy.service';
+import { API_ERROR_COPY } from '../utils/api-error-copy';
 
 /**
  * Guards against locale drift: the FR / NL / EN copy trees must expose the
@@ -27,6 +28,9 @@ describe('copy locale parity (FR / NL / EN)', () => {
   for (const [name, copy] of [
     ['CONSOLE_COPY', CONSOLE_COPY],
     ['APP_COPY', APP_COPY],
+    // API_ERROR_COPY is keyed fr/nl/en like the copy trees; its `http` map's
+    // numeric status keys must also stay in parity across locales.
+    ['API_ERROR_COPY', API_ERROR_COPY],
   ] as const) {
     it(`${name}: NL and EN have the same keys as FR`, () => {
       const fr = keyPaths(copy.fr).sort();

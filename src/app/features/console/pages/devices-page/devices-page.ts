@@ -23,6 +23,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
+import { pushTokenStatusSeverity } from '../../../../core/utils/device.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
@@ -293,16 +294,7 @@ export class DevicesPage implements OnInit {
   );
 
   statusSeverity(status: PushTokenStatus): 'success' | 'warn' | 'danger' | 'secondary' {
-    switch (status) {
-      case 'active':
-        return 'success';
-      case 'invalid':
-        return 'warn';
-      case 'revoked':
-        return 'danger';
-      default:
-        return 'secondary';
-    }
+    return pushTokenStatusSeverity(status);
   }
 
   deviceApplicationNames(device: DeviceRead): string {

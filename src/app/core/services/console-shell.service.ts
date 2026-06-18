@@ -31,11 +31,18 @@ export class ConsoleShellService {
   private tokenClearTimer: ReturnType<typeof setTimeout> | null = null;
   private static readonly TOKEN_TTL_MS = 120_000;
 
+  // Monotonic load token: each loadShell() tags its in-flight request; a late
+  // response whose token is no longer current is ignored so overlapping loads
+  // (e.g. a fast mutation triggering reload while a prior load is still in
+  // flight) can't clobber the signals with stale data.
+  private loadToken = 0;
+
   readonly selectedApp = computed(
     () => this.apps().find((app) => app.id === this.selectedAppId()) ?? null,
   );
 
   loadShell(preferredAppId?: number): void {
+    const token = ++this.loadToken;
     this.loading.set(true);
     this.error.set(null);
 
@@ -48,19 +55,31 @@ export class ConsoleShellService {
       // couple of times before surfacing the error.
       .pipe(
         retry({ count: 2, delay: 800 }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          // Only the latest load owns the loading flag.
+          if (token === this.loadToken) {
+            this.loading.set(false);
+          }
+        }),
       )
       .subscribe({
         next: ({ user, apps, devices }) => {
+          // A newer load started while this one was in flight → drop the result.
+          if (token !== this.loadToken) {
+            return;
+          }
           this.session.updateUser(user);
           this.user.set(user);
           this.languagePreference.applyBackendLanguage(user.language);
           this.apps.set(apps);
           this.devicesCount.set(devices.length);
           this.syncSelectedApp(apps, preferredAppId);
-          this.refreshSupplementaryCounts(apps, devices);
+          this.refreshSupplementaryCounts(apps, devices, token);
         },
         error: (error) => {
+          if (token !== this.loadToken) {
+            return;
+          }
           this.error.set(API_ERROR_COPY[this.i18n.language()].shellLoadFailed);
           Sentry.captureException(error);
         },
@@ -119,9 +138,17 @@ export class ConsoleShellService {
       });
   }
 
+  // Cache key for the last computed quiet-period count: the sorted set of app +
+  // device ids it was derived from. Quiet periods only change when an app/device
+  // is added/removed (or a quiet period is directly edited — see invalidate
+  // below), NOT on token/active-state mutations, so when the key is unchanged we
+  // reuse the cached count instead of re-running the N+M fan-out.
+  private quietPeriodsKey: string | null = null;
+
   private refreshSupplementaryCounts(
     apps: ApplicationRead[] = this.apps(),
     devices: Array<{ id: number }> = [],
+    token: number = this.loadToken,
   ): void {
     // Counts only — fetch the paginated `count` (page_size=1) instead of loading
     // every notification into memory just to read .length.
@@ -145,19 +172,71 @@ export class ConsoleShellService {
     })
       .pipe(
         switchMap(({ notifications, futureNotifications }) => {
-          this.notificationsCount.set(notifications + futureNotifications);
+          if (token === this.loadToken) {
+            this.notificationsCount.set(notifications + futureNotifications);
+          }
 
-          return this.loadQuietPeriodsCount(apps, devices);
+          return this.quietPeriodsCount$(apps, devices);
         }),
       )
       .subscribe({
         next: (quietPeriodsCount) => {
-          this.quietPeriodsCount.set(quietPeriodsCount);
+          if (token === this.loadToken) {
+            this.quietPeriodsCount.set(quietPeriodsCount);
+          }
         },
         error: () => {
-          this.quietPeriodsCount.set(0);
+          if (token === this.loadToken) {
+            this.quietPeriodsCount.set(0);
+          }
         },
       });
+  }
+
+  /**
+   * Resolve the quiet-period count, reusing the cached value when the app/device
+   * id set is unchanged. This decouples the expensive N+M fan-out from app/device
+   * mutations (activate, regenerate token, revoke…) that don't touch quiet
+   * periods: those keep the same id set, so the cached count is returned without
+   * any request.
+   *
+   * Residual cost: when the id set DOES change (app/device added or removed) the
+   * count is still computed with one request per app + one per device — there is
+   * no aggregate backend endpoint for it. That fan-out now only runs on those
+   * structural changes (and the explicit invalidations below), not on every
+   * mutation.
+   */
+  private quietPeriodsCount$(apps: ApplicationRead[], devices: Array<{ id: number }>) {
+    const key = this.computeQuietPeriodsKey(apps, devices);
+    if (key === this.quietPeriodsKey) {
+      return of(this.quietPeriodsCount());
+    }
+
+    return this.loadQuietPeriodsCount(apps, devices).pipe(
+      map((count) => {
+        this.quietPeriodsKey = key;
+        return count;
+      }),
+    );
+  }
+
+  private computeQuietPeriodsKey(
+    apps: ApplicationRead[],
+    devices: Array<{ id: number }>,
+  ): string {
+    const appIds = apps.map((app) => app.id).sort((a, b) => a - b);
+    const deviceIds = devices.map((device) => device.id).sort((a, b) => a - b);
+    return `a:${appIds.join(',')}|d:${deviceIds.join(',')}`;
+  }
+
+  /**
+   * Force the next supplementary-counts refresh to recompute the quiet-period
+   * count even if the app/device id set is unchanged. Call this after a direct
+   * quiet-period mutation (create/update/delete), where the id set stays the
+   * same but the underlying counts changed.
+   */
+  invalidateQuietPeriodsCount(): void {
+    this.quietPeriodsKey = null;
   }
 
   createApp(

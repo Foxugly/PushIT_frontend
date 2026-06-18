@@ -354,6 +354,9 @@ export class QuietPeriodsPage implements OnInit {
               ? this.copy().alerts.updated
               : this.copy().alerts.created,
           );
+          // The app/device set is unchanged but the quiet-period count changed,
+          // so the cached count must be recomputed on the upcoming refresh.
+          this.shell.invalidateQuietPeriodsCount();
           this.shell.refreshNavigationCounts();
           this.closeModal();
           this.loadQuietPeriods();
@@ -387,6 +390,7 @@ export class QuietPeriodsPage implements OnInit {
       .subscribe({
         next: () => {
           this.banner.set(this.interpolate(this.copy().alerts.deleted, { name: quietPeriod.name }));
+          this.shell.invalidateQuietPeriodsCount();
           this.shell.refreshNavigationCounts();
           this.loadQuietPeriods();
         },

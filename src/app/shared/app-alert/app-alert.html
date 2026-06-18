@@ -1,15 +1,45 @@
 @if (isVisible) {
-  <section class="app-alert" [class.app-alert--success]="tone() === 'success'" [class.app-alert--danger]="tone() === 'danger'" [class.app-alert--fading]="isFadingOut">
-    <p>{{ message() }}</p>
-    <p-button
-      icon="pi pi-times"
-      [text]="true"
-      [rounded]="true"
-      size="small"
-      severity="secondary"
-      pTooltip="Fermer"
-      tooltipPosition="top"
-      (onClick)="close()"
-    />
-  </section>
+  <!-- Danger alerts are assertive (interrupt the SR); success/info are polite. -->
+  @if (tone() === 'danger') {
+    <section
+      class="app-alert app-alert--danger"
+      [class.app-alert--fading]="isFadingOut"
+      role="alert"
+      aria-live="assertive"
+    >
+      <p>{{ message() }}</p>
+      <p-button
+        icon="pi pi-times"
+        [text]="true"
+        [rounded]="true"
+        size="small"
+        severity="secondary"
+        [ariaLabel]="resolvedCloseLabel()"
+        [pTooltip]="resolvedCloseLabel()"
+        tooltipPosition="top"
+        (onClick)="close()"
+      />
+    </section>
+  } @else {
+    <section
+      class="app-alert"
+      [class.app-alert--success]="tone() === 'success'"
+      [class.app-alert--fading]="isFadingOut"
+      role="status"
+      aria-live="polite"
+    >
+      <p>{{ message() }}</p>
+      <p-button
+        icon="pi pi-times"
+        [text]="true"
+        [rounded]="true"
+        size="small"
+        severity="secondary"
+        [ariaLabel]="resolvedCloseLabel()"
+        [pTooltip]="resolvedCloseLabel()"
+        tooltipPosition="top"
+        (onClick)="close()"
+      />
+    </section>
+  }
 }

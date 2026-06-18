@@ -1,9 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin, startWith } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -121,6 +121,41 @@ export class NotificationsPage implements OnInit {
 
   readonly deviceFilterOptions = computed(() =>
     this.devices().map((device) => ({ label: `${device.device_name} (${device.platform})`, value: device.id })),
+  );
+
+  // Mirror the create-form's selected application as a signal so device options
+  // can be a memoized computed (matching deviceFilterOptions / appOptions) rather
+  // than a method re-evaluated every change-detection cycle.
+  private readonly createFormApplicationId = toSignal(
+    this.notificationForm.controls.application_id.valueChanges.pipe(
+      startWith(this.notificationForm.controls.application_id.value),
+    ),
+    { initialValue: this.notificationForm.controls.application_id.value },
+  );
+
+  // Active devices linked to the currently selected create-form application.
+  readonly availableDeviceOptions = computed(() => {
+    const applicationId = Number(this.createFormApplicationId());
+    if (!applicationId) {
+      return [];
+    }
+    return this.devices()
+      .filter(
+        (device) =>
+          device.push_token_status === 'active' &&
+          device.application_ids.includes(applicationId),
+      )
+      .map((device) => ({
+        label: `${device.device_name} (${device.platform})`,
+        value: device.id,
+      }));
+  });
+
+  // O(1) future-notification membership test for the row template: a single
+  // Set rebuilt only when the future list changes, instead of an O(F) scan per
+  // row per change-detection cycle.
+  readonly futureNotificationIds = computed(
+    () => new Set(this.futureNotifications().map((notification) => notification.id)),
   );
 
   readonly futureEditForm = this.fb.nonNullable.group({
@@ -454,13 +489,6 @@ export class NotificationsPage implements OnInit {
     this.shell.apps().map((app) => ({ label: app.name, value: app.id })),
   );
 
-  availableDeviceOptions() {
-    return this.availableDevices().map((device) => ({
-      label: `${device.device_name} (${device.platform})`,
-      value: device.id,
-    }));
-  }
-
   readonly statusOptionsSelect = computed(() =>
     this.statusOptions.map((status) => ({ label: this.copy().statusLabels[status], value: status })),
   );
@@ -510,9 +538,7 @@ export class NotificationsPage implements OnInit {
   }
 
   isFutureNotification(notification: NotificationRead): boolean {
-    return this.futureNotifications().some(
-      (futureNotification) => futureNotification.id === notification.id,
-    );
+    return this.futureNotificationIds().has(notification.id);
   }
 
   openDetails(notification: NotificationRead): void {

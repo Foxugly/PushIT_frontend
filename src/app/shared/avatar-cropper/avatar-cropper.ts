@@ -29,11 +29,16 @@ export interface AvatarCropperLabels {
   styleUrl: './avatar-cropper.scss',
 })
 export class AvatarCropper {
+  private static nextId = 0;
+
   readonly labels = input.required<AvatarCropperLabels>();
   /** Disables the controls while the parent is uploading the cropped result. */
   readonly pending = input(false);
 
   readonly cropped = output<File>();
+
+  /** Stable id wiring the visible crop hint to the cropper via aria-describedby. */
+  readonly cropHintId = `avatar-cropper-hint-${AvatarCropper.nextId++}`;
 
   /** The raw image being edited; null shows the file picker instead. */
   readonly sourceFile = signal<File | null>(null);

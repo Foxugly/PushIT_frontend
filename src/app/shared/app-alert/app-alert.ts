@@ -1,9 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 
+import { LanguageCode, PublicI18nService } from '../../core/services/public-i18n.service';
+
 export type AppAlertTone = 'success' | 'info' | 'danger';
+
+/** Localized "close" label for the dismiss button. Kept inline (single generic
+ * word) rather than wired through the large copy trees; the active language is
+ * the global PublicI18nService signal, and callers may override via closeLabel. */
+const CLOSE_LABEL: Record<LanguageCode, string> = {
+  fr: 'Fermer',
+  nl: 'Sluiten',
+  en: 'Close',
+};
 
 @Component({
   selector: 'app-alert',
@@ -12,9 +23,15 @@ export type AppAlertTone = 'success' | 'info' | 'danger';
   styleUrl: './app-alert.scss',
 })
 export class AppAlert {
+  private readonly i18n = inject(PublicI18nService);
+
   readonly message = input.required<string>();
   readonly tone = input<AppAlertTone>('info');
   readonly timeoutMs = input(5000);
+  /** Override the localized default close label (e.g. to use a page's copy). */
+  readonly closeLabel = input<string>('');
+
+  readonly resolvedCloseLabel = computed(() => this.closeLabel() || CLOSE_LABEL[this.i18n.language()]);
 
   readonly dismissed = output<void>();
 

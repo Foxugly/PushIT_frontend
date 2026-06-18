@@ -161,6 +161,13 @@ export const APP_COPY = {
       loginLink: 'Se connecter',
       captchaRequired: 'Merci de valider le captcha anti-robot.',
       captchaFailed: 'Échec de la vérification anti-robot. Réessayez.',
+      validation: {
+        emailRequired: "L'email est requis.",
+        emailInvalid: 'Saisissez une adresse email valide.',
+        passwordRequired: 'Le mot de passe est requis.',
+        passwordTooShort: 'Le mot de passe doit faire au moins 8 caractères.',
+        languageRequired: 'La langue est requise.',
+      },
     },
     forgotPassword: {
       eyebrow: 'Mot de passe oublié',
@@ -206,6 +213,7 @@ export const APP_COPY = {
       emailLabel: 'Email',
       resend: 'Renvoyer le lien',
       resent: 'Si une confirmation est nécessaire, un nouveau lien a été envoyé.',
+      resendError: "Impossible d'envoyer le lien pour le moment. Réessayez plus tard.",
       backToLogin: 'Retour à la connexion',
     },
     footer: {
@@ -464,6 +472,13 @@ export const APP_COPY = {
       loginLink: 'Inloggen',
       captchaRequired: 'Bevestig de anti-robotcaptcha.',
       captchaFailed: 'Anti-robotverificatie mislukt. Probeer opnieuw.',
+      validation: {
+        emailRequired: 'E-mail is verplicht.',
+        emailInvalid: 'Voer een geldig e-mailadres in.',
+        passwordRequired: 'Wachtwoord is verplicht.',
+        passwordTooShort: 'Het wachtwoord moet minstens 8 tekens bevatten.',
+        languageRequired: 'Taal is verplicht.',
+      },
     },
     forgotPassword: {
       eyebrow: 'Wachtwoord vergeten',
@@ -509,6 +524,7 @@ export const APP_COPY = {
       emailLabel: 'E-mail',
       resend: 'Link opnieuw versturen',
       resent: 'Indien een bevestiging nodig is, is een nieuwe link verstuurd.',
+      resendError: 'De link kan nu niet worden verzonden. Probeer het later opnieuw.',
       backToLogin: 'Terug naar inloggen',
     },
     footer: {
@@ -767,6 +783,13 @@ export const APP_COPY = {
       loginLink: 'Log in',
       captchaRequired: 'Please complete the anti-bot captcha.',
       captchaFailed: 'Anti-bot verification failed. Please try again.',
+      validation: {
+        emailRequired: 'Email is required.',
+        emailInvalid: 'Enter a valid email address.',
+        passwordRequired: 'Password is required.',
+        passwordTooShort: 'Password must be at least 8 characters.',
+        languageRequired: 'Language is required.',
+      },
     },
     forgotPassword: {
       eyebrow: 'Forgot password',
@@ -812,6 +835,7 @@ export const APP_COPY = {
       emailLabel: 'Email',
       resend: 'Resend the link',
       resent: 'If a confirmation is needed, a new link has been sent.',
+      resendError: 'Could not send the link right now. Please try again later.',
       backToLogin: 'Back to sign in',
     },
     footer: {

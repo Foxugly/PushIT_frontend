@@ -16,6 +16,9 @@
             <span>{{ copy().emailLabel }}</span>
             <input pInputText type="email" formControlName="email" class="public-input" autocomplete="email" />
           </label>
+          @if (resendError()) {
+            <app-alert [message]="resendError()!" tone="danger" (dismissed)="resendError.set(null)" />
+          }
           <div class="public-submit-row">
             <p-button type="submit" [label]="copy().resend" [loading]="resendPending()" />
           </div>

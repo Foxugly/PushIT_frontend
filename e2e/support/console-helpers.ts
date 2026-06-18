@@ -66,6 +66,25 @@ export async function seedAuthenticatedSession(page: Page, user: User): Promise<
   }, [user]);
 }
 
+/**
+ * Mock the login endpoint so the auth page can complete a successful sign-in
+ * without a backend. Register this AFTER mockConsoleApi: Playwright matches the
+ * most recently registered route first, so this specific /auth/login/ handler
+ * must come last to win over the generic /api/v1/** console catch-all.
+ */
+export async function mockLogin(page: Page, user: User): Promise<void> {
+  await page.route('**/api/v1/auth/login/', async (route) => {
+    if (route.request().method() !== 'POST') {
+      return route.fallback();
+    }
+    return fulfillJson(route, 200, {
+      access: 'access-token',
+      refresh: 'refresh-token',
+      user,
+    });
+  });
+}
+
 export async function mockConsoleApi(page: Page, initialState: ConsoleState): Promise<ConsoleState> {
   const state: ConsoleState = {
     ...initialState,
@@ -138,6 +157,37 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
 
     if (path.endsWith('/notifications/future/') && method === 'GET') {
       return fulfillJson(route, 200, paginatedOrBare(url, state.futureNotifications));
+    }
+
+    // Create + immediate-send both append a new history notification. The page
+    // reloads the lists afterwards, so the freshly-pushed row shows up.
+    if ((path.endsWith('/notifications/') || path.endsWith('/notifications/send/')) && method === 'POST') {
+      const payload = (request.postDataJSON() ?? {}) as {
+        application_id?: number;
+        title?: string;
+        message?: string;
+        scheduled_for?: string | null;
+      };
+      const app = state.apps.find((item) => item.id === payload.application_id);
+      const created: Notification = {
+        id: Date.now(),
+        application_id: payload.application_id ?? 0,
+        application_name: app?.name ?? '',
+        device_ids: [],
+        title: payload.title ?? '',
+        message: payload.message ?? '',
+        status: payload.scheduled_for ? 'scheduled' : 'sent',
+        created_at: new Date().toISOString(),
+        scheduled_for: payload.scheduled_for ?? null,
+        effective_scheduled_for: payload.scheduled_for ?? null,
+        sent_at: payload.scheduled_for ? null : new Date().toISOString(),
+      };
+      if (payload.scheduled_for) {
+        state.futureNotifications = [created, ...state.futureNotifications];
+      } else {
+        state.notifications = [created, ...state.notifications];
+      }
+      return fulfillJson(route, 201, created);
     }
 
     const notificationMatch = path.match(/\/api\/v1\/notifications\/(\d+)\/$/);

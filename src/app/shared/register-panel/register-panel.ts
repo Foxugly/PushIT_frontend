@@ -26,6 +26,7 @@ import { LanguagePreferenceService } from '../../core/services/language-preferen
 import { PushitApiService } from '../../core/services/pushit-api.service';
 import { SessionService } from '../../core/services/session.service';
 import { coerceApiError, errorFieldMessages } from '../../core/utils/api-error.utils';
+import { ApiErrorMessagePipe } from '../../core/pipes/api-error-message.pipe';
 import { AppAlert } from '../app-alert/app-alert';
 import { TurnstileController } from '../turnstile/turnstile';
 
@@ -36,6 +37,7 @@ import { TurnstileController } from '../turnstile/turnstile';
     ReactiveFormsModule,
     RouterLink,
     AppAlert,
+    ApiErrorMessagePipe,
     ButtonModule,
     InputTextModule,
     PasswordModule,

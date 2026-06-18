@@ -12,9 +12,15 @@
   />
   <p class="console-muted avatar-cropper__hint">{{ labels().hint }}</p>
 } @else {
-  <div class="avatar-cropper">
+  <div class="avatar-cropper" role="group" [attr.aria-label]="labels().cropHint">
+    <!-- The cropper canvas itself is pan/zoom via mouse/touch only (ngx-image-cropper
+         has no keyboard handles). Zoom is reachable with the +/- buttons below; for
+         framing, the centred crop is a sensible default — documented via the hint
+         and the accessible name so SR/keyboard users aren't left without context. -->
     <image-cropper
       class="avatar-cropper__canvas"
+      [attr.aria-label]="labels().cropHint"
+      [attr.aria-describedby]="cropHintId"
       [imageFile]="sourceFile()!"
       [maintainAspectRatio]="true"
       [aspectRatio]="1"
@@ -48,7 +54,7 @@
         [disabled]="pending() || scale() >= 3"
         (onClick)="zoomIn()"
       />
-      <span class="avatar-cropper__hint">{{ labels().cropHint }}</span>
+      <span class="avatar-cropper__hint" [id]="cropHintId">{{ labels().cropHint }}</span>
     </div>
 
     <div class="avatar-cropper__actions">

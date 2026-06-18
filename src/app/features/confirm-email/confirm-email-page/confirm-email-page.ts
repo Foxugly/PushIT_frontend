@@ -2,7 +2,9 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
+import * as Sentry from '@sentry/angular';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 
@@ -37,6 +39,7 @@ export class ConfirmEmailPage implements OnInit {
   readonly error = signal<ApiErrorResponse | null>(null);
   readonly resent = signal(false);
   readonly resendPending = signal(false);
+  readonly resendError = signal<string | null>(null);
   readonly copy = computed(() => this.appCopy.current().confirmEmail);
 
   readonly resendForm = this.fb.nonNullable.group({
@@ -67,9 +70,29 @@ export class ConfirmEmailPage implements OnInit {
       return;
     }
     this.resendPending.set(true);
+    this.resendError.set(null);
     this.api
       .resendConfirmation(this.resendForm.getRawValue().email)
       .pipe(finalize(() => this.resendPending.set(false)))
-      .subscribe({ next: () => this.resent.set(true), error: () => this.resent.set(true) });
+      .subscribe({
+        next: () => this.resent.set(true),
+        error: (err: unknown) => this.handleResendError(err),
+      });
+  }
+
+  /**
+   * The endpoint is anti-enumeration: a 4xx-by-design (validation / "no such
+   * account") still warrants the neutral success copy, so we don't leak whether
+   * the address exists. A transport failure (status 0) or a 5xx is a genuine
+   * failure — surface an error state and report it.
+   */
+  private handleResendError(err: unknown): void {
+    const status = err instanceof HttpErrorResponse ? err.status : 0;
+    if (status >= 400 && status < 500) {
+      this.resent.set(true);
+      return;
+    }
+    this.resendError.set(this.copy().resendError);
+    Sentry.captureException(err);
   }
 }

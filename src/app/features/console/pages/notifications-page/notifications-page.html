@@ -138,7 +138,7 @@
             >
               <strong>{{ notification.title }}</strong>
             </a>
-            @if (isFutureNotification(notification)) {
+            @if (futureNotificationIds().has(notification.id)) {
               <p class="console-table__subtext">{{ copy().scheduledSubtext }}</p>
             }
           </td>
@@ -186,7 +186,7 @@
                   (onClick)="sendNotification(notification)"
                 />
               }
-              @if (isFutureNotification(notification)) {
+              @if (futureNotificationIds().has(notification.id)) {
                 <p-button
                   icon="pi pi-pencil"
                   [text]="true"
