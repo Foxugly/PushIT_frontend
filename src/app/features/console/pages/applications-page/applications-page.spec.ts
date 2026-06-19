@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
@@ -19,16 +19,11 @@ describe('ApplicationsPage', () => {
   let api: jasmine.SpyObj<PushitApiService>;
   let confirm: jasmine.SpyObj<AppConfirmService>;
   let router: Router;
-  let routeStub: {
-    snapshot: {
-      queryParamMap: ReturnType<typeof convertToParamMap>;
-    };
-  };
   let shell: {
     apps: ReturnType<typeof signal<ApplicationRead[]>>;
     loading: ReturnType<typeof signal<boolean>>;
     selectedAppId: ReturnType<typeof signal<number | null>>;
-    createApp: jasmine.Spy;
+    lastGeneratedToken: ReturnType<typeof signal<{ appId: number; token: string; prefix: string } | null>>;
     loadShell: jasmine.Spy;
     toggleAppState: jasmine.Spy;
     regenerateToken: jasmine.Spy;
@@ -36,8 +31,7 @@ describe('ApplicationsPage', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['updateApp', 'deleteApp']);
-    api.updateApp.and.returnValue(of(makeApplication({ name: 'PushIT Mobile V2' })));
+    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['deleteApp']);
     api.deleteApp.and.returnValue(of(void 0));
     confirm = jasmine.createSpyObj<AppConfirmService>('AppConfirmService', ['ask']);
     confirm.ask.and.resolveTo(true);
@@ -49,19 +43,11 @@ describe('ApplicationsPage', () => {
       ]),
       loading: signal<boolean>(false),
       selectedAppId: signal<number | null>(101),
-      createApp: jasmine.createSpy('createApp').and.callFake(
-        (_payload: unknown, onDone?: (app: { id: number }) => void) => onDone?.({ id: 999 }),
-      ),
+      lastGeneratedToken: signal<{ appId: number; token: string; prefix: string } | null>(null),
       loadShell: jasmine.createSpy('loadShell'),
       toggleAppState: jasmine.createSpy('toggleAppState'),
       regenerateToken: jasmine.createSpy('regenerateToken'),
       revokeToken: jasmine.createSpy('revokeToken'),
-    };
-
-    routeStub = {
-      snapshot: {
-        queryParamMap: convertToParamMap({}),
-      },
     };
 
     const consoleCopy = {
@@ -82,14 +68,6 @@ describe('ApplicationsPage', () => {
             createdAt: 'Creation',
             actions: 'Actions',
           },
-          dialog: {
-            createTitle: 'Nouvelle application',
-            editTitle: 'Modifier l application',
-            create: 'Creer',
-            save: 'Enregistrer',
-            creating: 'Creation...',
-            saving: 'Enregistrement...',
-          },
           actions: {
             view: 'Voir',
             edit: 'Editer',
@@ -107,13 +85,8 @@ describe('ApplicationsPage', () => {
             regenerate: 'Regen',
             error: 'Erreur QR',
             loading: 'Generation...',
-          },
-          logo: {
-            label: 'Logo',
-            none: 'Aucun logo',
-            remove: 'Supprimer le logo',
-            choose: 'Choisir une image',
-            hint: 'Glissez une image ici.',
+            copied: 'Token copie.',
+            copyFailed: 'Copie impossible.',
           },
           alerts: {
             created: 'Application creee.',
@@ -135,6 +108,8 @@ describe('ApplicationsPage', () => {
             inactive: 'inactive',
           },
           confirmDelete: 'Supprimer {name} ?',
+          confirmRegenerate: 'Regenerer {name} ?',
+          confirmRevoke: 'Revoquer {name} ?',
         },
       }),
     };
@@ -149,7 +124,6 @@ describe('ApplicationsPage', () => {
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },
         { provide: AppConfirmService, useValue: confirm },
-        { provide: ActivatedRoute, useValue: routeStub },
       ],
     }).compileComponents();
 
@@ -157,57 +131,28 @@ describe('ApplicationsPage', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.resolveTo(true);
+    fixture.detectChanges();
   });
 
-  it('opens the edit modal from the edit query param', () => {
-    routeStub.snapshot.queryParamMap = convertToParamMap({ edit: '101' });
+  it('navigates to the create page from the add action', () => {
+    component.openCreate();
 
-    fixture.detectChanges();
-
-    expect(component.isModalOpen()).toBeTrue();
-    expect(component.modalMode()).toBe('edit');
-    expect(component.editingAppId()).toBe(101);
-    expect(component.form.controls.name.value).toBe('PushIT Mobile');
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications/new']);
   });
 
-  it('delegates application creation to the shell service and shows a banner', () => {
-    fixture.detectChanges();
-    component.openCreateModal();
-    component.form.setValue({
-      name: 'Nouvelle app',
-      description: 'Description',
-    });
+  it('navigates to the edit page for a row', () => {
+    component.openEdit(makeApplication({ id: 102 }));
 
-    component.saveApp();
-
-    expect(shell.createApp).toHaveBeenCalledWith(
-      { name: 'Nouvelle app', description: 'Description' },
-      jasmine.any(Function),
-      jasmine.any(Function),
-    );
-    expect(component.banner()).toBe('Application creee.');
-    expect(component.isModalOpen()).toBeFalse();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 102, 'edit']);
   });
 
-  it('updates an application and reloads the shell on success', () => {
-    fixture.detectChanges();
-    component.openEditModal(makeApplication());
-    component.form.patchValue({ name: 'PushIT Mobile V2' });
+  it('navigates to the detail page', () => {
+    component.openDetails(makeApplication({ id: 102 }));
 
-    component.saveApp();
-
-    expect(api.updateApp).toHaveBeenCalledWith(101, {
-      name: 'PushIT Mobile V2',
-      description: 'Application mobile',
-    });
-    expect(shell.loadShell).toHaveBeenCalledWith(101);
-    expect(component.banner()).toBe('Application PushIT Mobile V2 mise a jour.');
-    expect(component.isModalOpen()).toBeFalse();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 102]);
   });
 
   it('deletes a confirmed application and refreshes the shell', async () => {
-    fixture.detectChanges();
-
     await component.deleteApp(makeApplication({ id: 102, name: 'Backoffice' }));
 
     expect(api.deleteApp).toHaveBeenCalledWith(102);
@@ -215,9 +160,18 @@ describe('ApplicationsPage', () => {
     expect(component.banner()).toBe('Application Backoffice supprimee.');
   });
 
-  it('refreshes applications with the selected app id', () => {
-    fixture.detectChanges();
+  it('toggles an application state via the shell and surfaces a banner', () => {
+    shell.toggleAppState.and.callFake(
+      (_app: ApplicationRead, onDone?: () => void) => onDone?.(),
+    );
 
+    component.toggleState(makeApplication({ is_active: true }));
+
+    expect(shell.toggleAppState).toHaveBeenCalled();
+    expect(component.banner()).toBe('Application activee.');
+  });
+
+  it('refreshes applications with the selected app id', () => {
     component.refreshApplications();
 
     expect(shell.loadShell).toHaveBeenCalledWith(101);

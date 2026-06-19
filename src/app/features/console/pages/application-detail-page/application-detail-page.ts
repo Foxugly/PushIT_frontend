@@ -1,14 +1,10 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
-import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
 import { finalize, forkJoin } from 'rxjs';
 
@@ -32,46 +28,41 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppAlertTone } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
-import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
 import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
-import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
 import { ConsoleFactsTable } from '../../components/console-facts-table/console-facts-table';
-import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
+import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
 
 @Component({
   selector: 'app-application-detail-page',
   imports: [
     CommonModule,
     RouterLink,
-    ReactiveFormsModule,
     DatePipe,
     AppAlert, ApiErrorMessagePipe,
-    ApplicationFormFields,
     ConsoleDetailHeader,
-    ConsoleDialogActions,
     ConsoleFactsTable,
+    AppTokenReveal,
     ButtonModule,
-    DialogModule,
-    InputTextModule,
     TagModule,
     TableModule,
-    TextareaModule,
     TooltipModule,
-    AvatarCropper,
   ],
   templateUrl: './application-detail-page.html',
   styleUrl: './application-detail-page.scss',
 })
 export class ApplicationDetailPage implements OnInit {
-  private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly confirm = inject(AppConfirmService);
   private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().applicationDetail);
+  // The one-time token reveal (QR + token) reuses the `applications` copy block
+  // (qr.* labels + alerts.created guidance) so the surface matches the list.
+  readonly applicationsCopy = computed(() => this.consoleCopy.current().applications);
 
   readonly application = signal<ApplicationRead | null>(null);
   readonly devices = signal<DeviceRead[]>([]);
@@ -88,9 +79,6 @@ export class ApplicationDetailPage implements OnInit {
   readonly banner = signal<string | null>(null);
   readonly bannerTone = signal<AppAlertTone>('success');
   readonly editError = signal<ApiErrorResponse | null>(null);
-  readonly saving = signal(false);
-  readonly isEditModalOpen = signal(false);
-  readonly logoPending = signal(false);
   readonly emailRegenerating = signal(false);
   readonly aliasChecking = signal(false);
   readonly aliasStatus = signal<AliasStatus | null>(null);
@@ -122,6 +110,16 @@ export class ApplicationDetailPage implements OnInit {
     return { severity: 'warn', label: copy.unverifiable, hint: status.detail || null };
   });
 
+  // One-time raw token for THIS app, iff it was just (re)generated this session
+  // (the shell holds it for a short TTL). This is what makes the freshly-minted
+  // token reachable after create→detail navigation: the regression was that the
+  // detail page had no reveal surface, so the token was lost.
+  readonly revealToken = computed(() => {
+    const app = this.application();
+    const last = this.shell.lastGeneratedToken();
+    return app && last && last.appId === app.id ? last.token : null;
+  });
+
   readonly applicationFactsComputed = computed(() => {
     const app = this.application();
     if (!app) {
@@ -148,11 +146,6 @@ export class ApplicationDetailPage implements OnInit {
       },
       { label: this.copy().facts.createdAt, value: this.formatDateTime(app.created_at) },
     ] as ConsoleFactItem[];
-  });
-
-  readonly editForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(120)]],
-    description: [''],
   });
 
   ngOnInit(): void {
@@ -265,102 +258,12 @@ export class ApplicationDetailPage implements OnInit {
     return this.futureNotifications().some((item) => item.id === notification.id);
   }
 
-  openEditModal(): void {
+  openEdit(): void {
     const app = this.application();
     if (!app) {
       return;
     }
-
-    this.editError.set(null);
-    this.editForm.reset({
-      name: app.name,
-      description: app.description,
-    });
-    this.isEditModalOpen.set(true);
-  }
-
-  closeEditModal(): void {
-    this.isEditModalOpen.set(false);
-  }
-
-  setEditModalVisible(visible: boolean): void {
-    this.isEditModalOpen.set(visible);
-    if (!visible) {
-      this.editError.set(null);
-    }
-  }
-
-  saveApplication(): void {
-    const app = this.application();
-    if (!app) {
-      return;
-    }
-
-    if (this.editForm.invalid) {
-      this.editForm.markAllAsTouched();
-      return;
-    }
-
-    this.saving.set(true);
-    this.editError.set(null);
-
-    this.api
-      .updateApp(app.id, this.editForm.getRawValue())
-      .pipe(finalize(() => this.saving.set(false)))
-      .subscribe({
-        next: (updatedApp) => {
-          this.application.set(updatedApp);
-          this.closeEditModal();
-          this.shell.loadShell(updatedApp.id);
-        },
-        error: (error) => {
-          this.editError.set(coerceApiError(error));
-        },
-      });
-  }
-
-  onLogoCropped(file: File): void {
-    const app = this.application();
-    if (!file || !app) {
-      return;
-    }
-
-    this.logoPending.set(true);
-    this.editError.set(null);
-    this.api
-      .uploadAppLogo(app.id, file)
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
-      .subscribe({
-        next: (updatedApp) => {
-          this.application.set(updatedApp);
-          this.bannerTone.set('success');
-          this.banner.set(this.copy().logo.updated);
-          this.shell.loadShell(updatedApp.id);
-        },
-        error: (error) => this.editError.set(coerceApiError(error)),
-      });
-  }
-
-  removeLogo(): void {
-    const app = this.application();
-    if (!app) {
-      return;
-    }
-
-    this.logoPending.set(true);
-    this.editError.set(null);
-    this.api
-      .deleteAppLogo(app.id)
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
-      .subscribe({
-        next: () => {
-          this.application.set({ ...app, logo: null });
-          this.bannerTone.set('success');
-          this.banner.set(this.copy().logo.removed);
-          this.shell.loadShell(app.id);
-        },
-        error: (error) => this.editError.set(coerceApiError(error)),
-      });
+    void this.router.navigate(['/dashboard/applications', app.id, 'edit']);
   }
 
   async regenerateInboundEmail(): Promise<void> {

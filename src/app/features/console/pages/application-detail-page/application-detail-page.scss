@@ -18,6 +18,13 @@
   align-items: flex-start;
 }
 
+.application-detail-email__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .application-detail-email__address {
   display: grid;
   gap: 0.35rem;

@@ -1,0 +1,43 @@
+<div class="app-qr">
+  @if (banner()) {
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
+  }
+
+  @if (qrImageUrl(); as url) {
+    <img class="app-qr__img" [src]="url" [alt]="copy().title" />
+    <p class="app-qr__hint">{{ copy().scanHint }}</p>
+    <p-button
+      icon="pi pi-download"
+      [label]="copy().downloadQr"
+      severity="secondary"
+      size="small"
+      (onClick)="downloadQr()"
+    />
+    <p class="app-qr__save-notice" role="status">{{ copy().saveNotice }}</p>
+    <div class="app-qr__token">
+      <code>{{ token() }}</code>
+      <p-button
+        icon="pi pi-copy"
+        [text]="true"
+        [rounded]="true"
+        [ariaLabel]="copy().copyToken"
+        [pTooltip]="copy().copyToken"
+        tooltipPosition="top"
+        (onClick)="copyToken()"
+      />
+      <p-button
+        icon="pi pi-download"
+        [text]="true"
+        [rounded]="true"
+        [ariaLabel]="copy().downloadToken"
+        [pTooltip]="copy().downloadToken"
+        tooltipPosition="top"
+        (onClick)="downloadToken()"
+      />
+    </div>
+  } @else if (qrLoading()) {
+    <p class="console-muted">{{ copy().loading }}</p>
+  } @else if (qrError(); as err) {
+    <app-alert [message]="err" tone="danger" (dismissed)="qrError.set(null)" />
+  }
+</div>

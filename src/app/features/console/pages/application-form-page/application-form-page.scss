@@ -2,20 +2,6 @@
   display: block;
 }
 
-.app-name-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.app-logo-thumb {
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid rgba(16, 185, 129, 0.16);
-}
-
 .app-logo-field {
   display: grid;
   gap: 0.4rem;
@@ -51,13 +37,4 @@
   text-align: center;
   color: var(--text-muted);
   background: rgba(16, 185, 129, 0.06);
-}
-
-// The QR/token reveal styles live in <app-token-reveal>. Only the dialog's
-// regenerate fallback still uses the .app-qr grid wrapper here.
-.app-qr {
-  display: grid;
-  justify-items: center;
-  gap: 1rem;
-  text-align: center;
 }

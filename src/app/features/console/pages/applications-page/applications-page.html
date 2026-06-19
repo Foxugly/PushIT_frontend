@@ -12,7 +12,7 @@
           <p-tag [value]="copy().active + ' ' + activeAppsCount()" severity="success" />
         </div>
         <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="refreshApplications()" />
-        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" />
+        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreate()" />
       </div>
     </div>
 
@@ -75,7 +75,7 @@
                   [ariaLabel]="copy().actions.edit"
                   [pTooltip]="copy().actions.edit"
                   tooltipPosition="top"
-                  (onClick)="openEditModal(app)"
+                  (onClick)="openEdit(app)"
                 />
                 <p-button
                   [icon]="app.is_active ? 'pi pi-pause' : 'pi pi-play'"
@@ -127,71 +127,9 @@
 
   </section>
 
-  <p-dialog
-    [header]="modalMode() === 'create' ? copy().dialog.createTitle : copy().dialog.editTitle"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [visible]="isModalOpen()"
-    (visibleChange)="setModalVisible($event)"
-    [style]="{ width: '42rem' }"
-  >
-    <form class="console-form" [formGroup]="form" (ngSubmit)="saveApp()">
-      <app-application-form-fields
-        [form]="form"
-        [nameMessages]="fieldErrors('name')"
-        [descriptionMessages]="fieldErrors('description')"
-      />
-
-      <div class="app-logo-field">
-        <span class="app-logo-field__label">{{ copy().logo.label }}</span>
-        @if (modalMode() === 'edit') {
-          <div class="app-logo-field__row">
-            @if (editingApp()?.logo) {
-              <img class="app-logo-preview" [src]="editingApp()!.logo!" alt="" />
-            } @else {
-              <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
-            }
-            @if (editingApp()?.logo) {
-              <p-button
-                [label]="copy().logo.remove"
-                [text]="true"
-                severity="danger"
-                [disabled]="logoPending()"
-                (onClick)="removeLogo()"
-              />
-            }
-          </div>
-        }
-        @if (modalMode() === 'create' && pendingLogoUrl()) {
-          <div class="app-logo-field__row">
-            <img class="app-logo-preview" [src]="pendingLogoUrl()!" alt="" />
-          </div>
-        }
-        @defer (when isModalOpen()) {
-          <app-avatar-cropper
-            [labels]="copy().logo"
-            [pending]="logoPending()"
-            (cropped)="onLogoCropped($event)"
-          />
-        } @placeholder {
-          <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
-        }
-      </div>
-
-      @if (error()?.detail) {
-        <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
-      }
-
-      <app-console-dialog-actions (cancelled)="closeModal()">
-        <p-button
-          type="submit"
-          [label]="pending() ? (modalMode() === 'create' ? copy().dialog.creating : copy().dialog.saving) : (modalMode() === 'create' ? copy().dialog.create : copy().dialog.save)"
-          [loading]="pending()"
-        />
-      </app-console-dialog-actions>
-    </form>
-  </p-dialog>
+  @if (error()?.detail) {
+    <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
+  }
 
   <p-dialog
     [header]="copy().qr.title"
@@ -203,44 +141,10 @@
     [style]="{ width: '24rem' }"
   >
     @if (qrApp(); as app) {
-      <div class="app-qr">
-        @if (qrImageUrl(); as url) {
-          <img class="app-qr__img" [src]="url" [alt]="copy().qr.title" />
-          <p class="app-qr__hint">{{ copy().qr.scanHint }}</p>
-          <p-button
-            icon="pi pi-download"
-            [label]="copy().qr.downloadQr"
-            severity="secondary"
-            size="small"
-            (onClick)="downloadQr()"
-          />
-          @if (qrToken(); as token) {
-            <p class="app-qr__save-notice" role="status">{{ copy().qr.saveNotice }}</p>
-            <div class="app-qr__token">
-              <code>{{ token }}</code>
-              <p-button
-                icon="pi pi-copy"
-                [text]="true"
-                [rounded]="true"
-                [ariaLabel]="copy().qr.copyToken"
-                [pTooltip]="copy().qr.copyToken"
-                tooltipPosition="top"
-                (onClick)="copyToken(token)"
-              />
-              <p-button
-                icon="pi pi-download"
-                [text]="true"
-                [rounded]="true"
-                [ariaLabel]="copy().qr.downloadToken"
-                [pTooltip]="copy().qr.downloadToken"
-                tooltipPosition="top"
-                (onClick)="downloadToken(token)"
-              />
-            </div>
-          }
-        } @else if (qrLoading()) {
-          <p class="console-muted">{{ copy().qr.loading }}</p>
-        } @else {
+      @if (qrToken(); as token) {
+        <app-token-reveal [app]="app" [token]="token" />
+      } @else {
+        <div class="app-qr">
           @if (qrError(); as err) {
             <app-alert [message]="err" tone="danger" (dismissed)="qrError.set(null)" />
           }
@@ -251,8 +155,8 @@
             severity="secondary"
             (onClick)="regenerateForQr(app)"
           />
-        }
-      </div>
+        </div>
+      }
     }
   </p-dialog>
 </section>
