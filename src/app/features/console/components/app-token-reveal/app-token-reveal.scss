@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.app-qr {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.app-qr__img {
+  width: 14rem;
+  height: 14rem;
+  image-rendering: pixelated;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.app-qr__hint {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.app-qr__save-notice {
+  margin: 0;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400e;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.app-qr__token {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+  border-radius: 10px;
+  background: rgba(246, 249, 255, 0.95);
+}
+
+.app-qr__token code {
+  flex: 1 1 auto;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+  text-align: left;
+}

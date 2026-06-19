@@ -31,6 +31,7 @@ import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-con
 import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
 import { ConsoleFactsTable } from '../../components/console-facts-table/console-facts-table';
+import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
 
 @Component({
   selector: 'app-application-detail-page',
@@ -41,6 +42,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     AppAlert, ApiErrorMessagePipe,
     ConsoleDetailHeader,
     ConsoleFactsTable,
+    AppTokenReveal,
     ButtonModule,
     TagModule,
     TableModule,
@@ -58,6 +60,9 @@ export class ApplicationDetailPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().applicationDetail);
+  // The one-time token reveal (QR + token) reuses the `applications` copy block
+  // (qr.* labels + alerts.created guidance) so the surface matches the list.
+  readonly applicationsCopy = computed(() => this.consoleCopy.current().applications);
 
   readonly application = signal<ApplicationRead | null>(null);
   readonly devices = signal<DeviceRead[]>([]);
@@ -103,6 +108,16 @@ export class ApplicationDetailPage implements OnInit {
       return { severity: 'secondary', label: copy.unavailable, hint: null };
     }
     return { severity: 'warn', label: copy.unverifiable, hint: status.detail || null };
+  });
+
+  // One-time raw token for THIS app, iff it was just (re)generated this session
+  // (the shell holds it for a short TTL). This is what makes the freshly-minted
+  // token reachable after create→detail navigation: the regression was that the
+  // detail page had no reveal surface, so the token was lost.
+  readonly revealToken = computed(() => {
+    const app = this.application();
+    const last = this.shell.lastGeneratedToken();
+    return app && last && last.appId === app.id ? last.token : null;
   });
 
   readonly applicationFactsComputed = computed(() => {

@@ -33,6 +33,9 @@ function configure(
     apps: ReturnType<typeof signal<ApplicationRead[]>>;
     createApp: jasmine.Spy;
     loadShell: jasmine.Spy;
+    lastGeneratedToken: ReturnType<
+      typeof signal<{ appId: number; token: string; prefix: string } | null>
+    >;
   },
 ) {
   return TestBed.configureTestingModule({
@@ -55,6 +58,9 @@ describe('ApplicationFormPage', () => {
     apps: ReturnType<typeof signal<ApplicationRead[]>>;
     createApp: jasmine.Spy;
     loadShell: jasmine.Spy;
+    lastGeneratedToken: ReturnType<
+      typeof signal<{ appId: number; token: string; prefix: string } | null>
+    >;
   };
 
   beforeEach(() => {
@@ -63,8 +69,14 @@ describe('ApplicationFormPage', () => {
     api.updateApp.and.returnValue(of(makeApplication({ name: 'PushIT Mobile V2' })));
     shell = {
       apps: signal<ApplicationRead[]>([makeApplication()]),
+      lastGeneratedToken: signal<{ appId: number; token: string; prefix: string } | null>(null),
+      // Mirror the real shell: on create it remembers the one-time token so the
+      // detail page can reveal it, then invokes onDone with the created app.
       createApp: jasmine.createSpy('createApp').and.callFake(
-        (_payload: unknown, onDone?: (app: { id: number }) => void) => onDone?.({ id: 999 }),
+        (_payload: unknown, onDone?: (app: { id: number }) => void) => {
+          shell.lastGeneratedToken.set({ appId: 999, token: 'apt_created_secret', prefix: 'apt_c' });
+          onDone?.({ id: 999 });
+        },
       ),
       loadShell: jasmine.createSpy('loadShell'),
     };
@@ -95,7 +107,7 @@ describe('ApplicationFormPage', () => {
       expect(component.form.controls.name.touched).toBeTrue();
     });
 
-    it('delegates creation to the shell and navigates to the detail page (token reveal)', () => {
+    it('delegates creation to the shell and navigates to the detail page where the token is revealed', () => {
       component.form.setValue({ name: 'Nouvelle app', description: 'Desc' });
 
       component.save();
@@ -105,7 +117,16 @@ describe('ApplicationFormPage', () => {
         jasmine.any(Function),
         jasmine.any(Function),
       );
+      // Navigate to the new app's detail page...
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999]);
+      // ...and the one-time token is REACHABLE there: the shell holds it for the
+      // created app id, which is exactly what the detail page's revealToken()
+      // surfaces (regression guard: create must not strand the token).
+      expect(shell.lastGeneratedToken()).toEqual({
+        appId: 999,
+        token: 'apt_created_secret',
+        prefix: 'apt_c',
+      });
     });
 
     it('surfaces a create error from the shell', () => {

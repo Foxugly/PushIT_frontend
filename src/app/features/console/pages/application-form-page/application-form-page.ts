@@ -118,9 +118,10 @@ export class ApplicationFormPage implements OnInit {
     this.shell.createApp(
       this.form.getRawValue(),
       (app) => {
-        // Navigate to the detail page where the freshly-created one-time token
-        // is revealed (the shell stored it via rememberGeneratedToken). The QR
-        // dialog on the list/detail surfaces it while it is still held.
+        // Navigate to the detail page, which reveals the freshly-created one-time
+        // token (QR + raw token) via <app-token-reveal>: the shell stored it via
+        // rememberGeneratedToken, and the detail page's revealToken() surfaces it
+        // while it is still held. Without that reveal the token would be lost.
         this.pending.set(false);
         void this.router.navigate(['/dashboard/applications', app.id]);
       },

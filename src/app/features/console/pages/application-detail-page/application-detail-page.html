@@ -44,6 +44,16 @@
         />
       }
       <div class="console-detail-grid">
+        @if (revealToken(); as token) {
+          <article class="console-detail-panel console-detail-panel--wide application-detail-token">
+            <div class="application-detail-section__header">
+              <h3>{{ applicationsCopy().qr.title }}</h3>
+            </div>
+            <p class="console-table__subtext">{{ applicationsCopy().alerts.created }}</p>
+            <app-token-reveal [app]="app" [token]="token" />
+          </article>
+        }
+
         <article class="console-detail-panel console-detail-panel--wide">
           <div class="application-detail-section__header application-detail-email__header">
             <div>

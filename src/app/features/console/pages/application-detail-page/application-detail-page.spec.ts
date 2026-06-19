@@ -23,6 +23,9 @@ describe('ApplicationDetailPage', () => {
   let shell: {
     apps: ReturnType<typeof signal<ReturnType<typeof makeApplication>[]>>;
     loadShell: jasmine.Spy<(preferredAppId?: number) => void>;
+    lastGeneratedToken: ReturnType<
+      typeof signal<{ appId: number; token: string; prefix: string } | null>
+    >;
   };
   let routeStub: {
     snapshot: {
@@ -43,7 +46,9 @@ describe('ApplicationDetailPage', () => {
       'deleteAppLogo',
       'regenerateAppEmail',
       'getAliasStatus',
+      'getAppQrCode',
     ]);
+    api.getAppQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
       of([
@@ -69,6 +74,7 @@ describe('ApplicationDetailPage', () => {
     shell = {
       apps: signal([makeApplication(), makeApplication({ id: 102, name: 'Backoffice' })]),
       loadShell: jasmine.createSpy('loadShell'),
+      lastGeneratedToken: signal<{ appId: number; token: string; prefix: string } | null>(null),
     };
 
     routeStub = {
@@ -79,6 +85,23 @@ describe('ApplicationDetailPage', () => {
 
     const consoleCopy = {
       current: signal({
+        applications: {
+          qr: {
+            title: 'QR code du token',
+            scanHint: 'Scannez ce QR.',
+            downloadQr: 'Telecharger le QR',
+            downloadToken: 'Telecharger le token',
+            copyToken: 'Copier le token',
+            copied: 'Token copie.',
+            copyFailed: 'Copie impossible.',
+            saveNotice: 'Token affiche une seule fois.',
+            error: 'QR impossible.',
+            loading: 'Generation...',
+          },
+          alerts: {
+            created: 'Application creee. Ouvrez le QR code pour voir le token.',
+          },
+        },
         applicationDetail: {
           back: 'Retour',
           eyebrow: 'Application',
@@ -209,6 +232,36 @@ describe('ApplicationDetailPage', () => {
 
     expect(component.error()?.detail).toBe('ID application invalide.');
     expect(api.getApp).not.toHaveBeenCalled();
+  });
+
+  it('reveals the one-time token after create (regression: token must stay reachable)', () => {
+    // Simulate the post-create state: the shell holds the freshly-minted token
+    // for this app and the form page has navigated here.
+    shell.lastGeneratedToken.set({ appId: 101, token: 'apt_freshsecret123', prefix: 'apt_fresh' });
+
+    fixture.detectChanges();
+
+    // The token is reachable via the reveal gate...
+    expect(component.revealToken()).toBe('apt_freshsecret123');
+
+    // ...and the reveal surface is rendered with the QR request fired for it.
+    const reveal = fixture.nativeElement.querySelector('app-token-reveal');
+    expect(reveal).not.toBeNull();
+    expect(api.getAppQrCode).toHaveBeenCalledWith(101, 'apt_freshsecret123');
+
+    // The created guidance is shown so the user knows to copy/download it now.
+    expect(fixture.nativeElement.textContent).toContain(
+      'Application creee. Ouvrez le QR code pour voir le token.',
+    );
+  });
+
+  it('does not reveal a token for an unrelated app', () => {
+    shell.lastGeneratedToken.set({ appId: 999, token: 'apt_other', prefix: 'apt_o' });
+
+    fixture.detectChanges();
+
+    expect(component.revealToken()).toBeNull();
+    expect(fixture.nativeElement.querySelector('app-token-reveal')).toBeNull();
   });
 
   it('navigates to the dedicated edit page from the edit action', () => {
