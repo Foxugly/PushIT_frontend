@@ -86,6 +86,20 @@ export const routes: Routes = [
           import('./features/console/pages/applications-page/applications-page').then((m) => m.ApplicationsPage),
       },
       {
+        path: 'applications/new',
+        loadComponent: () =>
+          import('./features/console/pages/application-form-page/application-form-page').then(
+            (m) => m.ApplicationFormPage,
+          ),
+      },
+      {
+        path: 'applications/:appId/edit',
+        loadComponent: () =>
+          import('./features/console/pages/application-form-page/application-form-page').then(
+            (m) => m.ApplicationFormPage,
+          ),
+      },
+      {
         path: 'applications/:appId',
         loadComponent: () =>
           import('./features/console/pages/application-detail-page/application-detail-page').then(

@@ -15,7 +15,7 @@
           [ariaLabel]="copy().editTooltip"
           [pTooltip]="copy().editTooltip"
           tooltipPosition="top"
-          (onClick)="openEditModal()"
+          (onClick)="openEdit()"
         />
         <p-tag [value]="app.is_active ? copy().statusLabels.active : copy().statusLabels.inactive" [severity]="appSeverity(app)" />
         <p-tag [value]="copy().facts.tokenPrefix + ' ' + app.app_token_prefix" severity="info" />
@@ -50,12 +50,23 @@
               <h3>{{ copy().inboundEmailTitle }}</h3>
               <p class="console-table__subtext">{{ copy().inboundEmailHelp.intro }}</p>
             </div>
-            <p-button
-              icon="pi pi-copy"
-              [label]="copy().inboundEmailCopy"
-              size="small"
-              (onClick)="copyInboundEmail(app.inbound_email_address)"
-            />
+            <div class="application-detail-email__actions">
+              <p-button
+                icon="pi pi-copy"
+                [label]="copy().inboundEmailCopy"
+                size="small"
+                (onClick)="copyInboundEmail(app.inbound_email_address)"
+              />
+              <p-button
+                icon="pi pi-refresh"
+                severity="warn"
+                size="small"
+                [outlined]="true"
+                [label]="emailRegenerating() ? copy().regenerateEmail.pending : copy().regenerateEmail.button"
+                [loading]="emailRegenerating()"
+                (onClick)="regenerateInboundEmail()"
+              />
+            </div>
           </div>
           <div class="application-detail-email__address">
             <span class="application-detail-email__label">{{ copy().inboundEmailLabel }}</span>
@@ -234,72 +245,7 @@
     }
   </section>
 
-  <p-dialog
-    [header]="copy().dialog.title"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [visible]="isEditModalOpen()"
-    (visibleChange)="setEditModalVisible($event)"
-    [style]="{ width: '42rem' }"
-  >
-    <form class="console-form" [formGroup]="editForm" (ngSubmit)="saveApplication()">
-      <app-application-form-fields [form]="editForm" [usePlaceholders]="false" />
-
-      <div class="app-logo-field">
-        <span class="app-logo-field__label">{{ copy().logo.label }}</span>
-        <div class="app-logo-field__row">
-          @if (application()?.logo) {
-            <img class="app-logo-preview" [src]="application()!.logo!" alt="" />
-          } @else {
-            <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
-          }
-          @if (application()?.logo) {
-            <p-button
-              [label]="copy().logo.remove"
-              [text]="true"
-              severity="danger"
-              [disabled]="logoPending()"
-              (onClick)="removeLogo()"
-            />
-          }
-        </div>
-        @defer (when isEditModalOpen()) {
-          <app-avatar-cropper
-            [labels]="copy().logo"
-            [pending]="logoPending()"
-            (cropped)="onLogoCropped($event)"
-          />
-        } @placeholder {
-          <p class="console-muted app-logo-field__hint">{{ copy().logo.hint }}</p>
-        }
-      </div>
-
-      @if (application(); as app) {
-        <div class="app-email-field">
-          <span class="app-logo-field__label">{{ copy().regenerateEmail.label }}</span>
-          <div class="app-email-field__row">
-            <code>{{ app.inbound_email_address }}</code>
-            <p-button
-              icon="pi pi-refresh"
-              severity="warn"
-              [outlined]="true"
-              [label]="emailRegenerating() ? copy().regenerateEmail.pending : copy().regenerateEmail.button"
-              [loading]="emailRegenerating()"
-              (onClick)="regenerateInboundEmail()"
-            />
-          </div>
-          <p class="console-table__subtext">{{ copy().regenerateEmail.hint }}</p>
-        </div>
-      }
-
-      @if (editError()?.detail) {
-        <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
-      }
-
-      <app-console-dialog-actions (cancelled)="closeEditModal()">
-        <p-button type="submit" [label]="saving() ? copy().dialog.saving : copy().dialog.save" [loading]="saving()" />
-      </app-console-dialog-actions>
-    </form>
-  </p-dialog>
+  @if (editError()?.detail) {
+    <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
+  }
 </section>

@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 
 import {
@@ -29,6 +29,7 @@ describe('ApplicationDetailPage', () => {
       paramMap: ReturnType<typeof convertToParamMap>;
     };
   };
+  let router: Router;
 
   beforeEach(async () => {
     api = jasmine.createSpyObj<PushitApiService>('PushitApiService', [
@@ -187,6 +188,8 @@ describe('ApplicationDetailPage', () => {
 
     fixture = TestBed.createComponent(ApplicationDetailPage);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
   });
 
   it('loads application-related resources on init', () => {
@@ -208,21 +211,12 @@ describe('ApplicationDetailPage', () => {
     expect(api.getApp).not.toHaveBeenCalled();
   });
 
-  it('updates the application and refreshes the console shell', () => {
+  it('navigates to the dedicated edit page from the edit action', () => {
     fixture.detectChanges();
-    component.openEditModal();
-    component.editForm.patchValue({
-      name: 'PushIT Mobile V2',
-    });
 
-    component.saveApplication();
+    component.openEdit();
 
-    expect(api.updateApp).toHaveBeenCalledWith(101, {
-      name: 'PushIT Mobile V2',
-      description: 'Application mobile',
-    });
-    expect(component.application()?.name).toBe('PushIT Mobile V2');
-    expect(shell.loadShell).toHaveBeenCalledWith(101);
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 101, 'edit']);
   });
 
   it('copies the inbound email address and shows a success banner', async () => {

@@ -1,0 +1,61 @@
+<section class="console-page">
+  <section class="console-card">
+    <app-console-detail-header
+      [backLink]="['/dashboard/applications']"
+      [backLabel]="copy().page.back"
+      [eyebrow]="copy().page.eyebrow"
+      [title]="isEdit() ? copy().page.editTitle : copy().page.createTitle"
+    />
+
+    @if (loading() && !application()) {
+      <p class="console-empty">{{ copy().page.loading }}</p>
+    } @else {
+      <form class="console-form" [formGroup]="form" (ngSubmit)="save()">
+        <app-application-form-fields
+          [form]="form"
+          [nameMessages]="fieldErrors('name')"
+          [descriptionMessages]="fieldErrors('description')"
+        />
+
+        @if (isEdit()) {
+          <div class="app-logo-field">
+            <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+            <div class="app-logo-field__row">
+              @if (application()?.logo) {
+                <img class="app-logo-preview" [src]="application()!.logo!" alt="" />
+              } @else {
+                <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+              }
+              @if (application()?.logo) {
+                <p-button
+                  [label]="copy().logo.remove"
+                  [text]="true"
+                  severity="danger"
+                  [disabled]="logoPending()"
+                  (onClick)="removeLogo()"
+                />
+              }
+            </div>
+            <app-avatar-cropper
+              [labels]="copy().logo"
+              [pending]="logoPending()"
+              (cropped)="onLogoCropped($event)"
+            />
+          </div>
+        }
+
+        @if (error()?.detail) {
+          <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
+        }
+
+        <app-console-dialog-actions [cancelLabel]="copy().page.cancel" (cancelled)="cancel()">
+          <p-button
+            type="submit"
+            [label]="pending() ? (isEdit() ? copy().dialog.saving : copy().dialog.creating) : (isEdit() ? copy().dialog.save : copy().dialog.create)"
+            [loading]="pending()"
+          />
+        </app-console-dialog-actions>
+      </form>
+    }
+  </section>
+</section>
