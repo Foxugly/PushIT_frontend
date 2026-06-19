@@ -309,7 +309,7 @@ export class ApplicationDetailPage implements OnInit {
 
     this.api
       .getApp(appId)
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
       .subscribe({
         next: (application) => this.application.set(application),
         error: (error) => this.error.set(coerceApiError(error)),
@@ -334,7 +334,7 @@ export class ApplicationDetailPage implements OnInit {
       }),
       quietPeriods: this.api.listAppQuietPeriods(appId),
     })
-      .pipe(finalize(() => this.relatedLoading.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.relatedLoading.set(false)))
       .subscribe({
         next: ({ devices, notifications, futureNotifications, quietPeriods }) => {
           this.devices.set(devices.filter((device) => device.application_ids.includes(appId)));

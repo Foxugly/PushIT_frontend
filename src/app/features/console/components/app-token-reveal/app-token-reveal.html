@@ -1,4 +1,4 @@
-<div class="app-qr">
+<div class="app-qr" data-testid="app-token-reveal">
   @if (banner()) {
     <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
