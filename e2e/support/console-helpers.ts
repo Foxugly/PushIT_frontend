@@ -111,11 +111,63 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
       return fulfillJson(route, 200, state.apps);
     }
 
+    // Create an application: returns the freshly-minted one-time raw token
+    // (app_token) alongside the created app, mirroring ApplicationCreateResponse.
+    if (path.endsWith('/apps/') && method === 'POST') {
+      const payload = (request.postDataJSON() ?? {}) as { name?: string; description?: string };
+      const id = state.apps.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+      const created: Application = {
+        id,
+        name: payload.name ?? '',
+        description: payload.description ?? '',
+        app_token_prefix: `apt_new${id}`,
+        inbound_email_alias: `apt_new${id}alias`,
+        inbound_email_address: `apt_new${id}alias@pushit.com`,
+        is_active: true,
+        revoked_at: null,
+        last_used_at: null,
+        created_at: new Date().toISOString(),
+      };
+      state.apps = [...state.apps, created];
+      return fulfillJson(route, 201, { ...created, app_token: `apt_new${id}_rawsecret` });
+    }
+
+    // QR-code PNG for an app token: a 1x1 transparent PNG is enough for the
+    // reveal surface to render an <img> (the data: URL is read client-side).
+    const appQrMatch = path.match(/\/api\/v1\/apps\/(\d+)\/qrcode\/$/);
+    if (appQrMatch && method === 'POST') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'image/png',
+        body: Buffer.from(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+          'base64',
+        ),
+      });
+    }
+
     const appDetailMatch = path.match(/\/api\/v1\/apps\/(\d+)\/$/);
     if (appDetailMatch && method === 'GET') {
       const appId = Number(appDetailMatch[1]);
       const app = state.apps.find((item) => item.id === appId);
       return fulfillJson(route, app ? 200 : 404, app ?? { detail: 'Not found.' });
+    }
+
+    // Update an application (edit page save).
+    if (appDetailMatch && method === 'PATCH') {
+      const appId = Number(appDetailMatch[1]);
+      const payload = (request.postDataJSON() ?? {}) as { name?: string; description?: string };
+      const index = state.apps.findIndex((item) => item.id === appId);
+      if (index === -1) {
+        return fulfillJson(route, 404, { detail: 'Not found.' });
+      }
+      const updated: Application = {
+        ...state.apps[index],
+        name: payload.name ?? state.apps[index].name,
+        description: payload.description ?? state.apps[index].description,
+      };
+      state.apps = state.apps.map((item) => (item.id === appId ? updated : item));
+      return fulfillJson(route, 200, updated);
     }
 
     if (appDetailMatch && method === 'DELETE') {
