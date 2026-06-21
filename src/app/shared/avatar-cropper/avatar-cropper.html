@@ -1,4 +1,4 @@
-@if (!sourceFile()) {
+@if (!sourceImage()) {
   <p-fileupload
     mode="advanced"
     [customUpload]="true"
@@ -24,7 +24,7 @@
       class="avatar-cropper__canvas"
       [attr.aria-label]="labels().cropHint"
       [attr.aria-describedby]="cropHintId"
-      [imageFile]="sourceFile()!"
+      [imageBase64]="sourceImage()!"
       [maintainAspectRatio]="true"
       [aspectRatio]="1"
       [roundCropper]="true"

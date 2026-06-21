@@ -17,11 +17,23 @@ export interface AvatarCropperLabels {
   loadError: string;
 }
 
+/** Longest-side cap for the source image handed to the cropper. A 256px avatar
+ * never needs more; downscaling keeps the editor fast and dodges the cropper's
+ * size-measuring retries that can otherwise time out on very large photos. */
+const MAX_SOURCE_PX = 1024;
+
 /**
  * Circular avatar editor: pick an image, then zoom (+/-) and drag the round
  * frame to choose the visible area, and emit the cropped square PNG on apply.
  * The round template is purely a guide — the output is a 256px square PNG (the
  * platform masks it to a circle when rendering the notification avatar).
+ *
+ * The picked file is decoded with the browser's native decoder and re-encoded
+ * as a normalized PNG data URL before being handed to ngx-image-cropper (via
+ * imageBase64). This means: (1) anything the browser can actually display loads
+ * reliably — we bypass the cropper's fragile file-load + size-retry path that
+ * could fail on otherwise-valid images; (2) genuinely undecodable files (HEIC,
+ * corrupt) are caught up front with a clear message instead of a blank editor.
  */
 @Component({
   selector: 'app-avatar-cropper',
@@ -41,8 +53,9 @@ export class AvatarCropper {
   /** Stable id wiring the visible crop hint to the cropper via aria-describedby. */
   readonly cropHintId = `avatar-cropper-hint-${AvatarCropper.nextId++}`;
 
-  /** The raw image being edited; null shows the file picker instead. */
-  readonly sourceFile = signal<File | null>(null);
+  /** The normalized image (a PNG data URL) handed to the cropper via
+   * imageBase64; null shows the file picker instead. */
+  readonly sourceImage = signal<string | null>(null);
   readonly scale = signal(1);
   readonly transform = computed<ImageTransform>(() => ({ scale: this.scale() }));
 
@@ -64,12 +77,44 @@ export class AvatarCropper {
   /** Guards against re-entrant apply() while a crop/upload is in flight. */
   private applying = false;
 
-  onSelect(event: FileSelectEvent): void {
+  async onSelect(event: FileSelectEvent): Promise<void> {
     const file = event.currentFiles?.[0] ?? event.files?.[0];
-    if (file) {
+    if (!file) {
+      return;
+    }
+    this.reset();
+    this.sourceImage.set(null);
+    try {
+      const dataUrl = await this.normalizeImage(file);
       this.loadFailed.set(false);
-      this.reset();
-      this.sourceFile.set(file);
+      this.sourceImage.set(dataUrl);
+    } catch {
+      // The browser couldn't decode the file (HEIC, corrupt, truly unsupported).
+      // Surface a clear message instead of opening a blank cropper.
+      this.loadFailed.set(true);
+    }
+  }
+
+  /** Decode the file with the browser's native decoder and re-encode it as a
+   * (downscaled) PNG data URL. Throws if the file can't be decoded. */
+  private async normalizeImage(file: File): Promise<string> {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    try {
+      const longest = Math.max(bitmap.width, bitmap.height);
+      const scale = longest > MAX_SOURCE_PX ? MAX_SOURCE_PX / longest : 1;
+      const w = Math.max(1, Math.round(bitmap.width * scale));
+      const h = Math.max(1, Math.round(bitmap.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('2D canvas context unavailable');
+      }
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      return canvas.toDataURL('image/png');
+    } finally {
+      bitmap.close();
     }
   }
 
@@ -78,10 +123,10 @@ export class AvatarCropper {
     this.ready.set(true);
   }
 
-  /** The cropper failed to decode the chosen image: drop back to the picker and
-   * surface the error so the user knows to try a different file/format. */
+  /** Safety net: the cropper failed even for a pre-decoded image — drop back to
+   * the picker and surface the error rather than leaving a blank editor. */
   onLoadFailed(): void {
-    this.sourceFile.set(null);
+    this.sourceImage.set(null);
     this.scale.set(1);
     this.ready.set(false);
     this.loadFailed.set(true);
@@ -97,7 +142,7 @@ export class AvatarCropper {
 
   /** Discard the current image and go back to the file picker. */
   changeImage(): void {
-    this.sourceFile.set(null);
+    this.sourceImage.set(null);
     this.reset();
   }
 
