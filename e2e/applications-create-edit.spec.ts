@@ -73,3 +73,40 @@ test('editing an application saves and returns to its detail page', async ({ pag
   await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
   await expect(page.getByRole('heading', { name: 'PushIT Mobile V2' })).toBeVisible();
 });
+
+// Regression guard for the logo cropper: after picking an image AND zooming,
+// "Apply" must stay enabled and actually upload. The previous implementation
+// disabled Apply on every zoom and waited for an imageCropped re-emit that
+// ngx-image-cropper never sends on a transform change — so Apply was dead after
+// any zoom. Icon-scoped locators keep this independent of the FR button copy.
+test('the logo cropper uploads after the image is zoomed', async ({ page }) => {
+  await page.goto('/dashboard/applications/10/edit');
+
+  // The logo field only renders in edit mode; pick the fixture image (PrimeNG's
+  // advanced fileupload renders two file inputs — the first is the real one).
+  await page.locator('input[type="file"]').first().setInputFiles('e2e/fixtures/logo.png');
+
+  // The cropper appears and signals readiness by enabling Apply.
+  const cropper = page.locator('.avatar-cropper');
+  await expect(cropper).toBeVisible();
+  const applyButton = cropper.locator('.avatar-cropper__actions button:has(.pi-check)');
+  await expect(applyButton).toBeEnabled();
+
+  // Zoom in twice — the core of the bug: Apply must NOT get stuck disabled.
+  const zoomIn = cropper.locator('button:has(.pi-search-plus)');
+  await zoomIn.click();
+  await zoomIn.click();
+  await expect(applyButton).toBeEnabled();
+
+  // Applying uploads the cropped PNG (multipart POST to the logo endpoint).
+  const uploadPromise = page.waitForRequest(
+    (req) => /\/api\/v1\/apps\/10\/logo\/$/.test(req.url()) && req.method() === 'POST',
+  );
+  await applyButton.click();
+  const uploadRequest = await uploadPromise;
+  expect(uploadRequest.method()).toBe('POST');
+
+  // After a successful apply the editor tears down the cropper and returns to
+  // the file picker (sourceFile cleared).
+  await expect(cropper).toBeHidden();
+});
