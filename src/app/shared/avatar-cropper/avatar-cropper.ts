@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal, viewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
@@ -44,11 +44,19 @@ export class AvatarCropper {
   readonly sourceFile = signal<File | null>(null);
   readonly scale = signal(1);
   readonly transform = computed<ImageTransform>(() => ({ scale: this.scale() }));
-  /** True once a fresh crop has been received for the current transform. Apply
-   * is disabled until then, so we never emit a stale (pre-zoom) or null blob. */
-  readonly hasCrop = signal(false);
 
-  private lastBlob: Blob | null = null;
+  /** The underlying cropper, present only while an image is being edited.
+   * apply() asks it for a *fresh* crop so the emitted PNG reflects the current
+   * zoom: ngx-image-cropper applies zoom as a CSS transform and does NOT
+   * re-emit imageCropped on a transform change, so any cached blob would be
+   * stale (the previous bug left Apply permanently disabled after a zoom). */
+  private readonly cropper = viewChild(ImageCropperComponent);
+
+  /** Enables Apply once the cropper has a loaded, croppable image. */
+  readonly ready = signal(false);
+
+  /** Guards against re-entrant apply() while a crop/upload is in flight. */
+  private applying = false;
 
   onSelect(event: FileSelectEvent): void {
     const file = event.currentFiles?.[0] ?? event.files?.[0];
@@ -58,19 +66,17 @@ export class AvatarCropper {
     }
   }
 
-  onCropped(event: ImageCroppedEvent): void {
-    this.lastBlob = event.blob ?? null;
-    this.hasCrop.set(this.lastBlob !== null);
+  /** The cropper finished loading the image and can produce a crop. */
+  onReady(): void {
+    this.ready.set(true);
   }
 
   zoomIn(): void {
     this.scale.update((s) => Math.min(3, Math.round((s + 0.1) * 10) / 10));
-    this.invalidateCrop();
   }
 
   zoomOut(): void {
     this.scale.update((s) => Math.max(1, Math.round((s - 0.1) * 10) / 10));
-    this.invalidateCrop();
   }
 
   /** Discard the current image and go back to the file picker. */
@@ -79,23 +85,30 @@ export class AvatarCropper {
     this.reset();
   }
 
-  apply(): void {
-    if (!this.hasCrop() || !this.lastBlob) {
+  async apply(): Promise<void> {
+    const cropper = this.cropper();
+    if (this.applying || !this.ready() || !cropper) {
       return;
     }
-    const type = this.lastBlob.type || 'image/png';
-    this.cropped.emit(new File([this.lastBlob], 'logo.png', { type }));
-    this.changeImage();
-  }
-
-  /** A transform changed: the held blob is now stale until the cropper re-emits. */
-  private invalidateCrop(): void {
-    this.lastBlob = null;
-    this.hasCrop.set(false);
+    this.applying = true;
+    try {
+      // Recompute now, at the current zoom/frame — returns the cropped event and
+      // also re-emits imageCropped. Default output is 'blob' (set on the element).
+      const event = (await cropper.crop()) as ImageCroppedEvent | null;
+      const blob = event?.blob;
+      if (!blob) {
+        return;
+      }
+      const type = blob.type || 'image/png';
+      this.cropped.emit(new File([blob], 'logo.png', { type }));
+      this.changeImage();
+    } finally {
+      this.applying = false;
+    }
   }
 
   private reset(): void {
     this.scale.set(1);
-    this.invalidateCrop();
+    this.ready.set(false);
   }
 }

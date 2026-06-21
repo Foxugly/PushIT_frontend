@@ -19,6 +19,7 @@ type Application = {
   revoked_at: string | null;
   last_used_at: string | null;
   created_at: string;
+  logo?: string | null;
 };
 
 type Device = {
@@ -144,6 +145,31 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
           'base64',
         ),
       });
+    }
+
+    // Logo upload (multipart) / removal. Upload returns the app carrying a
+    // (placeholder data:) logo; the form sets it as the new preview.
+    const appLogoMatch = path.match(/\/api\/v1\/apps\/(\d+)\/logo\/$/);
+    if (appLogoMatch && method === 'POST') {
+      const appId = Number(appLogoMatch[1]);
+      const index = state.apps.findIndex((item) => item.id === appId);
+      if (index === -1) {
+        return fulfillJson(route, 404, { detail: 'Not found.' });
+      }
+      const updated: Application = {
+        ...state.apps[index],
+        logo: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      };
+      state.apps = state.apps.map((item) => (item.id === appId ? updated : item));
+      return fulfillJson(route, 200, updated);
+    }
+    if (appLogoMatch && method === 'DELETE') {
+      const appId = Number(appLogoMatch[1]);
+      const index = state.apps.findIndex((item) => item.id === appId);
+      if (index !== -1) {
+        state.apps = state.apps.map((item) => (item.id === appId ? { ...item, logo: null } : item));
+      }
+      return route.fulfill({ status: 204, body: '' });
     }
 
     const appDetailMatch = path.match(/\/api\/v1\/apps\/(\d+)\/$/);

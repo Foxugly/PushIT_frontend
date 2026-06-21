@@ -2,7 +2,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { createServer } from 'node:http';
 
-const port = 4200;
+const port = Number(process.env.E2E_PORT) || 4200;
 const root = normalize(join(process.cwd(), 'dist', 'pushit-frontend', 'browser'));
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',

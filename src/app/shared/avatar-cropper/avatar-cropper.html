@@ -29,8 +29,9 @@
       [transform]="transform()"
       [resizeToWidth]="256"
       format="png"
+      output="blob"
       [imageQuality]="92"
-      (imageCropped)="onCropped($event)"
+      (cropperReady)="onReady()"
     />
 
     <div class="avatar-cropper__controls">
@@ -69,7 +70,7 @@
         [label]="labels().apply"
         icon="pi pi-check"
         [loading]="pending()"
-        [disabled]="!hasCrop()"
+        [disabled]="!ready() || pending()"
         (onClick)="apply()"
       />
     </div>
