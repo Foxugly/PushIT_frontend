@@ -5,8 +5,14 @@
 }
 
 .avatar-cropper__canvas {
+  // Give the cropper an explicit box: ngx-image-cropper sizes itself to its
+  // host, so without a width it stretches to the full form width (and a small
+  // source image renders as a tiny thumbnail). A fixed square keeps the circular
+  // editor consistently sized and aligned whatever the image dimensions.
   display: block;
-  max-height: 320px;
+  width: 100%;
+  max-width: 320px;
+  height: 320px;
 }
 
 .avatar-cropper__controls {
@@ -19,6 +25,12 @@
 .avatar-cropper__hint {
   font-size: 0.8125rem;
   color: var(--p-text-muted-color, #6b7280);
+  margin: 0;
+}
+
+.avatar-cropper__error {
+  font-size: 0.8125rem;
+  color: var(--p-red-600, #dc2626);
   margin: 0;
 }
 

@@ -14,6 +14,7 @@ export interface AvatarCropperLabels {
   zoomOut: string;
   apply: string;
   change: string;
+  loadError: string;
 }
 
 /**
@@ -55,12 +56,18 @@ export class AvatarCropper {
   /** Enables Apply once the cropper has a loaded, croppable image. */
   readonly ready = signal(false);
 
+  /** True when the last picked file couldn't be decoded by the browser
+   * (unsupported format such as HEIC, a CMYK/progressive JPEG, or a corrupt
+   * file). Drives a visible message instead of a silent blank cropper. */
+  readonly loadFailed = signal(false);
+
   /** Guards against re-entrant apply() while a crop/upload is in flight. */
   private applying = false;
 
   onSelect(event: FileSelectEvent): void {
     const file = event.currentFiles?.[0] ?? event.files?.[0];
     if (file) {
+      this.loadFailed.set(false);
       this.reset();
       this.sourceFile.set(file);
     }
@@ -69,6 +76,15 @@ export class AvatarCropper {
   /** The cropper finished loading the image and can produce a crop. */
   onReady(): void {
     this.ready.set(true);
+  }
+
+  /** The cropper failed to decode the chosen image: drop back to the picker and
+   * surface the error so the user knows to try a different file/format. */
+  onLoadFailed(): void {
+    this.sourceFile.set(null);
+    this.scale.set(1);
+    this.ready.set(false);
+    this.loadFailed.set(true);
   }
 
   zoomIn(): void {
