@@ -10,6 +10,9 @@
     [chooseLabel]="labels().choose"
     (onSelect)="onSelect($event)"
   />
+  @if (loadFailed()) {
+    <p class="avatar-cropper__error" role="alert">{{ labels().loadError }}</p>
+  }
   <p class="console-muted avatar-cropper__hint">{{ labels().hint }}</p>
 } @else {
   <div class="avatar-cropper" role="group" [attr.aria-label]="labels().cropHint">
@@ -32,6 +35,7 @@
       output="blob"
       [imageQuality]="92"
       (cropperReady)="onReady()"
+      (loadImageFailed)="onLoadFailed()"
     />
 
     <div class="avatar-cropper__controls">

@@ -110,3 +110,20 @@ test('the logo cropper uploads after the image is zoomed', async ({ page }) => {
   // the file picker (sourceFile cleared).
   await expect(cropper).toBeHidden();
 });
+
+// Regression guard: a file the browser can't decode (unsupported format such as
+// HEIC, a CMYK/progressive JPEG, or a corrupt file) used to leave a silent blank
+// cropper — the user "saw no image" with no explanation. The cropper must now
+// surface an error and drop back to the picker instead of hanging blank.
+test('an undecodable image shows an error instead of a blank cropper', async ({ page }) => {
+  await page.goto('/dashboard/applications/10/edit');
+
+  await page.locator('input[type="file"]').first().setInputFiles('e2e/fixtures/corrupt.png');
+
+  // No usable cropper; an explanatory error is shown in its place.
+  const error = page.locator('.avatar-cropper__error');
+  await expect(error).toBeVisible();
+  await expect(page.locator('.avatar-cropper')).toBeHidden();
+  // The file picker is still available so the user can try another file.
+  await expect(page.locator('input[type="file"]').first()).toBeAttached();
+});
