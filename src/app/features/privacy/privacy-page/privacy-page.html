@@ -1,0 +1,33 @@
+<main class="public-content privacy-content">
+  <section class="public-card">
+    <span class="public-badge">{{ copy().badge }}</span>
+    <h1>{{ copy().title }}</h1>
+    <p class="privacy-updated">{{ copy().lastUpdated }}</p>
+
+    <div class="privacy-sections">
+      @for (section of copy().sections; track section.title) {
+        <section class="privacy-block">
+          <h2>{{ section.title }}</h2>
+
+          @if (section.body) {
+            @for (paragraph of section.body; track paragraph) {
+              <p>{{ paragraph }}</p>
+            }
+          }
+
+          @if (section.items) {
+            <ul>
+              @for (item of section.items; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          }
+        </section>
+      }
+    </div>
+
+    <p class="privacy-contact-cta">
+      <a [href]="mailto(copy().contactEmail)">{{ copy().contactEmail }}</a>
+    </p>
+  </section>
+</main>

@@ -45,3 +45,13 @@
   height: 1.05em; /* petit, aligné verticalement au texte */
   width: auto;
 }
+
+.site-footer__privacy-link {
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+.site-footer__privacy-link:hover,
+.site-footer__privacy-link:focus-visible {
+  text-decoration: underline;
+}
