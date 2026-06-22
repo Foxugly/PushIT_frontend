@@ -218,6 +218,7 @@ export const APP_COPY = {
     },
     footer: {
       rightsReserved: 'Tous droits réservés.',
+      privacy: 'Politique de confidentialité',
     },
     console: {
       navigation: {
@@ -529,6 +530,7 @@ export const APP_COPY = {
     },
     footer: {
       rightsReserved: 'Alle rechten voorbehouden.',
+      privacy: 'Privacybeleid',
     },
     console: {
       navigation: {
@@ -840,6 +842,7 @@ export const APP_COPY = {
     },
     footer: {
       rightsReserved: 'All rights reserved.',
+      privacy: 'Privacy policy',
     },
     console: {
       navigation: {

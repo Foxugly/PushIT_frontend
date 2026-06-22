@@ -25,6 +25,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/donate/donate-page/donate-page').then((m) => m.DonatePage),
       },
       {
+        path: 'privacy',
+        loadComponent: () =>
+          import('./features/privacy/privacy-page/privacy-page').then((m) => m.PrivacyPage),
+      },
+      {
         path: 'auth',
         loadComponent: () => import('./features/auth/auth-page/auth-page').then((m) => m.AuthPage),
         canActivate: [guestGuard],
