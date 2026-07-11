@@ -10,7 +10,7 @@ import { ConsoleCopyService } from '../../../core/services/console-copy.service'
 import { ConsoleShellService } from '../../../core/services/console-shell.service';
 import { SettingsService } from '../../../core/services/settings.service';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
-import { ConsoleNavigation } from '../components/console-navigation/console-navigation';
+import { ConsoleNavigation } from '../../../features/console/components/console-navigation/console-navigation';
 import { Footer } from '../../../core/layout/footer/footer';
 import { Topmenu } from '../../../core/layout/topmenu/topmenu';
 
