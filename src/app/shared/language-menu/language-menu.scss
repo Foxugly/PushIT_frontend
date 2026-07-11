@@ -23,7 +23,7 @@
   transition: color 0.15s ease, background 0.15s ease;
 
   &:hover {
-    color: #fff;
+    color: var(--chrome-ink-strong);
     background: rgba(255, 255, 255, 0.08);
   }
 
@@ -43,7 +43,7 @@
   right: 0;
   top: calc(100% + 0.4rem);
   min-width: 6rem;
-  background: #fff;
+  background: var(--surface);
   border-radius: 0.75rem;
   border: 1px solid var(--border);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);

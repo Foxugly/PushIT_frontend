@@ -15,7 +15,7 @@
   image-rendering: pixelated;
   border: 1px solid rgba(16, 185, 129, 0.16);
   border-radius: 12px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .app-qr__hint {
