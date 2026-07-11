@@ -21,7 +21,7 @@ test.describe('Public privacy policy page', () => {
   test('is reachable from the public footer link', async ({ page }) => {
     await page.goto('/');
 
-    const footer = page.locator('footer.site-footer').first();
+    const footer = page.locator('footer.footer').first();
     const privacyLink = footer.getByRole('link', {
       name: /Politique de confidentialité|Privacybeleid|Privacy policy/i,
     });

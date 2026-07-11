@@ -7,7 +7,7 @@ test.describe('Foxugly footer credit', () => {
   test('renders the credit with a correct, accessible Foxugly link', async ({ page }) => {
     await page.goto('/');
 
-    const footer = page.locator('footer.site-footer').first();
+    const footer = page.locator('footer.footer').first();
     await expect(footer).toBeVisible();
 
     // Le lien est nommé par le mot « Foxugly » (le logo est décoratif, donc
@@ -24,8 +24,8 @@ test.describe('Foxugly footer credit', () => {
   test('logo is decorative (alt="" + aria-hidden) and inside the link', async ({ page }) => {
     await page.goto('/');
 
-    const link = page.locator('footer.site-footer').first().getByRole('link', { name: 'Foxugly' });
-    const logo = link.locator('img.site-footer__author-logo');
+    const link = page.locator('footer.footer').first().getByRole('link', { name: 'Foxugly' });
+    const logo = link.locator('img.footer__author-logo');
 
     await expect(logo).toHaveCount(1); // bien à l'intérieur du lien
     await expect(logo).toHaveAttribute('alt', '');
@@ -38,7 +38,7 @@ test.describe('Foxugly footer credit', () => {
   test('shows the current year dynamically and a localized rights notice', async ({ page }) => {
     await page.goto('/');
 
-    const footer = page.locator('footer.site-footer').first();
+    const footer = page.locator('footer.footer').first();
     const year = new Date().getFullYear();
 
     await expect(footer).toContainText(`© ${year}`);
