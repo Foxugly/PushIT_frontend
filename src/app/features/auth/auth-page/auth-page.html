@@ -34,18 +34,16 @@
     <p class="public-field-error">{{ message }}</p>
   }
 
-  <label class="checkbox">
-    <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
-    <span>{{ copy().rememberMe }}</span>
-  </label>
-
   @if (loginError()?.detail) {
     <app-alert [message]="loginError()! | apiError" tone="danger" (dismissed)="loginError.set(null)" />
   }
 
-  <div class="public-link-row link-row">
+  <div class="public-link-row auth-meta link-row">
+    <label class="checkbox">
+      <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
+      <span>{{ copy().rememberMe }}</span>
+    </label>
     <a routerLink="/forgot-password">{{ copy().forgotPassword }}</a>
-    <a routerLink="/register">{{ copy().register }}</a>
   </div>
 
   <div class="public-submit-row auth-submit-row">
@@ -57,4 +55,8 @@
       styleClass="auth-submit"
     />
   </div>
+
+  <p class="auth-alt link-row">
+    <a routerLink="/register">{{ copy().register }}</a>
+  </p>
 </form>

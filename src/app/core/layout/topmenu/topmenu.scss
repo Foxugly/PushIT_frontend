@@ -82,21 +82,21 @@
   justify-content: center;
   width: 2.35rem;
   height: 2.35rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: none;
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent;
   color: var(--chrome-ink);
   cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
+  transition: background 0.15s;
 }
 
-.topbar__theme:hover,
+.topbar__theme:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .topbar__theme:focus-visible {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.24);
-  outline: none;
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
 }
 
 .nav__link {
