@@ -62,7 +62,7 @@ export const appConfig: ApplicationConfig = {
     // catalogues ; PublicI18nService reste l'autorité de langue, synchronisée ici.
     provideTransloco({
       config: {
-        availableLangs: ['fr', 'nl', 'en'],
+        availableLangs: ['fr', 'nl', 'en', 'it', 'es'],
         defaultLang: 'fr',
         fallbackLang: 'en',
         reRenderOnLangChange: true,

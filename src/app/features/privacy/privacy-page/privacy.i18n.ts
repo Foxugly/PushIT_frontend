@@ -186,7 +186,8 @@ const EN: PrivacyCopy = {
   ],
 };
 
-const PRIVACY_COPY: Record<LanguageCode, PrivacyCopy> = { fr: FR, nl: NL, en: EN };
+// it/es non traduits pour cette page — fallback EN via getPrivacyCopy.
+const PRIVACY_COPY: Partial<Record<LanguageCode, PrivacyCopy>> = { fr: FR, nl: NL, en: EN };
 
 export function getPrivacyCopy(lang: LanguageCode): PrivacyCopy {
   return PRIVACY_COPY[lang] ?? EN;

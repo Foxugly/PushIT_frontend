@@ -15,7 +15,13 @@ interface LanguageOption {
   code: LanguageCode;
 }
 
-const LANGUAGES: LanguageOption[] = [{ code: 'fr' }, { code: 'nl' }, { code: 'en' }];
+const LANGUAGES: LanguageOption[] = [
+  { code: 'fr' },
+  { code: 'nl' },
+  { code: 'en' },
+  { code: 'it' },
+  { code: 'es' },
+];
 
 /**
  * Dropdown language switcher, mirroring TrainingManager's `app-language-switcher`:

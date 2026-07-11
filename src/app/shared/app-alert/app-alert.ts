@@ -14,6 +14,8 @@ const CLOSE_LABEL: Record<LanguageCode, string> = {
   fr: 'Fermer',
   nl: 'Sluiten',
   en: 'Close',
+  it: 'Chiudi',
+  es: 'Cerrar',
 };
 
 @Component({

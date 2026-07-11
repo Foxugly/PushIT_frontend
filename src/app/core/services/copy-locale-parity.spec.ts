@@ -22,19 +22,16 @@ function diff(a: string[], b: string[]): string[] {
   return a.filter((path) => !setB.has(path));
 }
 
-describe('copy locale parity (FR / NL / EN)', () => {
-  it('NL and EN catalogs have the same keys as FR', () => {
-    const fr = keyPaths(CATALOGS.fr).sort();
-    const nl = keyPaths(CATALOGS.nl).sort();
-    const en = keyPaths(CATALOGS.en).sort();
+describe('copy locale parity (FR / NL / EN / IT / ES)', () => {
+  const fr = keyPaths(CATALOGS.fr).sort();
 
-    expect({ missingInNl: diff(fr, nl), extraInNl: diff(nl, fr) }).toEqual({
-      missingInNl: [],
-      extraInNl: [],
+  for (const lang of ['nl', 'en', 'it', 'es'] as const) {
+    it(`${lang.toUpperCase()} catalog has the same keys as FR`, () => {
+      const other = keyPaths(CATALOGS[lang]).sort();
+      expect({ missing: diff(fr, other), extra: diff(other, fr) }).toEqual({
+        missing: [],
+        extra: [],
+      });
     });
-    expect({ missingInEn: diff(fr, en), extraInEn: diff(en, fr) }).toEqual({
-      missingInEn: [],
-      extraInEn: [],
-    });
-  });
+  }
 });

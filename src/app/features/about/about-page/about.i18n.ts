@@ -404,7 +404,9 @@ const EN: AboutCopy = {
   },
 };
 
-const ABOUT_COPY: Record<LanguageCode, AboutCopy> = { fr: FR, nl: NL, en: EN };
+// it/es non traduits pour cette page — fallback EN via getAboutCopy (Company/Legal
+// = contenu Foxugly partagé flotte ; traduction it/es à venir).
+const ABOUT_COPY: Partial<Record<LanguageCode, AboutCopy>> = { fr: FR, nl: NL, en: EN };
 
 export function getAboutCopy(lang: LanguageCode): AboutCopy {
   return ABOUT_COPY[lang] ?? EN;
