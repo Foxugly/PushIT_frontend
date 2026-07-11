@@ -69,8 +69,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #ecfdf5;
-    color: #047857;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
     outline: none;
   }
 

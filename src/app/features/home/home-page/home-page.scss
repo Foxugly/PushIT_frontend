@@ -34,7 +34,7 @@ h1 {
   padding: 1.1rem;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
   .hero-grid {
     grid-template-columns: minmax(0, 1.1fr) minmax(340px, 380px);
     align-items: start;

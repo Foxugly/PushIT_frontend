@@ -6,6 +6,7 @@ import { filter } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
+import { ConsoleCopyService } from '../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../core/services/console-shell.service';
 import { SettingsService } from '../../../core/services/settings.service';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
@@ -33,7 +34,9 @@ export class ConsoleLayoutPage implements OnInit {
   readonly shell = inject(ConsoleShellService);
   readonly settings = inject(SettingsService);
   private readonly appCopy = inject(AppCopyService);
+  private readonly consoleCopy = inject(ConsoleCopyService);
   readonly skipLabel = computed(() => this.appCopy.current().header.skipToContent);
+  readonly shellCopy = computed(() => this.consoleCopy.current().shell);
   hideSidebar = false;
 
   ngOnInit(): void {

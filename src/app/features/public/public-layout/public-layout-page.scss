@@ -21,7 +21,7 @@
   min-width: 0;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .app-layout__main {
     width: calc(100% - 2rem);
   }

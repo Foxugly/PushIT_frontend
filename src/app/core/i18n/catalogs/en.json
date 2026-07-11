@@ -10,7 +10,8 @@
       "settings": "Settings",
       "changePassword": "Change password",
       "logout": "Log out",
-      "skipToContent": "Skip to content"
+      "skipToContent": "Skip to content",
+      "toggleTheme": "Toggle theme"
     },
     "home": {
       "badge": "PushIT for product teams",
@@ -900,6 +901,10 @@
         "processingStuck": "Stuck notifications",
         "none": "No metrics available."
       }
+    },
+    "shell": {
+      "loading": "Loading your console…",
+      "retry": "Retry"
     }
   },
   "errors": {

@@ -13,7 +13,7 @@
         <p-tag [value]="devices().length + ' ' + copy().countLabel" severity="secondary" />
       </div>
       <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadDevices()" />
-      <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" />
+      <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" />
     </div>
   </app-page-header>
 
@@ -50,7 +50,7 @@
           [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
                 <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
           [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
-                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
           [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
               </div>
             </td>
@@ -117,7 +117,7 @@
 
         <app-console-dialog-actions (cancelled)="closeModal()">
           <p-button type="submit" [label]="saving() ? copy().actions.saving : copy().actions.save" [loading]="saving()" />
-          <p-button [label]="copy().actions.delete" severity="secondary" icon="pi pi-trash" (onClick)="deleteDevice()" [disabled]="saving()" />
+          <p-button [label]="copy().actions.delete" severity="danger" icon="pi pi-trash" (onClick)="deleteDevice()" [disabled]="saving()" />
         </app-console-dialog-actions>
       </form>
     }

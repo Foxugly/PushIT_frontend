@@ -10,7 +10,8 @@
       "settings": "Instellingen",
       "changePassword": "Wachtwoord wijzigen",
       "logout": "Uitloggen",
-      "skipToContent": "Naar de inhoud"
+      "skipToContent": "Naar de inhoud",
+      "toggleTheme": "Thema wisselen"
     },
     "home": {
       "badge": "PushIT voor productteams",
@@ -900,6 +901,10 @@
         "processingStuck": "Vastgelopen notificaties",
         "none": "Geen metrieken beschikbaar."
       }
+    },
+    "shell": {
+      "loading": "Uw console laden…",
+      "retry": "Opnieuw"
     }
   },
   "errors": {
