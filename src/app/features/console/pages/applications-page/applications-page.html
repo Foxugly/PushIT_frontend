@@ -17,7 +17,11 @@
     </div>
 
     @if (shell.loading() && !shell.apps().length) {
-      <p class="console-empty">{{ copy().loading }}</p>
+      <div class="console-skeletons">
+        @for (i of [1, 2, 3]; track i) {
+          <p-skeleton height="2.5rem" styleClass="console-skeleton-row" />
+        }
+      </div>
     } @else if (shell.apps().length) {
       <p-table [value]="shell.apps()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
@@ -122,7 +126,7 @@
         </ng-template>
       </p-table>
     } @else {
-      <p class="console-empty">{{ copy().empty }}</p>
+      <app-empty-state icon="pi pi-mobile" [title]="copy().empty" />
     }
 
   </section>

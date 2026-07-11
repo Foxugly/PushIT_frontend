@@ -1,11 +1,12 @@
 <div class="app-layout">
+  <a href="#main-content" class="skip-link">{{ skipLabel() }}</a>
   <app-site-header
     [sticky]="true"
     [maxWidth]="'var(--content-max)'"
     [username]="shell.user()?.email || 'Console'"
   />
 
-  <main class="app-layout__main">
+  <main id="main-content" tabindex="-1" class="app-layout__main">
     <div class="console-shell__body" [class.console-shell__body--no-sidebar]="hideSidebar">
       @if (!hideSidebar) {
         <aside class="console-shell__sidebar">

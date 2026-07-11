@@ -14,6 +14,7 @@ export const APP_COPY = {
       settings: 'Paramètres',
       changePassword: 'Changer de mot de passe',
       logout: 'Déconnexion',
+      skipToContent: 'Aller au contenu',
     },
     home: {
       badge: 'PushIT pour les équipes produit',
@@ -326,6 +327,7 @@ export const APP_COPY = {
       settings: 'Instellingen',
       changePassword: 'Wachtwoord wijzigen',
       logout: 'Uitloggen',
+      skipToContent: 'Naar de inhoud',
     },
     home: {
       badge: 'PushIT voor productteams',
@@ -638,6 +640,7 @@ export const APP_COPY = {
       settings: 'Settings',
       changePassword: 'Change password',
       logout: 'Log out',
+      skipToContent: 'Skip to content',
     },
     home: {
       badge: 'PushIT for product teams',

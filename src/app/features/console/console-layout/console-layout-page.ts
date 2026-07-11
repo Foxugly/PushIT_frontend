@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 
+import { AppCopyService } from '../../../core/services/app-copy.service';
 import { ConsoleShellService } from '../../../core/services/console-shell.service';
 import { SettingsService } from '../../../core/services/settings.service';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
@@ -31,6 +32,8 @@ export class ConsoleLayoutPage implements OnInit {
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
   readonly settings = inject(SettingsService);
+  private readonly appCopy = inject(AppCopyService);
+  readonly skipLabel = computed(() => this.appCopy.current().header.skipToContent);
   hideSidebar = false;
 
   ngOnInit(): void {
