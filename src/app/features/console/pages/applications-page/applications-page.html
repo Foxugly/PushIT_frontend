@@ -10,7 +10,7 @@
         <p-tag [value]="copy().active + ' ' + activeAppsCount()" severity="success" />
       </div>
       <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="refreshApplications()" />
-      <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreate()" />
+      <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreate()" />
     </div>
   </app-page-header>
 
@@ -112,6 +112,7 @@
                 />
                 <p-button
                   icon="pi pi-trash"
+                  severity="danger"
                   [text]="true"
                   [rounded]="true"
                   [disabled]="pending()"

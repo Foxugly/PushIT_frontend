@@ -28,7 +28,7 @@
 
 .app-alert--danger {
   background: rgba(255, 237, 239, 0.92);
-  color: #9e3650;
+  color: var(--danger-text);
 }
 
 .app-alert--fading {

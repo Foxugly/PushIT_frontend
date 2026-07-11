@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { AppCopyService } from '../../services/app-copy.service';
 import { SessionService } from '../../services/session.service';
@@ -14,7 +15,7 @@ import { UserMenu } from '../user-menu/user-menu';
  */
 @Component({
   selector: 'app-topmenu',
-  imports: [RouterLink, RouterLinkActive, LanguageMenu, UserMenu],
+  imports: [RouterLink, RouterLinkActive, TooltipModule, LanguageMenu, UserMenu],
   templateUrl: './topmenu.html',
   styleUrl: './topmenu.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

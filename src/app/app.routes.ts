@@ -6,7 +6,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./features/public/public-layout/public-layout-page').then((m) => m.PublicLayoutPage),
+      import('./core/layout/public-layout/public-layout-page').then((m) => m.PublicLayoutPage),
     children: [
       {
         path: '',
@@ -74,7 +74,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./features/console/console-layout/console-layout-page').then((m) => m.ConsoleLayoutPage),
+      import('./core/layout/console-layout/console-layout-page').then((m) => m.ConsoleLayoutPage),
     canActivate: [authGuard],
     children: [
       {

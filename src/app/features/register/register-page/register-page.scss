@@ -12,7 +12,7 @@
   max-width: 52ch;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .register-layout {
     grid-template-columns: minmax(0, 1fr) minmax(380px, 420px);
   }

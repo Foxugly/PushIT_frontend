@@ -39,7 +39,7 @@
       <button
         type="button"
         class="topbar__theme"
-        [attr.aria-label]="theme.theme() === 'dark' ? 'Light mode' : 'Dark mode'"
+        [attr.aria-label]="labels().toggleTheme" [pTooltip]="labels().toggleTheme" tooltipPosition="bottom"
         (click)="theme.toggle()"
       >
         <i class="pi" [class.pi-sun]="theme.theme() === 'dark'" [class.pi-moon]="theme.theme() !== 'dark'"></i>

@@ -10,7 +10,8 @@
       "settings": "Impostazioni",
       "changePassword": "Cambia password",
       "logout": "Esci",
-      "skipToContent": "Vai al contenuto"
+      "skipToContent": "Vai al contenuto",
+      "toggleTheme": "Cambia tema"
     },
     "home": {
       "badge": "PushIT per i team di prodotto",
@@ -900,6 +901,10 @@
         "processingStuck": "Notifiche bloccate",
         "none": "Nessuna metrica disponibile."
       }
+    },
+    "shell": {
+      "loading": "Caricamento della console…",
+      "retry": "Riprova"
     }
   },
   "errors": {

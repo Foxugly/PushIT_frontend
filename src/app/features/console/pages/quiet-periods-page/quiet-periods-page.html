@@ -14,7 +14,7 @@
         [pTooltip]="(!shell.apps().length && !devices().length) ? copy().missingTargets : ''"
         tooltipPosition="top"
       >
-        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+        <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
       </span>
     </div>
   </app-page-header>
@@ -60,7 +60,7 @@
               <div class="console-icon-actions">
                 <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
           [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
-                <p-button icon="pi pi-trash" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
           [pTooltip]="copy().actions.delete" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
               </div>
             </td>
