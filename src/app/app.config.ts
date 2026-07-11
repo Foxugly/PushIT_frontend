@@ -2,10 +2,12 @@ import {
   ApplicationConfig,
   ErrorHandler,
   inject,
+  isDevMode,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
+import { provideTransloco } from '@jsverse/transloco';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, Router } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -15,6 +17,7 @@ import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
+import { BundledTranslocoLoader } from './core/i18n/transloco-loader';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 // Fleet look: Aura preset with Emerald as primary (same as QuizOnline/TM). The
@@ -54,6 +57,19 @@ export const appConfig: ApplicationConfig = {
     }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
+    // i18n : Transloco est le moteur (catalogues bundlés servis par le loader).
+    // Les façades typées (AppCopyService/ConsoleCopyService) lisent les mêmes
+    // catalogues ; PublicI18nService reste l'autorité de langue, synchronisée ici.
+    provideTransloco({
+      config: {
+        availableLangs: ['fr', 'nl', 'en'],
+        defaultLang: 'fr',
+        fallbackLang: 'en',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: BundledTranslocoLoader,
+    }),
     // Sentry : capture des erreurs non gérées + instrumentation du routing.
     { provide: ErrorHandler, useValue: Sentry.createErrorHandler() },
     { provide: Sentry.TraceService, deps: [Router] },
