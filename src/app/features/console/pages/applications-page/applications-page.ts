@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -17,6 +18,7 @@ import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
+import { EmptyState } from '../../../../shared/empty-state/empty-state';
 import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
 
 @Component({
@@ -30,9 +32,11 @@ import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reve
     AppTokenReveal,
     ButtonModule,
     DialogModule,
+    SkeletonModule,
     TableModule,
     TagModule,
     TooltipModule,
+    EmptyState,
   ],
   templateUrl: './applications-page.html',
   styleUrl: './applications-page.scss',
