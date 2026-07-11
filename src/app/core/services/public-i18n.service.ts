@@ -36,8 +36,9 @@ export class PublicI18nService {
 
   private readInitialLanguage(): LanguageCode {
     const storedUser = this.storage.findObject<UserMe>(USER_KEY)?.value;
-    if (storedUser?.language === 'FR' || storedUser?.language === 'NL' || storedUser?.language === 'EN') {
-      return storedUser.language.toLowerCase() as LanguageCode;
+    const backendLang = storedUser?.language?.toLowerCase() as LanguageCode | undefined;
+    if (backendLang && UI_LANGS.includes(backendLang)) {
+      return backendLang;
     }
 
     const storedLanguage = this.storage.getString(LANGUAGE_KEY) as LanguageCode | null;
