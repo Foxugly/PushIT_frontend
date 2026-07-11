@@ -30,6 +30,14 @@
   </nav>
 
   <div class="header-actions">
+    <button
+      type="button"
+      class="site-header__theme"
+      [attr.aria-label]="theme.theme() === 'dark' ? 'Light mode' : 'Dark mode'"
+      (click)="theme.toggle()"
+    >
+      <i class="pi" [class.pi-sun]="theme.theme() === 'dark'" [class.pi-moon]="theme.theme() !== 'dark'"></i>
+    </button>
     <app-language-menu />
 
 

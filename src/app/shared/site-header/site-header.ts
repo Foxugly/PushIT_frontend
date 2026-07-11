@@ -9,6 +9,7 @@ import { Menu } from 'primeng/menu';
 import { AppCopyService } from '../../core/services/app-copy.service';
 import { PushitApiService } from '../../core/services/pushit-api.service';
 import { SessionService } from '../../core/services/session.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { LanguageMenu } from '../language-menu/language-menu';
 
 @Component({
@@ -29,6 +30,7 @@ export class SiteHeader {
   private readonly appCopy = inject(AppCopyService);
   private readonly api = inject(PushitApiService);
   readonly session = inject(SessionService);
+  readonly theme = inject(ThemeService);
 
   readonly sticky = input(false);
   readonly maxWidth = input('var(--content-max)');
