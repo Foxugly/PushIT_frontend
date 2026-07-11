@@ -903,3 +903,21 @@ a {
   max-width: 42rem;
   margin: -0.5rem auto 1.25rem;
 }
+
+// Cartes auth compactes (login / forgot / reset) : en-tête centré (standard « Pages
+// d'authentification » : icône + titre centrés). L'eyebrow est une pastille fit-content.
+.public-card--compact > .public-eyebrow,
+.public-card--compact > h1,
+.public-card--compact .card-heading {
+  text-align: center;
+}
+.public-card--compact > .public-eyebrow,
+.public-card--compact .card-heading .public-eyebrow {
+  margin-inline: auto;
+}
+.register-panel .panel-heading {
+  text-align: center;
+}
+.register-panel .panel-heading > div {
+  width: 100%;
+}
