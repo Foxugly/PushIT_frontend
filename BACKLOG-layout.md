@@ -12,3 +12,12 @@
 - **i18n Transloco 5 langues** (fr/nl/en/it/es) : moteur + catalogues JSON (app/console/errors) +
   about/privacy traduits. it/es **persistés côté serveur** (enum `UserLanguage` étendu IT/ES sur PushIT_server).
 - **`app-page-header`** (3-col + slots) sur les 12 pages console ; `console-detail-header` supprimé.
+- Login : toggle thème **borderless** (aligné sur le trigger langue) ; rangée **meta unique**
+  (« Se souvenir de moi » à gauche + « Mot de passe oublié ? » à droite), lien inscription sous la carte
+  (conformité flotte 2026-07-12).
+
+## Reste (différé)
+- **Bouton magic-link inline sur le login** (standard §Pages d'auth, point 6) : **DIFFÉRÉ — besoin backend.**
+  PushIT n'a **aucun flux passwordless / lien de connexion** (aucun service `magic`/`login-link` côté
+  `PushIT_server`). On n'ajoute pas de bouton non fonctionnel : à implémenter côté serveur d'abord
+  (endpoint demande de lien + page de vérification `/magic-link`), puis carte login en mode magic inline.

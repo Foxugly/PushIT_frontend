@@ -15,3 +15,20 @@
 .checkbox input {
   width: auto;
 }
+
+// Meta row: remember-me (left) + forgot-password (right) on a single line
+// (fleet standard — mirrors the FoxRunner login reference).
+.auth-meta {
+  align-items: center;
+}
+
+.auth-meta .checkbox {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.auth-alt {
+  margin: 0;
+  text-align: center;
+}
