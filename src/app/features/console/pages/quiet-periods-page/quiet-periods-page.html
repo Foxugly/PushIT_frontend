@@ -7,19 +7,19 @@
     <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
   }
 
-  <section class="console-card">
-    <div class="console-card__header console-resource-header">
-      <h2 class="console-resource-header__title">{{ copy().title }}</h2>
-      <div class="console-card__toolbar console-resource-header__toolbar">
-        <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
-        <span
-          [pTooltip]="(!shell.apps().length && !devices().length) ? copy().missingTargets : ''"
-          tooltipPosition="top"
-        >
-          <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
-        </span>
-      </div>
+  <app-page-header [title]="copy().title">
+    <div slot="right" class="ph-actions">
+      <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
+      <span
+        [pTooltip]="(!shell.apps().length && !devices().length) ? copy().missingTargets : ''"
+        tooltipPosition="top"
+      >
+        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+      </span>
     </div>
+  </app-page-header>
+
+  <section class="console-card">
     @if (loading()) {
       <p class="console-empty">{{ copy().loading }}</p>
     } @else if (quietPeriods().length) {

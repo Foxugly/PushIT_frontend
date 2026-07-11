@@ -5,7 +5,8 @@ import { Translation } from 'primeng/api';
 
 import { LanguageCode, PublicI18nService } from './public-i18n.service';
 
-const PRIME_TRANSLATIONS: Record<LanguageCode, Translation> = {
+// it/es non fournis → fallback EN dans l'effect (labels PrimeNG en anglais).
+const PRIME_TRANSLATIONS: Partial<Record<LanguageCode, Translation>> = {
   fr: {
     startsWith: 'Commence par',
     contains: 'Contient',
@@ -140,7 +141,7 @@ export class PrimeNgLocaleService {
   constructor() {
     effect(() => {
       const language = this.i18n.language();
-      this.primeng.setTranslation(PRIME_TRANSLATIONS[language]);
+      this.primeng.setTranslation(PRIME_TRANSLATIONS[language] ?? PRIME_TRANSLATIONS['en']!);
       this.document.documentElement.lang = language;
     });
   }

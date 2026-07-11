@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { finalize } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
-import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
 
@@ -26,7 +26,8 @@ import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper'
     AppAlert,
     ApiErrorMessagePipe,
     ApplicationFormFields,
-    ConsoleDetailHeader,
+    PageHeader,
+    RouterLink,
     ConsoleDialogActions,
     ButtonModule,
     AvatarCropper,

@@ -22,6 +22,7 @@ import {
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { pushTokenStatusSeverity } from '../../../../core/utils/device.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
@@ -42,6 +43,7 @@ import { DeviceEditFormFields } from '../../components/device-edit-form-fields/d
     ConsoleDialogActions,
     DeviceEditFormFields,
     ButtonModule,
+    PageHeader,
     DialogModule,
     InputTextModule,
     SelectModule,

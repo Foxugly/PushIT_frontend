@@ -1,0 +1,14 @@
+@if (session.isAuthenticated()) {
+  <p-menu #userMenu [model]="userMenuItems()" [popup]="true" appendTo="body" />
+  <p-button
+    [label]="displayUsername()"
+    icon="pi pi-angle-down"
+    iconPos="right"
+    [text]="true"
+    rounded="true"
+    styleClass="user-menu__account"
+    (onClick)="userMenu.toggle($event)"
+  />
+} @else {
+  <a routerLink="/auth" pButton [label]="labels().login" rounded="true" class="user-menu__login"></a>
+}

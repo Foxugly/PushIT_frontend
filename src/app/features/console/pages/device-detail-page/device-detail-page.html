@@ -1,11 +1,9 @@
 <section class="console-page">
-  <section class="console-card">
-    <app-console-detail-header
-      [backLink]="['/dashboard/devices']"
-      [backLabel]="copy().back"
-      [eyebrow]="copy().eyebrow"
-      [title]="device()?.device_name || copy().fallbackTitle"
-    >
+  <app-page-header [title]="device()?.device_name || copy().fallbackTitle">
+    <a slot="left" class="console-back-link" [routerLink]="['/dashboard/devices']">
+      <i class="pi pi-arrow-left"></i><span>{{ copy().back }}</span>
+    </a>
+    <div slot="right" class="ph-actions">
       @if (device(); as currentDevice) {
         <p-button
           icon="pi pi-pencil"
@@ -19,8 +17,10 @@
         <p-tag [value]="currentDevice.platform" severity="info" />
         <p-tag [value]="currentDevice.push_token_status" [severity]="statusSeverity(currentDevice.push_token_status)" />
       }
-    </app-console-detail-header>
+    </div>
+  </app-page-header>
 
+  <section class="console-card">
     @if (error()?.detail) {
       <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
     }

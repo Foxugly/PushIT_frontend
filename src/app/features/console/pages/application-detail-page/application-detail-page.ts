@@ -28,7 +28,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppAlertTone } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
-import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
 import { ConsoleFactsTable } from '../../components/console-facts-table/console-facts-table';
 import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
@@ -40,7 +40,7 @@ import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reve
     RouterLink,
     DatePipe,
     AppAlert, ApiErrorMessagePipe,
-    ConsoleDetailHeader,
+    PageHeader,
     ConsoleFactsTable,
     AppTokenReveal,
     ButtonModule,

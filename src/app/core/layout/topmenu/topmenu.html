@@ -1,0 +1,51 @@
+<header class="topbar" [class.topbar--sticky]="sticky()" [style.--content-max]="maxWidth()">
+  <div class="topbar__inner" [class.open]="mobileOpen()">
+    <a routerLink="/" class="brand" aria-label="PushIT" (click)="closeMobile()">
+      <img class="brand__mark" src="pushit-logo.svg" alt="" aria-hidden="true" width="40" height="40" />
+      <span class="brand__label">PushIT</span>
+    </a>
+
+    <button
+      type="button"
+      class="topbar__toggle"
+      [attr.aria-expanded]="mobileOpen()"
+      aria-label="Menu"
+      (click)="toggleMobile()"
+    >
+      <i class="pi" [class.pi-bars]="!mobileOpen()" [class.pi-times]="mobileOpen()"></i>
+    </button>
+
+    <nav class="nav" aria-label="Main navigation">
+      <a class="nav__link" routerLink="/" routerLinkActive="nav__link--active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
+        <i class="pi pi-home" aria-hidden="true"></i>{{ labels().home }}
+      </a>
+      @if (session.isAuthenticated()) {
+        <a class="nav__link" routerLink="/dashboard" routerLinkActive="nav__link--active" (click)="closeMobile()">
+          <i class="pi pi-th-large" aria-hidden="true"></i>{{ labels().dashboard }}
+        </a>
+      }
+      <a class="nav__link" routerLink="/features" routerLinkActive="nav__link--active" (click)="closeMobile()">
+        <i class="pi pi-bolt" aria-hidden="true"></i>{{ labels().features }}
+      </a>
+      <a class="nav__link nav__link--accent" routerLink="/donate" routerLinkActive="nav__link--active" (click)="closeMobile()">
+        <i class="pi pi-heart" aria-hidden="true"></i>{{ labels().donate }}
+      </a>
+      <a class="nav__link" routerLink="/about" routerLinkActive="nav__link--active" (click)="closeMobile()">
+        <i class="pi pi-info-circle" aria-hidden="true"></i>{{ labels().about }}
+      </a>
+    </nav>
+
+    <div class="topbar__actions">
+      <button
+        type="button"
+        class="topbar__theme"
+        [attr.aria-label]="theme.theme() === 'dark' ? 'Light mode' : 'Dark mode'"
+        (click)="theme.toggle()"
+      >
+        <i class="pi" [class.pi-sun]="theme.theme() === 'dark'" [class.pi-moon]="theme.theme() !== 'dark'"></i>
+      </button>
+      <app-language-menu />
+      <app-user-menu />
+    </div>
+  </div>
+</header>

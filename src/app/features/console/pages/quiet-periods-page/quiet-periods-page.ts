@@ -25,6 +25,7 @@ import {
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
@@ -45,6 +46,7 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     AppAlert, ApiErrorMessagePipe,
     ConsoleDialogActions,
     ButtonModule,
+    PageHeader,
     CheckboxModule,
     DatePickerModule,
     DialogModule,

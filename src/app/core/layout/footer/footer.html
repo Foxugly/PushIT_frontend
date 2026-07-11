@@ -1,0 +1,16 @@
+<footer class="footer">
+  <p class="footer__credit">
+    <span class="footer__brand">PushIT</span>
+    <span class="footer__sep" aria-hidden="true">·</span>
+    @if (version) {
+      <span class="footer__version">v{{ version }}</span>
+      <span class="footer__sep" aria-hidden="true">·</span>
+    }
+    © {{ year }}
+    <a class="footer__author-link" href="https://www.foxugly.com" target="_blank" rel="noopener noreferrer">
+      <img class="footer__author-logo" src="foxugly-logo.svg" alt="" aria-hidden="true" /> Foxugly
+    </a>. {{ copy().rightsReserved }}
+    <span class="footer__sep" aria-hidden="true">·</span>
+    <a class="footer__privacy-link" routerLink="/privacy">{{ copy().privacy }}</a>
+  </p>
+</footer>

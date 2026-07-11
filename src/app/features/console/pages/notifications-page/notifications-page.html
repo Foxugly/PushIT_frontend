@@ -8,24 +8,24 @@
     <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
   }
 
-  <section class="console-card">
-    <div class="console-card__header console-resource-header">
-      <h2 class="console-resource-header__title">{{ copy().title }}</h2>
-      <div class="console-card__toolbar console-resource-header__toolbar">
-        <div class="console-resource-header__badges">
-          <p-tag [value]="copy().history + ' ' + notificationsTotal()" severity="info" />
-          <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
-          <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
-        </div>
-        <p-button
-          [label]="copy().refresh"
-          icon="pi pi-refresh"
-          severity="secondary"
-          (onClick)="refreshNotifications()"
-        />
-        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" />
+  <app-page-header [title]="copy().title">
+    <div slot="right" class="ph-actions">
+      <div class="console-resource-header__badges">
+        <p-tag [value]="copy().history + ' ' + notificationsTotal()" severity="info" />
+        <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
+        <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
       </div>
+      <p-button
+        [label]="copy().refresh"
+        icon="pi pi-refresh"
+        severity="secondary"
+        (onClick)="refreshNotifications()"
+      />
+      <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreateModal()" />
     </div>
+  </app-page-header>
+
+  <section class="console-card">
 
     <div class="notifications-status-badges">
       @for (status of statusOptions; track status) {

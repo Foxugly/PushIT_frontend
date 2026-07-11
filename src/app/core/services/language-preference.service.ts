@@ -18,7 +18,7 @@ export class LanguagePreferenceService {
   ];
 
   currentBackendLanguage(): UserLanguage {
-    return this.toBackendLanguage(this.i18n.language());
+    return this.toBackendLanguage(this.i18n.language()) ?? 'FR';
   }
 
   applyBackendLanguage(language: UserLanguage | null | undefined): void {
@@ -33,11 +33,14 @@ export class LanguagePreferenceService {
     const previousLanguage = this.i18n.language();
     this.i18n.setLanguage(language);
 
-    if (!this.session.isAuthenticated() || !this.session.user()) {
+    const backendLanguage = this.toBackendLanguage(language);
+    // it/es sont des langues d'UI only : le backend (UserLanguage) n'en a pas,
+    // on ne pousse donc rien serveur pour ne pas écraser la préférence réelle.
+    if (!backendLanguage || !this.session.isAuthenticated() || !this.session.user()) {
       return;
     }
 
-    this.api.updateMe({ language: this.toBackendLanguage(language) }).subscribe({
+    this.api.updateMe({ language: backendLanguage }).subscribe({
       next: (user) => {
         this.session.updateUser(user);
         this.applyBackendLanguage(user.language);
@@ -59,14 +62,17 @@ export class LanguagePreferenceService {
     }
   }
 
-  toBackendLanguage(language: LanguageCode): UserLanguage {
+  toBackendLanguage(language: LanguageCode): UserLanguage | null {
     switch (language) {
+      case 'fr':
+        return 'FR';
       case 'nl':
         return 'NL';
       case 'en':
         return 'EN';
       default:
-        return 'FR';
+        // it / es : pas d'équivalent backend (UI only).
+        return null;
     }
   }
 }

@@ -1,9 +1,9 @@
 <div class="app-layout">
   <a href="#main-content" class="skip-link">{{ skipLabel() }}</a>
-  <app-site-header
+  <app-topmenu
+    [mode]="'authenticated'"
     [sticky]="true"
     [maxWidth]="'var(--content-max)'"
-    [username]="shell.user()?.email || 'Console'"
   />
 
   <main id="main-content" tabindex="-1" class="app-layout__main">
@@ -38,5 +38,5 @@
     </div>
   </main>
 
-  <app-site-footer />
+  <app-footer />
 </div>

@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { Component, computed, inject } from '@angular/core';
 
 import { AppCopyService } from '../../../../core/services/app-copy.service';
 
 @Component({
   selector: 'app-change-password-page',
-  imports: [CommonModule],
+  imports: [
+    PageHeader,CommonModule],
   templateUrl: './change-password-page.html',
   styleUrl: './change-password-page.scss',
 })

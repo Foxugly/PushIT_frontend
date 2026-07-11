@@ -5,7 +5,10 @@ import { UserMe } from '../models/api.models';
 import { USER_KEY } from './session.service';
 import { StorageService } from './storage.service';
 
-export type LanguageCode = 'fr' | 'nl' | 'en';
+export type LanguageCode = 'fr' | 'nl' | 'en' | 'it' | 'es';
+/** Langues d'UI (Transloco). Le backend n'en persiste que FR/NL/EN (UserLanguage) ;
+ * `it`/`es` sont donc des langues d'interface (localStorage), non synchronisées serveur. */
+export const UI_LANGS: readonly LanguageCode[] = ['fr', 'nl', 'en', 'it', 'es'];
 const LANGUAGE_KEY = 'pushit.language';
 
 /**
@@ -37,11 +40,12 @@ export class PublicI18nService {
       return storedUser.language.toLowerCase() as LanguageCode;
     }
 
-    const storedLanguage = this.storage.getString(LANGUAGE_KEY);
-    if (storedLanguage === 'fr' || storedLanguage === 'nl' || storedLanguage === 'en') {
+    const storedLanguage = this.storage.getString(LANGUAGE_KEY) as LanguageCode | null;
+    if (storedLanguage && UI_LANGS.includes(storedLanguage)) {
       return storedLanguage;
     }
 
-    return 'fr';
+    const nav = (navigator.language || '').slice(0, 2).toLowerCase() as LanguageCode;
+    return UI_LANGS.includes(nav) ? nav : 'fr';
   }
 }

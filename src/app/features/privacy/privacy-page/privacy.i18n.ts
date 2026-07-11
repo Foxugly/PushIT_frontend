@@ -186,7 +186,119 @@ const EN: PrivacyCopy = {
   ],
 };
 
-const PRIVACY_COPY: Record<LanguageCode, PrivacyCopy> = { fr: FR, nl: NL, en: EN };
+const IT: PrivacyCopy = {
+  badge: 'Legale',
+  title: 'Informativa sulla privacy',
+  lastUpdated: 'Ultimo aggiornamento: giugno 2026.',
+  contactEmail: CONTACT_EMAIL,
+  sections: [
+    {
+      title: 'Titolare del trattamento',
+      body: ['Foxugly SRL.', `Contatto: ${CONTACT_EMAIL}.`],
+    },
+    {
+      title: 'Dati che trattiamo',
+      items: [
+        'Indirizzo e-mail e identificativi dell’account (creazione dell’account, autenticazione).',
+        'Token di notifica (Firebase Cloud Messaging) del tuo dispositivo, per instradare le notifiche push.',
+        'Contenuto delle notifiche che ricevi (titolo, messaggio, applicazione mittente).',
+        'Token di sessione (JWT), memorizzato in forma cifrata sul dispositivo.',
+      ],
+    },
+    {
+      title: 'Finalità',
+      body: [
+        'Fornire il servizio: autenticazione, instradamento e visualizzazione delle tue notifiche push. Non trattiamo i tuoi dati a fini pubblicitari.',
+      ],
+    },
+    {
+      title: 'Responsabili del trattamento / condivisione',
+      body: [
+        'Non vendiamo né condividiamo i tuoi dati con terzi, ad eccezione di Google Firebase Cloud Messaging, utilizzato esclusivamente per instradare le notifiche verso il tuo dispositivo. Nessun tracciamento pubblicitario.',
+      ],
+    },
+    {
+      title: 'Sicurezza',
+      body: [
+        'Comunicazioni cifrate in transito (HTTPS) con il server pushit-api.foxugly.com; token memorizzati in forma cifrata sul dispositivo.',
+      ],
+    },
+    {
+      title: 'Conservazione ed eliminazione',
+      body: [
+        `Puoi richiedere l’eliminazione del tuo account e dei dati associati contattandoci all’indirizzo ${CONTACT_EMAIL}; i dati vengono quindi eliminati.`,
+      ],
+    },
+    {
+      title: 'I tuoi diritti (GDPR)',
+      body: [
+        `Accesso, rettifica, cancellazione, portabilità e opposizione. Per esercitare questi diritti: ${CONTACT_EMAIL}.`,
+      ],
+    },
+    {
+      title: 'Contatto',
+      body: [`Foxugly SRL — ${CONTACT_EMAIL}.`],
+    },
+  ],
+};
+
+const ES: PrivacyCopy = {
+  badge: 'Legal',
+  title: 'Política de privacidad',
+  lastUpdated: 'Última actualización: junio de 2026.',
+  contactEmail: CONTACT_EMAIL,
+  sections: [
+    {
+      title: 'Responsable del tratamiento',
+      body: ['Foxugly SRL.', `Contacto: ${CONTACT_EMAIL}.`],
+    },
+    {
+      title: 'Datos que tratamos',
+      items: [
+        'Dirección de correo electrónico e identificadores de cuenta (creación de cuenta, autenticación).',
+        'Token de notificación (Firebase Cloud Messaging) de tu dispositivo, para enrutar las notificaciones push.',
+        'Contenido de las notificaciones que recibes (título, mensaje, aplicación emisora).',
+        'Token de sesión (JWT), almacenado de forma cifrada en el dispositivo.',
+      ],
+    },
+    {
+      title: 'Finalidades',
+      body: [
+        'Prestar el servicio: autenticación, enrutamiento y visualización de tus notificaciones push. No tratamos tus datos con fines publicitarios.',
+      ],
+    },
+    {
+      title: 'Encargados del tratamiento / uso compartido',
+      body: [
+        'No vendemos ni compartimos tus datos con terceros, con la excepción de Google Firebase Cloud Messaging, utilizado únicamente para enrutar las notificaciones hacia tu dispositivo. Sin seguimiento publicitario.',
+      ],
+    },
+    {
+      title: 'Seguridad',
+      body: [
+        'Comunicaciones cifradas en tránsito (HTTPS) con el servidor pushit-api.foxugly.com; tokens almacenados de forma cifrada en el dispositivo.',
+      ],
+    },
+    {
+      title: 'Conservación y eliminación',
+      body: [
+        `Puedes solicitar la eliminación de tu cuenta y de los datos asociados contactándonos en ${CONTACT_EMAIL}; los datos se eliminan entonces.`,
+      ],
+    },
+    {
+      title: 'Tus derechos (RGPD)',
+      body: [
+        `Acceso, rectificación, supresión, portabilidad y oposición. Para ejercer estos derechos: ${CONTACT_EMAIL}.`,
+      ],
+    },
+    {
+      title: 'Contacto',
+      body: [`Foxugly SRL — ${CONTACT_EMAIL}.`],
+    },
+  ],
+};
+
+const PRIVACY_COPY: Record<LanguageCode, PrivacyCopy> = { fr: FR, nl: NL, en: EN, it: IT, es: ES };
 
 export function getPrivacyCopy(lang: LanguageCode): PrivacyCopy {
   return PRIVACY_COPY[lang] ?? EN;

@@ -1,11 +1,9 @@
 <section class="console-page">
-  <section class="console-card">
-    <app-console-detail-header
-      [backLink]="['/dashboard/applications']"
-      [backLabel]="copy().back"
-      [eyebrow]="copy().eyebrow"
-      [title]="application()?.name || copy().fallbackTitle"
-    >
+  <app-page-header [title]="application()?.name || copy().fallbackTitle">
+    <a slot="left" class="console-back-link" [routerLink]="['/dashboard/applications']">
+      <i class="pi pi-arrow-left"></i><span>{{ copy().back }}</span>
+    </a>
+    <div slot="right" class="ph-actions">
       @if (application(); as app) {
         <p-button
           icon="pi pi-pencil"
@@ -20,8 +18,10 @@
         <p-tag [value]="app.is_active ? copy().statusLabels.active : copy().statusLabels.inactive" [severity]="appSeverity(app)" />
         <p-tag [value]="copy().facts.tokenPrefix + ' ' + app.app_token_prefix" severity="info" />
       }
-    </app-console-detail-header>
+    </div>
+  </app-page-header>
 
+  <section class="console-card">
     @if (error()?.detail) {
       <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
     }

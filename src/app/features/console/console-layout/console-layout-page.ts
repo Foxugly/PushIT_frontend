@@ -10,8 +10,8 @@ import { ConsoleShellService } from '../../../core/services/console-shell.servic
 import { SettingsService } from '../../../core/services/settings.service';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
 import { ConsoleNavigation } from '../components/console-navigation/console-navigation';
-import { SiteFooter } from '../../../shared/site-footer/site-footer';
-import { SiteHeader } from '../../../shared/site-header/site-header';
+import { Footer } from '../../../core/layout/footer/footer';
+import { Topmenu } from '../../../core/layout/topmenu/topmenu';
 
 @Component({
   selector: 'app-console-layout-page',
@@ -21,8 +21,8 @@ import { SiteHeader } from '../../../shared/site-header/site-header';
     AppAlert,
     ButtonModule,
     ConsoleNavigation,
-    SiteFooter,
-    SiteHeader,
+    Footer,
+    Topmenu,
   ],
   templateUrl: './console-layout-page.html',
   styleUrl: './console-layout-page.scss',

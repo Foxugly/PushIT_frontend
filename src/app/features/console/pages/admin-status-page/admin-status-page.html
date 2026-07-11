@@ -1,15 +1,16 @@
 <section class="console-page">
-  <section class="console-card">
-    <app-console-detail-header
-      [backLink]="['/dashboard']"
-      [backLabel]="copy().back"
-      [eyebrow]="copy().eyebrow"
-      [title]="copy().title"
-    >
+  <app-page-header [title]="copy().title">
+    <a slot="left" class="console-back-link" [routerLink]="['/dashboard']">
+      <i class="pi pi-arrow-left"></i><span>{{ copy().back }}</span>
+    </a>
+    <div slot="right" class="ph-actions">
       @if (status(); as snapshot) {
         <p-tag [value]="overallLabel()" [severity]="overallSeverity()" />
       }
-    </app-console-detail-header>
+    </div>
+  </app-page-header>
+
+  <section class="console-card">
 
     <div class="admin-status__toolbar">
       <p class="console-muted">{{ copy().description }}</p>
