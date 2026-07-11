@@ -10,7 +10,7 @@ a {
   text-decoration: none;
   padding: 0.85rem 1rem;
   border-radius: 18px;
-  color: var(--text-main);
+  color: var(--ink);
   background: rgba(255, 255, 255, 0.64);
   border: 1px solid rgba(16, 185, 129, 0.08);
   transition:
@@ -56,7 +56,7 @@ a.is-active {
 }
 
 .console-menu-item__copy span {
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.35;
 }

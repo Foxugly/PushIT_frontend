@@ -21,7 +21,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  width: min(100%, var(--site-header-max-width, var(--content-width)));
+  width: min(100%, var(--content-max, var(--content-max)));
   min-height: 3.5rem;
   margin-inline: auto;
   padding: 0.5rem 1.25rem;
@@ -94,7 +94,7 @@
 // Accent (emerald) for the "Soutenir" call-to-action: a filled emerald pill
 // like TrainingManager's .nav-cta / QuizOnline's accent link.
 .site-nav a.site-nav__accent {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   color: #fff;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
 }
@@ -102,7 +102,7 @@
 .site-nav a.site-nav__accent:hover {
   filter: brightness(1.05);
   color: #fff;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
 }
 
 // Account/email button: transparent (no dark "contrast" fill), white label,
@@ -141,7 +141,7 @@
   white-space: normal;
   word-break: break-word;
   font-size: 0.82rem;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 @media (max-width: 800px) {

@@ -21,22 +21,14 @@
   --page-bg:
     radial-gradient(circle at top, rgba(16, 185, 129, 0.06), transparent 40%),
     linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  // --- Tokens spécifiques à l'app (les tokens flotte viennent de styles/_tokens.scss) ---
   --card-bg: #ffffff;
-  --card-border: #e2e8f0;
   --card-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  // Brand emerald (replaces the old blue accent).
-  --accent: #10b981;
-  --accent-soft: #d1fae5;
-  --accent-strong: #059669;
-  --success-soft: #d1fae5;
   --success-text: #047857;
   --control-radius: 8px;
   --field-radius: 8px;
   --field-padding-y: 0.5rem;
   --field-padding-x: 0.75rem;
-  --content-width: 1280px;
   --shell-gap: 1rem;
 }
 
@@ -48,7 +40,7 @@ body {
 body {
   margin: 0;
   background: #f8fafc;
-  color: var(--text-main);
+  color: var(--ink);
 }
 
 h1,
@@ -77,7 +69,7 @@ a {
   display: grid;
   grid-template-rows: auto auto auto;
   gap: 0;
-  width: min(var(--content-width), calc(100% - 2.5rem));
+  width: min(var(--content-max), calc(100% - 2.5rem));
   margin: 0 auto;
   padding: 0.75rem 0 1rem;
   align-content: start;
@@ -91,7 +83,7 @@ a {
 }
 
 .public-card {
-  border: 1px solid var(--card-border);
+  border: 1px solid var(--border);
   border-radius: 1.5rem;
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -114,7 +106,7 @@ a {
 .public-copy p,
 .public-card p,
 .public-muted {
-  color: var(--text-muted);
+  color: var(--muted);
   line-height: 1.7;
 }
 
@@ -139,7 +131,7 @@ a {
 
 .public-eyebrow,
 .public-badge--soft {
-  border: 1px solid var(--card-border);
+  border: 1px solid var(--border);
   background: var(--accent-soft);
   color: var(--accent-strong);
 }
@@ -170,9 +162,9 @@ a {
 }
 
 .public-button--secondary {
-  border-color: var(--card-border);
+  border-color: var(--border);
   background: #fff;
-  color: var(--text-main);
+  color: var(--ink);
 }
 
 .public-form {
@@ -193,10 +185,10 @@ a {
 .public-input {
   width: 100%;
   padding: 0.95rem 1rem;
-  border: 1px solid var(--card-border);
+  border: 1px solid var(--border);
   border-radius: var(--control-radius);
   background: #fff;
-  color: var(--text-main);
+  color: var(--ink);
 }
 
 :where(.public-form) .public-password,
@@ -263,7 +255,7 @@ a {
 
 .console-card {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--card-shadow);
   backdrop-filter: blur(18px);
@@ -338,11 +330,11 @@ a {
   border-radius: var(--field-radius);
   padding: var(--field-padding-y) var(--field-padding-x);
   background: rgba(255, 255, 255, 0.88);
-  color: var(--text-main);
+  color: var(--ink);
 }
 
 .console-card__header p:last-child {
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .console-grid {
@@ -379,7 +371,7 @@ a {
 .console-filter-grid label {
   display: grid;
   gap: 0.45rem;
-  color: var(--text-main);
+  color: var(--ink);
   font-weight: 600;
 }
 
@@ -403,7 +395,7 @@ a {
   border-radius: var(--field-radius);
   padding: var(--field-padding-y) var(--field-padding-x);
   background: rgba(255, 255, 255, 0.88);
-  color: var(--text-main);
+  color: var(--ink);
   font-size: 0.95rem;
   line-height: 1.35;
   outline: none;
@@ -448,7 +440,7 @@ a {
   align-items: center;
   gap: 0.75rem;
   font-weight: 500;
-  color: var(--text-main);
+  color: var(--ink);
 }
 
 .console-checkbox input {
@@ -494,7 +486,7 @@ a {
 }
 
 .console-muted {
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .console-note,
@@ -507,7 +499,7 @@ a {
 
 .console-note {
   background: rgba(209, 250, 229, 0.58);
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .console-flash {
@@ -562,7 +554,7 @@ a {
 
 .console-pill--muted {
   background: rgba(228, 235, 243, 0.9);
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .console-pill--warning {
@@ -590,7 +582,7 @@ a {
 }
 
 .console-empty {
-  color: var(--text-muted);
+  color: var(--muted);
   padding: 1rem 0;
 }
 
@@ -637,7 +629,7 @@ a {
   font-size: 0.84rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: var(--muted);
   background: rgba(209, 250, 229, 0.5);
   text-align: center;
 }
@@ -674,7 +666,7 @@ a {
 
 .console-table__subtext {
   margin: 0.18rem 0 0;
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -805,7 +797,7 @@ a {
 }
 
 .console-detail-list dt {
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.88rem;
   font-weight: 600;
 }

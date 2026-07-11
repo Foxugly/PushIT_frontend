@@ -2,7 +2,7 @@
   display: block;
   min-height: 100vh;
   background: var(--page-bg);
-  color: var(--text-main);
+  color: var(--ink);
 }
 
 // Full-height column: full-width header (flush top) + centered content + full-width
@@ -15,7 +15,7 @@
 
 .app-layout__main {
   flex: 1 0 auto;
-  width: min(var(--content-width), calc(100% - 2.5rem));
+  width: min(var(--content-max), calc(100% - 2.5rem));
   margin: 0 auto;
   padding: var(--shell-gap) 0 1.5rem;
   min-width: 0;

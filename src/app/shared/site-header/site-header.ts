@@ -31,7 +31,7 @@ export class SiteHeader {
   readonly session = inject(SessionService);
 
   readonly sticky = input(false);
-  readonly maxWidth = input('var(--content-width)');
+  readonly maxWidth = input('var(--content-max)');
   readonly username = input('');
   readonly settingsSummary = input('');
   readonly settingsLink = input('/dashboard/settings');
