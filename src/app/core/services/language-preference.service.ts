@@ -15,10 +15,12 @@ export class LanguagePreferenceService {
     { value: 'FR', label: 'Francais' },
     { value: 'NL', label: 'Nederlands' },
     { value: 'EN', label: 'English' },
+    { value: 'IT', label: 'Italiano' },
+    { value: 'ES', label: 'Espanol' },
   ];
 
   currentBackendLanguage(): UserLanguage {
-    return this.toBackendLanguage(this.i18n.language()) ?? 'FR';
+    return this.toBackendLanguage(this.i18n.language());
   }
 
   applyBackendLanguage(language: UserLanguage | null | undefined): void {
@@ -33,14 +35,11 @@ export class LanguagePreferenceService {
     const previousLanguage = this.i18n.language();
     this.i18n.setLanguage(language);
 
-    const backendLanguage = this.toBackendLanguage(language);
-    // it/es sont des langues d'UI only : le backend (UserLanguage) n'en a pas,
-    // on ne pousse donc rien serveur pour ne pas écraser la préférence réelle.
-    if (!backendLanguage || !this.session.isAuthenticated() || !this.session.user()) {
+    if (!this.session.isAuthenticated() || !this.session.user()) {
       return;
     }
 
-    this.api.updateMe({ language: backendLanguage }).subscribe({
+    this.api.updateMe({ language: this.toBackendLanguage(language) }).subscribe({
       next: (user) => {
         this.session.updateUser(user);
         this.applyBackendLanguage(user.language);
@@ -57,22 +56,27 @@ export class LanguagePreferenceService {
         return 'nl';
       case 'EN':
         return 'en';
+      case 'IT':
+        return 'it';
+      case 'ES':
+        return 'es';
       default:
         return 'fr';
     }
   }
 
-  toBackendLanguage(language: LanguageCode): UserLanguage | null {
+  toBackendLanguage(language: LanguageCode): UserLanguage {
     switch (language) {
-      case 'fr':
-        return 'FR';
       case 'nl':
         return 'NL';
       case 'en':
         return 'EN';
+      case 'it':
+        return 'IT';
+      case 'es':
+        return 'ES';
       default:
-        // it / es : pas d'équivalent backend (UI only).
-        return null;
+        return 'FR';
     }
   }
 }

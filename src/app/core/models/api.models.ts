@@ -11,7 +11,7 @@ export type NotificationStatus =
 export type DevicePlatform = 'android' | 'ios';
 export type PushTokenStatus = 'active' | 'invalid' | 'revoked';
 export type NotificationOrdering = 'effective_scheduled_for' | '-effective_scheduled_for';
-export type UserLanguage = 'FR' | 'NL' | 'EN';
+export type UserLanguage = 'FR' | 'NL' | 'EN' | 'IT' | 'ES';
 export type QuietPeriodType = 'ONCE' | 'RECURRING';
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
