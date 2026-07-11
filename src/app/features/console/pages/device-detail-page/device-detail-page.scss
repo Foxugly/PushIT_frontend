@@ -23,14 +23,14 @@
 .device-unlinked {
   margin-top: 1rem;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
+  border-top: 1px solid var(--border, rgba(0, 0, 0, 0.08));
 }
 
 .device-unlinked__title {
   margin: 0 0 0.4rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .device-unlinked__list {

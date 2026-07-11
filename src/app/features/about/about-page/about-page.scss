@@ -22,7 +22,7 @@
 
 .tab-intro {
   margin: 0;
-  color: var(--text-soft);
+  color: var(--ink-soft);
   line-height: 1.5;
 }
 
@@ -49,7 +49,7 @@
 
 .company-list dt {
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .company-list dd {
@@ -80,7 +80,7 @@
   padding-left: 1.15rem;
   display: grid;
   gap: 0.35rem;
-  color: var(--text-soft);
+  color: var(--ink-soft);
   line-height: 1.45;
 }
 
@@ -108,7 +108,7 @@
 
 .tech-card > p {
   margin: 0;
-  color: var(--text-soft);
+  color: var(--ink-soft);
 }
 
 .meta-block {
@@ -119,7 +119,7 @@
 .meta-label {
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 @media (max-width: 720px) {

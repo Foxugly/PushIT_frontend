@@ -3,7 +3,11 @@
 > **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`).
 > Le **plus éloigné** du standard (nommage `site-header`, pas de thème, pas de drawer,
 > pas de page-header) — **mais** son CSS est déjà **propre** (ni Tailwind ni PrimeFlex → le modèle).
-> **Statut :** à faire (audit 2026-07-10).
+> **Statut :** standard **VALIDÉ 2026-07-11** (réf complète : `FoxRunner_frontend`). Travailler sur
+> branche **`feat/scss-standard`** — **jamais `main`** (auto-deploy prod).
+>
+> **Fait (branche) :** tokens flotte copiés (`src/styles/_tokens.scss`, `_breakpoints.scss`) +
+> importés dans `styles.scss` (additif). Les tokens sont prêts à être consommés par les phases ci-dessous.
 
 ## ✅ Déjà conforme
 - `[mode]` public/authenticated ; `app-user-menu` + login « Se connecter ».
