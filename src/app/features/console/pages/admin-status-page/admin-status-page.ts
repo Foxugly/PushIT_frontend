@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
@@ -11,7 +12,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
-import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 
 type CheckKey = 'database' | 'celery_broker' | 'celery_workers' | 'exchange';
 
@@ -31,7 +32,7 @@ interface NotificationMetric {
 
 @Component({
   selector: 'app-admin-status-page',
-  imports: [CommonModule, ApiErrorMessagePipe, ConsoleDetailHeader, ButtonModule, TableModule, TagModule],
+  imports: [CommonModule, RouterLink, ApiErrorMessagePipe, PageHeader, ButtonModule, TableModule, TagModule],
   templateUrl: './admin-status-page.html',
   styleUrl: './admin-status-page.scss',
 })

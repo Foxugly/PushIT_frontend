@@ -31,7 +31,7 @@ import { pushTokenStatusSeverity } from '../../../../core/utils/device.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
-import { ConsoleDetailHeader } from '../../components/console-detail-header/console-detail-header';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { DeviceEditFormFields } from '../../components/device-edit-form-fields/device-edit-form-fields';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
@@ -46,7 +46,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     FormsModule,
     DatePipe,
     AppAlert, ApiErrorMessagePipe,
-    ConsoleDetailHeader,
+    PageHeader,
     ConsoleDialogActions,
     DeviceEditFormFields,
     ConsoleFactsTable,

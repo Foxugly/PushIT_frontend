@@ -1,11 +1,11 @@
 <section class="console-page">
+  <app-page-header [title]="isEdit() ? copy().page.editTitle : copy().page.createTitle">
+    <a slot="left" class="console-back-link" [routerLink]="['/dashboard/applications']">
+      <i class="pi pi-arrow-left"></i><span>{{ copy().page.back }}</span>
+    </a>
+  </app-page-header>
+
   <section class="console-card">
-    <app-console-detail-header
-      [backLink]="['/dashboard/applications']"
-      [backLabel]="copy().page.back"
-      [eyebrow]="copy().page.eyebrow"
-      [title]="isEdit() ? copy().page.editTitle : copy().page.createTitle"
-    />
 
     @if (loading() && !application()) {
       <p class="console-empty">{{ copy().page.loading }}</p>

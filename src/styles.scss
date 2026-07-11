@@ -887,3 +887,11 @@ a {
     padding-bottom: 0.75rem;
   }
 }
+// Wrapper for page-header right-slot actions (single projected node so [slot=right]
+// projects correctly even when the actions live inside an @if).
+.ph-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
