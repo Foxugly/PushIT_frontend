@@ -65,6 +65,31 @@
   min-height: 2.75rem;
 }
 
+// Rectangular theme toggle (fleet standard §5.4 — not a rounded p-button, so its
+// hover matches the other topbar actions). First of the actions: theme → lang → user.
+.site-header__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.site-header__theme:hover,
+.site-header__theme:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+  outline: none;
+}
+
 .site-nav a {
   display: inline-flex;
   align-items: center;
