@@ -19,6 +19,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { EmptyState } from '../../../../shared/empty-state/empty-state';
+import { PageHeader } from '../../../../shared/page-header/page-header';
 import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
 
 @Component({
@@ -37,6 +38,7 @@ import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reve
     TagModule,
     TooltipModule,
     EmptyState,
+    PageHeader,
   ],
   templateUrl: './applications-page.html',
   styleUrl: './applications-page.scss',

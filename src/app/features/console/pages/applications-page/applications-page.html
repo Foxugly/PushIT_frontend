@@ -3,18 +3,18 @@
     <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
 
-  <section class="console-card">
-    <div class="console-card__header console-resource-header">
-      <h2 class="console-resource-header__title">{{ copy().title }}</h2>
-      <div class="console-card__toolbar console-resource-header__toolbar">
-        <div class="console-resource-header__badges">
-          <p-tag [value]="copy().total + ' ' + shell.apps().length" severity="info" />
-          <p-tag [value]="copy().active + ' ' + activeAppsCount()" severity="success" />
-        </div>
-        <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="refreshApplications()" />
-        <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreate()" />
+  <app-page-header [title]="copy().title">
+    <div slot="right" class="ph-actions">
+      <div class="console-resource-header__badges">
+        <p-tag [value]="copy().total + ' ' + shell.apps().length" severity="info" />
+        <p-tag [value]="copy().active + ' ' + activeAppsCount()" severity="success" />
       </div>
+      <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="refreshApplications()" />
+      <p-button [label]="copy().add" icon="pi pi-plus" (onClick)="openCreate()" />
     </div>
+  </app-page-header>
+
+  <section class="console-card">
 
     @if (shell.loading() && !shell.apps().length) {
       <div class="console-skeletons">
