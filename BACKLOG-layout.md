@@ -14,17 +14,17 @@
 - About en `p-tabs` ; Features en grille SCSS.
 - **CSS propre** : aucun framework utilitaire (0 Tailwind, 0 PrimeFlex) — **la cible pour les autres**.
 
-## Phase 1 — structurel (gros)
-- [ ] **Topmenu** : renommer `app-site-header` → **`app-topmenu`**, déplacer `shared/site-header/` → **`core/layout/topmenu/`**, classes `site-header__*` → **BEM `topbar__*`**.
-- [ ] **Thème** : ajouter **toggle + `ThemeService`** + dark mode (aujourd'hui `darkModeSelector:false`) → `.dark-mode`, `localStorage['theme']`, **anti-FOUC**. Placer avant la langue.
-- [ ] **Responsive** : **empilement vertical → hamburger + drawer** à **1024**.
-- [ ] **Shell** : `console-layout` / `public-layout` (feature-based) → **`core/layout/` `main`/`public-layout`** + **skip-link** + `<main class="main-container">` + `<p-toast>` unique.
-- [ ] **Largeur** : `--content-max: 80rem` / `--content-pad: 1.5rem`, fonds pleine largeur.
-- [ ] **Footer** : `shared/site-footer/` → **`app-footer` `core/layout/footer/`** + version runtime + dark.
-- [ ] **Page-header** : **créer `app-page-header`** (aucun aujourd'hui) — 3 colonnes, slots.
-- [ ] **Empty-state** : **créer `app-empty-state`** (absent).
-- [ ] **Skeletons** : **ajouter** des états de chargement `p-skeleton` (absents).
-- [ ] **Breakpoints** : 800 → échelle `sm 640 / md 768 / lg 1024 / xl 1280`.
+## Phase 1 — structurel (gros) — partiellement MERGÉ + DÉPLOYÉ prod (2026-07-11)
+- [x] **Thème** : `ThemeService` (clé `theme`, `.dark-mode`, `darkModeSelector:false→'.dark-mode'`), toggle rectangulaire (avant la langue), **anti-FOUC** inline. ✅ déployé.
+- [x] **Shell** : **skip-link** (2 layouts + `<main id>`, clé `header.skipToContent` fr/nl/en) + `<p-toast>` déjà unique. ✅ déployé.
+- [x] **Empty-state** : **`app-empty-state`** créé (`shared/`) + câblé (liste applications). ✅ déployé.
+- [x] **Skeletons** : `p-skeleton` sur la liste applications. ✅ déployé. *(autres vues console = suivi)*
+- [ ] **Topmenu** : renommer `app-site-header` → **`app-topmenu`**, déplacer `shared/site-header/` → **`core/layout/topmenu/`**, classes `site-header__*` → **BEM `topbar__*`**. *(organisationnel, non fait)*
+- [ ] **Responsive** : empilement → hamburger + drawer à **1024**. *(à vérifier/ajuster)*
+- [ ] **Shell (suite)** : déplacer les layouts feature-based → `core/layout/` + `<main class="main-container">` largeur tokens.
+- [ ] **Footer** : `shared/site-footer/` → `core/layout/footer/` + version runtime + dark.
+- [ ] **Page-header** : **créer `app-page-header`** (3 colonnes, slots) + câbler dans les pages.
+- [ ] **Breakpoints** : échelle `sm 640 / md 768 / lg 1024 / xl 1280`.
 
 ## Phase 2 — i18n
 - [ ] **Migrer l'i18n maison** (`AppCopyService`) → **Transloco**.
