@@ -1,0 +1,926 @@
+{
+  "app": {
+    "header": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "about": "About",
+      "features": "Features",
+      "donate": "Support",
+      "login": "Log in",
+      "settings": "Settings",
+      "changePassword": "Change password",
+      "logout": "Log out",
+      "skipToContent": "Skip to content"
+    },
+    "home": {
+      "badge": "PushIT for product teams",
+      "title": "Manage your push notifications easily.",
+      "description": "Centralize push campaigns in a modern workspace designed to feel lighter and easier to operate.",
+      "primary": "See features",
+      "secondary": "Log in",
+      "register": {
+        "title": "Create an account",
+        "subtitle": "Sign up directly from the homepage."
+      }
+    },
+    "features": {
+      "badge": "Features",
+      "title": "Everything the frontend already covers.",
+      "description": "This page gathers the backend workflows already exposed in the UI along with API target configuration.",
+      "sections": [
+        {
+          "title": "General capabilities",
+          "items": [
+            "User sign-up, sign-in, sign-out and JWT refresh.",
+            "Current profile retrieval and user language update.",
+            "Supported languages: FR, NL and EN.",
+            "Secure JWT-based session handling on the frontend."
+          ]
+        },
+        {
+          "title": "Application capabilities",
+          "items": [
+            "List, create, inspect, update and delete applications.",
+            "Activate, deactivate, revoke and regenerate the application token.",
+            "Expose the data needed for mobile or API integration.",
+            "Cover the full push application lifecycle."
+          ]
+        },
+        {
+          "title": "Device capabilities",
+          "items": [
+            "List, inspect, update and delete visible devices.",
+            "Show which applications a device is linked to.",
+            "Automatically link a device through X-App-Token.",
+            "Support the mobile flow: install, QR scan, retrieve push token and create or update the backend link."
+          ]
+        },
+        {
+          "title": "Notification capabilities",
+          "items": [
+            "Create targeted notifications by application and explicit device list.",
+            "List, inspect, send manually and monitor notification statistics.",
+            "Manage future notifications: list, inspect, update and delete.",
+            "Filter by application, status and effective send date, including partial delivery handling and `effective_scheduled_for`."
+          ]
+        },
+        {
+          "title": "Quiet period capabilities",
+          "items": [
+            "Manage quiet periods at application or device level.",
+            "Support ONCE and RECURRING periods, with update, delete and activation.",
+            "Handle windows crossing midnight and contiguous windows.",
+            "Reflect the distinct business impact: global notification shift for applications, device-only delivery delay for devices."
+          ]
+        },
+        {
+          "title": "Email delivery capability",
+          "items": [
+            "Receive inbound email and resolve the target application from the recipient prefix.",
+            "Turn the subject into a notification title and the text body into a message, with optional `SEND_AT` scheduling.",
+            "Validate domain, sender and target application ownership.",
+            "Handle idempotency through `message_id`, rejecting replays with different content."
+          ]
+        }
+      ],
+      "backendTitle": "Backend configuration",
+      "backendDescription": "Set here the API base URL used across the Angular frontend.",
+      "submit": "Save",
+      "saved": "Saved"
+    },
+    "donate": {
+      "badge": "Donate",
+      "title": "Support a simpler console.",
+      "description": "If the project helps you, this page acts as a placeholder for a future real donation flow.",
+      "cards": [
+        "One-off support for project maintenance",
+        "Contribution to UX and i18n improvements",
+        "Help fund product iterations"
+      ],
+      "button": "Coming soon"
+    },
+    "about": {
+      "badge": "About",
+      "title": "About PushIT.",
+      "description": "PushIT is a simple console to manage your push notifications.",
+      "sections": [
+        {
+          "icon": "pi-bolt",
+          "title": "The product",
+          "body": "PushIT centralizes the management of your applications, devices and push campaigns in a clear, modern console."
+        },
+        {
+          "icon": "pi-building",
+          "title": "The publisher",
+          "body": "PushIT is designed and maintained by Foxugly, which builds a small family of polished web tools."
+        },
+        {
+          "icon": "pi-code",
+          "title": "Technology",
+          "body": "A Django REST backend, an Angular frontend and notifications delivered through Firebase Cloud Messaging."
+        }
+      ]
+    },
+    "auth": {
+      "eyebrow": "Log in",
+      "title": "Access your workspace.",
+      "description": "Log in to access the PushIT dashboard and manage your campaigns.",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "register": "Sign up",
+      "submit": "Log in",
+      "pending": "Logging in..."
+    },
+    "registerPage": {
+      "eyebrow": "Sign up",
+      "title": "Create a PushIT account.",
+      "description": "Sign up to access the console and start managing your applications and notifications."
+    },
+    "registerPanel": {
+      "defaultTitle": "Sign up",
+      "defaultSubtitle": "User account",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "language": "Language",
+      "languagePlaceholder": "Choose a language",
+      "submit": "Create account",
+      "pending": "Creating...",
+      "loginPrompt": "Already have an account?",
+      "loginLink": "Log in",
+      "captchaRequired": "Please complete the anti-bot captcha.",
+      "captchaFailed": "Anti-bot verification failed. Please try again.",
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordTooShort": "Password must be at least 8 characters.",
+        "languageRequired": "Language is required."
+      }
+    },
+    "forgotPassword": {
+      "eyebrow": "Forgot password",
+      "title": "Recover access.",
+      "description": "Enter your email. If an account exists, we will send you a link to reset your password.",
+      "email": "Email",
+      "submit": "Continue",
+      "submitted": "If an account exists for that email, a reset link has just been sent. Remember to check your spam folder.",
+      "registerPrompt": "Need an account?",
+      "registerLink": "Sign up",
+      "captchaRequired": "Please complete the anti-bot captcha.",
+      "captchaFailed": "Anti-bot verification failed. Please try again."
+    },
+    "resetPassword": {
+      "eyebrow": "Reset password",
+      "title": "Choose a new password.",
+      "description": "Enter your new password below.",
+      "password": "New password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "confirmPassword": "Confirm password",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "passwordMismatch": "Passwords do not match.",
+      "submit": "Reset password",
+      "success": "Your password has been reset. You can now sign in.",
+      "goToLogin": "Sign in",
+      "backToLogin": "Back to sign in"
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "intro": "We sent a confirmation link to ",
+      "hint": "Click the link to activate your account, then sign in.",
+      "resend": "Resend the link",
+      "resent": "If a confirmation is needed, a new link has been sent.",
+      "backToLogin": "Back to sign in"
+    },
+    "confirmEmail": {
+      "title": "Email confirmation",
+      "confirming": "Confirming…",
+      "invalid": "This confirmation link is invalid or has expired.",
+      "resendHint": "Enter your email to get a new link.",
+      "emailLabel": "Email",
+      "resend": "Resend the link",
+      "resent": "If a confirmation is needed, a new link has been sent.",
+      "resendError": "Could not send the link right now. Please try again later.",
+      "backToLogin": "Back to sign in"
+    },
+    "footer": {
+      "rightsReserved": "All rights reserved.",
+      "privacy": "Privacy policy"
+    },
+    "console": {
+      "navigation": {
+        "eyebrow": "Navigation",
+        "title": "Console menu",
+        "tokenEyebrow": "Token generated",
+        "copyButton": "Copy",
+        "dismissButton": "Hide",
+        "tokenNote": "The raw token is only visible once. Server-side storage only.",
+        "admin": {
+          "label": "Administration",
+          "description": "Monitor backend health and open the Django admin."
+        }
+      },
+      "sections": [
+        {
+          "label": "Applications",
+          "description": "Create, edit and manage your tokens.",
+          "icon": "pi pi-briefcase",
+          "link": "/dashboard/applications",
+          "countKey": "apps"
+        },
+        {
+          "label": "Devices",
+          "description": "Inspect and update linked devices.",
+          "icon": "pi pi-mobile",
+          "link": "/dashboard/devices",
+          "countKey": "devices"
+        },
+        {
+          "label": "Notifications",
+          "description": "Target, schedule and track deliveries.",
+          "icon": "pi pi-envelope",
+          "link": "/dashboard/notifications",
+          "countKey": "notifications"
+        },
+        {
+          "label": "Quiet periods",
+          "description": "Control application and device quiet windows.",
+          "icon": "pi pi-moon",
+          "link": "/dashboard/quiet-periods",
+          "countKey": "quietPeriods"
+        }
+      ],
+      "dashboard": {
+        "eyebrow": "Dashboard",
+        "title": "Overview",
+        "description": "See the global state of your console and jump quickly to management screens.",
+        "cta": "Applications",
+        "metrics": {
+          "apps": "Applications",
+          "activeApps": "Active",
+          "devices": "Devices",
+          "notifications": "Notifications",
+          "quietPeriods": "Quiet periods"
+        }
+      },
+      "settings": {
+        "eyebrow": "Settings",
+        "title": "Console settings",
+        "description": "This page centralizes the frontend configuration used to reach the backend.",
+        "backendEyebrow": "Backend",
+        "backendTitle": "API prefix",
+        "apiUrl": "API URL",
+        "language": "Account language",
+        "submit": "Save",
+        "saved": "Preferences saved.",
+        "sessionEyebrow": "Session",
+        "sessionTitle": "Signed-in account",
+        "fallbackUser": "User",
+        "fallbackEmail": "Email unavailable",
+        "activePrefix": "Active prefix",
+        "activeLanguage": "Active language"
+      },
+      "changePassword": {
+        "eyebrow": "Password",
+        "title": "Change password",
+        "description": "The frontend is ready for this action, but the provided backend does not expose a dedicated endpoint yet.",
+        "backendEyebrow": "Backend status",
+        "backendTitle": "Action unavailable",
+        "note": "The Swagger currently exposes `login`, `logout`, `me`, `refresh` and `register`, but no `change-password` route. When the endpoint becomes available, this page can host the update form."
+      },
+      "applicationForm": {
+        "name": "Name",
+        "description": "Description",
+        "namePlaceholder": "Push mobile Europe",
+        "descriptionPlaceholder": "Channel, environment, usage..."
+      },
+      "deviceForm": {
+        "name": "Name",
+        "platform": "Platform",
+        "pushTokenStatus": "Push token status"
+      }
+    }
+  },
+  "console": {
+    "applications": {
+      "title": "Application management",
+      "total": "Total",
+      "active": "Active",
+      "refresh": "Refresh",
+      "add": "Add",
+      "empty": "No applications for this account.",
+      "loading": "Loading application...",
+      "noDescription": "No description.",
+      "statuses": {
+        "active": "active",
+        "inactive": "inactive"
+      },
+      "table": {
+        "name": "Name",
+        "description": "Description",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View details",
+        "edit": "Edit",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "regenerate": "Regenerate token",
+        "revoke": "Revoke token",
+        "delete": "Delete",
+        "qrCode": "QR code"
+      },
+      "qr": {
+        "title": "Token QR code",
+        "scanHint": "Scan this QR code with the PushIT mobile app to link a device.",
+        "tokenOnce": "The token is only shown once. Regenerate it to display its QR code (already-linked devices are not affected).",
+        "regenerate": "Regenerate and show",
+        "error": "Could not generate the QR code.",
+        "loading": "Generating the QR code…",
+        "copyToken": "Copy token",
+        "copied": "Token copied to clipboard.",
+        "copyFailed": "Could not copy the token.",
+        "downloadQr": "Download QR code",
+        "downloadToken": "Download token",
+        "saveNotice": "⚠️ This token is shown only once: copy or download it now and keep it somewhere safe."
+      },
+      "logo": {
+        "label": "Logo",
+        "none": "No logo",
+        "remove": "Remove logo",
+        "choose": "Choose an image",
+        "hint": "Drag and drop an image here (PNG/JPG, max 2 MB).",
+        "cropHint": "Drag and zoom to frame inside the circle.",
+        "zoomIn": "Zoom in",
+        "zoomOut": "Zoom out",
+        "apply": "Apply",
+        "change": "Change image",
+        "loadError": "Couldn't load this image. Try a PNG or JPG — formats like HEIC (iPhone photos) aren't supported by the browser."
+      },
+      "dialog": {
+        "createTitle": "Create application",
+        "editTitle": "Edit application",
+        "create": "Create application",
+        "creating": "Creating...",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "page": {
+        "eyebrow": "Application",
+        "createTitle": "New application",
+        "editTitle": "Edit application",
+        "back": "Back to applications",
+        "cancel": "Cancel",
+        "loading": "Loading application..."
+      },
+      "alerts": {
+        "created": "Application created. Open the QR code to view, copy or download the token.",
+        "updated": "Application {name} updated.",
+        "activated": "Application activated successfully.",
+        "deactivated": "Application deactivated successfully.",
+        "regenerated": "New token generated. Open the QR code to view, copy or download it.",
+        "revoked": "This application token was revoked.",
+        "deleted": "Application {name} deleted."
+      },
+      "errors": {
+        "create": "Unable to create the application.",
+        "toggle": "Unable to update the application state.",
+        "regenerate": "Unable to regenerate the token.",
+        "revoke": "Unable to revoke the token.",
+        "invalidId": "Invalid application id."
+      },
+      "confirmDelete": "Delete application \"{name}\"?",
+      "confirmRegenerate": "Regenerate the token for \"{name}\"? All devices using the current token will stop receiving notifications until they are re-linked with the new token.",
+      "confirmRevoke": "Revoke the token for \"{name}\"? All devices using the current token will immediately stop receiving notifications."
+    },
+    "devices": {
+      "title": "Device inventory and linking",
+      "countLabel": "devices",
+      "refresh": "Refresh",
+      "add": "Add",
+      "empty": "No linked devices for this account.",
+      "loading": "Loading devices...",
+      "none": "none",
+      "never": "Never",
+      "table": {
+        "name": "Name",
+        "platform": "Platform",
+        "token": "Token",
+        "applications": "Applications",
+        "lastActivity": "Last activity",
+        "actions": "Actions",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Created"
+      },
+      "actions": {
+        "view": "View details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "useLatestToken": "Use latest generated token",
+        "link": "Link device",
+        "linking": "Linking...",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "dialog": {
+        "createTitle": "Link a device",
+        "editTitle": "Edit device"
+      },
+      "createForm": {
+        "appToken": "X-App-Token",
+        "appTokenPlaceholder": "Paste the raw token here",
+        "deviceName": "Device name",
+        "deviceNamePlaceholder": "Marie iPhone",
+        "platform": "Platform",
+        "pushToken": "Push token",
+        "pushTokenPlaceholder": "ExponentPushToken..."
+      },
+      "alerts": {
+        "updated": "Device updated successfully.",
+        "deleted": "Device deleted.",
+        "linked": "Device {deviceId} linked to application {applicationId}."
+      },
+      "errors": {
+        "missingAppToken": "Provide an X-App-Token to link a device.",
+        "invalidId": "Invalid device id.",
+        "loading": "Loading device..."
+      },
+      "confirmDelete": "Delete device \"{name}\"?"
+    },
+    "notifications": {
+      "title": "User notifications",
+      "history": "History",
+      "future": "Future",
+      "shifted": "Shifted",
+      "refresh": "Refresh",
+      "add": "Add",
+      "empty": "No notifications for these filters.",
+      "loading": "Loading notifications...",
+      "immediate": "immediate",
+      "scheduledSubtext": "Scheduled",
+      "filters": {
+        "application": "Application",
+        "device": "Device",
+        "status": "Status",
+        "from": "Effective from",
+        "to": "Effective to",
+        "allApps": "All",
+        "allDevices": "All",
+        "allStatuses": "All",
+        "apply": "Apply",
+        "reset": "Reset"
+      },
+      "table": {
+        "name": "Name",
+        "application": "Application",
+        "message": "Message",
+        "status": "Status",
+        "effective": "Effective",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View details",
+        "send": "Send",
+        "resend": "Resend",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "dialog": {
+        "createTitle": "Create notification",
+        "editTitle": "Edit future notification",
+        "create": "Create notification",
+        "creating": "Creating...",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "form": {
+        "application": "Application",
+        "applicationPlaceholder": "Choose...",
+        "devices": "Target devices",
+        "devicesPlaceholder": "Choose one or more devices",
+        "devicesHelp": "Only active devices linked to the selected application are offered.",
+        "title": "Title",
+        "titlePlaceholder": "Weekend promo",
+        "message": "Message",
+        "messagePlaceholder": "Your push message",
+        "schedule": "Optional scheduling",
+        "newDate": "New date"
+      },
+      "alerts": {
+        "createdImmediate": "Immediate notification created.",
+        "sentImmediate": "Notification sent.",
+        "createdScheduled": "Scheduled notification created.",
+        "updated": "Future notification updated.",
+        "deleted": "Future notification \"{title}\" deleted.",
+        "queued": "Notification {notificationId} queued in task {taskId}."
+      },
+      "confirmDelete": "Delete future notification \"{title}\"?",
+      "statusLabels": {
+        "draft": "draft",
+        "scheduled": "scheduled",
+        "queued": "queued",
+        "processing": "processing",
+        "sent": "sent",
+        "partial": "partial",
+        "failed": "failed",
+        "no_target": "no target",
+        "shifted": "shifted"
+      },
+      "typeLabels": {
+        "future": "Future",
+        "history": "History"
+      },
+      "errors": {
+        "invalidId": "Invalid notification id.",
+        "loading": "Loading notification..."
+      },
+      "validation": {
+        "title": "Missing fields",
+        "detail": "Please fill in all required fields (application, devices, title and message)."
+      }
+    },
+    "quietPeriods": {
+      "title": "Quiet window management",
+      "refresh": "Refresh",
+      "add": "Add",
+      "empty": "No quiet periods configured.",
+      "loading": "Loading quiet periods...",
+      "targetNone": "No target",
+      "targetUnknownApplication": "Unknown application",
+      "targetUnknownDevice": "Unknown device",
+      "missingTargets": "No application or device available to create a quiet period.",
+      "missingParent": "Select a valid target before creating a quiet period.",
+      "table": {
+        "target": "Target",
+        "name": "Name",
+        "type": "Type",
+        "rule": "Rule",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "createTitle": "New quiet period",
+        "editTitle": "Edit quiet period",
+        "create": "Create period",
+        "update": "Update",
+        "saving": "Saving..."
+      },
+      "scopeLabels": {
+        "application": "Application",
+        "device": "Device"
+      },
+      "typeLabels": {
+        "once": "One-time",
+        "recurring": "Recurring",
+        "badgeOnce": "once",
+        "badgeRecurring": "recurring"
+      },
+      "statusLabels": {
+        "active": "active",
+        "inactive": "inactive"
+      },
+      "form": {
+        "target": "Target",
+        "device": "Device",
+        "application": "Application",
+        "selectPlaceholder": "Choose...",
+        "name": "Name",
+        "namePlaceholder": "Marketing night",
+        "type": "Type",
+        "recurrenceDays": "Recurrence days",
+        "startTime": "Start time",
+        "endTime": "End time",
+        "startAt": "Start",
+        "endAt": "End",
+        "active": "Active period"
+      },
+      "weekdays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
+      "defaultNames": {
+        "application": "Application silence",
+        "device": "Device silence"
+      },
+      "alerts": {
+        "created": "Quiet period created.",
+        "updated": "Quiet period updated.",
+        "deleted": "Quiet period \"{name}\" deleted."
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "confirmDelete": "Delete quiet period \"{name}\"?",
+      "validation": {
+        "onceRequired": "A one-time period requires a start and end date.",
+        "recurringRequired": "A recurring period requires days and a time range.",
+        "required": "This field is required.",
+        "selectOneDay": "Select at least one day.",
+        "endAfterStart": "The end of the quiet period must be after the start.",
+        "differentEndTime": "End time must differ from start time."
+      }
+    },
+    "applicationDetail": {
+      "back": "Back to applications",
+      "eyebrow": "Application",
+      "fallbackTitle": "Application detail",
+      "retry": "Retry",
+      "editTooltip": "Edit application",
+      "loading": "Loading application...",
+      "descriptionTitle": "Description",
+      "descriptionEmpty": "No description available for this application.",
+      "inboundEmailTitle": "Notification email address",
+      "inboundEmailLabel": "Email address",
+      "inboundEmailCopy": "Copy address",
+      "inboundEmailCopied": "Email address copied.",
+      "inboundEmailCopyFailed": "Unable to copy the email address.",
+      "inboundEmailHelpTitle": "Send a notification by email",
+      "inboundEmailHelp": {
+        "intro": "Send an email to this address to create a notification for this application.",
+        "subject": "The email subject becomes the notification title.",
+        "body": "The plain text email content becomes the message.",
+        "schedule": "Scheduling is possible with [SEND_AT:ISO_DATETIME] in the subject.",
+        "sender": "The sender must be the application owner email address."
+      },
+      "devicesTitle": "Linked devices",
+      "devicesEmpty": "No devices linked to this application.",
+      "notificationsTitle": "Notifications",
+      "notificationsEmpty": "No notifications linked to this application.",
+      "quietPeriodsTitle": "Quiet periods",
+      "quietPeriodsEmpty": "No quiet periods linked to this application.",
+      "statusTitle": "Status",
+      "table": {
+        "name": "Name",
+        "platform": "Platform",
+        "pushStatus": "Push status",
+        "lastActivity": "Last activity",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Created",
+        "title": "Title",
+        "type": "Type",
+        "effective": "Effective",
+        "actions": "Actions"
+      },
+      "facts": {
+        "id": "ID",
+        "name": "Name",
+        "tokenPrefix": "Token prefix",
+        "status": "Status",
+        "lastUsed": "Last used",
+        "revokedToken": "Revoked token",
+        "createdAt": "Created"
+      },
+      "statusLabels": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "never": "Never",
+        "no": "No",
+        "immediate": "Immediate",
+        "once": "once",
+        "recurring": "recurring"
+      },
+      "notificationTypes": {
+        "future": "Future",
+        "history": "History"
+      },
+      "actions": {
+        "view": "View details"
+      },
+      "dialog": {
+        "title": "Edit application",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "logo": {
+        "label": "Logo",
+        "none": "No logo",
+        "remove": "Remove logo",
+        "updated": "Logo updated.",
+        "removed": "Logo removed.",
+        "choose": "Choose an image",
+        "hint": "Drag and drop an image here (PNG/JPG, max 2 MB).",
+        "cropHint": "Drag and zoom to frame inside the circle.",
+        "zoomIn": "Zoom in",
+        "zoomOut": "Zoom out",
+        "apply": "Apply",
+        "change": "Change image",
+        "loadError": "Couldn't load this image. Try a PNG or JPG — formats like HEIC (iPhone photos) aren't supported by the browser."
+      },
+      "regenerateEmail": {
+        "label": "Inbound email address",
+        "button": "Regenerate address",
+        "pending": "Regenerating...",
+        "hint": "Generates a new random address; the old one stops working.",
+        "confirm": "Regenerate the email address of \"{name}\"? The current address will immediately stop working.",
+        "success": "New email address generated.",
+        "error": "Unable to regenerate the email address."
+      },
+      "aliasStatus": {
+        "title": "Verify inbound email alias",
+        "button": "Verify alias",
+        "pending": "Verifying...",
+        "active": "Alias active",
+        "missing": "Alias missing",
+        "missingHint": "The alias does not exist on Exchange. Regenerate the address or contact ops.",
+        "unavailable": "Verification unavailable (Exchange not configured)",
+        "unverifiable": "Unable to verify",
+        "error": "Unable to verify the alias."
+      },
+      "errors": {
+        "invalidId": "Invalid application id.",
+        "logo": "Unable to update the logo."
+      }
+    },
+    "deviceDetail": {
+      "back": "Back to devices",
+      "eyebrow": "Device",
+      "fallbackTitle": "Device detail",
+      "editTooltip": "Edit device",
+      "loading": "Loading device...",
+      "applicationsTitle": "Linked applications",
+      "applicationsEmpty": "No linked applications.",
+      "unlinkedTitle": "Unlinked applications",
+      "unlinkedOn": "unlinked on",
+      "unlinkedUnknownDate": "unknown date",
+      "unlinkSources": {
+        "deviceButton": "from the device",
+        "inbox": "from the inbox",
+        "takeover": "taken over by another account",
+        "unknown": "unknown source"
+      },
+      "statusTitle": "Status",
+      "table": {
+        "name": "Name",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "facts": {
+        "id": "ID",
+        "name": "Name",
+        "platform": "Platform",
+        "tokenStatus": "Token status",
+        "lastActivity": "Last activity",
+        "createdAt": "Created"
+      },
+      "labels": {
+        "never": "Never",
+        "active": "active",
+        "inactive": "inactive"
+      },
+      "actions": {
+        "view": "View details"
+      },
+      "dialog": {
+        "title": "Edit device",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "errors": {
+        "invalidId": "Invalid device id."
+      },
+      "notifications": {
+        "title": "Received notifications",
+        "allApps": "All applications",
+        "filterLabel": "Filter by application",
+        "empty": "No notifications delivered to this device.",
+        "unknown": "unknown",
+        "table": {
+          "title": "Title",
+          "application": "Application",
+          "delivery": "Delivery",
+          "sentAt": "Sent at",
+          "actions": "Actions"
+        }
+      }
+    },
+    "notificationDetail": {
+      "back": "Back to notifications",
+      "eyebrow": "Notification",
+      "fallbackTitle": "Notification detail",
+      "editTooltip": "Edit notification",
+      "loading": "Loading notification...",
+      "messageTitle": "Message",
+      "devicesTitle": "Target devices",
+      "devicesEmpty": "No target device resolved for this notification.",
+      "statusTitle": "Status",
+      "note": "`effective_scheduled_for` only reflects application quiet periods. Device quiet periods may delay a delivery without changing this date.",
+      "table": {
+        "name": "Name",
+        "platform": "Platform",
+        "delivery": "Delivery",
+        "opened": "Opened at",
+        "pushStatus": "Push status",
+        "lastActivity": "Last activity",
+        "actions": "Actions"
+      },
+      "facts": {
+        "application": "Application",
+        "status": "Status",
+        "future": "Future",
+        "sentAt": "Sent at",
+        "createdAt": "Created",
+        "scheduledFor": "Requested for",
+        "effective": "Effective",
+        "targetedDevices": "Target devices"
+      },
+      "labels": {
+        "scheduled": "Scheduled",
+        "shifted": "Shifted",
+        "yes": "Yes",
+        "no": "No",
+        "notYet": "Not yet",
+        "immediate": "Immediate",
+        "notDelivered": "not delivered"
+      },
+      "actions": {
+        "view": "View details"
+      },
+      "dialog": {
+        "title": "Edit notification",
+        "message": "Message",
+        "newDate": "New date",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "errors": {
+        "invalidId": "Invalid notification id."
+      }
+    },
+    "adminStatus": {
+      "back": "Back to dashboard",
+      "eyebrow": "Administration",
+      "title": "Backend status",
+      "description": "Monitoring of the backend services and key metrics.",
+      "refresh": "Refresh",
+      "loading": "Loading backend status...",
+      "error": "Unable to load the backend status.",
+      "overallTitle": "Overall status",
+      "overallStatus": {
+        "ok": "Operational",
+        "degraded": "Degraded",
+        "unknown": "Unknown"
+      },
+      "djangoAdmin": "Open Django admin",
+      "checksTitle": "Checks",
+      "checkStatus": {
+        "ok": "ok",
+        "degraded": "degraded",
+        "error": "error",
+        "unknown": "unknown"
+      },
+      "checks": {
+        "database": "Database",
+        "celery_broker": "Celery broker",
+        "celery_workers": "Celery workers",
+        "exchange": "Exchange"
+      },
+      "noDetail": "No detail.",
+      "metricsTitle": "Metrics",
+      "metrics": {
+        "applications": "Applications",
+        "applicationsActive": "Active",
+        "devices": "Devices",
+        "notifications": "Notifications",
+        "processingStuck": "Stuck notifications",
+        "none": "No metrics available."
+      }
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "offline": "Could not reach the server. Check your connection.",
+    "validation": "Please fix the highlighted fields.",
+    "http": {
+      "0": "Could not reach the server. Check your connection.",
+      "400": "Invalid request.",
+      "401": "Session expired, please sign in again.",
+      "403": "You don't have access to this resource.",
+      "404": "Resource not found.",
+      "409": "Conflict with the current state.",
+      "413": "File too large.",
+      "429": "Too many requests, try again shortly.",
+      "500": "Server error, please try again later.",
+      "502": "Server error, please try again later.",
+      "503": "Service unavailable, please try again later.",
+      "504": "The server took too long to respond."
+    },
+    "shellLoadFailed": "Could not load the console.",
+    "shellRefreshFailed": "Could not refresh the navigation counts."
+  }
+}

@@ -1,0 +1,926 @@
+{
+  "app": {
+    "header": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "about": "Over",
+      "features": "Functies",
+      "donate": "Steunen",
+      "login": "Inloggen",
+      "settings": "Instellingen",
+      "changePassword": "Wachtwoord wijzigen",
+      "logout": "Uitloggen",
+      "skipToContent": "Naar de inhoud"
+    },
+    "home": {
+      "badge": "PushIT voor productteams",
+      "title": "Beheer je pushmeldingen eenvoudig.",
+      "description": "Centraliseer pushcampagnes in een moderne ruimte die rustiger leest en eenvoudiger in gebruik is.",
+      "primary": "Bekijk de features",
+      "secondary": "Inloggen",
+      "register": {
+        "title": "Account aanmaken",
+        "subtitle": "Registreer je rechtstreeks vanaf de homepagina."
+      }
+    },
+    "features": {
+      "badge": "Features",
+      "title": "Alles wat de frontend al ondersteunt.",
+      "description": "Deze pagina groepeert de backend-workflows en de configuratie van de API-doelomgeving.",
+      "sections": [
+        {
+          "title": "Algemene functionaliteiten",
+          "items": [
+            "Registratie, login, logout en refresh van het JWT-token.",
+            "Ophalen van het huidige profiel en bijwerken van de gebruikerstaal.",
+            "Ondersteunde talen: FR, NL en EN.",
+            "Veilige sessiebeheer met JWT aan frontendzijde."
+          ]
+        },
+        {
+          "title": "Applicatiefunctionaliteiten",
+          "items": [
+            "Lijst, creatie, detail, wijziging en verwijdering van een applicatie.",
+            "Activeren, deactiveren, intrekken en vernieuwen van het applicatietoken.",
+            "Ophalen van de integratiegegevens voor mobile of API.",
+            "Volledig beheer van de levenscyclus van een pushapplicatie."
+          ]
+        },
+        {
+          "title": "Devicefunctionaliteiten",
+          "items": [
+            "Lijst, detail, wijziging en verwijdering van zichtbare devices.",
+            "Visualisatie van de applicaties die aan een device gekoppeld zijn.",
+            "Automatische koppeling via X-App-Token.",
+            "Ondersteuning van de mobiele flow: installatie, QR-scan, ophalen van de push token en aanmaak of update van de koppeling in de backend."
+          ]
+        },
+        {
+          "title": "Notificatiefuncties",
+          "items": [
+            "Aanmaken van gerichte notificaties per applicatie en expliciete device-lijst.",
+            "Lijst, detail, manuele verzending en statistieken van notificaties.",
+            "Beheer van toekomstige notificaties: lijst, detail, wijziging en verwijdering.",
+            "Filters op applicatie, status en effectieve verzenddatum, inclusief partiele verzendingen en `effective_scheduled_for`."
+          ]
+        },
+        {
+          "title": "Stille-periodefunctionaliteiten",
+          "items": [
+            "Beheer van stille periodes per applicatie of per device.",
+            "Ondersteuning voor ONCE- en RECURRING-periodes, met wijziging, verwijdering en activatie.",
+            "Beheer van vensters die over middernacht lopen en aaneengesloten vensters.",
+            "Duidelijke business-impact: globale verschuiving op applicatieniveau, of uitgestelde delivery op deviceniveau."
+          ]
+        },
+        {
+          "title": "Mailverzendfunctionaliteit",
+          "items": [
+            "Ontvangst van inkomende mail en koppeling aan de applicatie via het bestemmingsprefix.",
+            "Omzetting van onderwerp naar titel en platte tekst naar bericht, met planning via `SEND_AT`.",
+            "Toegangscontroles op domein, afzender en eigendom van de doelapplicatie.",
+            "Idempotentie via `message_id`, met weigering bij hergebruik met andere inhoud."
+          ]
+        }
+      ],
+      "backendTitle": "Backendconfiguratie",
+      "backendDescription": "Definieer hier de basis-URL van de API die door de Angular-frontend wordt gebruikt.",
+      "submit": "Opslaan",
+      "saved": "Opgeslagen"
+    },
+    "donate": {
+      "badge": "Donate",
+      "title": "Steun een eenvoudigere console.",
+      "description": "Als het project nuttig is, dient deze pagina als basis voor een toekomstige donatiestroom.",
+      "cards": [
+        "Eenmalige steun voor onderhoud van het project",
+        "Bijdrage aan UX- en i18n-verbeteringen",
+        "Ondersteuning voor productiteraties"
+      ],
+      "button": "Binnenkort beschikbaar"
+    },
+    "about": {
+      "badge": "Over",
+      "title": "Over PushIT.",
+      "description": "PushIT is een eenvoudige console om je pushmeldingen te beheren.",
+      "sections": [
+        {
+          "icon": "pi-bolt",
+          "title": "Het product",
+          "body": "PushIT centraliseert het beheer van je applicaties, devices en pushcampagnes in een heldere, moderne console."
+        },
+        {
+          "icon": "pi-building",
+          "title": "De uitgever",
+          "body": "PushIT wordt ontworpen en onderhouden door Foxugly, dat een kleine familie van verzorgde webtools bouwt."
+        },
+        {
+          "icon": "pi-code",
+          "title": "Technologie",
+          "body": "Een Django REST-backend, een Angular-frontend en notificaties via Firebase Cloud Messaging."
+        }
+      ]
+    },
+    "auth": {
+      "eyebrow": "Inloggen",
+      "title": "Toegang tot je ruimte.",
+      "description": "Log in om het PushIT-dashboard te openen en je campagnes te beheren.",
+      "email": "Email",
+      "password": "Wachtwoord",
+      "passwordPlaceholder": "Wachtwoord",
+      "rememberMe": "Onthoud mij",
+      "forgotPassword": "Wachtwoord vergeten?",
+      "register": "Registreren",
+      "submit": "Inloggen",
+      "pending": "Bezig met inloggen..."
+    },
+    "registerPage": {
+      "eyebrow": "Registratie",
+      "title": "Maak een PushIT-account aan.",
+      "description": "Registreer je om toegang te krijgen tot de console en je applicaties en notificaties te beheren."
+    },
+    "registerPanel": {
+      "defaultTitle": "Registratie",
+      "defaultSubtitle": "Gebruikersaccount",
+      "email": "Email",
+      "password": "Wachtwoord",
+      "passwordPlaceholder": "Minimaal 8 tekens",
+      "language": "Taal",
+      "languagePlaceholder": "Kies een taal",
+      "submit": "Account aanmaken",
+      "pending": "Bezig met aanmaken...",
+      "loginPrompt": "Al een account?",
+      "loginLink": "Inloggen",
+      "captchaRequired": "Bevestig de anti-robotcaptcha.",
+      "captchaFailed": "Anti-robotverificatie mislukt. Probeer opnieuw.",
+      "validation": {
+        "emailRequired": "E-mail is verplicht.",
+        "emailInvalid": "Voer een geldig e-mailadres in.",
+        "passwordRequired": "Wachtwoord is verplicht.",
+        "passwordTooShort": "Het wachtwoord moet minstens 8 tekens bevatten.",
+        "languageRequired": "Taal is verplicht."
+      }
+    },
+    "forgotPassword": {
+      "eyebrow": "Wachtwoord vergeten",
+      "title": "Toegang herstellen.",
+      "description": "Voer je email in. Als er een account bestaat, sturen we je een link om je wachtwoord opnieuw in te stellen.",
+      "email": "Email",
+      "submit": "Doorgaan",
+      "submitted": "Als er een account met dit email bestaat, is er zojuist een reset-link verstuurd. Controleer ook je spam-map.",
+      "registerPrompt": "Nog geen account?",
+      "registerLink": "Registreren",
+      "captchaRequired": "Bevestig de anti-robotcaptcha.",
+      "captchaFailed": "Anti-robotverificatie mislukt. Probeer opnieuw."
+    },
+    "resetPassword": {
+      "eyebrow": "Opnieuw instellen",
+      "title": "Kies een nieuw wachtwoord.",
+      "description": "Voer hieronder je nieuwe wachtwoord in.",
+      "password": "Nieuw wachtwoord",
+      "passwordPlaceholder": "Minimaal 8 tekens",
+      "confirmPassword": "Bevestig wachtwoord",
+      "passwordTooShort": "Het wachtwoord moet minstens 8 tekens bevatten.",
+      "passwordMismatch": "De wachtwoorden komen niet overeen.",
+      "submit": "Wachtwoord opnieuw instellen",
+      "success": "Je wachtwoord is opnieuw ingesteld. Je kunt nu inloggen.",
+      "goToLogin": "Inloggen",
+      "backToLogin": "Terug naar inloggen"
+    },
+    "checkEmail": {
+      "title": "Controleer je e-mail",
+      "intro": "We hebben een bevestigingslink gestuurd naar ",
+      "hint": "Klik op de link om je account te activeren en log daarna in.",
+      "resend": "Link opnieuw versturen",
+      "resent": "Indien een bevestiging nodig is, is een nieuwe link verstuurd.",
+      "backToLogin": "Terug naar inloggen"
+    },
+    "confirmEmail": {
+      "title": "E-mail bevestigen",
+      "confirming": "Bezig met bevestigen…",
+      "invalid": "Deze bevestigingslink is ongeldig of verlopen.",
+      "resendHint": "Voer je e-mail in om een nieuwe link te ontvangen.",
+      "emailLabel": "E-mail",
+      "resend": "Link opnieuw versturen",
+      "resent": "Indien een bevestiging nodig is, is een nieuwe link verstuurd.",
+      "resendError": "De link kan nu niet worden verzonden. Probeer het later opnieuw.",
+      "backToLogin": "Terug naar inloggen"
+    },
+    "footer": {
+      "rightsReserved": "Alle rechten voorbehouden.",
+      "privacy": "Privacybeleid"
+    },
+    "console": {
+      "navigation": {
+        "eyebrow": "Navigatie",
+        "title": "Consolemenu",
+        "tokenEyebrow": "Token gegenereerd",
+        "copyButton": "Kopieren",
+        "dismissButton": "Verbergen",
+        "tokenNote": "Het ruwe token is slechts eenmaal zichtbaar. Opslag alleen aan serverzijde.",
+        "admin": {
+          "label": "Beheer",
+          "description": "De status van de backend bewaken en de Django-admin openen."
+        }
+      },
+      "sections": [
+        {
+          "label": "Applicaties",
+          "description": "Aanmaken, bewerken en tokens beheren.",
+          "icon": "pi pi-briefcase",
+          "link": "/dashboard/applications",
+          "countKey": "apps"
+        },
+        {
+          "label": "Devices",
+          "description": "Gekoppelde toestellen raadplegen en bijwerken.",
+          "icon": "pi pi-mobile",
+          "link": "/dashboard/devices",
+          "countKey": "devices"
+        },
+        {
+          "label": "Notificaties",
+          "description": "Verzendingen targeten, plannen en opvolgen.",
+          "icon": "pi pi-envelope",
+          "link": "/dashboard/notifications",
+          "countKey": "notifications"
+        },
+        {
+          "label": "Stille periodes",
+          "description": "Applicatieve en device-stiltevensters beheren.",
+          "icon": "pi pi-moon",
+          "link": "/dashboard/quiet-periods",
+          "countKey": "quietPeriods"
+        }
+      ],
+      "dashboard": {
+        "eyebrow": "Dashboard",
+        "title": "Overzicht",
+        "description": "Bekijk de globale staat van je console en ga snel naar de beheerschermen.",
+        "cta": "Applicaties",
+        "metrics": {
+          "apps": "Applicaties",
+          "activeApps": "Actief",
+          "devices": "Devices",
+          "notifications": "Notificaties",
+          "quietPeriods": "Stille periodes"
+        }
+      },
+      "settings": {
+        "eyebrow": "Instellingen",
+        "title": "Console-instellingen",
+        "description": "Deze pagina centraliseert de frontendconfiguratie om de backend te bereiken.",
+        "backendEyebrow": "Backend",
+        "backendTitle": "API-prefix",
+        "apiUrl": "API-URL",
+        "language": "Accounttaal",
+        "submit": "Opslaan",
+        "saved": "Voorkeuren opgeslagen.",
+        "sessionEyebrow": "Sessie",
+        "sessionTitle": "Ingelogd account",
+        "fallbackUser": "Gebruiker",
+        "fallbackEmail": "Email niet beschikbaar",
+        "activePrefix": "Actieve prefix",
+        "activeLanguage": "Actieve taal"
+      },
+      "changePassword": {
+        "eyebrow": "Wachtwoord",
+        "title": "Wachtwoord wijzigen",
+        "description": "De frontend is klaar voor deze actie, maar de meegeleverde backend exposeert nog geen specifieke endpoint.",
+        "backendEyebrow": "Backendstatus",
+        "backendTitle": "Actie niet beschikbaar",
+        "note": "De Swagger exposeert momenteel `login`, `logout`, `me`, `refresh` en `register`, maar geen route `change-password`. Zodra die endpoint beschikbaar is, kan deze pagina het updateformulier bevatten."
+      },
+      "applicationForm": {
+        "name": "Naam",
+        "description": "Beschrijving",
+        "namePlaceholder": "Push mobile Europe",
+        "descriptionPlaceholder": "Kanaal, omgeving, gebruik..."
+      },
+      "deviceForm": {
+        "name": "Naam",
+        "platform": "Platform",
+        "pushTokenStatus": "Push-tokenstatus"
+      }
+    }
+  },
+  "console": {
+    "applications": {
+      "title": "Beheer van applicaties",
+      "total": "Totaal",
+      "active": "Actief",
+      "refresh": "Vernieuwen",
+      "add": "Toevoegen",
+      "empty": "Geen applicaties voor dit account.",
+      "loading": "Applicatie laden...",
+      "noDescription": "Geen beschrijving.",
+      "statuses": {
+        "active": "actief",
+        "inactive": "inactief"
+      },
+      "table": {
+        "name": "Naam",
+        "description": "Beschrijving",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Aangemaakt op",
+        "actions": "Acties"
+      },
+      "actions": {
+        "view": "Details bekijken",
+        "edit": "Bewerken",
+        "activate": "Activeren",
+        "deactivate": "Deactiveren",
+        "regenerate": "Token vernieuwen",
+        "revoke": "Token intrekken",
+        "delete": "Verwijderen",
+        "qrCode": "QR-code"
+      },
+      "qr": {
+        "title": "QR-code van het token",
+        "scanHint": "Scan deze QR-code met de mobiele PushIT-app om een toestel te koppelen.",
+        "tokenOnce": "Het token is slechts eenmaal zichtbaar. Vernieuw het om de QR-code te tonen (reeds gekoppelde toestellen blijven werken).",
+        "regenerate": "Vernieuwen en tonen",
+        "error": "Kan de QR-code niet genereren.",
+        "loading": "QR-code genereren…",
+        "copyToken": "Token kopiëren",
+        "copied": "Token naar klembord gekopieerd.",
+        "copyFailed": "Kan het token niet kopiëren.",
+        "downloadQr": "QR-code downloaden",
+        "downloadToken": "Token downloaden",
+        "saveNotice": "⚠️ Dit token wordt slechts één keer getoond: kopieer of download het nu en bewaar het veilig."
+      },
+      "logo": {
+        "label": "Logo",
+        "none": "Geen logo",
+        "remove": "Logo verwijderen",
+        "choose": "Kies een afbeelding",
+        "hint": "Sleep een afbeelding hierheen (PNG/JPG, max 2 MB).",
+        "cropHint": "Versleep en zoom om in de cirkel te kaderen.",
+        "zoomIn": "Inzoomen",
+        "zoomOut": "Uitzoomen",
+        "apply": "Toepassen",
+        "change": "Andere afbeelding",
+        "loadError": "Kan deze afbeelding niet laden. Probeer een PNG of JPG — formaten zoals HEIC (iPhone-foto’s) worden niet door de browser ondersteund."
+      },
+      "dialog": {
+        "createTitle": "Applicatie aanmaken",
+        "editTitle": "Applicatie bewerken",
+        "create": "Applicatie aanmaken",
+        "creating": "Bezig met aanmaken...",
+        "save": "Opslaan",
+        "saving": "Bezig met opslaan..."
+      },
+      "page": {
+        "eyebrow": "Applicatie",
+        "createTitle": "Nieuwe applicatie",
+        "editTitle": "Applicatie bewerken",
+        "back": "Terug naar applicaties",
+        "cancel": "Annuleren",
+        "loading": "Applicatie laden..."
+      },
+      "alerts": {
+        "created": "Applicatie aangemaakt. Open de QR-code om het token te bekijken, kopiëren of downloaden.",
+        "updated": "Applicatie {name} bijgewerkt.",
+        "activated": "Applicatie succesvol geactiveerd.",
+        "deactivated": "Applicatie succesvol gedeactiveerd.",
+        "regenerated": "Nieuw token gegenereerd. Open de QR-code om het te bekijken, kopiëren of downloaden.",
+        "revoked": "Het token van deze applicatie werd ingetrokken.",
+        "deleted": "Applicatie {name} verwijderd."
+      },
+      "errors": {
+        "create": "Kan de applicatie niet aanmaken.",
+        "toggle": "Kan de status van de applicatie niet bijwerken.",
+        "regenerate": "Kan het token niet vernieuwen.",
+        "revoke": "Kan het token niet intrekken.",
+        "invalidId": "Ongeldige applicatie-id."
+      },
+      "confirmDelete": "Applicatie \"{name}\" verwijderen?",
+      "confirmRegenerate": "Token van \"{name}\" vernieuwen? Alle toestellen die het huidige token gebruiken, ontvangen geen notificaties meer totdat ze met het nieuwe token zijn gekoppeld.",
+      "confirmRevoke": "Token van \"{name}\" intrekken? Alle toestellen die het huidige token gebruiken, ontvangen onmiddellijk geen notificaties meer."
+    },
+    "devices": {
+      "title": "Inventaris en koppeling van devices",
+      "countLabel": "devices",
+      "refresh": "Vernieuwen",
+      "add": "Toevoegen",
+      "empty": "Geen gekoppelde devices voor dit account.",
+      "loading": "Devices laden...",
+      "none": "geen",
+      "never": "Nooit",
+      "table": {
+        "name": "Naam",
+        "platform": "Platform",
+        "token": "Token",
+        "applications": "Applicaties",
+        "lastActivity": "Laatste activiteit",
+        "actions": "Acties",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Aangemaakt op"
+      },
+      "actions": {
+        "view": "Details bekijken",
+        "edit": "Bewerken",
+        "delete": "Verwijderen",
+        "useLatestToken": "Laatste gegenereerde token gebruiken",
+        "link": "Device koppelen",
+        "linking": "Bezig met koppelen...",
+        "save": "Opslaan",
+        "saving": "Bezig met opslaan..."
+      },
+      "dialog": {
+        "createTitle": "Een device koppelen",
+        "editTitle": "Device bewerken"
+      },
+      "createForm": {
+        "appToken": "X-App-Token",
+        "appTokenPlaceholder": "Plak hier het ruwe token",
+        "deviceName": "Naam van het device",
+        "deviceNamePlaceholder": "Marie iPhone",
+        "platform": "Platform",
+        "pushToken": "Push token",
+        "pushTokenPlaceholder": "ExponentPushToken..."
+      },
+      "alerts": {
+        "updated": "Device succesvol bijgewerkt.",
+        "deleted": "Device verwijderd.",
+        "linked": "Device {deviceId} gekoppeld aan applicatie {applicationId}."
+      },
+      "errors": {
+        "missingAppToken": "Vul een X-App-Token in om een device te koppelen.",
+        "invalidId": "Ongeldige device-id.",
+        "loading": "Device laden..."
+      },
+      "confirmDelete": "Device \"{name}\" verwijderen?"
+    },
+    "notifications": {
+      "title": "Gebruikersnotificaties",
+      "history": "Historiek",
+      "future": "Toekomstig",
+      "shifted": "Verschoven",
+      "refresh": "Vernieuwen",
+      "add": "Toevoegen",
+      "empty": "Geen notificaties voor deze filters.",
+      "loading": "Notificaties laden...",
+      "immediate": "onmiddellijk",
+      "scheduledSubtext": "Gepland",
+      "filters": {
+        "application": "Applicatie",
+        "device": "Device",
+        "status": "Status",
+        "from": "Effectief vanaf",
+        "to": "Effectief tot",
+        "allApps": "Alle",
+        "allDevices": "Alle",
+        "allStatuses": "Alle",
+        "apply": "Toepassen",
+        "reset": "Resetten"
+      },
+      "table": {
+        "name": "Naam",
+        "application": "Applicatie",
+        "message": "Bericht",
+        "status": "Status",
+        "effective": "Effectief",
+        "actions": "Acties"
+      },
+      "actions": {
+        "view": "Details bekijken",
+        "send": "Versturen",
+        "resend": "Opnieuw versturen",
+        "edit": "Bewerken",
+        "delete": "Verwijderen"
+      },
+      "dialog": {
+        "createTitle": "Notificatie aanmaken",
+        "editTitle": "Toekomstige notificatie bewerken",
+        "create": "Notificatie aanmaken",
+        "creating": "Bezig met aanmaken...",
+        "save": "Opslaan",
+        "saving": "Bezig met opslaan..."
+      },
+      "form": {
+        "application": "Applicatie",
+        "applicationPlaceholder": "Kiezen...",
+        "devices": "Doeldevices",
+        "devicesPlaceholder": "Kies een of meerdere devices",
+        "devicesHelp": "Alleen actieve devices gekoppeld aan de geselecteerde applicatie worden voorgesteld.",
+        "title": "Titel",
+        "titlePlaceholder": "Weekendpromo",
+        "message": "Bericht",
+        "messagePlaceholder": "Je pushbericht",
+        "schedule": "Optionele planning",
+        "newDate": "Nieuwe datum"
+      },
+      "alerts": {
+        "createdImmediate": "Onmiddellijke notificatie aangemaakt.",
+        "sentImmediate": "Notificatie verzonden.",
+        "createdScheduled": "Geplande notificatie aangemaakt.",
+        "updated": "Toekomstige notificatie bijgewerkt.",
+        "deleted": "Toekomstige notificatie \"{title}\" verwijderd.",
+        "queued": "Notificatie {notificationId} in wachtrij geplaatst: {taskId}."
+      },
+      "confirmDelete": "Toekomstige notificatie \"{title}\" verwijderen?",
+      "statusLabels": {
+        "draft": "concept",
+        "scheduled": "gepland",
+        "queued": "in wachtrij",
+        "processing": "bezig",
+        "sent": "verzonden",
+        "partial": "gedeeltelijk",
+        "failed": "mislukt",
+        "no_target": "zonder doel",
+        "shifted": "verschoven"
+      },
+      "typeLabels": {
+        "future": "Toekomstig",
+        "history": "Historiek"
+      },
+      "errors": {
+        "invalidId": "Ongeldige notificatie-id.",
+        "loading": "Notificatie laden..."
+      },
+      "validation": {
+        "title": "Ontbrekende velden",
+        "detail": "Vul alle verplichte velden in (applicatie, toestellen, titel en bericht)."
+      }
+    },
+    "quietPeriods": {
+      "title": "Beheer van stille vensters",
+      "refresh": "Vernieuwen",
+      "add": "Toevoegen",
+      "empty": "Geen stille periodes geconfigureerd.",
+      "loading": "Stille periodes laden...",
+      "targetNone": "Geen doel",
+      "targetUnknownApplication": "Onbekende applicatie",
+      "targetUnknownDevice": "Onbekend device",
+      "missingTargets": "Geen applicatie of device beschikbaar om een stille periode aan te maken.",
+      "missingParent": "Selecteer een geldig doel voor je een stille periode aanmaakt.",
+      "table": {
+        "target": "Doel",
+        "name": "Naam",
+        "type": "Type",
+        "rule": "Regel",
+        "status": "Status",
+        "actions": "Acties"
+      },
+      "dialog": {
+        "createTitle": "Nieuwe stille periode",
+        "editTitle": "Stille periode bewerken",
+        "create": "Periode aanmaken",
+        "update": "Bijwerken",
+        "saving": "Bezig met opslaan..."
+      },
+      "scopeLabels": {
+        "application": "Applicatie",
+        "device": "Device"
+      },
+      "typeLabels": {
+        "once": "Eenmalig",
+        "recurring": "Terugkerend",
+        "badgeOnce": "eenmalig",
+        "badgeRecurring": "terugkerend"
+      },
+      "statusLabels": {
+        "active": "actief",
+        "inactive": "inactief"
+      },
+      "form": {
+        "target": "Doel",
+        "device": "Device",
+        "application": "Applicatie",
+        "selectPlaceholder": "Kiezen...",
+        "name": "Naam",
+        "namePlaceholder": "Marketingnacht",
+        "type": "Type",
+        "recurrenceDays": "Herhalingsdagen",
+        "startTime": "Startuur",
+        "endTime": "Einduur",
+        "startAt": "Start",
+        "endAt": "Einde",
+        "active": "Periode actief"
+      },
+      "weekdays": [
+        "Ma",
+        "Di",
+        "Wo",
+        "Do",
+        "Vr",
+        "Za",
+        "Zo"
+      ],
+      "defaultNames": {
+        "application": "Stilte applicatie",
+        "device": "Stilte device"
+      },
+      "alerts": {
+        "created": "Stille periode aangemaakt.",
+        "updated": "Stille periode bijgewerkt.",
+        "deleted": "Stille periode \"{name}\" verwijderd."
+      },
+      "actions": {
+        "edit": "Bewerken",
+        "delete": "Verwijderen"
+      },
+      "confirmDelete": "Stille periode \"{name}\" verwijderen?",
+      "validation": {
+        "onceRequired": "Een eenmalige periode vereist een start- en einddatum.",
+        "recurringRequired": "Een terugkerende periode vereist dagen en een tijdsvenster.",
+        "required": "Dit veld is verplicht.",
+        "selectOneDay": "Selecteer minstens een dag.",
+        "endAfterStart": "Het einde van de stille periode moet na het begin liggen.",
+        "differentEndTime": "De eindtijd moet verschillen van de begintijd."
+      }
+    },
+    "applicationDetail": {
+      "back": "Terug naar applicaties",
+      "eyebrow": "Applicatie",
+      "fallbackTitle": "Applicatiedetail",
+      "retry": "Opnieuw proberen",
+      "editTooltip": "Applicatie bewerken",
+      "loading": "Applicatie laden...",
+      "descriptionTitle": "Beschrijving",
+      "descriptionEmpty": "Geen beschrijving beschikbaar voor deze applicatie.",
+      "inboundEmailTitle": "E-mailadres voor notificaties",
+      "inboundEmailLabel": "E-mailadres",
+      "inboundEmailCopy": "Adres kopieren",
+      "inboundEmailCopied": "E-mailadres gekopieerd.",
+      "inboundEmailCopyFailed": "Kan het e-mailadres niet kopieren.",
+      "inboundEmailHelpTitle": "Een notificatie via e-mail versturen",
+      "inboundEmailHelp": {
+        "intro": "Stuur een e-mail naar dit adres om een notificatie voor deze applicatie aan te maken.",
+        "subject": "Het onderwerp van de e-mail wordt de titel van de notificatie.",
+        "body": "De tekstinhoud van de e-mail wordt het bericht.",
+        "schedule": "Planning is mogelijk met [SEND_AT:ISO_DATETIME] in het onderwerp.",
+        "sender": "De afzender moet het e-mailadres van de eigenaar van de applicatie zijn."
+      },
+      "devicesTitle": "Gekoppelde devices",
+      "devicesEmpty": "Geen devices gekoppeld aan deze applicatie.",
+      "notificationsTitle": "Notificaties",
+      "notificationsEmpty": "Geen notificaties gekoppeld aan deze applicatie.",
+      "quietPeriodsTitle": "Stille periodes",
+      "quietPeriodsEmpty": "Geen stille periodes gekoppeld aan deze applicatie.",
+      "statusTitle": "Status",
+      "table": {
+        "name": "Naam",
+        "platform": "Platform",
+        "pushStatus": "Pushstatus",
+        "lastActivity": "Laatste activiteit",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Aangemaakt op",
+        "title": "Titel",
+        "type": "Type",
+        "effective": "Effectief",
+        "actions": "Acties"
+      },
+      "facts": {
+        "id": "ID",
+        "name": "Naam",
+        "tokenPrefix": "Tokenprefix",
+        "status": "Status",
+        "lastUsed": "Laatst gebruikt",
+        "revokedToken": "Token ingetrokken",
+        "createdAt": "Aangemaakt op"
+      },
+      "statusLabels": {
+        "active": "Actief",
+        "inactive": "Inactief",
+        "never": "Nooit",
+        "no": "Nee",
+        "immediate": "Onmiddellijk",
+        "once": "eenmalig",
+        "recurring": "terugkerend"
+      },
+      "notificationTypes": {
+        "future": "Toekomstig",
+        "history": "Historiek"
+      },
+      "actions": {
+        "view": "Details bekijken"
+      },
+      "dialog": {
+        "title": "Applicatie bewerken",
+        "save": "Opslaan",
+        "saving": "Bezig met opslaan..."
+      },
+      "logo": {
+        "label": "Logo",
+        "none": "Geen logo",
+        "remove": "Logo verwijderen",
+        "updated": "Logo bijgewerkt.",
+        "removed": "Logo verwijderd.",
+        "choose": "Kies een afbeelding",
+        "hint": "Sleep een afbeelding hierheen (PNG/JPG, max 2 MB).",
+        "cropHint": "Versleep en zoom om in de cirkel te kaderen.",
+        "zoomIn": "Inzoomen",
+        "zoomOut": "Uitzoomen",
+        "apply": "Toepassen",
+        "change": "Andere afbeelding",
+        "loadError": "Kan deze afbeelding niet laden. Probeer een PNG of JPG — formaten zoals HEIC (iPhone-foto’s) worden niet door de browser ondersteund."
+      },
+      "regenerateEmail": {
+        "label": "Inkomend e-mailadres",
+        "button": "Adres opnieuw genereren",
+        "pending": "Bezig met genereren...",
+        "hint": "Genereert een nieuw willekeurig adres; het oude stopt met werken.",
+        "confirm": "Het e-mailadres van \"{name}\" opnieuw genereren? Het huidige adres stopt onmiddellijk met werken.",
+        "success": "Nieuw e-mailadres gegenereerd.",
+        "error": "Kan het e-mailadres niet opnieuw genereren."
+      },
+      "aliasStatus": {
+        "title": "Inkomende e-mailalias controleren",
+        "button": "Alias controleren",
+        "pending": "Bezig met controleren...",
+        "active": "Alias actief",
+        "missing": "Alias ontbreekt",
+        "missingHint": "De alias bestaat niet op Exchange. Genereer het adres opnieuw of neem contact op met ops.",
+        "unavailable": "Controle niet beschikbaar (Exchange niet geconfigureerd)",
+        "unverifiable": "Kan niet controleren",
+        "error": "Kan de alias niet controleren."
+      },
+      "errors": {
+        "invalidId": "Ongeldige applicatie-id.",
+        "logo": "Kan het logo niet bijwerken."
+      }
+    },
+    "deviceDetail": {
+      "back": "Terug naar devices",
+      "eyebrow": "Device",
+      "fallbackTitle": "Devicedetail",
+      "editTooltip": "Device bewerken",
+      "loading": "Device laden...",
+      "applicationsTitle": "Gekoppelde applicaties",
+      "applicationsEmpty": "Geen gekoppelde applicaties.",
+      "unlinkedTitle": "Ontkoppelde applicaties",
+      "unlinkedOn": "ontkoppeld op",
+      "unlinkedUnknownDate": "datum onbekend",
+      "unlinkSources": {
+        "deviceButton": "vanaf het toestel",
+        "inbox": "vanuit de inbox",
+        "takeover": "overgenomen door een ander account",
+        "unknown": "onbekende bron"
+      },
+      "statusTitle": "Status",
+      "table": {
+        "name": "Naam",
+        "prefix": "Prefix",
+        "status": "Status",
+        "createdAt": "Aangemaakt op",
+        "actions": "Acties"
+      },
+      "facts": {
+        "id": "ID",
+        "name": "Naam",
+        "platform": "Platform",
+        "tokenStatus": "Tokenstatus",
+        "lastActivity": "Laatste activiteit",
+        "createdAt": "Aangemaakt op"
+      },
+      "labels": {
+        "never": "Nooit",
+        "active": "actief",
+        "inactive": "inactief"
+      },
+      "actions": {
+        "view": "Details bekijken"
+      },
+      "dialog": {
+        "title": "Device bewerken",
+        "save": "Opslaan",
+        "saving": "Bezig met opslaan..."
+      },
+      "errors": {
+        "invalidId": "Ongeldige device-id."
+      },
+      "notifications": {
+        "title": "Ontvangen notificaties",
+        "allApps": "Alle applicaties",
+        "filterLabel": "Filteren op applicatie",
+        "empty": "Geen notificaties geleverd aan dit device.",
+        "unknown": "onbekend",
+        "table": {
+          "title": "Titel",
+          "application": "Applicatie",
+          "delivery": "Levering",
+          "sentAt": "Verzonden op",
+          "actions": "Acties"
+        }
+      }
+    },
+    "notificationDetail": {
+      "back": "Terug naar notificaties",
+      "eyebrow": "Notificatie",
+      "fallbackTitle": "Notificatiedetail",
+      "editTooltip": "Notificatie bewerken",
+      "loading": "Notificatie laden...",
+      "messageTitle": "Bericht",
+      "devicesTitle": "Doeldevices",
+      "devicesEmpty": "Geen doeldevice gevonden voor deze notificatie.",
+      "statusTitle": "Status",
+      "note": "`effective_scheduled_for` houdt alleen rekening met stille periodes op applicatieniveau. Deviceperiodes kunnen een delivery vertragen zonder deze datum te wijzigen.",
+      "table": {
+        "name": "Naam",
+        "platform": "Platform",
+        "delivery": "Levering",
+        "opened": "Geopend op",
+        "pushStatus": "Pushstatus",
+        "lastActivity": "Laatste activiteit",
+        "actions": "Acties"
+      },
+      "facts": {
+        "application": "Applicatie",
+        "status": "Status",
+        "future": "Toekomstig",
+        "sentAt": "Verzonden op",
+        "createdAt": "Aangemaakt op",
+        "scheduledFor": "Gevraagd voor",
+        "effective": "Effectief",
+        "targetedDevices": "Doeldevices"
+      },
+      "labels": {
+        "scheduled": "Gepland",
+        "shifted": "Verschoven",
+        "yes": "Ja",
+        "no": "Nee",
+        "notYet": "Nog niet",
+        "immediate": "Onmiddellijk",
+        "notDelivered": "niet geleverd"
+      },
+      "actions": {
+        "view": "Details bekijken"
+      },
+      "dialog": {
+        "title": "Notificatie bewerken",
+        "message": "Bericht",
+        "newDate": "Nieuwe datum",
+        "save": "Opslaan",
+        "saving": "Bezig met opslaan..."
+      },
+      "errors": {
+        "invalidId": "Ongeldige notificatie-id."
+      }
+    },
+    "adminStatus": {
+      "back": "Terug naar dashboard",
+      "eyebrow": "Beheer",
+      "title": "Backendstatus",
+      "description": "Monitoring van de backendservices en belangrijkste metrieken.",
+      "refresh": "Vernieuwen",
+      "loading": "Backendstatus laden...",
+      "error": "Kan de backendstatus niet laden.",
+      "overallTitle": "Algemene status",
+      "overallStatus": {
+        "ok": "Operationeel",
+        "degraded": "Verminderd",
+        "unknown": "Onbekend"
+      },
+      "djangoAdmin": "Django-admin openen",
+      "checksTitle": "Controles",
+      "checkStatus": {
+        "ok": "ok",
+        "degraded": "verminderd",
+        "error": "fout",
+        "unknown": "onbekend"
+      },
+      "checks": {
+        "database": "Database",
+        "celery_broker": "Celery-broker",
+        "celery_workers": "Celery-workers",
+        "exchange": "Exchange"
+      },
+      "noDetail": "Geen details.",
+      "metricsTitle": "Metrieken",
+      "metrics": {
+        "applications": "Applicaties",
+        "applicationsActive": "Actief",
+        "devices": "Devices",
+        "notifications": "Notificaties",
+        "processingStuck": "Vastgelopen notificaties",
+        "none": "Geen metrieken beschikbaar."
+      }
+    }
+  },
+  "errors": {
+    "generic": "Er is een fout opgetreden. Probeer opnieuw.",
+    "offline": "Kan de server niet bereiken. Controleer je verbinding.",
+    "validation": "Corrigeer de gemarkeerde velden.",
+    "http": {
+      "0": "Kan de server niet bereiken. Controleer je verbinding.",
+      "400": "Ongeldige aanvraag.",
+      "401": "Sessie verlopen, log opnieuw in.",
+      "403": "Je hebt geen toegang tot deze bron.",
+      "404": "Bron niet gevonden.",
+      "409": "Conflict met de huidige status.",
+      "413": "Bestand te groot.",
+      "429": "Te veel aanvragen, probeer zo opnieuw.",
+      "500": "Serverfout, probeer het later opnieuw.",
+      "502": "Serverfout, probeer het later opnieuw.",
+      "503": "Service niet beschikbaar, probeer het later opnieuw.",
+      "504": "De server reageerde te traag."
+    },
+    "shellLoadFailed": "Kan de console niet laden.",
+    "shellRefreshFailed": "Kan de navigatietellers niet vernieuwen."
+  }
+}

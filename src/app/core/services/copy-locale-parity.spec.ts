@@ -1,11 +1,9 @@
-import { APP_COPY } from './app-copy.service';
-import { CONSOLE_COPY } from './console-copy.service';
-import { API_ERROR_COPY } from '../utils/api-error-copy';
+import { CATALOGS } from '../i18n/catalogs';
 
 /**
- * Guards against locale drift: the FR / NL / EN copy trees must expose the
- * exact same set of keys. Editing one locale and forgetting another is an easy
- * mistake in these large hand-maintained objects.
+ * Guards against locale drift: the FR / NL / EN Transloco catalogs must expose
+ * the exact same set of keys (app + console + errors namespaces). Editing one
+ * locale and forgetting another is an easy mistake in these large catalogs.
  */
 
 /** Collect dotted key paths. Arrays are treated as leaves (we only compare
@@ -25,26 +23,18 @@ function diff(a: string[], b: string[]): string[] {
 }
 
 describe('copy locale parity (FR / NL / EN)', () => {
-  for (const [name, copy] of [
-    ['CONSOLE_COPY', CONSOLE_COPY],
-    ['APP_COPY', APP_COPY],
-    // API_ERROR_COPY is keyed fr/nl/en like the copy trees; its `http` map's
-    // numeric status keys must also stay in parity across locales.
-    ['API_ERROR_COPY', API_ERROR_COPY],
-  ] as const) {
-    it(`${name}: NL and EN have the same keys as FR`, () => {
-      const fr = keyPaths(copy.fr).sort();
-      const nl = keyPaths(copy.nl).sort();
-      const en = keyPaths(copy.en).sort();
+  it('NL and EN catalogs have the same keys as FR', () => {
+    const fr = keyPaths(CATALOGS.fr).sort();
+    const nl = keyPaths(CATALOGS.nl).sort();
+    const en = keyPaths(CATALOGS.en).sort();
 
-      expect({ missingInNl: diff(fr, nl), extraInNl: diff(nl, fr) }).toEqual({
-        missingInNl: [],
-        extraInNl: [],
-      });
-      expect({ missingInEn: diff(fr, en), extraInEn: diff(en, fr) }).toEqual({
-        missingInEn: [],
-        extraInEn: [],
-      });
+    expect({ missingInNl: diff(fr, nl), extraInNl: diff(nl, fr) }).toEqual({
+      missingInNl: [],
+      extraInNl: [],
     });
-  }
+    expect({ missingInEn: diff(fr, en), extraInEn: diff(en, fr) }).toEqual({
+      missingInEn: [],
+      extraInEn: [],
+    });
+  });
 });
