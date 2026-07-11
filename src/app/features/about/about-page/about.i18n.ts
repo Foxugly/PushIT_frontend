@@ -404,9 +404,251 @@ const EN: AboutCopy = {
   },
 };
 
-// it/es non traduits pour cette page — fallback EN via getAboutCopy (Company/Legal
-// = contenu Foxugly partagé flotte ; traduction it/es à venir).
-const ABOUT_COPY: Partial<Record<LanguageCode, AboutCopy>> = { fr: FR, nl: NL, en: EN };
+const IT: AboutCopy = {
+  tabs: { company: 'Società', legal: 'Note legali', technical: 'Tecnico' },
+  companyTitle: 'Società',
+  companyIntro: 'Informazioni legali e recapiti della società che pubblica e gestisce PushIT.',
+  company: {
+    companyLabel: 'Società',
+    vatLabel: 'IVA / BCE',
+    addressLabel: 'Indirizzo',
+    emailLabel: 'Email',
+    emailButton: 'Inviami una email',
+    phoneLabel: 'Telefono',
+    websiteLabel: 'Sito web',
+  },
+  legalTitle: 'Note legali e protezione dei dati',
+  legalIntro: 'PushIT rispetta la normativa europea in materia di protezione dei dati personali (GDPR).',
+  legalSections: [
+    {
+      title: 'Titolare del trattamento',
+      content: [
+        'Il titolare del trattamento dei dati è Foxugly SRL, editore di PushIT.',
+        'Per qualsiasi domanda relativa ai tuoi dati personali, contattaci all\'indirizzo indicato nella scheda Società.',
+      ],
+    },
+    {
+      title: 'Dati raccolti',
+      content: [
+        'Dati identificativi: indirizzo email, nome, cognome.',
+        'Dati applicativi: nomi delle tue applicazioni e dei tuoi dispositivi, token dei dispositivi, contenuto e metadati delle notifiche, periodi di silenzio, preferenza di lingua.',
+        'Token push (Firebase Cloud Messaging) necessari alla consegna delle notifiche.',
+        'Dati tecnici: registri di connessione strettamente necessari alla sicurezza.',
+      ],
+    },
+    {
+      title: 'Base giuridica e finalità (GDPR Art. 6)',
+      content: [
+        'Esecuzione di un contratto: gestione del tuo account, delle tue applicazioni e invio delle tue notifiche push.',
+        'Legittimo interesse: sicurezza della piattaforma, prevenzione degli abusi, miglioramento del servizio.',
+        'Consenso: autorizzazione delle notifiche a livello del tuo dispositivo (revocabile in qualsiasi momento).',
+      ],
+    },
+    {
+      title: 'I tuoi diritti (GDPR Art. 15-22)',
+      content: [
+        'Diritto di accesso: ottenere una copia dei tuoi dati personali.',
+        'Diritto di rettifica: correggere dati inesatti o incompleti.',
+        'Diritto alla cancellazione: richiedere l\'eliminazione dei tuoi dati.',
+        'Diritto alla portabilità: ricevere i tuoi dati in un formato strutturato e leggibile.',
+        'Diritto di opposizione: opporti al trattamento in determinati casi.',
+        'Diritto di reclamo: presentare un reclamo alla tua autorità di controllo nazionale.',
+      ],
+    },
+    {
+      title: 'Conservazione dei dati',
+      content: [
+        'I dati dell\'account sono conservati per la durata della tua registrazione.',
+        'Le notifiche e i registri di invio sono conservati finché il tuo account è attivo.',
+        'Alla cancellazione del tuo account, i tuoi dati personali vengono eliminati o anonimizzati entro 30 giorni.',
+      ],
+    },
+    {
+      title: 'Sicurezza',
+      content: [
+        'Le comunicazioni sono cifrate tramite HTTPS/TLS.',
+        'Le password sono sottoposte a hash con un algoritmo irreversibile (PBKDF2).',
+        'L\'autenticazione si basa su token JWT a durata di vita limitata.',
+        'I token applicativi vengono mostrati una sola volta e memorizzati con hash lato server.',
+      ],
+    },
+    {
+      title: 'Cookie',
+      content: [
+        'PushIT non utilizza cookie di tracciamento né cookie pubblicitari.',
+        'Vengono utilizzati solo elementi tecnici strettamente necessari al funzionamento (sessione, preferenza di lingua).',
+      ],
+    },
+  ],
+  technicalTitle: 'Informazioni tecniche',
+  technicalIntro: 'PushIT è composto da un backend Django REST, una console web Angular e un\'app mobile multipiattaforma, collegati da un contratto OpenAPI.',
+  repositoryUrlLabel: 'Organizzazione GitHub',
+  cards: {
+    repository: {
+      title: 'Repository',
+      description: 'Il codice è suddiviso in tre repository GitHub pubblici.',
+      items: [
+        'Foxugly/PushIT_server — backend Django REST',
+        'Foxugly/PushIT_frontend — console web Angular',
+        'Foxugly/PushIT_app — app mobile (KMP)',
+      ],
+    },
+    backend: {
+      title: 'Backend',
+      description: 'API REST, logica di business e consegna delle notifiche.',
+      items: [
+        'Django e Django REST Framework',
+        'drf-spectacular per il contratto OpenAPI',
+        'Simple JWT e django-filter',
+        'Firebase Admin (FCM) e PostgreSQL',
+      ],
+    },
+    frontend: {
+      title: 'Frontend web',
+      description: 'Console per la gestione di applicazioni, dispositivi e notifiche.',
+      items: [
+        'Angular 20, TypeScript e RxJS',
+        'PrimeNG 20 e SCSS',
+        'Client API tipizzato scritto a mano',
+        'Karma, Jasmine e Playwright',
+      ],
+    },
+    mobile: {
+      title: 'App mobile',
+      description: 'Client mobile Android e iOS per ricevere le notifiche.',
+      items: [
+        'Kotlin Multiplatform e Compose Multiplatform',
+        'Ktor per la rete',
+        'Firebase Cloud Messaging',
+        'Scansione di QR code per collegare un dispositivo',
+      ],
+    },
+  },
+};
+
+const ES: AboutCopy = {
+  tabs: { company: 'Empresa', legal: 'Aviso legal', technical: 'Técnico' },
+  companyTitle: 'Empresa',
+  companyIntro: 'Información legal y datos de contacto de la empresa que edita y opera PushIT.',
+  company: {
+    companyLabel: 'Empresa',
+    vatLabel: 'IVA / BCE',
+    addressLabel: 'Dirección',
+    emailLabel: 'Correo electrónico',
+    emailButton: 'Enviarme un correo',
+    phoneLabel: 'Teléfono',
+    websiteLabel: 'Sitio web',
+  },
+  legalTitle: 'Aviso legal y protección de datos',
+  legalIntro: 'PushIT cumple con la normativa europea en materia de protección de datos personales (RGPD).',
+  legalSections: [
+    {
+      title: 'Responsable del tratamiento',
+      content: [
+        'El responsable del tratamiento de los datos es Foxugly SRL, editor de PushIT.',
+        'Para cualquier pregunta relativa a tus datos personales, contáctanos en la dirección indicada en la pestaña Empresa.',
+      ],
+    },
+    {
+      title: 'Datos recopilados',
+      content: [
+        'Datos de identificación: dirección de correo electrónico, nombre, apellidos.',
+        'Datos de la aplicación: nombres de tus aplicaciones y dispositivos, tokens de dispositivo, contenido y metadatos de las notificaciones, periodos de silencio, preferencia de idioma.',
+        'Tokens push (Firebase Cloud Messaging) necesarios para la entrega de las notificaciones.',
+        'Datos técnicos: registros de conexión estrictamente necesarios para la seguridad.',
+      ],
+    },
+    {
+      title: 'Base jurídica y finalidades (RGPD Art. 6)',
+      content: [
+        'Ejecución de un contrato: gestión de tu cuenta, de tus aplicaciones y envío de tus notificaciones push.',
+        'Interés legítimo: seguridad de la plataforma, prevención de abusos, mejora del servicio.',
+        'Consentimiento: autorización de las notificaciones a nivel de tu dispositivo (revocable en cualquier momento).',
+      ],
+    },
+    {
+      title: 'Tus derechos (RGPD Art. 15-22)',
+      content: [
+        'Derecho de acceso: obtener una copia de tus datos personales.',
+        'Derecho de rectificación: corregir datos inexactos o incompletos.',
+        'Derecho de supresión: solicitar la eliminación de tus datos.',
+        'Derecho a la portabilidad: recibir tus datos en un formato estructurado y legible.',
+        'Derecho de oposición: oponerte al tratamiento en determinados casos.',
+        'Derecho de reclamación: presentar una reclamación ante tu autoridad de control nacional.',
+      ],
+    },
+    {
+      title: 'Conservación de los datos',
+      content: [
+        'Los datos de la cuenta se conservan durante el periodo de tu registro.',
+        'Las notificaciones y los registros de envío se conservan mientras tu cuenta esté activa.',
+        'Al eliminar tu cuenta, tus datos personales se suprimen o anonimizan en un plazo de 30 días.',
+      ],
+    },
+    {
+      title: 'Seguridad',
+      content: [
+        'Las comunicaciones se cifran mediante HTTPS/TLS.',
+        'Las contraseñas se cifran con un algoritmo irreversible (PBKDF2).',
+        'La autenticación se basa en tokens JWT de duración limitada.',
+        'Los tokens de aplicación solo se muestran una vez y se almacenan cifrados en el servidor.',
+      ],
+    },
+    {
+      title: 'Cookies',
+      content: [
+        'PushIT no utiliza cookies de rastreo ni cookies publicitarias.',
+        'Solo se utilizan elementos técnicos estrictamente necesarios para el funcionamiento (sesión, preferencia de idioma).',
+      ],
+    },
+  ],
+  technicalTitle: 'Información técnica',
+  technicalIntro: 'PushIT se compone de un backend Django REST, una consola web Angular y una aplicación móvil multiplataforma, unidos por un contrato OpenAPI.',
+  repositoryUrlLabel: 'Organización GitHub',
+  cards: {
+    repository: {
+      title: 'Repositorios',
+      description: 'El código se reparte en tres repositorios GitHub públicos.',
+      items: [
+        'Foxugly/PushIT_server — backend Django REST',
+        'Foxugly/PushIT_frontend — consola web Angular',
+        'Foxugly/PushIT_app — aplicación móvil (KMP)',
+      ],
+    },
+    backend: {
+      title: 'Backend',
+      description: 'API REST, lógica de negocio y entrega de las notificaciones.',
+      items: [
+        'Django y Django REST Framework',
+        'drf-spectacular para el contrato OpenAPI',
+        'Simple JWT y django-filter',
+        'Firebase Admin (FCM) y PostgreSQL',
+      ],
+    },
+    frontend: {
+      title: 'Frontend web',
+      description: 'Consola para la gestión de aplicaciones, dispositivos y notificaciones.',
+      items: [
+        'Angular 20, TypeScript y RxJS',
+        'PrimeNG 20 y SCSS',
+        'Cliente API tipado escrito a mano',
+        'Karma, Jasmine y Playwright',
+      ],
+    },
+    mobile: {
+      title: 'Aplicación móvil',
+      description: 'Cliente móvil Android e iOS para recibir las notificaciones.',
+      items: [
+        'Kotlin Multiplatform y Compose Multiplatform',
+        'Ktor para la red',
+        'Firebase Cloud Messaging',
+        'Escaneo de código QR para vincular un dispositivo',
+      ],
+    },
+  },
+};
+
+const ABOUT_COPY: Record<LanguageCode, AboutCopy> = { fr: FR, nl: NL, en: EN, it: IT, es: ES };
 
 export function getAboutCopy(lang: LanguageCode): AboutCopy {
   return ABOUT_COPY[lang] ?? EN;
