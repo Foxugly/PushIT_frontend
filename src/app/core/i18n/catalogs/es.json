@@ -1,0 +1,926 @@
+{
+  "app": {
+    "header": {
+      "home": "Inicio",
+      "dashboard": "Panel de control",
+      "about": "Acerca de",
+      "features": "Funcionalidades",
+      "donate": "Apoyar",
+      "login": "Iniciar sesión",
+      "settings": "Ajustes",
+      "changePassword": "Cambiar contraseña",
+      "logout": "Cerrar sesión",
+      "skipToContent": "Ir al contenido"
+    },
+    "home": {
+      "badge": "PushIT para equipos de producto",
+      "title": "Gestiona fácilmente tus notificaciones push.",
+      "description": "Centraliza tus campañas push en un espacio moderno, más tranquilo de explorar y más sencillo de manejar.",
+      "primary": "Ver funcionalidades",
+      "secondary": "Iniciar sesión",
+      "register": {
+        "title": "Crear una cuenta",
+        "subtitle": "Regístrate directamente desde la página de inicio."
+      }
+    },
+    "features": {
+      "badge": "Funcionalidades",
+      "title": "Todo lo que el frontend ya cubre.",
+      "description": "La página reúne los flujos de trabajo expuestos por el backend junto con la configuración del destino de la API.",
+      "sections": [
+        {
+          "title": "Funcionalidades generales",
+          "items": [
+            "Registro, inicio de sesión, cierre de sesión y renovación del token JWT.",
+            "Recuperación del perfil actual y actualización del idioma del usuario.",
+            "Idiomas admitidos: FR, NL y EN.",
+            "Gestión de sesión segura mediante JWT en el frontend clásico."
+          ]
+        },
+        {
+          "title": "Funcionalidades de las aplicaciones",
+          "items": [
+            "Listar, crear, ver el detalle, modificar y eliminar una aplicación.",
+            "Activación, desactivación, revocación y regeneración del token de la aplicación.",
+            "Recuperación de la información útil para la integración móvil o de API.",
+            "Gestión completa del ciclo de vida de una aplicación de push."
+          ]
+        },
+        {
+          "title": "Funcionalidades de los dispositivos",
+          "items": [
+            "Listar, ver el detalle, modificar y eliminar los dispositivos visibles.",
+            "Visualización de las aplicaciones vinculadas a un dispositivo.",
+            "Vinculación automática mediante X-App-Token.",
+            "Compatibilidad con el flujo móvil: instalación, escaneo de código QR, recuperación del push token y creación o actualización del vínculo en el backend."
+          ]
+        },
+        {
+          "title": "Funcionalidades de las notificaciones",
+          "items": [
+            "Creación de notificaciones dirigidas por aplicación y lista explícita de dispositivos.",
+            "Listar, ver el detalle, enviar manualmente y estadísticas de las notificaciones.",
+            "Gestión de las notificaciones futuras: listar, ver el detalle, modificar y eliminar.",
+            "Filtros por aplicación, estado y fecha efectiva de envío, teniendo en cuenta los envíos parciales y `effective_scheduled_for`."
+          ]
+        },
+        {
+          "title": "Funcionalidades de los periodos de silencio",
+          "items": [
+            "Gestión de los periodos de silencio por aplicación o por dispositivo.",
+            "Compatibilidad con los periodos ONCE y RECURRING, con modificación, eliminación y activación.",
+            "Gestión de las ventanas que cruzan la medianoche y de las ventanas contiguas.",
+            "Impacto de negocio distinto: desplazamiento global de la notificación en la aplicación, o aplazamiento de la entrega en el dispositivo."
+          ]
+        },
+        {
+          "title": "Funcionalidad de envío por correo",
+          "items": [
+            "Recepción de un correo entrante y resolución de la aplicación mediante el prefijo del destinatario.",
+            "Transformación del asunto en título y del contenido de texto en mensaje, con planificación mediante un marcador `SEND_AT`.",
+            "Controles de acceso sobre el dominio, el remitente y la pertenencia de la aplicación destino.",
+            "Gestión de la idempotencia mediante `message_id`, con rechazo de las repeticiones con contenido diferente."
+          ]
+        }
+      ],
+      "backendTitle": "Configuración del backend",
+      "backendDescription": "Define aquí la URL base de la API utilizada por todo el frontend Angular.",
+      "submit": "Guardar",
+      "saved": "Guardado"
+    },
+    "donate": {
+      "badge": "Apoyar",
+      "title": "Apoyar una consola más sencilla.",
+      "description": "Si el proyecto te resulta útil, esta página sirve de punto de partida para un futuro flujo de donación real.",
+      "cards": [
+        "Apoyo puntual para el mantenimiento del proyecto",
+        "Participación en las mejoras de UX e i18n",
+        "Ayuda para financiar las iteraciones del producto"
+      ],
+      "button": "Próximamente"
+    },
+    "about": {
+      "badge": "Acerca de",
+      "title": "Acerca de PushIT.",
+      "description": "PushIT es una consola sencilla para gestionar tus notificaciones push.",
+      "sections": [
+        {
+          "icon": "pi-bolt",
+          "title": "El producto",
+          "body": "PushIT centraliza la gestión de tus aplicaciones, tus dispositivos y tus campañas de notificaciones push en una consola clara y moderna."
+        },
+        {
+          "icon": "pi-building",
+          "title": "El editor",
+          "body": "PushIT está diseñado y mantenido por Foxugly, que desarrolla una pequeña familia de herramientas web cuidadas."
+        },
+        {
+          "icon": "pi-code",
+          "title": "Tecnología",
+          "body": "Un backend Django REST, un frontend Angular y el envío de las notificaciones a través de Firebase Cloud Messaging."
+        }
+      ]
+    },
+    "auth": {
+      "eyebrow": "Iniciar sesión",
+      "title": "Accede a tu espacio.",
+      "description": "Inicia sesión para acceder al panel de PushIT y gestionar tus campañas.",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Contraseña",
+      "rememberMe": "Recordarme",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "register": "Registrarse",
+      "submit": "Iniciar sesión",
+      "pending": "Iniciando sesión..."
+    },
+    "registerPage": {
+      "eyebrow": "Registrarse",
+      "title": "Crear una cuenta de PushIT.",
+      "description": "Regístrate para acceder a la consola y empezar a gestionar tus aplicaciones y tus notificaciones."
+    },
+    "registerPanel": {
+      "defaultTitle": "Registrarse",
+      "defaultSubtitle": "Cuenta de usuario",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "language": "Idioma",
+      "languagePlaceholder": "Elegir un idioma",
+      "submit": "Crear la cuenta",
+      "pending": "Creando...",
+      "loginPrompt": "¿Ya tienes una cuenta?",
+      "loginLink": "Iniciar sesión",
+      "captchaRequired": "Completa el captcha antirrobots.",
+      "captchaFailed": "Error en la verificación antirrobots. Inténtalo de nuevo.",
+      "validation": {
+        "emailRequired": "El correo electrónico es obligatorio.",
+        "emailInvalid": "Introduce una dirección de correo electrónico válida.",
+        "passwordRequired": "La contraseña es obligatoria.",
+        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+        "languageRequired": "El idioma es obligatorio."
+      }
+    },
+    "forgotPassword": {
+      "eyebrow": "Contraseña olvidada",
+      "title": "Recuperar el acceso.",
+      "description": "Introduce tu correo electrónico. Si existe una cuenta, te enviaremos un enlace para restablecer tu contraseña.",
+      "email": "Correo electrónico",
+      "submit": "Continuar",
+      "submitted": "Si existe una cuenta con este correo electrónico, se acaba de enviar un enlace de restablecimiento. Recuerda revisar tu carpeta de spam.",
+      "registerPrompt": "¿Necesitas una cuenta?",
+      "registerLink": "Registrarse",
+      "captchaRequired": "Completa el captcha antirrobots.",
+      "captchaFailed": "Error en la verificación antirrobots. Inténtalo de nuevo."
+    },
+    "resetPassword": {
+      "eyebrow": "Restablecimiento",
+      "title": "Elegir una nueva contraseña.",
+      "description": "Introduce tu nueva contraseña a continuación.",
+      "password": "Nueva contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "confirmPassword": "Confirmar la contraseña",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "submit": "Restablecer la contraseña",
+      "success": "Tu contraseña se ha restablecido. Ahora puedes iniciar sesión.",
+      "goToLogin": "Iniciar sesión",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "checkEmail": {
+      "title": "Revisa tu correo electrónico",
+      "intro": "Hemos enviado un enlace de confirmación a ",
+      "hint": "Haz clic en el enlace para activar tu cuenta y luego inicia sesión.",
+      "resend": "Reenviar el enlace",
+      "resent": "Si es necesaria una confirmación, se ha enviado un nuevo enlace.",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "confirmEmail": {
+      "title": "Confirmación del correo electrónico",
+      "confirming": "Confirmando…",
+      "invalid": "Este enlace de confirmación no es válido o ha caducado.",
+      "resendHint": "Introduce tu correo electrónico para recibir un nuevo enlace.",
+      "emailLabel": "Correo electrónico",
+      "resend": "Reenviar el enlace",
+      "resent": "Si es necesaria una confirmación, se ha enviado un nuevo enlace.",
+      "resendError": "No se puede enviar el enlace en este momento. Inténtalo de nuevo más tarde.",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "footer": {
+      "rightsReserved": "Todos los derechos reservados.",
+      "privacy": "Política de privacidad"
+    },
+    "console": {
+      "navigation": {
+        "eyebrow": "Navegación",
+        "title": "Menú de la consola",
+        "tokenEyebrow": "Token generado",
+        "copyButton": "Copiar",
+        "dismissButton": "Ocultar",
+        "tokenNote": "El token en bruto solo es visible una vez. Almacenamiento únicamente en el servidor.",
+        "admin": {
+          "label": "Administración",
+          "description": "Supervisar el estado del backend y acceder al admin de Django."
+        }
+      },
+      "sections": [
+        {
+          "label": "Aplicaciones",
+          "description": "Crear, modificar y gestionar tus tokens.",
+          "icon": "pi pi-briefcase",
+          "link": "/dashboard/applications",
+          "countKey": "apps"
+        },
+        {
+          "label": "Dispositivos",
+          "description": "Consultar y actualizar los terminales vinculados.",
+          "icon": "pi pi-mobile",
+          "link": "/dashboard/devices",
+          "countKey": "devices"
+        },
+        {
+          "label": "Notificaciones",
+          "description": "Dirigir, planificar y hacer seguimiento de los envíos.",
+          "icon": "pi pi-envelope",
+          "link": "/dashboard/notifications",
+          "countKey": "notifications"
+        },
+        {
+          "label": "Periodos de silencio",
+          "description": "Gestionar las ventanas de silencio de aplicaciones y dispositivos.",
+          "icon": "pi pi-moon",
+          "link": "/dashboard/quiet-periods",
+          "countKey": "quietPeriods"
+        }
+      ],
+      "dashboard": {
+        "eyebrow": "Panel de control",
+        "title": "Vista general",
+        "description": "Consulta el estado global de tu consola y accede rápidamente a las pantallas de gestión.",
+        "cta": "Aplicaciones",
+        "metrics": {
+          "apps": "Aplicaciones",
+          "activeApps": "Activas",
+          "devices": "Dispositivos",
+          "notifications": "Notificaciones",
+          "quietPeriods": "Periodos de silencio"
+        }
+      },
+      "settings": {
+        "eyebrow": "Ajustes",
+        "title": "Ajustes de la consola",
+        "description": "Esta página centraliza la configuración del frontend utilizada para conectar con el backend.",
+        "backendEyebrow": "Backend",
+        "backendTitle": "Prefijo de la API",
+        "apiUrl": "URL de la API",
+        "language": "Idioma de la cuenta",
+        "submit": "Guardar",
+        "saved": "Preferencias guardadas.",
+        "sessionEyebrow": "Sesión",
+        "sessionTitle": "Cuenta conectada",
+        "fallbackUser": "Usuario",
+        "fallbackEmail": "Correo electrónico no disponible",
+        "activePrefix": "Prefijo activo",
+        "activeLanguage": "Idioma activo"
+      },
+      "changePassword": {
+        "eyebrow": "Contraseña",
+        "title": "Cambiar contraseña",
+        "description": "El frontend está listo para recibir esta acción, pero el Swagger del backend proporcionado aún no expone un endpoint dedicado.",
+        "backendEyebrow": "Estado del backend",
+        "backendTitle": "Acción no disponible",
+        "note": "El Swagger expone actualmente `login`, `logout`, `me`, `refresh` y `register`, pero no una ruta `change-password`. Cuando el endpoint esté disponible, esta página podrá alojar el formulario de actualización."
+      },
+      "applicationForm": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "namePlaceholder": "Push mobile Europe",
+        "descriptionPlaceholder": "Canal, entorno, uso..."
+      },
+      "deviceForm": {
+        "name": "Nombre",
+        "platform": "Plataforma",
+        "pushTokenStatus": "Estado del push token"
+      }
+    }
+  },
+  "console": {
+    "applications": {
+      "title": "Gestión de las aplicaciones",
+      "total": "Total",
+      "active": "Activas",
+      "refresh": "Actualizar",
+      "add": "Añadir",
+      "empty": "No hay ninguna aplicación para esta cuenta.",
+      "loading": "Cargando la aplicación...",
+      "noDescription": "Sin descripción.",
+      "statuses": {
+        "active": "activa",
+        "inactive": "inactiva"
+      },
+      "table": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "prefix": "Prefijo",
+        "status": "Estado",
+        "createdAt": "Creada el",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "view": "Ver el detalle",
+        "edit": "Editar",
+        "activate": "Activar",
+        "deactivate": "Desactivar",
+        "regenerate": "Regenerar el token",
+        "revoke": "Revocar el token",
+        "delete": "Eliminar",
+        "qrCode": "Código QR"
+      },
+      "qr": {
+        "title": "Código QR del token",
+        "scanHint": "Escanea este código QR con la app móvil de PushIT para vincular un dispositivo.",
+        "tokenOnce": "El token solo es visible una vez. Regenéralo para mostrar su código QR (los dispositivos ya vinculados no se ven afectados).",
+        "regenerate": "Regenerar y mostrar",
+        "error": "No se puede generar el código QR.",
+        "loading": "Generando el código QR…",
+        "copyToken": "Copiar el token",
+        "copied": "Token copiado al portapapeles.",
+        "copyFailed": "No se puede copiar el token.",
+        "downloadQr": "Descargar el código QR",
+        "downloadToken": "Descargar el token",
+        "saveNotice": "⚠️ Este token solo se muestra una vez: cópialo o descárgalo ahora y guárdalo en un lugar seguro."
+      },
+      "logo": {
+        "label": "Logotipo",
+        "none": "Sin logotipo",
+        "remove": "Eliminar el logotipo",
+        "choose": "Elegir una imagen",
+        "hint": "Arrastra y suelta una imagen aquí (PNG/JPG, máx. 2 MB).",
+        "cropHint": "Desplaza y haz zoom para encuadrar dentro del círculo.",
+        "zoomIn": "Acercar",
+        "zoomOut": "Alejar",
+        "apply": "Aplicar",
+        "change": "Cambiar de imagen",
+        "loadError": "No se puede cargar esta imagen. Prueba con un PNG o un JPG — los formatos como HEIC (fotos de iPhone) no son compatibles con el navegador."
+      },
+      "dialog": {
+        "createTitle": "Crear una aplicación",
+        "editTitle": "Modificar una aplicación",
+        "create": "Crear la aplicación",
+        "creating": "Creando...",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "page": {
+        "eyebrow": "Aplicación",
+        "createTitle": "Nueva aplicación",
+        "editTitle": "Modificar la aplicación",
+        "back": "Volver a las aplicaciones",
+        "cancel": "Cancelar",
+        "loading": "Cargando la aplicación..."
+      },
+      "alerts": {
+        "created": "Aplicación creada. Abre el código QR para ver, copiar o descargar el token.",
+        "updated": "Aplicación {name} actualizada.",
+        "activated": "Aplicación activada correctamente.",
+        "deactivated": "Aplicación desactivada correctamente.",
+        "regenerated": "Nuevo token generado. Abre el código QR para verlo, copiarlo o descargarlo.",
+        "revoked": "El token de esta aplicación se ha revocado.",
+        "deleted": "Aplicación {name} eliminada."
+      },
+      "errors": {
+        "create": "No se puede crear la aplicación.",
+        "toggle": "No se puede actualizar el estado de la aplicación.",
+        "regenerate": "No se puede regenerar el token.",
+        "revoke": "No se puede revocar el token.",
+        "invalidId": "Identificador de aplicación no válido."
+      },
+      "confirmDelete": "¿Eliminar la aplicación \"{name}\"?",
+      "confirmRegenerate": "¿Regenerar el token de \"{name}\"? Todos los dispositivos que usan el token actual dejarán de recibir notificaciones hasta que se vinculen con el nuevo token.",
+      "confirmRevoke": "¿Revocar el token de \"{name}\"? Todos los dispositivos que usan el token actual dejarán de recibir notificaciones de inmediato."
+    },
+    "devices": {
+      "title": "Inventario y vinculación de dispositivos",
+      "countLabel": "dispositivos",
+      "refresh": "Actualizar",
+      "add": "Añadir",
+      "empty": "No hay ningún dispositivo vinculado para esta cuenta.",
+      "loading": "Cargando los dispositivos...",
+      "none": "ninguna",
+      "never": "Nunca",
+      "table": {
+        "name": "Nombre",
+        "platform": "Plataforma",
+        "token": "Token",
+        "applications": "Aplicaciones",
+        "lastActivity": "Última actividad",
+        "actions": "Acciones",
+        "prefix": "Prefijo",
+        "status": "Estado",
+        "createdAt": "Creado el"
+      },
+      "actions": {
+        "view": "Ver el detalle",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "useLatestToken": "Usar el último token generado",
+        "link": "Vincular el dispositivo",
+        "linking": "Vinculando...",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "dialog": {
+        "createTitle": "Vincular un dispositivo",
+        "editTitle": "Modificar el dispositivo"
+      },
+      "createForm": {
+        "appToken": "X-App-Token",
+        "appTokenPlaceholder": "Pega aquí el token en bruto",
+        "deviceName": "Nombre del dispositivo",
+        "deviceNamePlaceholder": "iPhone de María",
+        "platform": "Plataforma",
+        "pushToken": "Push token",
+        "pushTokenPlaceholder": "ExponentPushToken..."
+      },
+      "alerts": {
+        "updated": "Dispositivo actualizado correctamente.",
+        "deleted": "Dispositivo eliminado.",
+        "linked": "Dispositivo {deviceId} vinculado a la aplicación {applicationId}."
+      },
+      "errors": {
+        "missingAppToken": "Introduce un X-App-Token para vincular un dispositivo.",
+        "invalidId": "Identificador de dispositivo no válido.",
+        "loading": "Cargando el dispositivo..."
+      },
+      "confirmDelete": "¿Eliminar el dispositivo \"{name}\"?"
+    },
+    "notifications": {
+      "title": "Notificaciones del usuario",
+      "history": "Historial",
+      "future": "Futuras",
+      "shifted": "Desplazadas",
+      "refresh": "Actualizar",
+      "add": "Añadir",
+      "empty": "No hay ninguna notificación para estos filtros.",
+      "loading": "Cargando las notificaciones...",
+      "immediate": "inmediato",
+      "scheduledSubtext": "Planificada",
+      "filters": {
+        "application": "Aplicación",
+        "device": "Dispositivo",
+        "status": "Estado",
+        "from": "Efectiva a partir de",
+        "to": "Efectiva hasta",
+        "allApps": "Todas",
+        "allDevices": "Todos",
+        "allStatuses": "Todos",
+        "apply": "Aplicar",
+        "reset": "Restablecer"
+      },
+      "table": {
+        "name": "Nombre",
+        "application": "Aplicación",
+        "message": "Mensaje",
+        "status": "Estado",
+        "effective": "Efectiva",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "view": "Ver el detalle",
+        "send": "Enviar",
+        "resend": "Reenviar",
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "dialog": {
+        "createTitle": "Crear una notificación",
+        "editTitle": "Modificar una notificación futura",
+        "create": "Crear la notificación",
+        "creating": "Creando...",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "form": {
+        "application": "Aplicación",
+        "applicationPlaceholder": "Elegir...",
+        "devices": "Dispositivos destino",
+        "devicesPlaceholder": "Elegir uno o varios dispositivos",
+        "devicesHelp": "Solo se proponen los dispositivos activos vinculados a la aplicación seleccionada.",
+        "title": "Título",
+        "titlePlaceholder": "Promoción de fin de semana",
+        "message": "Mensaje",
+        "messagePlaceholder": "Tu mensaje push",
+        "schedule": "Planificación opcional",
+        "newDate": "Nueva fecha"
+      },
+      "alerts": {
+        "createdImmediate": "Notificación inmediata creada.",
+        "sentImmediate": "Notificación enviada.",
+        "createdScheduled": "Notificación planificada creada.",
+        "updated": "Notificación futura actualizada.",
+        "deleted": "Notificación futura \"{title}\" eliminada.",
+        "queued": "Notificación {notificationId} colocada en la cola {taskId}."
+      },
+      "confirmDelete": "¿Eliminar la notificación futura \"{title}\"?",
+      "statusLabels": {
+        "draft": "borrador",
+        "scheduled": "planificada",
+        "queued": "en cola",
+        "processing": "en curso",
+        "sent": "enviada",
+        "partial": "parcial",
+        "failed": "fallida",
+        "no_target": "sin destino",
+        "shifted": "desplazada"
+      },
+      "typeLabels": {
+        "future": "Futura",
+        "history": "Historial"
+      },
+      "errors": {
+        "invalidId": "Identificador de notificación no válido.",
+        "loading": "Cargando la notificación..."
+      },
+      "validation": {
+        "title": "Campos faltantes",
+        "detail": "Rellena todos los campos obligatorios (aplicación, dispositivos, título y mensaje)."
+      }
+    },
+    "quietPeriods": {
+      "title": "Gestión de las ventanas de silencio",
+      "refresh": "Actualizar",
+      "add": "Añadir",
+      "empty": "No hay ningún periodo de silencio configurado.",
+      "loading": "Cargando los periodos de silencio...",
+      "targetNone": "Sin destino",
+      "targetUnknownApplication": "Aplicación desconocida",
+      "targetUnknownDevice": "Dispositivo desconocido",
+      "missingTargets": "No hay ninguna aplicación ni ningún dispositivo disponible para crear un periodo de silencio.",
+      "missingParent": "Selecciona un destino válido antes de crear un periodo de silencio.",
+      "table": {
+        "target": "Destino",
+        "name": "Nombre",
+        "type": "Tipo",
+        "rule": "Regla",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "createTitle": "Nuevo periodo de silencio",
+        "editTitle": "Modificar un periodo de silencio",
+        "create": "Crear el periodo",
+        "update": "Actualizar",
+        "saving": "Guardando..."
+      },
+      "scopeLabels": {
+        "application": "Aplicación",
+        "device": "Dispositivo"
+      },
+      "typeLabels": {
+        "once": "Puntual",
+        "recurring": "Recurrente",
+        "badgeOnce": "once",
+        "badgeRecurring": "recurring"
+      },
+      "statusLabels": {
+        "active": "activo",
+        "inactive": "inactivo"
+      },
+      "form": {
+        "target": "Destino",
+        "device": "Dispositivo",
+        "application": "Aplicación",
+        "selectPlaceholder": "Elegir...",
+        "name": "Nombre",
+        "namePlaceholder": "Noche de marketing",
+        "type": "Tipo",
+        "recurrenceDays": "Días de recurrencia",
+        "startTime": "Hora de inicio",
+        "endTime": "Hora de fin",
+        "startAt": "Inicio",
+        "endAt": "Fin",
+        "active": "Periodo activo"
+      },
+      "weekdays": [
+        "Lun",
+        "Mar",
+        "Mié",
+        "Jue",
+        "Vie",
+        "Sáb",
+        "Dom"
+      ],
+      "defaultNames": {
+        "application": "Silencio de aplicación",
+        "device": "Silencio de dispositivo"
+      },
+      "alerts": {
+        "created": "Periodo de silencio creado.",
+        "updated": "Periodo de silencio actualizado.",
+        "deleted": "Periodo de silencio \"{name}\" eliminado."
+      },
+      "actions": {
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "confirmDelete": "¿Eliminar el periodo de silencio \"{name}\"?",
+      "validation": {
+        "onceRequired": "Un periodo puntual requiere una fecha de inicio y una fecha de fin.",
+        "recurringRequired": "Un periodo recurrente requiere días y un rango horario.",
+        "required": "Este campo es obligatorio.",
+        "selectOneDay": "Selecciona al menos un día.",
+        "endAfterStart": "El fin del periodo de silencio debe ser posterior al inicio.",
+        "differentEndTime": "La hora de fin debe ser diferente de la hora de inicio."
+      }
+    },
+    "applicationDetail": {
+      "back": "Volver a las aplicaciones",
+      "eyebrow": "Aplicación",
+      "fallbackTitle": "Detalle de la aplicación",
+      "retry": "Reintentar",
+      "editTooltip": "Editar la aplicación",
+      "loading": "Cargando la aplicación...",
+      "descriptionTitle": "Descripción",
+      "descriptionEmpty": "No hay descripción disponible para esta aplicación.",
+      "inboundEmailTitle": "Dirección de correo electrónico de notificación",
+      "inboundEmailLabel": "Dirección de correo electrónico",
+      "inboundEmailCopy": "Copiar la dirección",
+      "inboundEmailCopied": "Dirección de correo electrónico copiada.",
+      "inboundEmailCopyFailed": "No se puede copiar la dirección de correo electrónico.",
+      "inboundEmailHelpTitle": "Enviar una notificación por correo electrónico",
+      "inboundEmailHelp": {
+        "intro": "Envía un correo electrónico a esta dirección para crear una notificación en esta aplicación.",
+        "subject": "El asunto del correo electrónico se convierte en el título de la notificación.",
+        "body": "El contenido de texto del correo electrónico se convierte en el mensaje.",
+        "schedule": "La planificación es posible con [SEND_AT:ISO_DATETIME] en el asunto.",
+        "sender": "El remitente debe ser el correo electrónico del propietario de la aplicación."
+      },
+      "devicesTitle": "Dispositivos vinculados",
+      "devicesEmpty": "No hay ningún dispositivo vinculado a esta aplicación.",
+      "notificationsTitle": "Notificaciones",
+      "notificationsEmpty": "No hay ninguna notificación vinculada a esta aplicación.",
+      "quietPeriodsTitle": "Periodos de silencio",
+      "quietPeriodsEmpty": "No hay ningún periodo de silencio vinculado a esta aplicación.",
+      "statusTitle": "Estado",
+      "table": {
+        "name": "Nombre",
+        "platform": "Plataforma",
+        "pushStatus": "Estado push",
+        "lastActivity": "Última actividad",
+        "prefix": "Prefijo",
+        "status": "Estado",
+        "createdAt": "Creada el",
+        "title": "Título",
+        "type": "Tipo",
+        "effective": "Efectiva",
+        "actions": "Acciones"
+      },
+      "facts": {
+        "id": "ID",
+        "name": "Nombre",
+        "tokenPrefix": "Prefijo del token",
+        "status": "Estado",
+        "lastUsed": "Último uso",
+        "revokedToken": "Token revocado",
+        "createdAt": "Creada el"
+      },
+      "statusLabels": {
+        "active": "Activa",
+        "inactive": "Inactiva",
+        "never": "Nunca",
+        "no": "No",
+        "immediate": "Inmediato",
+        "once": "once",
+        "recurring": "recurring"
+      },
+      "notificationTypes": {
+        "future": "Futura",
+        "history": "Historial"
+      },
+      "actions": {
+        "view": "Ver el detalle"
+      },
+      "dialog": {
+        "title": "Modificar la aplicación",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "logo": {
+        "label": "Logotipo",
+        "none": "Sin logotipo",
+        "remove": "Eliminar el logotipo",
+        "updated": "Logotipo actualizado.",
+        "removed": "Logotipo eliminado.",
+        "choose": "Elegir una imagen",
+        "hint": "Arrastra y suelta una imagen aquí (PNG/JPG, máx. 2 MB).",
+        "cropHint": "Desplaza y haz zoom para encuadrar dentro del círculo.",
+        "zoomIn": "Acercar",
+        "zoomOut": "Alejar",
+        "apply": "Aplicar",
+        "change": "Cambiar de imagen",
+        "loadError": "No se puede cargar esta imagen. Prueba con un PNG o un JPG — los formatos como HEIC (fotos de iPhone) no son compatibles con el navegador."
+      },
+      "regenerateEmail": {
+        "label": "Dirección de correo electrónico de ingesta",
+        "button": "Regenerar la dirección",
+        "pending": "Regenerando...",
+        "hint": "Genera una nueva dirección aleatoria; la anterior dejará de funcionar.",
+        "confirm": "¿Regenerar la dirección de correo electrónico de «{name}»? La dirección actual dejará de funcionar de inmediato.",
+        "success": "Nueva dirección de correo electrónico generada.",
+        "error": "No se puede regenerar la dirección de correo electrónico."
+      },
+      "aliasStatus": {
+        "title": "Verificar el alias de correo entrante",
+        "button": "Verificar el alias",
+        "pending": "Verificando...",
+        "active": "Alias activo",
+        "missing": "Alias ausente",
+        "missingHint": "El alias no existe en Exchange. Regenera la dirección o contacta con el equipo de ops.",
+        "unavailable": "Verificación no disponible (Exchange no configurado)",
+        "unverifiable": "No se puede verificar",
+        "error": "No se puede verificar el alias."
+      },
+      "errors": {
+        "invalidId": "Identificador de aplicación no válido.",
+        "logo": "No se puede actualizar el logotipo."
+      }
+    },
+    "deviceDetail": {
+      "back": "Volver a los dispositivos",
+      "eyebrow": "Dispositivo",
+      "fallbackTitle": "Detalle del dispositivo",
+      "editTooltip": "Editar el dispositivo",
+      "loading": "Cargando el dispositivo...",
+      "applicationsTitle": "Aplicaciones vinculadas",
+      "applicationsEmpty": "No hay aplicaciones vinculadas.",
+      "unlinkedTitle": "Aplicaciones desvinculadas",
+      "unlinkedOn": "desvinculada el",
+      "unlinkedUnknownDate": "fecha desconocida",
+      "unlinkSources": {
+        "deviceButton": "desde el dispositivo",
+        "inbox": "desde la bandeja de entrada",
+        "takeover": "reasignada a otra cuenta",
+        "unknown": "origen desconocido"
+      },
+      "statusTitle": "Estado",
+      "table": {
+        "name": "Nombre",
+        "prefix": "Prefijo",
+        "status": "Estado",
+        "createdAt": "Creada el",
+        "actions": "Acciones"
+      },
+      "facts": {
+        "id": "ID",
+        "name": "Nombre",
+        "platform": "Plataforma",
+        "tokenStatus": "Estado del token",
+        "lastActivity": "Última actividad",
+        "createdAt": "Creado el"
+      },
+      "labels": {
+        "never": "Nunca",
+        "active": "activo",
+        "inactive": "inactivo"
+      },
+      "actions": {
+        "view": "Ver el detalle"
+      },
+      "dialog": {
+        "title": "Modificar el dispositivo",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "errors": {
+        "invalidId": "Identificador de dispositivo no válido."
+      },
+      "notifications": {
+        "title": "Notificaciones recibidas",
+        "allApps": "Todas las aplicaciones",
+        "filterLabel": "Filtrar por aplicación",
+        "empty": "No hay ninguna notificación entregada a este dispositivo.",
+        "unknown": "desconocido",
+        "table": {
+          "title": "Título",
+          "application": "Aplicación",
+          "delivery": "Entrega",
+          "sentAt": "Enviada el",
+          "actions": "Acciones"
+        }
+      }
+    },
+    "notificationDetail": {
+      "back": "Volver a las notificaciones",
+      "eyebrow": "Notificación",
+      "fallbackTitle": "Detalle de la notificación",
+      "editTooltip": "Editar la notificación",
+      "loading": "Cargando la notificación...",
+      "messageTitle": "Mensaje",
+      "devicesTitle": "Dispositivos destino",
+      "devicesEmpty": "No se ha resuelto ningún dispositivo destino para esta notificación.",
+      "statusTitle": "Estado",
+      "note": "`effective_scheduled_for` solo tiene en cuenta los periodos de silencio de la aplicación. Los periodos de dispositivo pueden retrasar una entrega sin cambiar esta fecha.",
+      "table": {
+        "name": "Nombre",
+        "platform": "Plataforma",
+        "delivery": "Entrega",
+        "opened": "Abierta el",
+        "pushStatus": "Estado push",
+        "lastActivity": "Última actividad",
+        "actions": "Acciones"
+      },
+      "facts": {
+        "application": "Aplicación",
+        "status": "Estado",
+        "future": "Futura",
+        "sentAt": "Enviada el",
+        "createdAt": "Creada el",
+        "scheduledFor": "Solicitada para",
+        "effective": "Efectiva",
+        "targetedDevices": "Dispositivos destino"
+      },
+      "labels": {
+        "scheduled": "Planificada",
+        "shifted": "Desplazada",
+        "yes": "Sí",
+        "no": "No",
+        "notYet": "Todavía no",
+        "immediate": "Inmediato",
+        "notDelivered": "no entregada"
+      },
+      "actions": {
+        "view": "Ver el detalle"
+      },
+      "dialog": {
+        "title": "Modificar la notificación",
+        "message": "Mensaje",
+        "newDate": "Nueva fecha",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "errors": {
+        "invalidId": "Identificador de notificación no válido."
+      }
+    },
+    "adminStatus": {
+      "back": "Volver al panel de control",
+      "eyebrow": "Administración",
+      "title": "Estado del backend",
+      "description": "Supervisión de los servicios del backend y de las métricas clave.",
+      "refresh": "Actualizar",
+      "loading": "Cargando el estado del backend...",
+      "error": "No se puede cargar el estado del backend.",
+      "overallTitle": "Estado global",
+      "overallStatus": {
+        "ok": "Operativo",
+        "degraded": "Degradado",
+        "unknown": "Desconocido"
+      },
+      "djangoAdmin": "Abrir el admin de Django",
+      "checksTitle": "Comprobaciones",
+      "checkStatus": {
+        "ok": "ok",
+        "degraded": "degradado",
+        "error": "error",
+        "unknown": "desconocido"
+      },
+      "checks": {
+        "database": "Base de datos",
+        "celery_broker": "Broker de Celery",
+        "celery_workers": "Workers de Celery",
+        "exchange": "Exchange"
+      },
+      "noDetail": "Sin detalle.",
+      "metricsTitle": "Métricas",
+      "metrics": {
+        "applications": "Aplicaciones",
+        "applicationsActive": "Activas",
+        "devices": "Dispositivos",
+        "notifications": "Notificaciones",
+        "processingStuck": "Notificaciones bloqueadas",
+        "none": "No hay ninguna métrica disponible."
+      }
+    }
+  },
+  "errors": {
+    "generic": "Se ha producido un error. Inténtalo de nuevo.",
+    "offline": "No se puede conectar con el servidor. Comprueba tu conexión.",
+    "validation": "Corrige los campos con errores.",
+    "http": {
+      "0": "No se puede conectar con el servidor. Comprueba tu conexión.",
+      "400": "Solicitud no válida.",
+      "401": "Sesión caducada, vuelve a iniciar sesión.",
+      "403": "No tienes acceso a este recurso.",
+      "404": "Recurso no encontrado.",
+      "409": "Conflicto: esta acción entra en conflicto con el estado actual.",
+      "413": "Archivo demasiado grande.",
+      "429": "Demasiadas solicitudes, inténtalo de nuevo en un instante.",
+      "500": "Error del servidor, inténtalo de nuevo más tarde.",
+      "502": "Error del servidor, inténtalo de nuevo más tarde.",
+      "503": "Servicio no disponible, inténtalo de nuevo más tarde.",
+      "504": "El servidor ha tardado demasiado en responder."
+    },
+    "shellLoadFailed": "No se puede cargar el espacio de la consola.",
+    "shellRefreshFailed": "No se pueden actualizar los contadores de navegación."
+  }
+}

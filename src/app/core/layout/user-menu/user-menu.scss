@@ -1,0 +1,37 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host ::ng-deep .user-menu__account.p-button {
+  color: var(--chrome-ink);
+  background: transparent;
+  border-color: transparent;
+}
+
+:host ::ng-deep .user-menu__account.p-button:hover,
+:host ::ng-deep .user-menu__account.p-button:focus-visible {
+  color: var(--chrome-ink-strong);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:host ::ng-deep .p-menu {
+  min-width: 18rem;
+  max-width: 24rem;
+}
+
+:host ::ng-deep .p-menu .user-menu__meta .p-menu-item-link {
+  align-items: flex-start;
+  opacity: 1;
+}
+
+:host ::ng-deep .p-menu .user-menu__meta .p-menu-item-icon {
+  margin-top: 0.1rem;
+}
+
+:host ::ng-deep .p-menu .user-menu__meta .p-menu-item-label {
+  white-space: normal;
+  word-break: break-word;
+  font-size: 0.82rem;
+  color: var(--muted);
+}

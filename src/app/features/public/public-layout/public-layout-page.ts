@@ -2,12 +2,12 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
-import { SiteFooter } from '../../../shared/site-footer/site-footer';
-import { SiteHeader } from '../../../shared/site-header/site-header';
+import { Footer } from '../../../core/layout/footer/footer';
+import { Topmenu } from '../../../core/layout/topmenu/topmenu';
 
 @Component({
   selector: 'app-public-layout-page',
-  imports: [RouterOutlet, SiteHeader, SiteFooter],
+  imports: [RouterOutlet, Topmenu, Footer],
   templateUrl: './public-layout-page.html',
   styleUrl: './public-layout-page.scss',
 })

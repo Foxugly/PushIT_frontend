@@ -1,0 +1,180 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Full-width navy bar (flotte). Le dégradé va bord à bord ; le contenu est capé
+// dans .topbar__inner sur la grille de contenu.
+.topbar {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(15, 23, 42, 0.98)),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.18), rgba(16, 185, 129, 0.12));
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+  color: var(--chrome-ink);
+}
+
+.topbar--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: min(100%, var(--content-max));
+  min-height: 3.5rem;
+  margin-inline: auto;
+  padding: 0.5rem var(--content-pad);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: var(--chrome-ink);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+
+.brand__mark {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  object-fit: contain;
+  background: var(--chrome-ink-strong);
+  padding: 4px;
+}
+
+.topbar__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--chrome-ink);
+  cursor: pointer;
+}
+
+.nav,
+.topbar__actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+// Toggle thème rectangulaire (standard §5.4) — 1er des actions : thème → langue → user.
+.topbar__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--chrome-ink);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.topbar__theme:hover,
+.topbar__theme:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+  outline: none;
+}
+
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(226, 232, 240, 0.88);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.nav__link i {
+  font-size: 0.85rem;
+}
+
+.nav__link:hover {
+  color: var(--chrome-ink-strong);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav__link--active {
+  color: var(--chrome-ink-strong);
+  background: rgba(16, 185, 129, 0.22);
+}
+
+// CTA « Soutenir » (Donate) : pilule emerald pleine (standard §10).
+.nav__link--accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: var(--chrome-ink-strong);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
+}
+
+.nav__link--accent:hover,
+.nav__link--accent.nav__link--active {
+  filter: brightness(1.05);
+  color: var(--chrome-ink-strong);
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+}
+
+// Repli en hamburger + drawer sous le breakpoint lg (1024px, échelle flotte).
+@media (max-width: 1024px) {
+  .topbar__toggle {
+    display: inline-flex;
+  }
+  .topbar__inner {
+    flex-wrap: wrap;
+  }
+  .nav,
+  .topbar__actions {
+    display: none;
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .topbar__inner.open .nav,
+  .topbar__inner.open .topbar__actions {
+    display: flex;
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+  .topbar__inner.open .nav {
+    flex-direction: column;
+    background: rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+  }
+  .topbar__inner.open .nav__link {
+    justify-content: flex-start;
+  }
+  .topbar__inner.open .topbar__actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-bottom: 0.25rem;
+  }
+}
