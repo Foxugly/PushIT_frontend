@@ -27,5 +27,10 @@
 - [ ] **Breakpoints** : échelle `sm 640 / md 768 / lg 1024 / xl 1280`.
 
 ## Phase 2 — i18n
-- [ ] **Migrer l'i18n maison** (`AppCopyService`) → **Transloco**.
-- [ ] Passer **3 → 5 langues** (ajouter `it` + `es`).
+- [x] **Migrer l'i18n maison** (`AppCopyService`) → **Transloco** ✅ MERGÉ + DÉPLOYÉ (PR #22, e2e vert).
+  Extraction app/console/errors → catalogues JSON `core/i18n/catalogs/{fr,nl,en}.json` ; `provideTransloco` +
+  loader bundlé ; `PublicI18nService` = autorité langue synchronisée avec Transloco ; façades typées sur `CATALOGS`
+  (0 churn des 636 accès) ; ~1400 L de const supprimées.
+- [ ] **about/privacy** : migrer vers catalogues (interpolation `${CONTACT_EMAIL}` à résoudre).
+- [ ] Passer **3 → 5 langues** (ajouter `it` + `es` : ~674 chaînes × 2, trad machine à relire ; MAJ `availableLangs`,
+  `LanguageCode`, `language-menu`).
