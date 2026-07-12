@@ -95,6 +95,24 @@ export class PushitApiService {
     });
   }
 
+  /** Request a passwordless sign-in link (anti-leak: always 200). */
+  requestMagicLink(email: string, turnstileToken?: string): Observable<void> {
+    const body: { email: string; turnstile_token?: string } = { email };
+    if (turnstileToken) body.turnstile_token = turnstileToken;
+    return this.http.post<void>(this.url('/auth/magic-link/'), body, {
+      context: new HttpContext().set(SKIP_AUTH, true),
+    });
+  }
+
+  /** Exchange a single-use magic-link token for JWT tokens + user (auto-login). */
+  verifyMagicLink(token: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      this.url('/auth/magic-link/verify/'),
+      { token },
+      { context: new HttpContext().set(SKIP_AUTH, true) },
+    );
+  }
+
   logout(refresh: string): Observable<void> {
     return this.http.post<void>(this.url('/auth/logout/'), { refresh });
   }

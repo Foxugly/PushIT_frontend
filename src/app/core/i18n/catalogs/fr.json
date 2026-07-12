@@ -133,7 +133,17 @@
       "forgotPassword": "Mot de passe oublié ?",
       "register": "Inscription",
       "submit": "Se connecter",
-      "pending": "Connexion..."
+      "pending": "Connexion...",
+      "or": "ou",
+      "magicRequest": "Recevoir un lien de connexion",
+      "magicTitle": "Connexion par lien",
+      "magicDescription": "Saisissez votre email : nous vous enverrons un lien de connexion à usage unique.",
+      "magicSend": "Envoyer le lien",
+      "magicPending": "Envoi...",
+      "magicSent": "Si cet email est enregistré, un lien de connexion vient d’être envoyé.",
+      "magicBack": "Retour à la connexion par mot de passe",
+      "magicCaptchaRequired": "Veuillez compléter le captcha.",
+      "magicCaptchaFailed": "La vérification du captcha a échoué. Réessayez."
     },
     "registerPage": {
       "eyebrow": "Inscription",
@@ -205,6 +215,13 @@
       "resend": "Renvoyer le lien",
       "resent": "Si une confirmation est nécessaire, un nouveau lien a été envoyé.",
       "resendError": "Impossible d'envoyer le lien pour le moment. Réessayez plus tard.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "magicLink": {
+      "title": "Connexion en cours",
+      "verifying": "Vérification de votre lien de connexion…",
+      "invalid": "Ce lien de connexion est invalide, expiré ou déjà utilisé.",
+      "invalidHint": "Demandez un nouveau lien depuis la page de connexion.",
       "backToLogin": "Retour à la connexion"
     },
     "footer": {

@@ -1,0 +1,15 @@
+<section class="public-shell">
+  <div class="public-card public-card--compact public-copy">
+    <h1>{{ copy().title }}</h1>
+
+    @if (verifying()) {
+      <p class="public-muted">{{ copy().verifying }}</p>
+    } @else if (failed()) {
+      <app-alert [message]="copy().invalid" tone="danger" [timeoutMs]="0" />
+      <p class="public-muted">{{ copy().invalidHint }}</p>
+      <div class="public-link-row">
+        <a routerLink="/auth">{{ copy().backToLogin }}</a>
+      </div>
+    }
+  </div>
+</section>

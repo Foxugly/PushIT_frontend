@@ -69,6 +69,14 @@ export const routes: Routes = [
           ),
         canActivate: [guestGuard],
       },
+      {
+        path: 'auth/magic-link/:token',
+        loadComponent: () =>
+          import('./features/magic-link/magic-link-page/magic-link-page').then(
+            (m) => m.MagicLinkPage,
+          ),
+        canActivate: [guestGuard],
+      },
     ],
   },
   {
