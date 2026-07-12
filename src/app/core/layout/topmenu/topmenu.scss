@@ -124,7 +124,7 @@
 
 .topbar__link--active {
   color: var(--chrome-ink-strong);
-  background: var(--chrome-accent);
+  background: color-mix(in srgb, var(--chrome-accent) 22%, transparent);
 }
 
 // CTA « Soutenir » (Donate) : pilule emerald pleine (standard §10).
