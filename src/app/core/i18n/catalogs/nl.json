@@ -133,7 +133,17 @@
       "forgotPassword": "Wachtwoord vergeten?",
       "register": "Registreren",
       "submit": "Inloggen",
-      "pending": "Bezig met inloggen..."
+      "pending": "Bezig met inloggen...",
+      "or": "of",
+      "magicRequest": "Ontvang een inloglink",
+      "magicTitle": "Aanmelden via link",
+      "magicDescription": "Voer je e-mail in en we sturen je een eenmalige inloglink.",
+      "magicSend": "Stuur de link",
+      "magicPending": "Verzenden...",
+      "magicSent": "Als dat e-mailadres geregistreerd is, is er zojuist een inloglink verzonden.",
+      "magicBack": "Terug naar aanmelden met wachtwoord",
+      "magicCaptchaRequired": "Voltooi de captcha.",
+      "magicCaptchaFailed": "Captcha-verificatie mislukt. Probeer het opnieuw."
     },
     "registerPage": {
       "eyebrow": "Registratie",
@@ -206,6 +216,13 @@
       "resent": "Indien een bevestiging nodig is, is een nieuwe link verstuurd.",
       "resendError": "De link kan nu niet worden verzonden. Probeer het later opnieuw.",
       "backToLogin": "Terug naar inloggen"
+    },
+    "magicLink": {
+      "title": "Je wordt aangemeld",
+      "verifying": "Je inloglink wordt geverifieerd…",
+      "invalid": "Deze inloglink is ongeldig, verlopen of al gebruikt.",
+      "invalidHint": "Vraag een nieuwe link aan op de aanmeldpagina.",
+      "backToLogin": "Terug naar aanmelden"
     },
     "footer": {
       "rightsReserved": "Alle rechten voorbehouden.",

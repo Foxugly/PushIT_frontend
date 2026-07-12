@@ -133,7 +133,17 @@
       "forgotPassword": "Password dimenticata?",
       "register": "Registrazione",
       "submit": "Accedi",
-      "pending": "Accesso in corso..."
+      "pending": "Accesso in corso...",
+      "or": "o",
+      "magicRequest": "Ricevi un link di accesso",
+      "magicTitle": "Accesso tramite link",
+      "magicDescription": "Inserisci la tua email: ti invieremo un link di accesso monouso.",
+      "magicSend": "Invia il link",
+      "magicPending": "Invio...",
+      "magicSent": "Se questa email è registrata, è stato appena inviato un link di accesso.",
+      "magicBack": "Torna all’accesso con password",
+      "magicCaptchaRequired": "Completa il captcha.",
+      "magicCaptchaFailed": "Verifica captcha non riuscita. Riprova."
     },
     "registerPage": {
       "eyebrow": "Registrazione",
@@ -206,6 +216,13 @@
       "resent": "Se è necessaria una conferma, è stato inviato un nuovo link.",
       "resendError": "Impossibile inviare il link al momento. Riprova più tardi.",
       "backToLogin": "Torna all'accesso"
+    },
+    "magicLink": {
+      "title": "Accesso in corso",
+      "verifying": "Verifica del link di accesso in corso…",
+      "invalid": "Questo link di accesso non è valido, è scaduto o è già stato usato.",
+      "invalidHint": "Richiedi un nuovo link dalla pagina di accesso.",
+      "backToLogin": "Torna all’accesso"
     },
     "footer": {
       "rightsReserved": "Tutti i diritti riservati.",

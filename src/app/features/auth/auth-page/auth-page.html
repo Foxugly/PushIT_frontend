@@ -1,62 +1,123 @@
-<form class="public-card public-card--compact public-form auth-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
-  <div class="card-heading">
-    <div>
-      <span class="public-eyebrow">{{ copy().eyebrow }}</span>
-      <h1>{{ copy().title }}</h1>
+@if (!magicMode()) {
+  <form class="public-card public-card--compact public-form auth-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+    <div class="card-heading">
+      <div>
+        <span class="public-eyebrow">{{ copy().eyebrow }}</span>
+        <h1>{{ copy().title }}</h1>
+      </div>
     </div>
-  </div>
 
-  <p class="hero-copy">{{ copy().description }}</p>
+    <p class="hero-copy">{{ copy().description }}</p>
 
-  <label>
-    <span>{{ copy().email }}</span>
-    <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
-  </label>
-  @for (message of fieldErrors(loginError(), 'email'); track message) {
-    <p class="public-field-error">{{ message }}</p>
-  }
-
-  <label>
-    <span>{{ copy().password }}</span>
-    <p-password
-      formControlName="password"
-      [feedback]="false"
-      [toggleMask]="true"
-      [placeholder]="copy().passwordPlaceholder"
-      styleClass="public-password auth-password"
-      inputStyleClass="auth-password__input"
-    />
-  </label>
-  @for (message of fieldErrors(loginError(), 'password'); track message) {
-    <p class="public-field-error">{{ message }}</p>
-  }
-  @for (message of fieldErrors(loginError(), 'non_field_errors'); track message) {
-    <p class="public-field-error">{{ message }}</p>
-  }
-
-  @if (loginError()?.detail) {
-    <app-alert [message]="loginError()! | apiError" tone="danger" (dismissed)="loginError.set(null)" />
-  }
-
-  <div class="public-link-row auth-meta link-row">
-    <label class="checkbox">
-      <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
-      <span>{{ copy().rememberMe }}</span>
+    <label>
+      <span>{{ copy().email }}</span>
+      <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
     </label>
-    <a routerLink="/forgot-password">{{ copy().forgotPassword }}</a>
-  </div>
+    @for (message of fieldErrors(loginError(), 'email'); track message) {
+      <p class="public-field-error">{{ message }}</p>
+    }
 
-  <div class="public-submit-row auth-submit-row">
-    <p-button
-      type="submit"
-      [label]="loginPending() ? copy().pending : copy().submit"
-      [loading]="loginPending()"
-      [disabled]="loginPending()"
-      styleClass="auth-submit"
-    />
-  </div>
+    <label>
+      <span>{{ copy().password }}</span>
+      <p-password
+        formControlName="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        [placeholder]="copy().passwordPlaceholder"
+        styleClass="public-password auth-password"
+        inputStyleClass="auth-password__input"
+      />
+    </label>
+    @for (message of fieldErrors(loginError(), 'password'); track message) {
+      <p class="public-field-error">{{ message }}</p>
+    }
+    @for (message of fieldErrors(loginError(), 'non_field_errors'); track message) {
+      <p class="public-field-error">{{ message }}</p>
+    }
 
-  <p class="auth-alt link-row">
-    <a routerLink="/register">{{ copy().register }}</a>
-  </p>
-</form>
+    @if (loginError()?.detail) {
+      <app-alert [message]="loginError()! | apiError" tone="danger" (dismissed)="loginError.set(null)" />
+    }
+
+    <div class="public-link-row auth-meta link-row">
+      <label class="checkbox">
+        <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
+        <span>{{ copy().rememberMe }}</span>
+      </label>
+      <a routerLink="/forgot-password">{{ copy().forgotPassword }}</a>
+    </div>
+
+    <div class="public-submit-row auth-submit-row">
+      <p-button
+        type="submit"
+        [label]="loginPending() ? copy().pending : copy().submit"
+        [loading]="loginPending()"
+        [disabled]="loginPending()"
+        styleClass="auth-submit"
+      />
+    </div>
+
+    <div class="auth-divider"><span>{{ copy().or }}</span></div>
+
+    <div class="public-submit-row auth-magic-row">
+      <p-button
+        type="button"
+        [label]="copy().magicRequest"
+        icon="pi pi-envelope"
+        [outlined]="true"
+        styleClass="auth-magic"
+        (onClick)="enterMagicMode()"
+      />
+    </div>
+
+    <p class="auth-alt link-row">
+      <a routerLink="/register">{{ copy().register }}</a>
+    </p>
+  </form>
+} @else {
+  <form class="public-card public-card--compact public-form auth-card" [formGroup]="magicForm" (ngSubmit)="submitMagic()">
+    <div class="card-heading">
+      <div>
+        <span class="public-eyebrow">{{ copy().eyebrow }}</span>
+        <h1>{{ copy().magicTitle }}</h1>
+      </div>
+    </div>
+
+    <p class="hero-copy">{{ copy().magicDescription }}</p>
+
+    <label>
+      <span>{{ copy().email }}</span>
+      <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" autocomplete="email" />
+    </label>
+    @for (message of fieldErrors(magicError(), 'email'); track message) {
+      <p class="public-field-error">{{ message }}</p>
+    }
+
+    @if (magicError()?.detail) {
+      <app-alert [message]="magicError()! | apiError" tone="danger" (dismissed)="magicError.set(null)" />
+    }
+
+    @if (turnstile.enabled) {
+      <div #magicTurnstile class="auth-turnstile"></div>
+    }
+
+    @if (magicSent()) {
+      <app-alert [message]="copy().magicSent" tone="success" />
+    }
+
+    <div class="public-submit-row auth-submit-row">
+      <p-button
+        type="submit"
+        [label]="magicPending() ? copy().magicPending : copy().magicSend"
+        icon="pi pi-send"
+        [loading]="magicPending()"
+        [disabled]="magicPending()"
+        styleClass="auth-submit"
+      />
+    </div>
+
+    <p class="auth-alt link-row">
+      <a href="#" (click)="$event.preventDefault(); exitMagicMode()">{{ copy().magicBack }}</a>
+    </p>
+  </form>
+}

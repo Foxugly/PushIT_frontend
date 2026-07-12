@@ -32,3 +32,31 @@
   margin: 0;
   text-align: center;
 }
+
+// "ou" divider between the sign-in button and the magic-link button (fleet
+// standard §Pages d'auth point 6 — mirrors the FoxRunner login reference).
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: lowercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border, rgba(148, 163, 184, 0.35));
+}
+
+.auth-magic {
+  width: 100%;
+}
+
+.auth-turnstile {
+  display: flex;
+  justify-content: center;
+}

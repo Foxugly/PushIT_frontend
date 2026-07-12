@@ -133,7 +133,17 @@
       "forgotPassword": "Forgot password?",
       "register": "Sign up",
       "submit": "Log in",
-      "pending": "Logging in..."
+      "pending": "Logging in...",
+      "or": "or",
+      "magicRequest": "Get a sign-in link",
+      "magicTitle": "Sign in by link",
+      "magicDescription": "Enter your email and we’ll send you a single-use sign-in link.",
+      "magicSend": "Send the link",
+      "magicPending": "Sending...",
+      "magicSent": "If that email is registered, a sign-in link has just been sent.",
+      "magicBack": "Back to password sign-in",
+      "magicCaptchaRequired": "Please complete the captcha.",
+      "magicCaptchaFailed": "Captcha verification failed. Please try again."
     },
     "registerPage": {
       "eyebrow": "Sign up",
@@ -205,6 +215,13 @@
       "resend": "Resend the link",
       "resent": "If a confirmation is needed, a new link has been sent.",
       "resendError": "Could not send the link right now. Please try again later.",
+      "backToLogin": "Back to sign in"
+    },
+    "magicLink": {
+      "title": "Signing you in",
+      "verifying": "Verifying your sign-in link…",
+      "invalid": "This sign-in link is invalid, expired, or already used.",
+      "invalidHint": "Request a new link from the sign-in page.",
       "backToLogin": "Back to sign in"
     },
     "footer": {

@@ -32,7 +32,7 @@ describe('AuthPage', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['login']);
+    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['login', 'requestMagicLink']);
     session = jasmine.createSpyObj<SessionService>('SessionService', ['startSession']);
     languagePreference = jasmine.createSpyObj<LanguagePreferenceService>(
       'LanguagePreferenceService',
@@ -52,6 +52,16 @@ describe('AuthPage', () => {
           register: 'Inscription',
           submit: 'Se connecter',
           pending: 'Connexion...',
+          or: 'ou',
+          magicRequest: 'Recevoir un lien de connexion',
+          magicTitle: 'Connexion par lien',
+          magicDescription: 'Saisissez votre email.',
+          magicSend: 'Envoyer le lien',
+          magicPending: 'Envoi...',
+          magicSent: 'Lien envoyé.',
+          magicBack: 'Retour',
+          magicCaptchaRequired: 'Captcha requis.',
+          magicCaptchaFailed: 'Captcha échoué.',
         },
       }),
     };
@@ -129,6 +139,36 @@ describe('AuthPage', () => {
       }),
     );
     expect(component.loginPending()).toBeFalse();
+  });
+
+  it('toggles into inline magic-link mode, prefilling the email', () => {
+    component.loginForm.patchValue({ email: 'renaud@example.com' });
+
+    component.enterMagicMode();
+
+    expect(component.magicMode()).toBeTrue();
+    expect(component.magicForm.getRawValue().email).toBe('renaud@example.com');
+  });
+
+  it('requests a magic link and shows the sent confirmation', () => {
+    api.requestMagicLink.and.returnValue(of(undefined));
+    component.enterMagicMode();
+    component.magicForm.setValue({ email: 'renaud@example.com' });
+
+    component.submitMagic();
+
+    expect(api.requestMagicLink).toHaveBeenCalledWith('renaud@example.com', undefined);
+    expect(component.magicSent()).toBeTrue();
+    expect(component.magicPending()).toBeFalse();
+  });
+
+  it('does not request a magic link when the email is invalid', () => {
+    component.enterMagicMode();
+    component.magicForm.setValue({ email: 'not-an-email' });
+
+    component.submitMagic();
+
+    expect(api.requestMagicLink).not.toHaveBeenCalled();
   });
 
   it('redirects an unconfirmed account to the check-email page (no dead-end error)', () => {
