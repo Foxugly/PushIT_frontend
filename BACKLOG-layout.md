@@ -21,4 +21,12 @@
   calqué sur Poker_server) + front (bouton « ou » → mode magic inline avec Turnstile, page de vérif
   `/auth/magic-link/:token`). Build + 119 unit + 19 e2e verts.
 
+## ✅ Audit profond 2026-07-12 (déployé)
+- Token **`--chrome-accent`** ajouté ; lien nav actif du chrome = tint translucide (`color-mix`) via le token.
+- **`app-language-menu` → `app-language-switcher`** (dossier/selector/classe renommés, usages mis à jour).
+- **`p-toast` monté à la racine du shell** (`console-layout` + `public-layout`, `MessageService` au root) au lieu
+  d'être local à `notifications-page`.
+- Topmenu : blocs restants (`.brand`/`.nav`…) renommés en **BEM `topbar__*`**.
+- **Breakpoints éparses** `720/960px` → 768/1024 (échelle canonique).
+
 **Aucune tâche restante.**
