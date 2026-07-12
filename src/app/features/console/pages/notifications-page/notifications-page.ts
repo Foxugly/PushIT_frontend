@@ -14,7 +14,6 @@ import { SelectModule } from 'primeng/select';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
-import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 
 import {
@@ -56,10 +55,8 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
     TableModule,
     TagModule,
     TextareaModule,
-    ToastModule,
     TooltipModule,
   ],
-  providers: [MessageService],
   templateUrl: './notifications-page.html',
   styleUrl: './notifications-page.scss',
 })

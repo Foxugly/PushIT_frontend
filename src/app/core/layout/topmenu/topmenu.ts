@@ -5,7 +5,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AppCopyService } from '../../services/app-copy.service';
 import { SessionService } from '../../services/session.service';
 import { ThemeService } from '../../services/theme.service';
-import { LanguageMenu } from '../../../shared/language-menu/language-menu';
+import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 import { UserMenu } from '../user-menu/user-menu';
 
 /**
@@ -15,7 +15,7 @@ import { UserMenu } from '../user-menu/user-menu';
  */
 @Component({
   selector: 'app-topmenu',
-  imports: [RouterLink, RouterLinkActive, TooltipModule, LanguageMenu, UserMenu],
+  imports: [RouterLink, RouterLinkActive, TooltipModule, LanguageSwitcher, UserMenu],
   templateUrl: './topmenu.html',
   styleUrl: './topmenu.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

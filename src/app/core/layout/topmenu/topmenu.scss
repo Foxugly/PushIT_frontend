@@ -32,7 +32,7 @@
   padding: 0.5rem var(--content-pad);
 }
 
-.brand {
+.topbar__brand {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -44,7 +44,7 @@
   flex-shrink: 0;
 }
 
-.brand__mark {
+.topbar__brand-icon {
   display: inline-block;
   width: 40px;
   height: 40px;
@@ -67,7 +67,7 @@
   cursor: pointer;
 }
 
-.nav,
+.topbar__nav,
 .topbar__actions {
   display: flex;
   gap: 0.75rem;
@@ -99,7 +99,7 @@
   outline-offset: 2px;
 }
 
-.nav__link {
+.topbar__link {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -113,29 +113,29 @@
     color 0.15s;
 }
 
-.nav__link i {
+.topbar__link i {
   font-size: 0.85rem;
 }
 
-.nav__link:hover {
+.topbar__link:hover {
   color: var(--chrome-ink-strong);
   background: rgba(255, 255, 255, 0.08);
 }
 
-.nav__link--active {
+.topbar__link--active {
   color: var(--chrome-ink-strong);
-  background: rgba(16, 185, 129, 0.22);
+  background: color-mix(in srgb, var(--chrome-accent) 22%, transparent);
 }
 
 // CTA « Soutenir » (Donate) : pilule emerald pleine (standard §10).
-.nav__link--accent {
+.topbar__link--support {
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   color: var(--chrome-ink-strong);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
 }
 
-.nav__link--accent:hover,
-.nav__link--accent.nav__link--active {
+.topbar__link--support:hover,
+.topbar__link--support.topbar__link--active {
   filter: brightness(1.05);
   color: var(--chrome-ink-strong);
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
@@ -149,26 +149,26 @@
   .topbar__inner {
     flex-wrap: wrap;
   }
-  .nav,
+  .topbar__nav,
   .topbar__actions {
     display: none;
     flex-basis: 100%;
     width: 100%;
   }
-  .topbar__inner.open .nav,
+  .topbar__inner.open .topbar__nav,
   .topbar__inner.open .topbar__actions {
     display: flex;
     align-items: stretch;
     gap: 0.35rem;
   }
-  .topbar__inner.open .nav {
+  .topbar__inner.open .topbar__nav {
     flex-direction: column;
     background: rgba(15, 23, 42, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
     padding: 0.5rem;
   }
-  .topbar__inner.open .nav__link {
+  .topbar__inner.open .topbar__link {
     justify-content: flex-start;
   }
   .topbar__inner.open .topbar__actions {
