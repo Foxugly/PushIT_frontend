@@ -1,7 +1,7 @@
 # Backlog — harmonisation layout · PushIT_frontend
 
 > **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`) ; réf = `FoxRunner_frontend`.
-> **Statut : ✅ ~100 % CONFORME — MERGÉ + DÉPLOYÉ** (audit 2026-07-11).
+> **Statut : ✅ 100 % CONFORME — MERGÉ + DÉPLOYÉ** (2026-07-12).
 
 **Aucune tâche restante.** Fait + déployé :
 - Design tokens sémantiques + breakpoints ; couleurs en dur tokenisées.
@@ -16,8 +16,9 @@
   (« Se souvenir de moi » à gauche + « Mot de passe oublié ? » à droite), lien inscription sous la carte
   (conformité flotte 2026-07-12).
 
-## Reste (différé)
-- **Bouton magic-link inline sur le login** (standard §Pages d'auth, point 6) : **DIFFÉRÉ — besoin backend.**
-  PushIT n'a **aucun flux passwordless / lien de connexion** (aucun service `magic`/`login-link` côté
-  `PushIT_server`). On n'ajoute pas de bouton non fonctionnel : à implémenter côté serveur d'abord
-  (endpoint demande de lien + page de vérification `/magic-link`), puis carte login en mode magic inline.
+- **Lien magique (passwordless) — FAIT + déployé 2026-07-12** : backend `PushIT_server` (modèle
+  `MagicLinkToken` single-use+TTL, endpoints request anti-énumération + verify→JWT, Turnstile fail-closed,
+  calqué sur Poker_server) + front (bouton « ou » → mode magic inline avec Turnstile, page de vérif
+  `/auth/magic-link/:token`). Build + 119 unit + 19 e2e verts.
+
+**Aucune tâche restante.**
