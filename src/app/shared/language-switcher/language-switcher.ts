@@ -29,10 +29,10 @@ const LANGUAGES: LanguageOption[] = [
  * navigation, click-outside / Escape close. Wired to PushIT's PublicI18nService.
  */
 @Component({
-  selector: 'app-language-menu',
+  selector: 'app-language-switcher',
   imports: [UpperCasePipe],
-  templateUrl: './language-menu.html',
-  styleUrl: './language-menu.scss',
+  templateUrl: './language-switcher.html',
+  styleUrl: './language-switcher.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(document:click)': 'onDocumentClick($event)',
@@ -43,7 +43,7 @@ const LANGUAGES: LanguageOption[] = [
     '(keydown.end)': 'onEnd($event)',
   },
 })
-export class LanguageMenu {
+export class LanguageSwitcher {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly i18n = inject(PublicI18nService);
   private readonly languagePreference = inject(LanguagePreferenceService);

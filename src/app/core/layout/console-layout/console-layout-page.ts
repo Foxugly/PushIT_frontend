@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 import { ConsoleCopyService } from '../../../core/services/console-copy.service';
@@ -24,6 +25,7 @@ import { Topmenu } from '../../../core/layout/topmenu/topmenu';
     ConsoleNavigation,
     Footer,
     Topmenu,
+    ToastModule,
   ],
   templateUrl: './console-layout-page.html',
   styleUrl: './console-layout-page.scss',

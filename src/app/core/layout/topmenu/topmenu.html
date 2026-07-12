@@ -1,8 +1,8 @@
 <header class="topbar" [class.topbar--sticky]="sticky()" [style.--content-max]="maxWidth()">
   <div class="topbar__inner" [class.open]="mobileOpen()">
-    <a routerLink="/" class="brand" aria-label="PushIT" (click)="closeMobile()">
-      <img class="brand__mark" src="pushit-logo.svg" alt="" aria-hidden="true" width="40" height="40" />
-      <span class="brand__label">PushIT</span>
+    <a routerLink="/" class="topbar__brand" aria-label="PushIT" (click)="closeMobile()">
+      <img class="topbar__brand-icon" src="pushit-logo.svg" alt="" aria-hidden="true" width="40" height="40" />
+      <span class="topbar__brand-name">PushIT</span>
     </a>
 
     <button
@@ -15,22 +15,22 @@
       <i class="pi" [class.pi-bars]="!mobileOpen()" [class.pi-times]="mobileOpen()"></i>
     </button>
 
-    <nav class="nav" aria-label="Main navigation">
-      <a class="nav__link" routerLink="/" routerLinkActive="nav__link--active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
+    <nav class="topbar__nav" aria-label="Main navigation">
+      <a class="topbar__link" routerLink="/" routerLinkActive="topbar__link--active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
         <i class="pi pi-home" aria-hidden="true"></i>{{ labels().home }}
       </a>
       @if (session.isAuthenticated()) {
-        <a class="nav__link" routerLink="/dashboard" routerLinkActive="nav__link--active" (click)="closeMobile()">
+        <a class="topbar__link" routerLink="/dashboard" routerLinkActive="topbar__link--active" (click)="closeMobile()">
           <i class="pi pi-th-large" aria-hidden="true"></i>{{ labels().dashboard }}
         </a>
       }
-      <a class="nav__link" routerLink="/features" routerLinkActive="nav__link--active" (click)="closeMobile()">
+      <a class="topbar__link" routerLink="/features" routerLinkActive="topbar__link--active" (click)="closeMobile()">
         <i class="pi pi-bolt" aria-hidden="true"></i>{{ labels().features }}
       </a>
-      <a class="nav__link nav__link--accent" routerLink="/donate" routerLinkActive="nav__link--active" (click)="closeMobile()">
+      <a class="topbar__link topbar__link--support" routerLink="/donate" routerLinkActive="topbar__link--active" (click)="closeMobile()">
         <i class="pi pi-heart" aria-hidden="true"></i>{{ labels().donate }}
       </a>
-      <a class="nav__link" routerLink="/about" routerLinkActive="nav__link--active" (click)="closeMobile()">
+      <a class="topbar__link" routerLink="/about" routerLinkActive="topbar__link--active" (click)="closeMobile()">
         <i class="pi pi-info-circle" aria-hidden="true"></i>{{ labels().about }}
       </a>
     </nav>
@@ -44,7 +44,7 @@
       >
         <i class="pi" [class.pi-sun]="theme.theme() === 'dark'" [class.pi-moon]="theme.theme() !== 'dark'"></i>
       </button>
-      <app-language-menu />
+      <app-language-switcher />
       <app-user-menu />
     </div>
   </div>

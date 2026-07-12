@@ -133,7 +133,7 @@ a {
   line-height: 1.7;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .public-shell {
     width: calc(100% - 2rem);
     padding-top: 0.5rem;
@@ -843,7 +843,7 @@ a {
   white-space: pre-wrap;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .console-grid--2,
   .console-form-grid--2,
   .console-filter-grid--2,

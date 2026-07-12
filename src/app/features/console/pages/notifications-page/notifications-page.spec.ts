@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 
 import {
@@ -196,6 +197,7 @@ describe('NotificationsPage', () => {
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
+        MessageService,
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },

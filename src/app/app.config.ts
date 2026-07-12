@@ -12,6 +12,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, Router } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 import * as Sentry from '@sentry/angular';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
@@ -57,6 +58,9 @@ export const appConfig: ApplicationConfig = {
     }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
+    // Toast global : un seul <p-toast/> monté à la racine des layouts de shell,
+    // alimenté par ce MessageService partagé (standard flotte).
+    MessageService,
     // i18n : Transloco est le moteur (catalogues bundlés servis par le loader).
     // Les façades typées (AppCopyService/ConsoleCopyService) lisent les mêmes
     // catalogues ; PublicI18nService reste l'autorité de langue, synchronisée ici.
