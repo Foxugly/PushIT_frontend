@@ -10,56 +10,67 @@
   <app-page-header [title]="copy().title">
     <div slot="right" class="ph-actions">
       <div class="console-resource-header__badges">
-        <p-tag [value]="devices().length + ' ' + copy().countLabel" severity="secondary" />
+        <p-tag [value]="devicesTotal() + ' ' + copy().countLabel" severity="secondary" />
       </div>
-      <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadDevices()" />
+      <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="reloadDevices()" />
       <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" />
     </div>
   </app-page-header>
 
   <section class="console-card">
 
-    @if (loading()) {
-      <p class="console-empty">{{ copy().loading }}</p>
-    } @else if (devices().length) {
-      <p-table [value]="devices()" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>{{ copy().table.name }}</th>
-            <th>{{ copy().table.platform }}</th>
-            <th>{{ copy().table.token }}</th>
-            <th>{{ copy().table.applications }}</th>
-            <th>{{ copy().table.lastActivity }}</th>
-            <th class="console-table__actions">{{ copy().table.actions }}</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-device>
-          <tr [class.console-row-selected]="selectedDeviceId() === device.id">
-            <td class="console-table__name">
-              <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
-                <strong>{{ device.device_name }}</strong>
-              </a>
-            </td>
-            <td>{{ device.platform }}</td>
-            <td><p-tag [value]="device.push_token_status" [severity]="statusSeverity(device.push_token_status)" /></td>
-            <td>{{ deviceApplicationNames(device) }}</td>
-            <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().never }}</td>
-            <td class="console-table__actions">
-              <div class="console-icon-actions">
-                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.view"
-          [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
-                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
-          [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
-                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
-          [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    } @else {
-      <p class="console-empty">{{ copy().empty }}</p>
-    }
+    <p-table
+      [value]="devices()"
+      [lazy]="true"
+      [lazyLoadOnInit]="false"
+      (onLazyLoad)="loadDevices($event)"
+      [paginator]="true"
+      [rows]="deviceRows"
+      [first]="deviceFirst()"
+      [totalRecords]="devicesTotal()"
+      [loading]="tableLoading()"
+      [rowsPerPageOptions]="[25, 50, 100]"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ copy().table.name }}</th>
+          <th>{{ copy().table.platform }}</th>
+          <th>{{ copy().table.token }}</th>
+          <th>{{ copy().table.applications }}</th>
+          <th>{{ copy().table.lastActivity }}</th>
+          <th class="console-table__actions">{{ copy().table.actions }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-device>
+        <tr [class.console-row-selected]="selectedDeviceId() === device.id">
+          <td class="console-table__name">
+            <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
+              <strong>{{ device.device_name }}</strong>
+            </a>
+          </td>
+          <td>{{ device.platform }}</td>
+          <td><p-tag [value]="device.push_token_status" [severity]="statusSeverity(device.push_token_status)" /></td>
+          <td>{{ deviceApplicationNames(device) }}</td>
+          <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().never }}</td>
+          <td class="console-table__actions">
+            <div class="console-icon-actions">
+              <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.view"
+        [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
+              <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
+        [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
+              <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+        [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="console-empty">{{ copy().empty }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
   </section>
 
   <p-dialog

@@ -271,6 +271,25 @@ export class PushitApiService {
     return this.http.get<DeviceRead[]>(this.url('/devices/'));
   }
 
+  // Server-paginated devices (the unbounded list) for the devices page's lazy
+  // table — opt-in via ?page (the bare-array call above stays for the SPA views
+  // that read the full list, e.g. the app/notification detail pages).
+  listDevicesPage(page: number, pageSize: number): Observable<Paginated<DeviceRead>> {
+    return this.http.get<Paginated<DeviceRead>>(this.url('/devices/'), {
+      params: this.buildParams({ page, page_size: pageSize }),
+    });
+  }
+
+  // Cheap devices count via opt-in pagination: page_size=1 returns just the
+  // envelope's `count`, avoiding loading every device into memory for a badge.
+  countDevices(): Observable<number> {
+    return this.http
+      .get<Paginated<unknown>>(this.url('/devices/'), {
+        params: this.buildParams({ page: 1, page_size: 1 }),
+      })
+      .pipe(map((response) => response.count));
+  }
+
   getDevice(deviceId: number): Observable<DeviceRead> {
     return this.http.get<DeviceRead>(this.url(`/devices/${deviceId}/`));
   }

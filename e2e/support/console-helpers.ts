@@ -209,7 +209,7 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     }
 
     if (path.endsWith('/devices/') && method === 'GET') {
-      return fulfillJson(route, 200, state.devices);
+      return fulfillJson(route, 200, paginatedOrBare(url, state.devices));
     }
 
     const deviceDetailMatch = path.match(/\/api\/v1\/devices\/(\d+)\/$/);

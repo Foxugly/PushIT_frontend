@@ -49,7 +49,9 @@ export class ConsoleShellService {
     forkJoin({
       user: this.api.me(),
       apps: this.api.listApps(),
-      devices: this.api.listDevices(),
+      // Cheap count (page_size=1) for the nav badge — decoupled from the full
+      // device list, which is now only fetched by the quiet-period fan-out.
+      devicesCount: this.api.countDevices(),
     })
       // Transient network/5xx hiccups shouldn't blank the whole console: retry a
       // couple of times before surfacing the error.
@@ -63,7 +65,7 @@ export class ConsoleShellService {
         }),
       )
       .subscribe({
-        next: ({ user, apps, devices }) => {
+        next: ({ user, apps, devicesCount }) => {
           // A newer load started while this one was in flight → drop the result.
           if (token !== this.loadToken) {
             return;
@@ -72,9 +74,9 @@ export class ConsoleShellService {
           this.user.set(user);
           this.languagePreference.applyBackendLanguage(user.language);
           this.apps.set(apps);
-          this.devicesCount.set(devices.length);
+          this.devicesCount.set(devicesCount);
           this.syncSelectedApp(apps, preferredAppId);
-          this.refreshSupplementaryCounts(apps, devices, token);
+          this.refreshSupplementaryCounts(apps, token);
         },
         error: (error) => {
           if (token !== this.loadToken) {
@@ -121,15 +123,17 @@ export class ConsoleShellService {
   refreshNavigationCounts(): void {
     forkJoin({
       apps: this.api.listApps(),
-      devices: this.api.listDevices(),
+      // Cheap count for the badge; the full device list is fetched separately by
+      // the quiet-period fan-out below.
+      devicesCount: this.api.countDevices(),
     })
       .pipe(retry({ count: 2, delay: 800 }))
       .subscribe({
-        next: ({ apps, devices }) => {
+        next: ({ apps, devicesCount }) => {
           this.apps.set(apps);
           this.syncSelectedApp(apps);
-          this.devicesCount.set(devices.length);
-          this.refreshSupplementaryCounts(apps, devices);
+          this.devicesCount.set(devicesCount);
+          this.refreshSupplementaryCounts(apps);
         },
         error: (error) => {
           this.error.set(API_ERROR_COPY[this.i18n.language()].shellRefreshFailed);
@@ -147,7 +151,6 @@ export class ConsoleShellService {
 
   private refreshSupplementaryCounts(
     apps: ApplicationRead[] = this.apps(),
-    devices: Array<{ id: number }> = [],
     token: number = this.loadToken,
   ): void {
     // Counts only — fetch the paginated `count` (page_size=1) instead of loading
@@ -176,7 +179,7 @@ export class ConsoleShellService {
             this.notificationsCount.set(notifications + futureNotifications);
           }
 
-          return this.quietPeriodsCount$(apps, devices);
+          return this.quietPeriodsCount$(apps);
         }),
       )
       .subscribe({
@@ -206,16 +209,25 @@ export class ConsoleShellService {
    * structural changes (and the explicit invalidations below), not on every
    * mutation.
    */
-  private quietPeriodsCount$(apps: ApplicationRead[], devices: Array<{ id: number }>) {
-    const key = this.computeQuietPeriodsKey(apps, devices);
-    if (key === this.quietPeriodsKey) {
-      return of(this.quietPeriodsCount());
-    }
+  private quietPeriodsCount$(apps: ApplicationRead[]) {
+    // The quiet-period count is inherently per-device (one request per app + one
+    // per device — there is no aggregate endpoint), so it needs the device id
+    // set. Fetch it here, on the quiet-period pipeline, rather than on the shell
+    // load: the nav's device badge comes from the cheap countDevices() and no
+    // longer waits on this fan-out.
+    return this.api.listDevices().pipe(
+      switchMap((devices) => {
+        const key = this.computeQuietPeriodsKey(apps, devices);
+        if (key === this.quietPeriodsKey) {
+          return of(this.quietPeriodsCount());
+        }
 
-    return this.loadQuietPeriodsCount(apps, devices).pipe(
-      map((count) => {
-        this.quietPeriodsKey = key;
-        return count;
+        return this.loadQuietPeriodsCount(apps, devices).pipe(
+          map((count) => {
+            this.quietPeriodsKey = key;
+            return count;
+          }),
+        );
       }),
     );
   }

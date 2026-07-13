@@ -29,6 +29,7 @@ describe('ConsoleShellService', () => {
       'me',
       'listApps',
       'listDevices',
+      'countDevices',
       'listNotifications',
       'listFutureNotifications',
       'countNotifications',
@@ -55,6 +56,7 @@ describe('ConsoleShellService', () => {
     api.me.and.returnValue(of(makeUser()));
     api.listApps.and.returnValue(of([makeApplication()]));
     api.listDevices.and.returnValue(of([makeDevice()]));
+    api.countDevices.and.returnValue(of(1));
     api.listNotifications.and.returnValue(of([]));
     api.listFutureNotifications.and.returnValue(of([]));
     api.countNotifications.and.returnValue(of(0));
