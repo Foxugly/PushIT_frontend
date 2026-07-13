@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
@@ -68,10 +68,15 @@ export class DevicesPage implements OnInit {
   readonly platformOptions: DevicePlatform[] = ['android', 'ios'];
   readonly statusOptions: PushTokenStatus[] = ['active', 'invalid', 'revoked'];
 
+  // devices() holds the CURRENT page (server-paginated); devicesTotal() is the
+  // backend `count` used for the badge, the nav count and the paginator.
   readonly devices = signal<DeviceRead[]>([]);
+  readonly devicesTotal = signal(0);
+  readonly deviceRows = 25;
+  readonly deviceFirst = signal(0);
+  readonly tableLoading = signal(false);
   readonly selectedDeviceId = signal<number | null>(null);
   readonly modalMode = signal<'create' | 'edit' | null>(null);
-  readonly loading = signal(false);
   readonly saving = signal(false);
   readonly linking = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
@@ -95,34 +100,52 @@ export class DevicesPage implements OnInit {
   });
 
   ngOnInit(): void {
+    this.reloadDevices();
+  }
+
+  /** Reset the lazy table to its first page and reload (refresh/after a mutation). */
+  reloadDevices(): void {
+    this.deviceFirst.set(0);
     this.loadDevices();
   }
 
-  loadDevices(): void {
-    this.loading.set(true);
+  /** Load one page of devices from the server. Driven by reloadDevices() on
+   * init/refresh and by the table's onLazyLoad on paging. */
+  loadDevices(event?: TableLazyLoadEvent): void {
+    const rows = event?.rows ?? this.deviceRows;
+    if (event && event.first != null) {
+      this.deviceFirst.set(event.first);
+    }
+    const page = Math.floor(this.deviceFirst() / rows) + 1;
+    this.tableLoading.set(true);
     this.error.set(null);
 
-    this.api.listDevices().subscribe({
-      next: (devices) => {
-        this.loading.set(false);
-        this.devices.set(devices);
-        this.shell.setDevicesCount(devices.length);
+    this.api
+      .listDevicesPage(page, rows)
+      .pipe(
+        finalize(() => this.tableLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (response) => {
+          this.devices.set(response.results);
+          this.devicesTotal.set(response.count);
+          this.shell.setDevicesCount(response.count);
 
-        const selectedId = this.selectedDeviceId();
-        if (selectedId && devices.some((device) => device.id === selectedId)) {
-          const selected = devices.find((device) => device.id === selectedId)!;
-          this.populateEditForm(selected);
-          return;
-        }
+          const selectedId = this.selectedDeviceId();
+          if (selectedId && response.results.some((device) => device.id === selectedId)) {
+            const selected = response.results.find((device) => device.id === selectedId)!;
+            this.populateEditForm(selected);
+            return;
+          }
 
-        this.selectedDeviceId.set(null);
-        this.resetEditForm();
-      },
-      error: (error) => {
-        this.loading.set(false);
-        this.error.set(coerceApiError(error));
-      },
-    });
+          this.selectedDeviceId.set(null);
+          this.resetEditForm();
+        },
+        error: (error) => {
+          this.error.set(coerceApiError(error));
+        },
+      });
   }
 
   selectDevice(device: DeviceRead): void {
@@ -184,7 +207,7 @@ export class DevicesPage implements OnInit {
         next: () => {
           this.banner.set(this.copy().alerts.updated);
           this.closeModal();
-          this.loadDevices();
+          this.reloadDevices();
         },
         error: (error) => {
           this.error.set(coerceApiError(error));
@@ -219,7 +242,7 @@ export class DevicesPage implements OnInit {
           this.selectedDeviceId.set(null);
           this.closeModal();
           this.shell.refreshNavigationCounts();
-          this.loadDevices();
+          this.reloadDevices();
         },
         error: (error) => {
           this.error.set(coerceApiError(error));
@@ -265,7 +288,7 @@ export class DevicesPage implements OnInit {
         );
         this.closeModal();
         this.shell.refreshNavigationCounts();
-        this.loadDevices();
+        this.reloadDevices();
       },
       error: (error) => {
         this.linking.set(false);
