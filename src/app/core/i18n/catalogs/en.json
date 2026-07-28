@@ -997,7 +997,9 @@
         "void": "Void",
         "uncollectible": "Uncollectible"
       },
-      "goToBilling": "Go to billing"
+      "goToBilling": "Go to billing",
+      "changePlanTitle": "Change plan",
+      "changePlanHint": "You already have a subscription. To change plan or cancel, use the portal: it replaces the running subscription instead of opening a second one."
     },
     "staffUsers": {
       "title": "Accounts",

@@ -997,7 +997,9 @@
         "void": "Annullata",
         "uncollectible": "Inesigibile"
       },
-      "goToBilling": "Vai alla fatturazione"
+      "goToBilling": "Vai alla fatturazione",
+      "changePlanTitle": "Cambiare piano",
+      "changePlanHint": "Hai gia un abbonamento. Per cambiare piano o disdire, usa il portale: sostituisce l'abbonamento in corso invece di aprirne un secondo."
     },
     "staffUsers": {
       "title": "Account",

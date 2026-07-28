@@ -997,7 +997,9 @@
         "void": "Geannuleerd",
         "uncollectible": "Oninbaar"
       },
-      "goToBilling": "Naar facturatie"
+      "goToBilling": "Naar facturatie",
+      "changePlanTitle": "Van formule veranderen",
+      "changePlanHint": "U hebt al een abonnement. Ga via het portaal om van formule te veranderen of op te zeggen: dat vervangt het lopende abonnement in plaats van er een tweede te openen."
     },
     "staffUsers": {
       "title": "Accounts",

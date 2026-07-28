@@ -997,7 +997,9 @@
         "void": "Annulée",
         "uncollectible": "Irrécouvrable"
       },
-      "goToBilling": "Voir la facturation"
+      "goToBilling": "Voir la facturation",
+      "changePlanTitle": "Changer de formule",
+      "changePlanHint": "Vous avez deja un abonnement. Pour changer de formule ou resilier, passez par le portail : cela remplace l'abonnement en cours au lieu d'en ouvrir un second."
     },
     "staffUsers": {
       "title": "Comptes",
