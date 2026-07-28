@@ -2,7 +2,7 @@
   display: block;
 }
 
-.staff-users__search {
+.accounts__search {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
@@ -13,14 +13,14 @@
   }
 }
 
-.staff-users__access {
+.accounts__access {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.staff-users__note {
+.accounts__note {
   width: 100%;
   min-width: 12rem;
 }
