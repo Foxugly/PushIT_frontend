@@ -254,7 +254,10 @@ export class ConsoleShellService {
   createApp(
     payload: ApplicationCreateRequest,
     onDone?: (app: ApplicationCreateResponse) => void,
-    onError?: () => void,
+    // L'erreur est transmise : la creation peut echouer pour une raison que
+    // l'appelant doit distinguer -- un 402 de facturation ne se traite pas
+    // comme un echec de validation.
+    onError?: (error: unknown) => void,
   ): void {
     this.api.createApp(payload).subscribe({
       next: (response) => {
@@ -266,8 +269,8 @@ export class ConsoleShellService {
         this.loadShell(response.id);
         onDone?.(response);
       },
-      error: () => {
-        onError?.();
+      error: (err) => {
+        onError?.(err);
       },
     });
   }

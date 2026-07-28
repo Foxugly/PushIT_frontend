@@ -347,3 +347,84 @@ export interface DeviceNotificationFilters {
   application_id?: number | null;
   page?: number | null;
 }
+
+// --- Facturation (relayee par le service central) ------------------------------
+
+export type BillingInterval = 'monthly' | 'yearly';
+
+/** Un montant Stripe : en centimes, avec sa devise. */
+export interface BillingPrice {
+  id: string;
+  amount: number;
+  currency: string;
+}
+
+/** GET /billing/plans/ — le catalogue vient du central, jamais code en dur ici. */
+export interface BillingPlan {
+  code: string;
+  name: string;
+  description: string;
+  quotas: Record<string, number>;
+  /** Non vide = plan facture a l'unite : le quota suit la quantite souscrite. */
+  per_unit_quota_key: string;
+  /** Ce que le plan propose ; l'essai reel n'est accorde qu'a une premiere
+   * souscription d'une seule unite, et Stripe affiche le montant exact. */
+  trial_days: number;
+  prices: { monthly: BillingPrice | null; yearly: BillingPrice | null };
+}
+
+/** GET /billing/subscription/ — servi depuis le cache local du backend. */
+export interface BillingSubscription {
+  billingEnabled: boolean;
+  isPaid: boolean;
+  status: string;
+  plan: string;
+  interval: string;
+  quota: number;
+  applicationsUsed: number;
+  currentPeriodEnd: string | null;
+  canManage: boolean;
+}
+
+/** POST /billing/quantity/preview/ — ce que couterait le changement, sans l'appliquer. */
+export interface BillingQuantityPreview {
+  current_quantity: number;
+  new_quantity: number;
+  /** En centimes, au prorata. Negatif = avoir porte sur la prochaine facture. */
+  amount_due_now: number;
+  currency: string;
+  /** Prochain renouvellement, en secondes epoch (format Stripe). */
+  next_renewal: number | null;
+}
+
+export interface BillingSubscriptionEntry {
+  id: string;
+  status: string;
+  /** Code du plan ; vide si le prix n'est plus rattache a un plan connu. */
+  plan: string;
+  planName: string;
+  interval: string;
+  quantity: number;
+  startedAt: string | null;
+  currentPeriodEnd: string | null;
+  canceledAt: string | null;
+}
+
+export interface BillingInvoice {
+  id: string;
+  number: string;
+  status: string;
+  /** En centimes. */
+  amountPaid: number;
+  currency: string;
+  createdAt: string | null;
+  hostedUrl: string;
+  pdfUrl: string;
+}
+
+/** GET /billing/history/ — lu en direct chez Stripe, rien n'est duplique en base. */
+export interface BillingHistory {
+  billingEnabled: boolean;
+  subscriptions: BillingSubscriptionEntry[];
+  invoices: BillingInvoice[];
+}

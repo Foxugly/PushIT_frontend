@@ -44,6 +44,7 @@ export class ApplicationFormPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().applications);
+  readonly billingCopy = computed(() => this.consoleCopy.current().billing);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -126,12 +127,27 @@ export class ApplicationFormPage implements OnInit {
         this.pending.set(false);
         void this.router.navigate(['/dashboard/applications', app.id]);
       },
-      () => {
+      (err) => {
         this.pending.set(false);
-        this.error.set({ code: 'application_create_failed', detail: this.copy().errors.create });
+        const failure = coerceApiError(err);
+        // Un refus de facturation dit precisement ce qui manque -- souscrire, ou
+        // augmenter la quantite : ecraser ce detail par un « la creation a
+        // echoue » generique laisserait l'utilisateur sans issue.
+        this.error.set(
+          this.isBillingRefusal(failure)
+            ? failure
+            : { code: 'application_create_failed', detail: this.copy().errors.create },
+        );
       },
     );
   }
+
+  /** Les deux 402 du gating de facturation, qui menent tous deux a la page dediee. */
+  isBillingRefusal(error: ApiErrorResponse | null): boolean {
+    return error?.code === 'subscription_required' || error?.code === 'quota_exceeded';
+  }
+
+  readonly billingRefused = computed(() => this.isBillingRefusal(this.error()));
 
   private updateApp(): void {
     const appId = this.appId();

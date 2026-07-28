@@ -17,6 +17,13 @@
       />
     }
 
+    <app-console-menu-item
+      link="/dashboard/billing"
+      [label]="billingCopy().label"
+      [description]="billingCopy().description"
+      icon="pi pi-credit-card"
+    />
+
     @if (session.isAdmin()) {
       <app-console-menu-item
         link="/dashboard/admin"

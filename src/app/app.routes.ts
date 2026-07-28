@@ -151,6 +151,11 @@ export const routes: Routes = [
           import('./features/console/pages/settings-page/settings-page').then((m) => m.SettingsPage),
       },
       {
+        path: 'billing',
+        loadComponent: () =>
+          import('./features/console/pages/billing-page/billing-page').then((m) => m.BillingPage),
+      },
+      {
         path: 'change-password',
         loadComponent: () =>
           import('./features/console/pages/change-password-page/change-password-page').then(

@@ -22,6 +22,7 @@ export class ConsoleNavigation {
   readonly session = inject(SessionService);
   readonly copy = computed(() => this.appCopy.current().console.navigation);
   readonly adminCopy = computed(() => this.appCopy.current().console.navigation.admin);
+  readonly billingCopy = computed(() => this.appCopy.current().console.navigation.billing);
   readonly sections = computed(() => buildConsoleSections(this.appCopy.current().console.sections));
   readonly navigationItems = computed(() =>
     this.sections().map((section) => ({

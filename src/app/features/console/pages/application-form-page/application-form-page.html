@@ -48,6 +48,15 @@
           <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
         }
 
+        @if (billingRefused()) {
+          <p-button
+            [label]="billingCopy().goToBilling"
+            icon="pi pi-credit-card"
+            [outlined]="true"
+            routerLink="/dashboard/billing"
+          />
+        }
+
         <app-console-dialog-actions [cancelLabel]="copy().page.cancel" (cancelled)="cancel()">
           <p-button
             type="submit"

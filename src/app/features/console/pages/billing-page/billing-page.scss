@@ -1,0 +1,151 @@
+:host {
+  display: block;
+}
+
+.billing-kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.4rem 1.25rem;
+  margin: 0 0 1rem;
+
+  dt {
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}
+
+.billing-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+.billing-adjust {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0;
+}
+
+/* Le récapitulatif du prorata : cadré et distinct, parce que c'est ce que
+   l'utilisateur doit lire avant de confirmer un prélèvement. */
+.billing-preview {
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  background: var(--accent-soft);
+  padding: 0.9rem 1rem;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+
+  p {
+    margin: 0;
+  }
+}
+
+.billing-warning {
+  color: var(--danger-text);
+}
+
+.billing-plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.billing-plan {
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  padding: 1rem;
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+  align-content: start;
+
+  h4 {
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.billing-plan__price {
+  font-size: 1.4rem;
+  font-weight: 700;
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+}
+
+.billing-plan__quantity {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.billing-plan__total {
+  font-weight: 600;
+}
+
+.billing-subheading {
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* Les tableaux doivent défiler dans leur propre boîte : sinon une facture au
+   libellé long fait déborder la page entière sur mobile. */
+.billing-table-scroll {
+  overflow-x: auto;
+}
+
+.billing-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+}
+
+.billing-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.billing-links {
+  display: flex;
+  gap: 0.9rem;
+
+  a {
+    color: var(--accent-strong);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
