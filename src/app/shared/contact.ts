@@ -5,7 +5,7 @@ const EMAIL_USER = 'info';
 const EMAIL_HOST = 'foxugly';
 const EMAIL_TLD = 'com';
 const PHONE_PREFIX = '+32';
-const PHONE_PARTS = ['478', '811988'];
+const PHONE_PARTS = ['470', '672', '572'];
 
 export const CONTACT_INFO = {
   name: 'Renaud Vilain',
