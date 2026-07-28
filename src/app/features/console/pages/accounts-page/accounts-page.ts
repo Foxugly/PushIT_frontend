@@ -26,7 +26,7 @@ import { PageHeader } from '../../../../shared/page-header/page-header';
  * qu'on se pose en pratique, « à qui ai-je donné quoi ».
  */
 @Component({
-  selector: 'app-staff-users-page',
+  selector: 'app-accounts-page',
   imports: [
     CommonModule,
     FormsModule,
@@ -39,14 +39,14 @@ import { PageHeader } from '../../../../shared/page-header/page-header';
     TagModule,
     ToggleSwitchModule,
   ],
-  templateUrl: './staff-users-page.html',
-  styleUrl: './staff-users-page.scss',
+  templateUrl: './accounts-page.html',
+  styleUrl: './accounts-page.scss',
 })
-export class StaffUsersPage implements OnInit {
+export class AccountsPage implements OnInit {
   private readonly staff = inject(StaffService);
   private readonly consoleCopy = inject(ConsoleCopyService);
 
-  readonly copy = computed(() => this.consoleCopy.current().staffUsers);
+  readonly copy = computed(() => this.consoleCopy.current().accounts);
 
   readonly users = signal<StaffUser[]>([]);
   readonly loading = signal(false);

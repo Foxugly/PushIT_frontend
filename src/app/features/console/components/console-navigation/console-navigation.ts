@@ -23,7 +23,7 @@ export class ConsoleNavigation {
   readonly copy = computed(() => this.appCopy.current().console.navigation);
   readonly adminCopy = computed(() => this.appCopy.current().console.navigation.admin);
   readonly billingCopy = computed(() => this.appCopy.current().console.navigation.billing);
-  readonly staffCopy = computed(() => this.appCopy.current().console.navigation.staffUsers);
+  readonly accountsCopy = computed(() => this.appCopy.current().console.navigation.accounts);
   readonly sections = computed(() => buildConsoleSections(this.appCopy.current().console.sections));
   readonly navigationItems = computed(() =>
     this.sections().map((section) => ({

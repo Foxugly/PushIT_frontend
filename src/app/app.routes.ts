@@ -163,11 +163,11 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'staff/users',
+        path: 'accounts',
         canActivate: [superuserGuard],
         loadComponent: () =>
-          import('./features/console/pages/staff-users-page/staff-users-page').then(
-            (m) => m.StaffUsersPage,
+          import('./features/console/pages/accounts-page/accounts-page').then(
+            (m) => m.AccountsPage,
           ),
       },
       {

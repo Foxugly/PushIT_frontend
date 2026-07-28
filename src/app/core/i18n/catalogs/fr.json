@@ -244,7 +244,7 @@
           "label": "Facturation",
           "description": "Abonnement, quantité, factures."
         },
-        "staffUsers": {
+        "accounts": {
           "label": "Comptes",
           "description": "Offrir l'accès à un utilisateur."
         }
@@ -1001,7 +1001,7 @@
       "changePlanTitle": "Changer de formule",
       "changePlanHint": "Vous avez deja un abonnement. Pour changer de formule ou resilier, passez par le portail : cela remplace l'abonnement en cours au lieu d'en ouvrir un second."
     },
-    "staffUsers": {
+    "accounts": {
       "title": "Comptes",
       "lead": "Chercher un compte et lui offrir l'accès. Le reste passe par l'admin Django.",
       "searchPlaceholder": "Email ou clé utilisateur",

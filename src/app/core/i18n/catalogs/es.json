@@ -244,7 +244,7 @@
           "label": "Facturación",
           "description": "Suscripción, cantidad, facturas."
         },
-        "staffUsers": {
+        "accounts": {
           "label": "Cuentas",
           "description": "Ofrecer el acceso a un usuario."
         }
@@ -1001,7 +1001,7 @@
       "changePlanTitle": "Cambiar de plan",
       "changePlanHint": "Ya tienes una suscripcion. Para cambiar de plan o darte de baja, usa el portal: sustituye la suscripcion en curso en lugar de abrir una segunda."
     },
-    "staffUsers": {
+    "accounts": {
       "title": "Cuentas",
       "lead": "Buscar una cuenta y ofrecerle el acceso. El resto pasa por el admin de Django.",
       "searchPlaceholder": "Email o clave de usuario",

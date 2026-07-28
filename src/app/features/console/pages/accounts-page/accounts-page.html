@@ -1,4 +1,4 @@
-<section class="console-page staff-users">
+<section class="console-page accounts">
   @if (notice()) {
     <app-alert [message]="notice()" tone="success" (dismissed)="notice.set('')" />
   }
@@ -10,7 +10,7 @@
   <p class="console-muted console-page__lead">{{ copy().lead }}</p>
 
   <section class="console-card">
-    <div class="staff-users__search">
+    <div class="accounts__search">
       <input
         pInputText
         [(ngModel)]="query"
@@ -49,7 +49,7 @@
                 <p-tag severity="danger" [value]="copy().inactive" />
               }
             </td>
-            <td class="staff-users__access">
+            <td class="accounts__access">
               <p-toggleswitch
                 [ngModel]="user.subscription_bypass"
                 (ngModelChange)="toggle(user, $event)"
@@ -63,7 +63,7 @@
             <td>
               <input
                 pInputText
-                class="staff-users__note"
+                class="accounts__note"
                 [ngModel]="noteFor(user.id)"
                 (ngModelChange)="setNote(user.id, $event)"
                 [placeholder]="copy().notePlaceholder"

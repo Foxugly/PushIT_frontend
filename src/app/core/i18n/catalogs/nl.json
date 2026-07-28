@@ -244,7 +244,7 @@
           "label": "Facturatie",
           "description": "Abonnement, aantal, facturen."
         },
-        "staffUsers": {
+        "accounts": {
           "label": "Accounts",
           "description": "Een gebruiker gratis toegang geven."
         }
@@ -1001,7 +1001,7 @@
       "changePlanTitle": "Van formule veranderen",
       "changePlanHint": "U hebt al een abonnement. Ga via het portaal om van formule te veranderen of op te zeggen: dat vervangt het lopende abonnement in plaats van er een tweede te openen."
     },
-    "staffUsers": {
+    "accounts": {
       "title": "Accounts",
       "lead": "Een account zoeken en gratis toegang geven. De rest gaat via de Django-admin.",
       "searchPlaceholder": "E-mail of gebruikerssleutel",

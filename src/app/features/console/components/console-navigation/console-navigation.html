@@ -26,9 +26,9 @@
 
     @if (session.isSuperuser()) {
       <app-console-menu-item
-        link="/dashboard/staff/users"
-        [label]="staffCopy().label"
-        [description]="staffCopy().description"
+        link="/dashboard/accounts"
+        [label]="accountsCopy().label"
+        [description]="accountsCopy().description"
         icon="pi pi-users"
       />
     }

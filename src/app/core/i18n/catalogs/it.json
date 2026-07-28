@@ -244,7 +244,7 @@
           "label": "Fatturazione",
           "description": "Abbonamento, quantità, fatture."
         },
-        "staffUsers": {
+        "accounts": {
           "label": "Account",
           "description": "Offrire l'accesso a un utente."
         }
@@ -1001,7 +1001,7 @@
       "changePlanTitle": "Cambiare piano",
       "changePlanHint": "Hai gia un abbonamento. Per cambiare piano o disdire, usa il portale: sostituisce l'abbonamento in corso invece di aprirne un secondo."
     },
-    "staffUsers": {
+    "accounts": {
       "title": "Account",
       "lead": "Cercare un account e offrirgli l'accesso. Il resto passa dall'admin Django.",
       "searchPlaceholder": "Email o chiave utente",

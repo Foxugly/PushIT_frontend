@@ -9,7 +9,7 @@ import { of, throwError } from 'rxjs';
 import { StaffUser } from '../../../../core/models/api.models';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { StaffService } from '../../../../core/services/staff.service';
-import { StaffUsersPage } from './staff-users-page';
+import { AccountsPage } from './accounts-page';
 
 const STAFF_COPY = {
   title: 'Comptes',
@@ -41,9 +41,9 @@ function makeUser(overrides: Partial<StaffUser> = {}): StaffUser {
   };
 }
 
-describe('StaffUsersPage', () => {
-  let fixture: ComponentFixture<StaffUsersPage>;
-  let component: StaffUsersPage;
+describe('AccountsPage', () => {
+  let fixture: ComponentFixture<AccountsPage>;
+  let component: AccountsPage;
   let staff: jasmine.SpyObj<StaffService>;
 
   async function setup(users: StaffUser[] = [makeUser()]): Promise<void> {
@@ -51,18 +51,18 @@ describe('StaffUsersPage', () => {
     staff.users.and.returnValue(of(users));
 
     await TestBed.configureTestingModule({
-      imports: [StaffUsersPage],
+      imports: [AccountsPage],
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: StaffService, useValue: staff },
-        { provide: ConsoleCopyService, useValue: { current: signal({ staffUsers: STAFF_COPY }) } },
+        { provide: ConsoleCopyService, useValue: { current: signal({ accounts: STAFF_COPY }) } },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(StaffUsersPage);
+    fixture = TestBed.createComponent(AccountsPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }
