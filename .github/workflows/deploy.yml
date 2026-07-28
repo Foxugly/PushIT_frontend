@@ -99,8 +99,11 @@ jobs:
           # fetch-script / nginx vhost from the COMMITTED git blob (never the
           # django tree → §3.10); enable unit; pull the bundle from S3 via the
           # instance role (blank the certbot creds) and atomic-swap into the
-          # docroot; restart the runtime-fetch unit (writes the SSM snippet +
-          # nginx -t + reload); normalise perms.
+          # docroot; restart the runtime-fetch unit (writes the SSM snippet); puis
+          # RECHARGE nginx explicitement — le runtime-fetch saute son reload quand
+          # le snippet SSM est inchange, donc un changement de VHOST n'etait jamais
+          # applique : deploiement vert, fichier sur disque, nginx sur l'ancienne
+          # conf. Constate le 2026-07-28. Normalise les perms.
           APP=/var/www/django_websites/PushIT_frontend
           DOC="$APP/dist/pushit-frontend/browser"
           GB="git -C $APP -c safe.directory=$APP show origin/main"
@@ -115,6 +118,7 @@ jobs:
             "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/pushit-frontend/$SHA.tar.gz /tmp/pfe.tar.gz --region eu-west-1",
             "rm -rf /tmp/pfe && mkdir -p /tmp/pfe && tar -xzf /tmp/pfe.tar.gz -C /tmp/pfe && mkdir -p $DOC && rsync -a --delete /tmp/pfe/ $DOC/ && rm -rf /tmp/pfe /tmp/pfe.tar.gz",
             "systemctl restart pushit-frontend-runtime-fetch",
+            "nginx -t && systemctl reload nginx",
             "chown -R django:www-data $APP && chmod -R g-w,o-rwx $APP"
           ], "executionTimeout": ["900"] }
           EOF
