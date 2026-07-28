@@ -68,6 +68,8 @@ const BILLING_COPY = {
   noInvoices: 'Aucune',
   checkoutSuccess: 'Paiement enregistre.',
   goToBilling: 'Voir la facturation',
+  changePlanTitle: 'Changer de formule',
+  changePlanHint: 'Vous avez deja un abonnement.',
   statuses: { active: 'Actif', trialing: 'Essai' },
 };
 
@@ -267,6 +269,22 @@ describe('BillingPage', () => {
 
     expect(component.error()).not.toBeNull();
     expect(component.pendingPlan()).toBe('');
+  });
+
+  it('never offers to subscribe to someone already subscribed', async () => {
+    // Repasser par Checkout ouvrirait un SECOND abonnement Stripe. Le central le
+    // refuse, mais un bouton qui mene a un refus est pire que pas de bouton.
+    await setup(makeSubscription({ isPaid: true }));
+
+    const texte = fixture.nativeElement.textContent;
+    expect(texte).toContain('Vous avez deja un abonnement.');
+    expect(texte).not.toContain("S'abonner");
+  });
+
+  it('offers the catalogue to someone without a subscription', async () => {
+    await setup(makeSubscription({ isPaid: false, plan: '', quota: 0 }));
+
+    expect(fixture.nativeElement.textContent).toContain("S'abonner");
   });
 
   it('falls back to the raw code for a status the copy does not cover', async () => {

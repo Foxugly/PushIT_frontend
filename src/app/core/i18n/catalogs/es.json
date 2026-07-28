@@ -997,7 +997,9 @@
         "void": "Anulada",
         "uncollectible": "Incobrable"
       },
-      "goToBilling": "Ir a facturación"
+      "goToBilling": "Ir a facturación",
+      "changePlanTitle": "Cambiar de plan",
+      "changePlanHint": "Ya tienes una suscripcion. Para cambiar de plan o darte de baja, usa el portal: sustituye la suscripcion en curso en lugar de abrir una segunda."
     },
     "staffUsers": {
       "title": "Cuentas",

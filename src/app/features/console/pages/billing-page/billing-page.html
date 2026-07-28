@@ -117,8 +117,30 @@
         </section>
       }
 
-      <!-- Catalogue -->
-      @if (plans().length) {
+      <!-- Catalogue : masque a qui est deja abonne. Repasser par Checkout
+           ouvrirait un SECOND abonnement Stripe -- le central le refuse
+           desormais, mais proposer un bouton qui mene a un refus est pire que
+           de ne pas le proposer. -->
+      @if (sub.isPaid) {
+        <section class="console-card">
+          <div class="console-card__header">
+            <div>
+              <p class="console-shell__eyebrow">{{ copy().plansEyebrow }}</p>
+              <h3>{{ copy().changePlanTitle }}</h3>
+            </div>
+          </div>
+          <p class="console-muted">{{ copy().changePlanHint }}</p>
+          @if (sub.canManage) {
+            <p-button
+              [label]="copy().managePortal"
+              icon="pi pi-external-link"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="openPortal()"
+            />
+          }
+        </section>
+      } @else if (plans().length) {
         <section class="console-card">
           <div class="console-card__header">
             <div>
