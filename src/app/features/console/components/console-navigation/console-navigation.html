@@ -24,6 +24,15 @@
       icon="pi pi-credit-card"
     />
 
+    @if (session.isSuperuser()) {
+      <app-console-menu-item
+        link="/dashboard/staff/users"
+        [label]="staffCopy().label"
+        [description]="staffCopy().description"
+        icon="pi pi-users"
+      />
+    }
+
     @if (session.isAdmin()) {
       <app-console-menu-item
         link="/dashboard/admin"

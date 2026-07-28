@@ -243,6 +243,10 @@
         "billing": {
           "label": "Facturatie",
           "description": "Abonnement, aantal, facturen."
+        },
+        "staffUsers": {
+          "label": "Accounts",
+          "description": "Een gebruiker gratis toegang geven."
         }
       },
       "sections": [
@@ -994,6 +998,26 @@
         "uncollectible": "Oninbaar"
       },
       "goToBilling": "Naar facturatie"
+    },
+    "staffUsers": {
+      "title": "Accounts",
+      "lead": "Een account zoeken en gratis toegang geven. De rest gaat via de Django-admin.",
+      "searchPlaceholder": "E-mail of gebruikerssleutel",
+      "search": "Zoeken",
+      "noMatch": "Geen account gevonden.",
+      "noneOffered": "Voorlopig heeft geen enkel account gratis toegang.",
+      "offered": "Gratis toegang",
+      "unconfirmed": "E-mail niet bevestigd",
+      "inactive": "Gedeactiveerd",
+      "notePlaceholder": "Waarom deze toegang?",
+      "saved": "Opgeslagen.",
+      "scopeNote": "Alleen de gratis toegang is hier aanpasbaar. E-mail, wachtwoord, activering en verwijdering blijven in de Django-admin. Elke toekenning en intrekking wordt gelogd met de auteur.",
+      "fields": {
+        "email": "Account",
+        "access": "Gratis toegang",
+        "note": "Notitie",
+        "grantedAt": "Toegekend op"
+      }
     }
   },
   "errors": {

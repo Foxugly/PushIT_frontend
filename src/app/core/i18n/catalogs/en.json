@@ -243,6 +243,10 @@
         "billing": {
           "label": "Billing",
           "description": "Subscription, quantity, invoices."
+        },
+        "staffUsers": {
+          "label": "Accounts",
+          "description": "Grant a user free access."
         }
       },
       "sections": [
@@ -994,6 +998,26 @@
         "uncollectible": "Uncollectible"
       },
       "goToBilling": "Go to billing"
+    },
+    "staffUsers": {
+      "title": "Accounts",
+      "lead": "Find an account and grant it free access. Everything else goes through the Django admin.",
+      "searchPlaceholder": "Email or user key",
+      "search": "Search",
+      "noMatch": "No matching account.",
+      "noneOffered": "No account has free access at the moment.",
+      "offered": "Free access",
+      "unconfirmed": "Email unconfirmed",
+      "inactive": "Deactivated",
+      "notePlaceholder": "Why this access?",
+      "saved": "Saved.",
+      "scopeNote": "Only free access is editable here. Email, password, activation and deletion stay in the Django admin. Every grant and revocation is logged with its author.",
+      "fields": {
+        "email": "Account",
+        "access": "Free access",
+        "note": "Note",
+        "grantedAt": "Granted on"
+      }
     }
   },
   "errors": {
