@@ -1,0 +1,289 @@
+<section class="console-page billing-page">
+  @if (notice()) {
+    <app-alert [message]="notice()" tone="success" (dismissed)="notice.set('')" />
+  }
+  @if (error(); as err) {
+    <app-alert [message]="err | apiError" tone="danger" (dismissed)="error.set(null)" />
+  }
+
+  <app-page-header icon="pi-credit-card" [title]="copy().title" />
+  <p class="console-muted console-page__lead">{{ copy().lead }}</p>
+
+  @if (loading()) {
+    <p class="console-muted">{{ copy().loading }}</p>
+  } @else if (subscription(); as sub) {
+    @if (!sub.billingEnabled) {
+      <section class="console-card">
+        <p class="console-note">{{ copy().disabled }}</p>
+      </section>
+    } @else {
+      <!-- Ce qui tourne -->
+      <section class="console-card">
+        <div class="console-card__header">
+          <div>
+            <p class="console-shell__eyebrow">{{ copy().currentEyebrow }}</p>
+            <h3>{{ copy().currentTitle }}</h3>
+          </div>
+        </div>
+
+        @if (sub.isPaid) {
+          <dl class="billing-kv">
+            <dt>{{ copy().planLabel }}</dt>
+            <dd>
+              {{ currentPlan()?.name || sub.plan }}
+              @if (sub.interval) {
+                · {{ sub.interval === 'yearly' ? copy().intervalYearly : copy().intervalMonthly }}
+              }
+              <p-tag severity="success" [value]="statusLabel(sub.status)" />
+            </dd>
+
+            <dt>{{ copy().usageLabel }}</dt>
+            <dd>{{ sub.applicationsUsed }} / {{ sub.quota }}</dd>
+
+            @if (sub.currentPeriodEnd) {
+              <dt>{{ copy().renewsLabel }}</dt>
+              <dd>{{ sub.currentPeriodEnd | date: 'mediumDate' }}</dd>
+            }
+          </dl>
+
+          @if (sub.canManage) {
+            <p-button
+              [label]="copy().managePortal"
+              icon="pi pi-external-link"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="openPortal()"
+            />
+            <p class="console-muted billing-hint">{{ copy().portalHint }}</p>
+          }
+        } @else {
+          <p class="console-muted">{{ copy().noSubscription }}</p>
+        }
+      </section>
+
+      <!-- Ajustement de quantité : aperçu obligatoire avant tout prélèvement -->
+      @if (canAdjustQuantity()) {
+        <section class="console-card">
+          <div class="console-card__header">
+            <div>
+              <p class="console-shell__eyebrow">{{ copy().adjustEyebrow }}</p>
+              <h3>{{ copy().adjustTitle }}</h3>
+            </div>
+          </div>
+
+          <p class="console-muted">{{ copy().adjustLead }}</p>
+
+          <div class="billing-adjust">
+            <p-inputNumber
+              [ngModel]="newQuantity()"
+              (ngModelChange)="newQuantity.set($event ?? 1); preview.set(null)"
+              [min]="1"
+              [max]="20"
+              [showButtons]="true"
+              [ariaLabel]="copy().quantityLabel"
+            />
+            <p-button
+              [label]="copy().previewButton"
+              icon="pi pi-calculator"
+              [outlined]="true"
+              [loading]="previewPending()"
+              [disabled]="newQuantity() === sub.quota"
+              (onClick)="askPreview()"
+            />
+          </div>
+
+          @if (newQuantity() < sub.applicationsUsed) {
+            <p class="console-note billing-warning">{{ copy().belowUsageWarning }}</p>
+          }
+
+          @if (preview(); as pv) {
+            <div class="billing-preview">
+              <p>{{ previewSentence(pv) }}</p>
+              @if (pv.next_renewal) {
+                <p class="console-muted">
+                  {{ copy().nextRenewalLabel }} {{ pv.next_renewal * 1000 | date: 'mediumDate' }}
+                </p>
+              }
+              <p class="console-muted">{{ copy().amountsExcludeVat }}</p>
+              <p-button
+                [label]="copy().confirmQuantity"
+                icon="pi pi-check"
+                severity="success"
+                [loading]="applyPending()"
+                (onClick)="applyQuantity()"
+              />
+            </div>
+          }
+        </section>
+      }
+
+      <!-- Catalogue -->
+      @if (plans().length) {
+        <section class="console-card">
+          <div class="console-card__header">
+            <div>
+              <p class="console-shell__eyebrow">{{ copy().plansEyebrow }}</p>
+              <h3>{{ copy().plansTitle }}</h3>
+            </div>
+            <p-selectButton
+              [options]="intervalOptions()"
+              [ngModel]="interval()"
+              (ngModelChange)="interval.set($event)"
+              optionLabel="label"
+              optionValue="value"
+              [allowEmpty]="false"
+            />
+          </div>
+
+          <div class="billing-plans">
+            @for (plan of plans(); track plan.code) {
+              <article class="billing-plan">
+                <h4>{{ plan.name }}</h4>
+                @if (plan.description) {
+                  <p class="console-muted">{{ plan.description }}</p>
+                }
+
+                @if (unitAmount(plan) === null) {
+                  <p class="console-muted">{{ copy().priceUnavailable }}</p>
+                } @else {
+                  <p class="billing-plan__price">
+                    {{ money(unitAmount(plan)!, currencyOf(plan)) }}
+                    <span class="console-muted">
+                      {{ interval() === 'yearly' ? copy().perYear : copy().perMonth }}
+                      @if (isPerUnit(plan)) { {{ copy().perApplication }} }
+                    </span>
+                  </p>
+
+                  @if (isPerUnit(plan)) {
+                    <label class="billing-plan__quantity">
+                      <span>{{ copy().quantityLabel }}</span>
+                      <p-inputNumber
+                        [ngModel]="quantityFor(plan)"
+                        (ngModelChange)="setQuantityFor(plan, $event)"
+                        [min]="1"
+                        [max]="20"
+                        [showButtons]="true"
+                        [ariaLabel]="copy().quantityLabel"
+                      />
+                    </label>
+                    <p class="billing-plan__total">{{ copy().totalLabel }} {{ totalFor(plan) }}</p>
+                  }
+
+                  @if (showsTrial(plan)) {
+                    <p-tag severity="info" [value]="trialLabel(plan)" />
+                    <p class="console-muted billing-hint">{{ copy().trialConditions }}</p>
+                  }
+
+                  <p-button
+                    [label]="copy().subscribeButton"
+                    icon="pi pi-shopping-cart"
+                    severity="success"
+                    [loading]="pendingPlan() === plan.code"
+                    (onClick)="subscribe(plan)"
+                  />
+                }
+              </article>
+            }
+          </div>
+
+          <p class="console-note">{{ copy().vatNote }}</p>
+        </section>
+      }
+
+      <!-- Historique -->
+      <section class="console-card">
+        <div class="console-card__header">
+          <div>
+            <p class="console-shell__eyebrow">{{ copy().historyEyebrow }}</p>
+            <h3>{{ copy().historyTitle }}</h3>
+          </div>
+        </div>
+
+        @if (history()?.subscriptions?.length) {
+          <div class="billing-table-scroll">
+            <table class="billing-table">
+              <thead>
+                <tr>
+                  <th>{{ copy().planLabel }}</th>
+                  <th>{{ copy().quantityLabel }}</th>
+                  <th>{{ copy().statusLabel }}</th>
+                  <th>{{ copy().startedLabel }}</th>
+                  <th>{{ copy().endedLabel }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (entry of history()!.subscriptions; track entry.id) {
+                  <tr>
+                    <td>
+                      {{ planLabel(entry) }}
+                      @if (entry.interval) {
+                        · {{ entry.interval === 'yearly' ? copy().intervalYearly : copy().intervalMonthly }}
+                      }
+                    </td>
+                    <td>{{ entry.quantity || 1 }}</td>
+                    <td>
+                      <p-tag
+                        [severity]="isLive(entry) ? 'success' : 'secondary'"
+                        [value]="statusLabel(entry.status)"
+                      />
+                    </td>
+                    <td>{{ entry.startedAt ? (entry.startedAt | date: 'mediumDate') : '—' }}</td>
+                    <td>{{ endDate(entry) ? (endDate(entry) | date: 'mediumDate') : '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="console-muted">{{ copy().noHistory }}</p>
+        }
+
+        <h4 class="billing-subheading">{{ copy().invoicesTitle }}</h4>
+        @if (history()?.invoices?.length) {
+          <div class="billing-table-scroll">
+            <table class="billing-table">
+              <thead>
+                <tr>
+                  <th>{{ copy().invoiceNumber }}</th>
+                  <th>{{ copy().invoiceDate }}</th>
+                  <th>{{ copy().invoiceAmount }}</th>
+                  <th>{{ copy().statusLabel }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (invoice of history()!.invoices; track invoice.id) {
+                  <tr>
+                    <td class="billing-mono">{{ invoice.number || invoice.id }}</td>
+                    <td>{{ invoice.createdAt ? (invoice.createdAt | date: 'mediumDate') : '—' }}</td>
+                    <td>{{ money(invoice.amountPaid, invoice.currency) }}</td>
+                    <td>
+                      <p-tag
+                        [severity]="invoice.status === 'paid' ? 'success' : 'secondary'"
+                        [value]="statusLabel(invoice.status)"
+                      />
+                    </td>
+                    <td class="billing-links">
+                      @if (invoice.pdfUrl) {
+                        <a [href]="invoice.pdfUrl" target="_blank" rel="noreferrer noopener">
+                          <i class="pi pi-file-pdf" aria-hidden="true"></i> {{ copy().invoicePdf }}
+                        </a>
+                      }
+                      @if (invoice.hostedUrl) {
+                        <a [href]="invoice.hostedUrl" target="_blank" rel="noreferrer noopener">
+                          <i class="pi pi-external-link" aria-hidden="true"></i> {{ copy().invoiceView }}
+                        </a>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="console-muted">{{ copy().noInvoices }}</p>
+        }
+      </section>
+    }
+  }
+</section>
