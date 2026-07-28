@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.staff-users__search {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  input {
+    flex: 1 1 18rem;
+  }
+}
+
+.staff-users__access {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.staff-users__note {
+  width: 100%;
+  min-width: 12rem;
+}

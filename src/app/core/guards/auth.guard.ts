@@ -34,6 +34,16 @@ export const adminGuard: CanActivateFn = () => {
   return session.isAdmin() ? true : router.createUrlTree(['/dashboard']);
 };
 
+/** Reserve aux superusers. `is_staff` suffit pour consulter l'etat du backend ;
+ *  offrir un acces gratuit engage de l'argent et demande un cran de plus. La
+ *  vraie frontiere reste cote serveur (`IsSuperUser`), qui exige la meme chose. */
+export const superuserGuard: CanActivateFn = () => {
+  const session = inject(SessionService);
+  const router = inject(Router);
+
+  return session.isSuperuser() ? true : router.createUrlTree(['/dashboard']);
+};
+
 export const guestGuard: CanActivateFn = () => {
   const session = inject(SessionService);
   const router = inject(Router);

@@ -428,3 +428,24 @@ export interface BillingHistory {
   subscriptions: BillingSubscriptionEntry[];
   invoices: BillingInvoice[];
 }
+
+
+// --- Back-office staff --------------------------------------------------------
+
+/** GET /staff/users/ (superuser only). Seuls `subscription_bypass` et
+ * `bypass_note` sont modifiables ; le reste est en lecture. */
+export interface StaffUser {
+  id: number;
+  email: string;
+  userkey: string;
+  is_active: boolean;
+  email_confirmed: boolean;
+  subscription_bypass: boolean;
+  bypass_note: string;
+  bypass_granted_at: string | null;
+}
+
+export interface StaffUserPatch {
+  subscription_bypass?: boolean;
+  bypass_note?: string;
+}

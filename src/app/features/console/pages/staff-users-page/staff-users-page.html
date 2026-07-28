@@ -1,0 +1,85 @@
+<section class="console-page staff-users">
+  @if (notice()) {
+    <app-alert [message]="notice()" tone="success" (dismissed)="notice.set('')" />
+  }
+  @if (error(); as err) {
+    <app-alert [message]="err | apiError" tone="danger" (dismissed)="error.set(null)" />
+  }
+
+  <app-page-header icon="pi-shield" [title]="copy().title" />
+  <p class="console-muted console-page__lead">{{ copy().lead }}</p>
+
+  <section class="console-card">
+    <div class="staff-users__search">
+      <input
+        pInputText
+        [(ngModel)]="query"
+        [placeholder]="copy().searchPlaceholder"
+        [attr.aria-label]="copy().searchPlaceholder"
+        (keyup.enter)="search()"
+      />
+      <p-button
+        [label]="copy().search"
+        icon="pi pi-search"
+        [loading]="loading()"
+        (onClick)="search()"
+      />
+    </div>
+
+    @if (!loading() && !users().length) {
+      <p class="console-muted">{{ query ? copy().noMatch : copy().noneOffered }}</p>
+    } @else {
+      <p-table [value]="users()" [loading]="loading()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ copy().fields.email }}</th>
+            <th>{{ copy().fields.access }}</th>
+            <th>{{ copy().fields.note }}</th>
+            <th>{{ copy().fields.grantedAt }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              {{ user.email }}
+              @if (!user.email_confirmed) {
+                <p-tag severity="warn" [value]="copy().unconfirmed" />
+              }
+              @if (!user.is_active) {
+                <p-tag severity="danger" [value]="copy().inactive" />
+              }
+            </td>
+            <td class="staff-users__access">
+              <p-toggleswitch
+                [ngModel]="user.subscription_bypass"
+                (ngModelChange)="toggle(user, $event)"
+                [disabled]="busy() === user.id"
+                [ariaLabel]="copy().fields.access"
+              />
+              @if (user.subscription_bypass) {
+                <p-tag severity="success" icon="pi pi-gift" [value]="copy().offered" />
+              }
+            </td>
+            <td>
+              <input
+                pInputText
+                class="staff-users__note"
+                [ngModel]="noteFor(user.id)"
+                (ngModelChange)="setNote(user.id, $event)"
+                [placeholder]="copy().notePlaceholder"
+                [attr.aria-label]="copy().fields.note"
+                (blur)="saveNote(user)"
+                (keyup.enter)="saveNote(user)"
+              />
+            </td>
+            <td>
+              {{ user.bypass_granted_at ? (user.bypass_granted_at | date: 'mediumDate') : '—' }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+
+    <p class="console-note">{{ copy().scopeNote }}</p>
+  </section>
+</section>

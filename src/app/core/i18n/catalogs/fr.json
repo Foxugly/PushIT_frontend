@@ -243,6 +243,10 @@
         "billing": {
           "label": "Facturation",
           "description": "Abonnement, quantité, factures."
+        },
+        "staffUsers": {
+          "label": "Comptes",
+          "description": "Offrir l'accès à un utilisateur."
         }
       },
       "sections": [
@@ -994,6 +998,26 @@
         "uncollectible": "Irrécouvrable"
       },
       "goToBilling": "Voir la facturation"
+    },
+    "staffUsers": {
+      "title": "Comptes",
+      "lead": "Chercher un compte et lui offrir l'accès. Le reste passe par l'admin Django.",
+      "searchPlaceholder": "Email ou clé utilisateur",
+      "search": "Chercher",
+      "noMatch": "Aucun compte ne correspond.",
+      "noneOffered": "Aucun compte n'a d'accès offert pour le moment.",
+      "offered": "Accès offert",
+      "unconfirmed": "Email non confirmé",
+      "inactive": "Désactivé",
+      "notePlaceholder": "Pourquoi cet accès ?",
+      "saved": "Enregistré.",
+      "scopeNote": "Seul l'accès offert est modifiable ici. Email, mot de passe, activation et suppression restent dans l'admin Django. Chaque octroi et chaque retrait sont journalisés avec leur auteur.",
+      "fields": {
+        "email": "Compte",
+        "access": "Accès offert",
+        "note": "Note",
+        "grantedAt": "Offert le"
+      }
     }
   },
   "errors": {

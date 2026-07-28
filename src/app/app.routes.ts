@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { adminGuard, authGuard, guestGuard } from './core/guards/auth.guard';
+import { adminGuard, authGuard, guestGuard, superuserGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -160,6 +160,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/console/pages/change-password-page/change-password-page').then(
             (m) => m.ChangePasswordPage,
+          ),
+      },
+      {
+        path: 'staff/users',
+        canActivate: [superuserGuard],
+        loadComponent: () =>
+          import('./features/console/pages/staff-users-page/staff-users-page').then(
+            (m) => m.StaffUsersPage,
           ),
       },
       {

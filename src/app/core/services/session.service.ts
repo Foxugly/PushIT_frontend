@@ -37,6 +37,9 @@ export class SessionService {
   // Drives the admin-only console nav entry / adminGuard. Defaults to false when
   // the flag is absent (older backend) — never grant admin on a missing field.
   readonly isAdmin = computed(() => Boolean(this.userSignal()?.is_staff));
+  /** Un cran au-dessus d'isAdmin : requis pour les gestes qui engagent de
+   *  l'argent, comme offrir un acces gratuit. Le serveur exige le meme niveau. */
+  readonly isSuperuser = computed(() => Boolean(this.userSignal()?.is_superuser));
 
   accessToken(): string | null {
     return this.accessTokenSignal();
