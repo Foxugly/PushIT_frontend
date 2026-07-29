@@ -202,6 +202,21 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
       return route.fulfill({ status: 204, body: '' });
     }
 
+    // Evict a subscriber: cuts the link only. The device survives — it belongs
+    // to somebody else — so we drop this application from its ids rather than
+    // removing the row from the device list.
+    const evictMatch = path.match(/\/api\/v1\/apps\/(\d+)\/devices\/(\d+)\/$/);
+    if (evictMatch && method === 'DELETE') {
+      const appId = Number(evictMatch[1]);
+      const deviceId = Number(evictMatch[2]);
+      state.devices = state.devices.map((item) =>
+        item.id === deviceId
+          ? { ...item, application_ids: item.application_ids.filter((id) => id !== appId) }
+          : item,
+      );
+      return route.fulfill({ status: 204, body: '' });
+    }
+
     const appQuietPeriodsMatch = path.match(/\/api\/v1\/apps\/(\d+)\/quiet-periods\/$/);
     if (appQuietPeriodsMatch && method === 'GET') {
       const appId = Number(appQuietPeriodsMatch[1]);

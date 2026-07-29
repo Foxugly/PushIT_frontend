@@ -82,6 +82,22 @@ test('application detail view renders linked devices and notifications', async (
   await expect(page.getByRole('heading', { name: 'Statut' })).toBeVisible();
 });
 
+test('the owner evicts a subscriber from the application', async ({ page }) => {
+  await page.goto('/dashboard/applications/10');
+
+  const deviceRow = page.locator('tr', { hasText: 'iPhone Marie' });
+  await expect(deviceRow).toBeVisible();
+  await deviceRow.getByRole('button', { name: "Retirer de l'application" }).click();
+
+  await expect(page.getByRole('dialog', { name: 'Confirmation' })).toBeVisible();
+  await page.getByRole('button', { name: 'Confirmer' }).click();
+
+  await expect(page.getByText("Terminal retiré de l'application.")).toBeVisible();
+  await expect(page.locator('tr', { hasText: 'iPhone Marie' })).toHaveCount(0);
+  // Rotating the enrolment code is the companion gesture — the page says so.
+  await expect(page.getByText("changez aussi le code", { exact: false })).toBeVisible();
+});
+
 test('notification detail view renders targeted devices', async ({ page }) => {
   await page.goto('/dashboard/notifications/30');
 

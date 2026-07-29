@@ -200,6 +200,16 @@ export class PushitApiService {
     return this.http.delete<void>(this.url(`/apps/${appId}/logo/`));
   }
 
+  /**
+   * Remove a subscriber from an application (owner side). Deactivates the link
+   * only — the device belongs to somebody else and may be linked to other
+   * applications. Note this does not prevent a comeback: whoever still holds the
+   * enrolment code can link again, so rotating the code is the companion gesture.
+   */
+  evictDeviceFromApp(appId: number, deviceId: number): Observable<void> {
+    return this.http.delete<void>(this.url(`/apps/${appId}/devices/${deviceId}/`));
+  }
+
   listAppQuietPeriods(appId: number): Observable<ApplicationQuietPeriod[]> {
     return this.http.get<ApplicationQuietPeriod[]>(this.url(`/apps/${appId}/quiet-periods/`));
   }

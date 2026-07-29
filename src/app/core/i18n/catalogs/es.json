@@ -683,6 +683,13 @@
       },
       "devicesTitle": "Dispositivos vinculados",
       "devicesEmpty": "No hay ningún dispositivo vinculado a esta aplicación.",
+      "evict": {
+        "button": "Quitar de la aplicación",
+        "hint": "Quitar un dispositivo interrumpe los envíos hacia él. Mientras conozca el código de inscripción podrá volver a suscribirse: cambia también el código.",
+        "confirm": "¿Quitar «{device}» de «{name}»? Este dispositivo dejará de recibir las notificaciones de esta aplicación. Podrá volver a suscribirse mientras no se cambie el código de inscripción.",
+        "success": "Dispositivo quitado de la aplicación.",
+        "error": "No se ha podido quitar este dispositivo."
+      },
       "notificationsTitle": "Notificaciones",
       "notificationsEmpty": "No hay ninguna notificación vinculada a esta aplicación.",
       "quietPeriodsTitle": "Periodos de silencio",

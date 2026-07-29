@@ -683,6 +683,13 @@
       },
       "devicesTitle": "Gekoppelde devices",
       "devicesEmpty": "Geen devices gekoppeld aan deze applicatie.",
+      "evict": {
+        "button": "Uit de applicatie verwijderen",
+        "hint": "Een device verwijderen stopt de verzending ernaartoe. Zolang het de inschrijvingscode kent, kan het zich opnieuw abonneren — vervang ook de code.",
+        "confirm": "„{device}” uit „{name}” verwijderen? Dit device ontvangt geen meldingen meer van deze applicatie. Het kan zich opnieuw abonneren zolang de inschrijvingscode niet is vervangen.",
+        "success": "Device uit de applicatie verwijderd.",
+        "error": "Kan dit device niet verwijderen."
+      },
       "notificationsTitle": "Notificaties",
       "notificationsEmpty": "Geen notificaties gekoppeld aan deze applicatie.",
       "quietPeriodsTitle": "Stille periodes",

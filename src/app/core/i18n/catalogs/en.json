@@ -683,6 +683,13 @@
       },
       "devicesTitle": "Linked devices",
       "devicesEmpty": "No devices linked to this application.",
+      "evict": {
+        "button": "Remove from the application",
+        "hint": "Removing a device stops sending to it. As long as it knows the enrolment code it can subscribe again — rotate the code as well.",
+        "confirm": "Remove “{device}” from “{name}”? This device will no longer receive notifications from this application. It can subscribe again until the enrolment code is rotated.",
+        "success": "Device removed from the application.",
+        "error": "Could not remove this device."
+      },
       "notificationsTitle": "Notifications",
       "notificationsEmpty": "No notifications linked to this application.",
       "quietPeriodsTitle": "Quiet periods",
