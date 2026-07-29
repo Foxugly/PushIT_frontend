@@ -740,7 +740,7 @@
       "enrolmentTitle": "Enrôlement",
       "sendTokensTitle": "Jetons d'émission",
       "examplesTitle": "Exemples d'envoi",
-      "legacyWarning": "Cette application émet encore avec l'ancien jeton applicatif. Ce jeton finira par être refusé à l'émission : créez un jeton d'émission ci-dessous et remplacez-le dans votre intégration.",
+      "legacyWarning": "Cette application a émis avec l'ancien jeton applicatif, qui n'est plus accepté à l'émission depuis le 29/07/2026. Si un envoi échoue avec « app_token_retired », créez un jeton d'émission ci-dessous et remplacez-le dans votre intégration. L'enrôlement des terminaux, lui, continue de fonctionner.",
       "devicesTitle": "Devices liés",
       "devicesEmpty": "Aucun device lié à cette application.",
       "evict": {

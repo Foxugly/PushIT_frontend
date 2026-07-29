@@ -741,7 +741,7 @@
       "enrolmentTitle": "Inscripción",
       "sendTokensTitle": "Tokens de envío",
       "examplesTitle": "Ejemplos de envío",
-      "legacyWarning": "Esta aplicación todavía envía con el antiguo token de aplicación. Ese token acabará siendo rechazado para el envío: crea abajo un token de envío y sustitúyelo en tu integración.",
+      "legacyWarning": "Esta aplicación ha enviado con el antiguo token de aplicación, que desde el 29/07/2026 ya no se acepta para el envío. Si un envío falla con «app_token_retired», crea abajo un token de envío y sustitúyelo en tu integración. La inscripción de dispositivos sigue funcionando.",
       "devicesEmpty": "No hay ningún dispositivo vinculado a esta aplicación.",
       "evict": {
         "button": "Quitar de la aplicación",

@@ -741,7 +741,7 @@
       "enrolmentTitle": "Enrolment",
       "sendTokensTitle": "Send tokens",
       "examplesTitle": "Sending examples",
-      "legacyWarning": "This application still sends with the legacy app token. That token will eventually be refused for sending: create a send token below and swap it into your integration.",
+      "legacyWarning": "This application has sent with the legacy app token, which is no longer accepted for sending since 2026-07-29. If a send fails with “app_token_retired”, create a send token below and swap it into your integration. Device enrolment keeps working.",
       "devicesEmpty": "No devices linked to this application.",
       "evict": {
         "button": "Remove from the application",
