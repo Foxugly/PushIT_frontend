@@ -1,5 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
@@ -21,6 +22,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
   styleUrl: './magic-link-page.scss',
 })
 export class MagicLinkPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly api = inject(PushitApiService);
   private readonly session = inject(SessionService);

@@ -1,6 +1,7 @@
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -37,6 +38,7 @@ interface NotificationMetric {
   styleUrl: './admin-status-page.scss',
 })
 export class AdminStatusPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly settings = inject(SettingsService);
@@ -115,7 +117,7 @@ export class AdminStatusPage implements OnInit {
     this.error.set(null);
     this.api
       .getAdminStatus()
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
       .subscribe({
         next: (status) => this.status.set(status),
         error: (error) => this.error.set(coerceApiError(error)),

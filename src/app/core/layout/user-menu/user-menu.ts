@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -22,6 +23,7 @@ import { SessionService } from '../../services/session.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserMenu {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly api = inject(PushitApiService);
   readonly session = inject(SessionService);

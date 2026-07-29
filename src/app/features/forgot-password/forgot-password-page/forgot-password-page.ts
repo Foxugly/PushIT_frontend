@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
   OnDestroy,
   ViewChild,
@@ -9,6 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -29,6 +31,7 @@ import { TurnstileController } from '../../../shared/turnstile/turnstile';
   styleUrl: './forgot-password-page.scss',
 })
 export class ForgotPasswordPage implements AfterViewInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
