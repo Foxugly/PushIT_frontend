@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.code-examples__intro,
+.code-examples__env {
+  margin: 0 0 0.5rem;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.code-examples__env {
+  margin-bottom: 0.9rem;
+  font-size: 0.82rem;
+}
+
+.code-examples__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.code-examples__code {
+  margin: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--border, rgba(16, 185, 129, 0.16));
+  border-radius: 10px;
+  background: var(--surface-muted, rgba(246, 249, 255, 0.95));
+  /* Wide snippets scroll inside their own box — the page must never scroll
+     horizontally. */
+  overflow-x: auto;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}

@@ -11,6 +11,7 @@ import {
   ApplicationActivationResponse,
   ApplicationCreateRequest,
   ApplicationCreateResponse,
+  ApplicationEnrolmentCodeResponse,
   ApplicationQuietPeriod,
   ApplicationRead,
   ApplicationRegenerateEmailResponse,
@@ -36,6 +37,9 @@ import {
   QuietPeriodWrite,
   RegisterPendingResponse,
   RegisterRequest,
+  SendToken,
+  SendTokenCreateResponse,
+  SendTokenRevealResponse,
   UserMe,
   UserMeUpdateRequest,
 } from '../models/api.models';
@@ -187,6 +191,51 @@ export class PushitApiService {
       this.url(`/apps/${appId}/qrcode/`),
       { app_token: appToken },
       { responseType: 'blob' },
+    );
+  }
+
+  /**
+   * QR code of the application's enrolment code. A plain GET: the code is
+   * stored in clear server-side because it is meant to be distributed, so the
+   * console can ask for it again at any time — unlike the legacy token QR,
+   * which needed the raw token and became unreachable once the page reloaded.
+   */
+  getEnrolmentQrCode(appId: number): Observable<Blob> {
+    return this.http.get(this.url(`/apps/${appId}/qrcode/`), { responseType: 'blob' });
+  }
+
+  /**
+   * Draw a new enrolment code. Closes the door to newcomers; **evicts nobody** —
+   * already-linked devices stay linked (see evictDeviceFromApp).
+   */
+  rotateEnrolmentCode(appId: number): Observable<ApplicationEnrolmentCodeResponse> {
+    return this.http.post<ApplicationEnrolmentCodeResponse>(
+      this.url(`/apps/${appId}/rotate-enrolment-code/`),
+      {},
+    );
+  }
+
+  listSendTokens(appId: number): Observable<SendToken[]> {
+    return this.http.get<SendToken[]>(this.url(`/apps/${appId}/send-tokens/`));
+  }
+
+  /** Returns the raw token — shown once, then only via reveal. */
+  createSendToken(appId: number, name: string): Observable<SendTokenCreateResponse> {
+    return this.http.post<SendTokenCreateResponse>(this.url(`/apps/${appId}/send-tokens/`), { name });
+  }
+
+  revokeSendToken(appId: number, tokenId: number): Observable<void> {
+    return this.http.delete<void>(this.url(`/apps/${appId}/send-tokens/${tokenId}/`));
+  }
+
+  /**
+   * Show a send token again. The password is re-asked by the backend: an open
+   * session is not enough to re-read a secret.
+   */
+  revealSendToken(appId: number, tokenId: number, password: string): Observable<SendTokenRevealResponse> {
+    return this.http.post<SendTokenRevealResponse>(
+      this.url(`/apps/${appId}/send-tokens/${tokenId}/reveal/`),
+      { password },
     );
   }
 

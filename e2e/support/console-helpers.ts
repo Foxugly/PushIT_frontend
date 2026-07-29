@@ -13,6 +13,11 @@ type Application = {
   name: string;
   description: string;
   app_token_prefix: string;
+  // Distributed in clear (the QR carries it); never a send credential.
+  enrolment_code: string;
+  enrolment_code_rotated_at: string | null;
+  // Non-null = this application still SENDS with the legacy token.
+  legacy_send_last_used_at: string | null;
   inbound_email_alias: string;
   inbound_email_address: string;
   is_active: boolean;
@@ -46,6 +51,16 @@ type Notification = {
   sent_at: string | null;
 };
 
+type SendToken = {
+  id: number;
+  name: string;
+  prefix: string;
+  created_at: string;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  is_active: boolean;
+};
+
 type QuietPeriod = unknown[];
 
 type ConsoleState = {
@@ -57,6 +72,7 @@ type ConsoleState = {
   stats?: Array<{ status: string; count: number }>;
   appQuietPeriods?: Record<number, QuietPeriod>;
   deviceQuietPeriods?: Record<number, QuietPeriod>;
+  sendTokens?: Record<number, SendToken[]>;
 };
 
 export async function seedAuthenticatedSession(page: Page, user: User): Promise<void> {
@@ -96,6 +112,7 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     stats: initialState.stats ?? [],
     appQuietPeriods: { ...(initialState.appQuietPeriods ?? {}) },
     deviceQuietPeriods: { ...(initialState.deviceQuietPeriods ?? {}) },
+    sendTokens: { ...(initialState.sendTokens ?? {}) },
   };
 
   await page.route('**/api/v1/**', async (route) => {
@@ -122,6 +139,9 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
         name: payload.name ?? '',
         description: payload.description ?? '',
         app_token_prefix: `apt_new${id}`,
+        enrolment_code: `apk_new${id}code`,
+        enrolment_code_rotated_at: null,
+        legacy_send_last_used_at: null,
         inbound_email_alias: `apt_new${id}alias`,
         inbound_email_address: `apt_new${id}alias@pushit.com`,
         is_active: true,
@@ -133,10 +153,79 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
       return fulfillJson(route, 201, { ...created, app_token: `apt_new${id}_rawsecret` });
     }
 
-    // QR-code PNG for an app token: a 1x1 transparent PNG is enough for the
-    // reveal surface to render an <img> (the data: URL is read client-side).
+    // Send tokens: list / create / revoke / reveal. The raw value is served by
+    // the creation and by a reveal that re-checks the password — never by the
+    // list, which is the whole point of the split.
+    const sendTokensMatch = path.match(/\/api\/v1\/apps\/(\d+)\/send-tokens\/$/);
+    if (sendTokensMatch && method === 'GET') {
+      const appId = Number(sendTokensMatch[1]);
+      return fulfillJson(route, 200, state.sendTokens?.[appId] ?? []);
+    }
+    if (sendTokensMatch && method === 'POST') {
+      const appId = Number(sendTokensMatch[1]);
+      const payload = (request.postDataJSON() ?? {}) as { name?: string };
+      const existing = state.sendTokens?.[appId] ?? [];
+      const created: SendToken = {
+        id: existing.reduce((max, item) => Math.max(max, item.id), 0) + 1,
+        name: payload.name ?? '',
+        prefix: 'apt_new1',
+        created_at: new Date().toISOString(),
+        last_used_at: null,
+        revoked_at: null,
+        is_active: true,
+      };
+      state.sendTokens = { ...state.sendTokens, [appId]: [...existing, created] };
+      return fulfillJson(route, 201, { ...created, token: 'apt_new1rawsecret000000' });
+    }
+
+    const sendTokenRevealMatch = path.match(/\/api\/v1\/apps\/(\d+)\/send-tokens\/(\d+)\/reveal\/$/);
+    if (sendTokenRevealMatch && method === 'POST') {
+      const payload = (request.postDataJSON() ?? {}) as { password?: string };
+      if (payload.password !== 'hunter2') {
+        return fulfillJson(route, 403, { code: 'invalid_password', detail: 'Mot de passe incorrect.' });
+      }
+      return fulfillJson(route, 200, { token: 'apt_revealedrawsecret00' });
+    }
+
+    const sendTokenMatch = path.match(/\/api\/v1\/apps\/(\d+)\/send-tokens\/(\d+)\/$/);
+    if (sendTokenMatch && method === 'DELETE') {
+      const appId = Number(sendTokenMatch[1]);
+      const tokenId = Number(sendTokenMatch[2]);
+      state.sendTokens = {
+        ...state.sendTokens,
+        [appId]: (state.sendTokens?.[appId] ?? []).map((item) =>
+          item.id === tokenId
+            ? { ...item, is_active: false, revoked_at: new Date().toISOString() }
+            : item,
+        ),
+      };
+      return route.fulfill({ status: 204, body: '' });
+    }
+
+    // Rotate the enrolment code: closes the door to newcomers, evicts nobody —
+    // the device links are deliberately left untouched here, like server-side.
+    const rotateMatch = path.match(/\/api\/v1\/apps\/(\d+)\/rotate-enrolment-code\/$/);
+    if (rotateMatch && method === 'POST') {
+      const appId = Number(rotateMatch[1]);
+      const rotatedAt = new Date().toISOString();
+      const code = `apk_rotated${appId}`;
+      state.apps = state.apps.map((item) =>
+        item.id === appId
+          ? { ...item, enrolment_code: code, enrolment_code_rotated_at: rotatedAt }
+          : item,
+      );
+      return fulfillJson(route, 200, {
+        app_id: appId,
+        enrolment_code: code,
+        enrolment_code_rotated_at: rotatedAt,
+      });
+    }
+
+    // QR-code PNG: a 1x1 transparent PNG is enough for the surfaces to render an
+    // <img> (the data: URL is read client-side). GET encodes the enrolment code,
+    // POST is the legacy token form.
     const appQrMatch = path.match(/\/api\/v1\/apps\/(\d+)\/qrcode\/$/);
-    if (appQrMatch && method === 'POST') {
+    if (appQrMatch && (method === 'POST' || method === 'GET')) {
       return route.fulfill({
         status: 200,
         contentType: 'image/png',

@@ -659,6 +659,62 @@
         "differentEndTime": "De eindtijd moet verschillen van de begintijd."
       }
     },
+    "enrolment": {
+      "intro": "Deze code is bedoeld om rond te gaan: uw ontvangers scannen hem om uw meldingen te ontvangen. Hij geeft geen recht om te verzenden.",
+      "copy": "Code kopiëren",
+      "copied": "Code gekopieerd.",
+      "copyFailed": "Kan de code niet kopiëren.",
+      "qrAlt": "QR-code van de inschrijvingscode",
+      "qrLoading": "QR-code genereren...",
+      "qrError": "Kan de QR-code niet genereren.",
+      "scanHint": "Laat deze QR-code scannen vanuit de mobiele PushIT-app.",
+      "downloadQr": "QR downloaden",
+      "rotate": "Nieuwe code",
+      "rotatePending": "Genereren...",
+      "rotateWarning": "Een nieuwe code sluit de deur voor toekomstige koppelingen. Ze verwijdert niemand: al gekoppelde devices blijven ontvangen. Gebruik de lijst met devices hieronder om er een te verwijderen.",
+      "rotateConfirm": "Een nieuwe inschrijvingscode voor „{name}” genereren? De huidige code werkt daarna niet meer; al gekoppelde devices blijven ongemoeid.",
+      "rotated": "Nieuwe inschrijvingscode gegenereerd.",
+      "rotateError": "Kan geen nieuwe code genereren."
+    },
+    "sendTokens": {
+      "intro": "Een verzendtoken geeft het recht om te verzenden. Het is het enige geheim van de applicatie: geef het nooit samen met de inschrijvingscode. Met meerdere tokens vervangt u er één zonder onderbreking — maak het nieuwe aan, rol het uit en trek daarna het oude in.",
+      "loading": "Tokens laden...",
+      "empty": "Nog geen verzendtoken. Maak er een aan om vanuit uw code te verzenden.",
+      "nameLabel": "Naam van het token",
+      "namePlaceholder": "prod, nachtelijk script, ...",
+      "create": "Token aanmaken",
+      "createPending": "Aanmaken...",
+      "createdNotice": "Kopieer dit token nu: het wordt niet opnieuw zo getoond. U kunt het later terugzien door uw wachtwoord opnieuw in te voeren.",
+      "createdDone": "Gekopieerd",
+      "table": {
+        "name": "Naam",
+        "prefix": "Voorvoegsel",
+        "lastUsed": "Laatst gebruikt",
+        "status": "Status",
+        "actions": "Acties"
+      },
+      "activeLabel": "actief",
+      "revokedLabel": "ingetrokken",
+      "never": "Nooit",
+      "reveal": "Token opnieuw tonen",
+      "revealHint": "Voer uw wachtwoord opnieuw in: een openstaande sessie volstaat niet om een geheim te herlezen.",
+      "revealSubmit": "Tonen",
+      "revealPending": "Controleren...",
+      "revealTtl": "Het token verbergt zichzelf na enkele seconden.",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "Uw wachtwoord",
+      "cancel": "Annuleren",
+      "hide": "Verbergen",
+      "revoke": "Intrekken",
+      "revokeConfirm": "Het token „{name}” intrekken? Alles wat ermee verzendt, stopt onmiddellijk met werken.",
+      "revokedBanner": "Token ingetrokken."
+    },
+    "codeExamples": {
+      "intro": "Een melding verzenden vanuit uw code, met een verzendtoken.",
+      "envNotice": "De voorbeelden lezen het token uit de omgevingsvariabele PUSHIT_TOKEN — plak het nooit hard in een repository. De applicatie-id is daarentegen geen geheim.",
+      "copy": "Voorbeeld kopiëren",
+      "copied": "Gekopieerd"
+    },
     "applicationDetail": {
       "back": "Terug naar applicaties",
       "eyebrow": "Applicatie",
@@ -682,6 +738,10 @@
         "sender": "De afzender moet het e-mailadres van de eigenaar van de applicatie zijn."
       },
       "devicesTitle": "Gekoppelde devices",
+      "enrolmentTitle": "Inschrijving",
+      "sendTokensTitle": "Verzendtokens",
+      "examplesTitle": "Verzendvoorbeelden",
+      "legacyWarning": "Deze applicatie verzendt nog met het oude applicatietoken. Dat token wordt op termijn geweigerd voor verzending: maak hieronder een verzendtoken aan en vervang het in uw integratie.",
       "devicesEmpty": "Geen devices gekoppeld aan deze applicatie.",
       "evict": {
         "button": "Uit de applicatie verwijderen",

@@ -1,0 +1,66 @@
+:host {
+  display: block;
+}
+
+.enrolment {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.enrolment__intro,
+.enrolment__hint {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.enrolment__code {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+  border-radius: 10px;
+  background: var(--surface-muted, rgba(246, 249, 255, 0.95));
+}
+
+.enrolment__code code {
+  flex: 1 1 auto;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.enrolment__qr {
+  width: 14rem;
+  height: 14rem;
+  image-rendering: pixelated;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.enrolment__rotate {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.enrolment__warning {
+  margin: 0;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warn);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  text-align: left;
+}
