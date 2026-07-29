@@ -683,6 +683,13 @@
       },
       "devicesTitle": "Device collegati",
       "devicesEmpty": "Nessun device collegato a questa applicazione.",
+      "evict": {
+        "button": "Rimuovi dall'applicazione",
+        "hint": "Rimuovere un device interrompe gli invii verso di esso. Finché conosce il codice di iscrizione può iscriversi di nuovo: cambia anche il codice.",
+        "confirm": "Rimuovere «{device}» da «{name}»? Questo device non riceverà più le notifiche di questa applicazione. Potrà iscriversi di nuovo finché il codice di iscrizione non viene cambiato.",
+        "success": "Device rimosso dall'applicazione.",
+        "error": "Impossibile rimuovere questo device."
+      },
       "notificationsTitle": "Notifiche",
       "notificationsEmpty": "Nessuna notifica collegata a questa applicazione.",
       "quietPeriodsTitle": "Periodi di silenzio",

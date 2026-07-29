@@ -683,6 +683,13 @@
       },
       "devicesTitle": "Devices liés",
       "devicesEmpty": "Aucun device lié à cette application.",
+      "evict": {
+        "button": "Retirer de l'application",
+        "hint": "Retirer un terminal coupe les envois vers lui. Tant qu'il connaît le code d'enrôlement, il peut se réabonner : changez aussi le code.",
+        "confirm": "Retirer « {device} » de « {name} » ? Ce terminal ne recevra plus les notifications de cette application. Il pourra se réabonner tant que le code d'enrôlement n'a pas changé.",
+        "success": "Terminal retiré de l'application.",
+        "error": "Impossible de retirer ce terminal."
+      },
       "notificationsTitle": "Notifications",
       "notificationsEmpty": "Aucune notification liée à cette application.",
       "quietPeriodsTitle": "Périodes blanches",

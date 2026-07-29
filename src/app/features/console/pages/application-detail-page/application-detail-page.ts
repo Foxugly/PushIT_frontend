@@ -80,6 +80,8 @@ export class ApplicationDetailPage implements OnInit {
   readonly bannerTone = signal<AppAlertTone>('success');
   readonly editError = signal<ApiErrorResponse | null>(null);
   readonly emailRegenerating = signal(false);
+  /** Id of the device being evicted, to keep the spinner on its own row. */
+  readonly evicting = signal<number | null>(null);
   readonly aliasChecking = signal(false);
   readonly aliasStatus = signal<AliasStatus | null>(null);
 
@@ -298,6 +300,45 @@ export class ApplicationDetailPage implements OnInit {
         error: () => {
           this.bannerTone.set('danger');
           this.banner.set(this.copy().regenerateEmail.error);
+        },
+      });
+  }
+
+  /**
+   * Remove a subscriber from this application. The device itself survives — it
+   * belongs to somebody else — and only the link to this application is cut.
+   * The confirmation says the other half out loud: eviction alone does not keep
+   * them out, since the enrolment code they scanned still works.
+   */
+  async evictDevice(device: DeviceRead): Promise<void> {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+
+    const confirmed = await this.confirm.ask({
+      message: interpolate(this.copy().evict.confirm, {
+        device: device.device_name || String(device.id),
+        name: app.name,
+      }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    this.evicting.set(device.id);
+    this.api
+      .evictDeviceFromApp(app.id, device.id)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.evicting.set(null)))
+      .subscribe({
+        next: () => {
+          this.devices.update((devices) => devices.filter((item) => item.id !== device.id));
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().evict.success);
+        },
+        error: () => {
+          this.bannerTone.set('danger');
+          this.banner.set(this.copy().evict.error);
         },
       });
   }

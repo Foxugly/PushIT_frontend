@@ -47,7 +47,9 @@ describe('ApplicationDetailPage', () => {
       'regenerateAppEmail',
       'getAliasStatus',
       'getAppQrCode',
+      'evictDeviceFromApp',
     ]);
+    api.evictDeviceFromApp.and.returnValue(of(void 0));
     api.getAppQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
@@ -125,6 +127,13 @@ describe('ApplicationDetailPage', () => {
           },
           devicesTitle: 'Devices',
           devicesEmpty: 'Aucun device',
+          evict: {
+            button: 'Retirer',
+            hint: 'Retirer ne suffit pas : changez aussi le code.',
+            confirm: 'Retirer {device} de {name} ?',
+            success: 'Terminal retire.',
+            error: 'Retrait impossible.',
+          },
           notificationsTitle: 'Notifications',
           notificationsEmpty: 'Aucune notification',
           quietPeriodsTitle: 'Periodes blanches',
@@ -306,6 +315,29 @@ describe('ApplicationDetailPage', () => {
     expect(component.banner()).toBe('Nouvelle adresse generee.');
     expect(component.bannerTone()).toBe('success');
     expect(shell.loadShell).toHaveBeenCalledWith(101);
+  });
+
+  it('evicts a subscriber and drops it from the list', async () => {
+    fixture.detectChanges();
+    expect(component.devices().map((device) => device.id)).toEqual([201]);
+
+    await component.evictDevice(component.devices()[0]);
+
+    expect(api.evictDeviceFromApp).toHaveBeenCalledWith(101, 201);
+    expect(component.devices()).toEqual([]);
+    expect(component.banner()).toBe('Terminal retire.');
+    expect(component.bannerTone()).toBe('success');
+  });
+
+  it('keeps the subscriber when the confirmation is declined', async () => {
+    fixture.detectChanges();
+    const confirmService = TestBed.inject(AppConfirmService);
+    spyOn(confirmService, 'ask').and.resolveTo(false);
+
+    await component.evictDevice(component.devices()[0]);
+
+    expect(api.evictDeviceFromApp).not.toHaveBeenCalled();
+    expect(component.devices().length).toBe(1);
   });
 
   it('shows an active alias when provisioned is true', () => {
