@@ -659,6 +659,62 @@
         "differentEndTime": "L'heure de fin doit être différente de l'heure de début."
       }
     },
+    "enrolment": {
+      "intro": "Ce code est fait pour circuler : c'est lui que vos destinataires scannent pour recevoir vos notifications. Il n'autorise aucun envoi.",
+      "copy": "Copier le code",
+      "copied": "Code copié.",
+      "copyFailed": "Impossible de copier le code.",
+      "qrAlt": "QR code du code d'enrôlement",
+      "qrLoading": "Génération du QR code...",
+      "qrError": "Impossible de générer le QR code.",
+      "scanHint": "Faites scanner ce QR code depuis l'application mobile PushIT.",
+      "downloadQr": "Télécharger le QR",
+      "rotate": "Nouveau code",
+      "rotatePending": "Génération...",
+      "rotateWarning": "Un nouveau code ferme la porte aux futurs rattachements. Il ne retire personne : les terminaux déjà rattachés continuent de recevoir. Pour en retirer un, utilisez la liste des terminaux ci-dessous.",
+      "rotateConfirm": "Générer un nouveau code d'enrôlement pour « {name} » ? L'ancien code cessera de fonctionner ; les terminaux déjà rattachés ne sont pas touchés.",
+      "rotated": "Nouveau code d'enrôlement généré.",
+      "rotateError": "Impossible de générer un nouveau code."
+    },
+    "sendTokens": {
+      "intro": "Un jeton d'émission autorise l'envoi. C'est le seul secret de l'application : ne le distribuez jamais avec le code d'enrôlement. Plusieurs jetons permettent d'en remplacer un sans interruption — créez le nouveau, déployez-le, puis révoquez l'ancien.",
+      "loading": "Chargement des jetons...",
+      "empty": "Aucun jeton d'émission. Créez-en un pour envoyer depuis votre code.",
+      "nameLabel": "Nom du jeton",
+      "namePlaceholder": "prod, script de nuit, ...",
+      "create": "Créer un jeton",
+      "createPending": "Création...",
+      "createdNotice": "Copiez ce jeton maintenant : il ne sera plus affiché tel quel. Vous pourrez le revoir en re-saisissant votre mot de passe.",
+      "createdDone": "J'ai copié",
+      "table": {
+        "name": "Nom",
+        "prefix": "Préfixe",
+        "lastUsed": "Dernier usage",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "activeLabel": "actif",
+      "revokedLabel": "révoqué",
+      "never": "Jamais",
+      "reveal": "Revoir le jeton",
+      "revealHint": "Re-saisissez votre mot de passe : une session ouverte ne suffit pas à relire un secret.",
+      "revealSubmit": "Afficher",
+      "revealPending": "Vérification...",
+      "revealTtl": "Le jeton se masque automatiquement après quelques secondes.",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Votre mot de passe",
+      "cancel": "Annuler",
+      "hide": "Masquer",
+      "revoke": "Révoquer",
+      "revokeConfirm": "Révoquer le jeton « {name} » ? Tout envoi qui l'utilise cessera immédiatement de fonctionner.",
+      "revokedBanner": "Jeton révoqué."
+    },
+    "codeExamples": {
+      "intro": "Envoyer une notification depuis votre code, avec un jeton d'émission.",
+      "envNotice": "Les exemples lisent le jeton depuis la variable d'environnement PUSHIT_TOKEN — ne le collez jamais en dur dans un dépôt. L'identifiant d'application, lui, n'est pas un secret.",
+      "copy": "Copier l'exemple",
+      "copied": "Copié"
+    },
     "applicationDetail": {
       "back": "Retour aux applications",
       "eyebrow": "Application",
@@ -681,6 +737,10 @@
         "schedule": "Planification possible avec [SEND_AT:ISO_DATETIME] dans le sujet.",
         "sender": "L'expéditeur doit être l'email du propriétaire de l'application."
       },
+      "enrolmentTitle": "Enrôlement",
+      "sendTokensTitle": "Jetons d'émission",
+      "examplesTitle": "Exemples d'envoi",
+      "legacyWarning": "Cette application émet encore avec l'ancien jeton applicatif. Ce jeton finira par être refusé à l'émission : créez un jeton d'émission ci-dessous et remplacez-le dans votre intégration.",
       "devicesTitle": "Devices liés",
       "devicesEmpty": "Aucun device lié à cette application.",
       "evict": {

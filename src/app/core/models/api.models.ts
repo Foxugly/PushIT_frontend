@@ -79,6 +79,20 @@ export interface ApplicationRead {
   name: string;
   description: string;
   app_token_prefix: string;
+  /**
+   * The enrolment code (`apk_…`): what the QR carries and what every recipient
+   * ends up holding. Served in clear on purpose — it is not a secret, and
+   * hiding it behind a reveal would suggest otherwise. It only opens enrolment;
+   * sending goes through a separate, secret token (see SendToken).
+   */
+  enrolment_code: string;
+  enrolment_code_rotated_at: string | null;
+  /**
+   * Last time this application SENT using the legacy token. Non-null means
+   * switching that token off would break somebody's integration — the console
+   * says so on the application's page.
+   */
+  legacy_send_last_used_at: string | null;
   inbound_email_alias: string;
   inbound_email_address: string;
   logo: string | null;
@@ -86,6 +100,36 @@ export interface ApplicationRead {
   revoked_at: string | null;
   last_used_at: string | null;
   created_at: string;
+}
+
+/**
+ * A send token: what actually authorises an emission. Multiple per application
+ * so a compromised one can be replaced without an interruption — create the new
+ * one, deploy it, then revoke the old.
+ */
+export interface SendToken {
+  id: number;
+  name: string;
+  prefix: string;
+  created_at: string;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  is_active: boolean;
+}
+
+/** Creation returns the raw value — the only time it is served unasked. */
+export interface SendTokenCreateResponse extends SendToken {
+  token: string;
+}
+
+export interface SendTokenRevealResponse {
+  token: string;
+}
+
+export interface ApplicationEnrolmentCodeResponse {
+  app_id: number;
+  enrolment_code: string;
+  enrolment_code_rotated_at: string | null;
 }
 
 export interface ApplicationCreateRequest {

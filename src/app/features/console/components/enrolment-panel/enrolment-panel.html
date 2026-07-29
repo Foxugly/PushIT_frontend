@@ -1,0 +1,49 @@
+<div class="enrolment" data-testid="enrolment-panel">
+  @if (banner()) {
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
+  }
+
+  <p class="enrolment__intro">{{ copy().intro }}</p>
+
+  <div class="enrolment__code">
+    <code data-testid="enrolment-code">{{ currentCode() }}</code>
+    <p-button
+      icon="pi pi-copy"
+      [text]="true"
+      [rounded]="true"
+      [ariaLabel]="copy().copy"
+      [pTooltip]="copy().copy"
+      tooltipPosition="top"
+      (onClick)="copyCode()"
+    />
+  </div>
+
+  @if (qrImageUrl(); as url) {
+    <img class="enrolment__qr" [src]="url" [alt]="copy().qrAlt" />
+    <p class="enrolment__hint">{{ copy().scanHint }}</p>
+    <p-button
+      icon="pi pi-download"
+      [label]="copy().downloadQr"
+      severity="secondary"
+      size="small"
+      (onClick)="downloadQr()"
+    />
+  } @else if (qrLoading()) {
+    <p class="console-muted">{{ copy().qrLoading }}</p>
+  } @else if (qrError(); as err) {
+    <app-alert [message]="err" tone="danger" (dismissed)="qrError.set(null)" />
+  }
+
+  <div class="enrolment__rotate">
+    <p class="enrolment__warning" role="note">{{ copy().rotateWarning }}</p>
+    <p-button
+      icon="pi pi-refresh"
+      severity="warn"
+      size="small"
+      [outlined]="true"
+      [label]="rotating() ? copy().rotatePending : copy().rotate"
+      [loading]="rotating()"
+      (onClick)="rotate()"
+    />
+  </div>
+</div>

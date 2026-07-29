@@ -21,6 +21,9 @@ test.beforeEach(async ({ page }) => {
         name: 'PushIT Mobile',
         description: 'Application mobile',
         app_token_prefix: 'apt_12345678',
+        enrolment_code: 'apk_Ab12Cd34Ef56',
+        enrolment_code_rotated_at: null,
+        legacy_send_last_used_at: null,
         inbound_email_alias: 'apt_fc4471fe12345678',
         inbound_email_address: 'apt_fc4471fe12345678@pushit.com',
         is_active: true,
@@ -80,6 +83,40 @@ test('application detail view renders linked devices and notifications', async (
   await expect(page.getByRole('heading', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByText('Promo flash')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Statut' })).toBeVisible();
+});
+
+test('the enrolment block shows the code and warns that rotating evicts nobody', async ({ page }) => {
+  await page.goto('/dashboard/applications/10');
+
+  const panel = page.getByTestId('enrolment-panel');
+  await expect(panel.getByTestId('enrolment-code')).toHaveText('apk_Ab12Cd34Ef56');
+  await expect(panel.getByText('Il ne retire personne', { exact: false })).toBeVisible();
+
+  await panel.getByRole('button', { name: 'Nouveau code' }).click();
+  await expect(page.getByRole('dialog', { name: 'Confirmation' })).toBeVisible();
+  await page.getByRole('button', { name: 'Confirmer' }).click();
+
+  await expect(panel.getByTestId('enrolment-code')).toHaveText('apk_rotated10');
+});
+
+test('a send token is shown once at creation, then only behind the password', async ({ page }) => {
+  await page.goto('/dashboard/applications/10');
+
+  const panel = page.getByTestId('send-tokens-panel');
+  await panel.getByPlaceholder('prod, script de nuit, ...').fill('prod');
+  await panel.getByRole('button', { name: 'Créer un jeton' }).click();
+
+  // Served once by the creation itself…
+  await expect(panel.getByTestId('created-send-token')).toHaveText('apt_new1rawsecret000000');
+  await panel.getByRole('button', { name: "J'ai copié" }).click();
+  await expect(panel.getByTestId('created-send-token')).toHaveCount(0);
+
+  // …then only by a reveal that re-asks the password.
+  await panel.getByRole('button', { name: 'Revoir le jeton' }).click();
+  await panel.getByPlaceholder('Votre mot de passe').fill('hunter2');
+  await panel.getByRole('button', { name: 'Afficher', exact: true }).click();
+
+  await expect(panel.getByTestId('revealed-send-token')).toHaveText('apt_revealedrawsecret00');
 });
 
 test('the owner evicts a subscriber from the application', async ({ page }) => {

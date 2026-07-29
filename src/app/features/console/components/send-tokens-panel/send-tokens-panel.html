@@ -1,0 +1,142 @@
+<div class="send-tokens" data-testid="send-tokens-panel">
+  <p class="send-tokens__intro">{{ copy().intro }}</p>
+
+  @if (error(); as err) {
+    <app-alert [message]="err | apiError" tone="danger" (dismissed)="error.set(null)" />
+  }
+  @if (banner()) {
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
+  }
+
+  @if (createdToken(); as created) {
+    <div class="send-tokens__created" role="status">
+      <p class="send-tokens__created-notice">{{ copy().createdNotice }}</p>
+      <code data-testid="created-send-token">{{ created }}</code>
+      <p-button
+        [label]="copy().createdDone"
+        severity="secondary"
+        size="small"
+        (onClick)="createdToken.set(null)"
+      />
+    </div>
+  }
+
+  <form class="send-tokens__create" (ngSubmit)="create()">
+    <input
+      pInputText
+      type="text"
+      name="tokenName"
+      [ngModel]="newName()"
+      (ngModelChange)="newName.set($event)"
+      [placeholder]="copy().namePlaceholder"
+      [attr.aria-label]="copy().nameLabel"
+      maxlength="60"
+    />
+    <p-button
+      type="submit"
+      icon="pi pi-plus"
+      severity="success"
+      size="small"
+      [label]="creating() ? copy().createPending : copy().create"
+      [loading]="creating()"
+      [disabled]="!newName().trim()"
+    />
+  </form>
+
+  @if (loading() && !tokens().length) {
+    <p class="console-muted">{{ copy().loading }}</p>
+  } @else if (tokens().length) {
+    <p-table [value]="tokens()" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ copy().table.name }}</th>
+          <th>{{ copy().table.prefix }}</th>
+          <th>{{ copy().table.lastUsed }}</th>
+          <th>{{ copy().table.status }}</th>
+          <th class="console-table__actions">{{ copy().table.actions }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-token>
+        <tr>
+          <td class="console-table__name"><strong>{{ token.name }}</strong></td>
+          <td><code>{{ token.prefix }}…</code></td>
+          <td>{{ formatDateTime(token.last_used_at) }}</td>
+          <td>
+            <p-tag
+              [value]="token.is_active ? copy().activeLabel : copy().revokedLabel"
+              [severity]="tokenSeverity(token)"
+            />
+          </td>
+          <td class="console-table__actions">
+            <div class="console-icon-actions">
+              @if (token.is_active) {
+                <p-button
+                  icon="pi pi-eye"
+                  severity="info"
+                  [text]="true"
+                  [rounded]="true"
+                  [ariaLabel]="copy().reveal"
+                  [pTooltip]="copy().reveal"
+                  tooltipPosition="top"
+                  (onClick)="openReveal(token)"
+                />
+                <p-button
+                  icon="pi pi-ban"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [ariaLabel]="copy().revoke"
+                  [pTooltip]="copy().revoke"
+                  tooltipPosition="top"
+                  (onClick)="revoke(token)"
+                />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else {
+    <p class="console-muted">{{ copy().empty }}</p>
+  }
+
+  @if (revealingId() !== null) {
+    <div class="send-tokens__reveal">
+      <p class="send-tokens__reveal-hint">{{ copy().revealHint }}</p>
+
+      @if (revealedToken(); as revealed) {
+        <div class="send-tokens__revealed">
+          <code data-testid="revealed-send-token">{{ revealed }}</code>
+          <p-button [label]="copy().hide" severity="secondary" size="small" (onClick)="hideRevealed()" />
+        </div>
+        <p class="send-tokens__reveal-ttl">{{ copy().revealTtl }}</p>
+      } @else {
+        <form class="send-tokens__reveal-form" (ngSubmit)="reveal()">
+          <input
+            pInputText
+            type="password"
+            name="revealPassword"
+            autocomplete="current-password"
+            [ngModel]="revealPassword()"
+            (ngModelChange)="revealPassword.set($event)"
+            [placeholder]="copy().passwordPlaceholder"
+            [attr.aria-label]="copy().passwordLabel"
+          />
+          <p-button
+            type="submit"
+            [label]="revealPending() ? copy().revealPending : copy().revealSubmit"
+            severity="info"
+            size="small"
+            [loading]="revealPending()"
+            [disabled]="!revealPassword()"
+          />
+          <p-button [label]="copy().cancel" severity="secondary" size="small" [text]="true" (onClick)="closeReveal()" />
+        </form>
+      }
+
+      @if (revealError(); as revErr) {
+        <app-alert [message]="revErr | apiError" tone="danger" (dismissed)="revealError.set(null)" />
+      }
+    </div>
+  }
+</div>

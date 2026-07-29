@@ -659,6 +659,62 @@
         "differentEndTime": "L'ora di fine deve essere diversa dall'ora di inizio."
       }
     },
+    "enrolment": {
+      "intro": "Questo codice è fatto per circolare: è quello che i destinatari scansionano per ricevere le notifiche. Non autorizza alcun invio.",
+      "copy": "Copia il codice",
+      "copied": "Codice copiato.",
+      "copyFailed": "Impossibile copiare il codice.",
+      "qrAlt": "QR code del codice di iscrizione",
+      "qrLoading": "Generazione del QR code...",
+      "qrError": "Impossibile generare il QR code.",
+      "scanHint": "Fai scansionare questo QR code dall'app mobile PushIT.",
+      "downloadQr": "Scarica il QR",
+      "rotate": "Nuovo codice",
+      "rotatePending": "Generazione...",
+      "rotateWarning": "Un nuovo codice chiude la porta ai collegamenti futuri. Non rimuove nessuno: i device già collegati continuano a ricevere. Per rimuoverne uno, usa l'elenco dei device qui sotto.",
+      "rotateConfirm": "Generare un nuovo codice di iscrizione per «{name}»? Il codice attuale smetterà di funzionare; i device già collegati non sono toccati.",
+      "rotated": "Nuovo codice di iscrizione generato.",
+      "rotateError": "Impossibile generare un nuovo codice."
+    },
+    "sendTokens": {
+      "intro": "Un token di invio autorizza l'invio. È l'unico segreto dell'applicazione: non distribuirlo mai insieme al codice di iscrizione. Più token permettono di sostituirne uno senza interruzioni — crea il nuovo, distribuiscilo, poi revoca il vecchio.",
+      "loading": "Caricamento dei token...",
+      "empty": "Nessun token di invio. Creane uno per inviare dal tuo codice.",
+      "nameLabel": "Nome del token",
+      "namePlaceholder": "prod, script notturno, ...",
+      "create": "Crea un token",
+      "createPending": "Creazione...",
+      "createdNotice": "Copia questo token ora: non verrà più mostrato così. Potrai rivederlo reinserendo la password.",
+      "createdDone": "Copiato",
+      "table": {
+        "name": "Nome",
+        "prefix": "Prefisso",
+        "lastUsed": "Ultimo utilizzo",
+        "status": "Stato",
+        "actions": "Azioni"
+      },
+      "activeLabel": "attivo",
+      "revokedLabel": "revocato",
+      "never": "Mai",
+      "reveal": "Rivedi il token",
+      "revealHint": "Reinserisci la password: una sessione aperta non basta per rileggere un segreto.",
+      "revealSubmit": "Mostra",
+      "revealPending": "Verifica...",
+      "revealTtl": "Il token si nasconde da solo dopo qualche secondo.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "La tua password",
+      "cancel": "Annulla",
+      "hide": "Nascondi",
+      "revoke": "Revoca",
+      "revokeConfirm": "Revocare il token «{name}»? Tutto ciò che invia con esso smette subito di funzionare.",
+      "revokedBanner": "Token revocato."
+    },
+    "codeExamples": {
+      "intro": "Inviare una notifica dal tuo codice, con un token di invio.",
+      "envNotice": "Gli esempi leggono il token dalla variabile d'ambiente PUSHIT_TOKEN — non incollarlo mai in chiaro in un repository. L'identificativo dell'applicazione, invece, non è un segreto.",
+      "copy": "Copia l'esempio",
+      "copied": "Copiato"
+    },
     "applicationDetail": {
       "back": "Torna alle applicazioni",
       "eyebrow": "Applicazione",
@@ -682,6 +738,10 @@
         "sender": "Il mittente deve essere l'email del proprietario dell'applicazione."
       },
       "devicesTitle": "Device collegati",
+      "enrolmentTitle": "Iscrizione",
+      "sendTokensTitle": "Token di invio",
+      "examplesTitle": "Esempi di invio",
+      "legacyWarning": "Questa applicazione invia ancora con il vecchio token applicativo. Quel token verrà prima o poi rifiutato in invio: crea un token di invio qui sotto e sostituiscilo nella tua integrazione.",
       "devicesEmpty": "Nessun device collegato a questa applicazione.",
       "evict": {
         "button": "Rimuovi dall'applicazione",

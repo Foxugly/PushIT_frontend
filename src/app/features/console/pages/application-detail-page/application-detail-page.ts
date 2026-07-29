@@ -32,6 +32,10 @@ import { PageHeader } from '../../../../shared/page-header/page-header';
 import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
 import { ConsoleFactsTable } from '../../components/console-facts-table/console-facts-table';
 import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
+import { CodeExamples } from '../../components/code-examples/code-examples';
+import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel';
+import { SendTokensPanel } from '../../components/send-tokens-panel/send-tokens-panel';
+import { SettingsService } from '../../../../core/services/settings.service';
 
 @Component({
   selector: 'app-application-detail-page',
@@ -43,6 +47,9 @@ import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reve
     PageHeader,
     ConsoleFactsTable,
     AppTokenReveal,
+    CodeExamples,
+    EnrolmentPanel,
+    SendTokensPanel,
     ButtonModule,
     TagModule,
     TableModule,
@@ -58,7 +65,9 @@ export class ApplicationDetailPage implements OnInit {
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly confirm = inject(AppConfirmService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly settings = inject(SettingsService);
   readonly shell = inject(ConsoleShellService);
+  readonly apiBaseUrl = computed(() => this.settings.apiBaseUrl());
   readonly copy = computed(() => this.consoleCopy.current().applicationDetail);
   // The one-time token reveal (QR + token) reuses the `applications` copy block
   // (qr.* labels + alerts.created guidance) so the surface matches the list.
@@ -122,6 +131,15 @@ export class ApplicationDetailPage implements OnInit {
     return app && last && last.appId === app.id ? last.token : null;
   });
 
+  /**
+   * True while this application still SENDS with the legacy token. Switching
+   * that token off (the plan's last step) would break whoever is behind this —
+   * so the page says it out loud instead of letting the day arrive by surprise.
+   */
+  readonly stillSendsWithLegacyToken = computed(
+    () => this.application()?.legacy_send_last_used_at != null,
+  );
+
   readonly applicationFactsComputed = computed(() => {
     const app = this.application();
     if (!app) {
@@ -169,6 +187,13 @@ export class ApplicationDetailPage implements OnInit {
 
   retryRelated(): void {
     this.loadRelated(this.appId);
+  }
+
+  /** Keep the page's application in sync after the enrolment panel rotated. */
+  onEnrolmentCodeRotated(code: string): void {
+    this.application.update((app) =>
+      app ? { ...app, enrolment_code: code, enrolment_code_rotated_at: new Date().toISOString() } : app,
+    );
   }
 
   appSeverity(app: ApplicationRead): 'success' | 'secondary' {

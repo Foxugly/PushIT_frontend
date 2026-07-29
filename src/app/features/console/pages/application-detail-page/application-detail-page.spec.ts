@@ -48,8 +48,13 @@ describe('ApplicationDetailPage', () => {
       'getAliasStatus',
       'getAppQrCode',
       'evictDeviceFromApp',
+      'getEnrolmentQrCode',
+      'rotateEnrolmentCode',
+      'listSendTokens',
     ]);
     api.evictDeviceFromApp.and.returnValue(of(void 0));
+    api.getEnrolmentQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
+    api.listSendTokens.and.returnValue(of([]));
     api.getAppQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
@@ -104,8 +109,62 @@ describe('ApplicationDetailPage', () => {
             created: 'Application creee. Ouvrez le QR code pour voir le token.',
           },
         },
+        enrolment: {
+          intro: 'Ce code circule.',
+          copy: 'Copier le code',
+          copied: 'Code copie.',
+          copyFailed: 'Copie impossible.',
+          qrAlt: 'QR du code',
+          qrLoading: 'Generation...',
+          qrError: 'QR impossible.',
+          scanHint: 'Faites scanner ce QR.',
+          downloadQr: 'Telecharger le QR',
+          rotate: 'Nouveau code',
+          rotatePending: 'Generation...',
+          rotateWarning: 'Un nouveau code ne retire personne.',
+          rotateConfirm: 'Nouveau code pour {name} ?',
+          rotated: 'Nouveau code genere.',
+          rotateError: 'Generation impossible.',
+        },
+        sendTokens: {
+          intro: 'Un jeton d emission autorise l envoi.',
+          loading: 'Chargement...',
+          empty: 'Aucun jeton',
+          nameLabel: 'Nom',
+          namePlaceholder: 'prod',
+          create: 'Creer',
+          createPending: 'Creation...',
+          createdNotice: 'Copiez ce jeton maintenant.',
+          createdDone: 'J ai copie',
+          table: { name: 'Nom', prefix: 'Prefixe', lastUsed: 'Dernier usage', status: 'Statut', actions: 'Actions' },
+          activeLabel: 'actif',
+          revokedLabel: 'revoque',
+          never: 'Jamais',
+          reveal: 'Revoir',
+          revealHint: 'Re-saisissez votre mot de passe.',
+          revealSubmit: 'Afficher',
+          revealPending: 'Verification...',
+          revealTtl: 'Masquage automatique.',
+          passwordLabel: 'Mot de passe',
+          passwordPlaceholder: 'Mot de passe',
+          cancel: 'Annuler',
+          hide: 'Masquer',
+          revoke: 'Revoquer',
+          revokeConfirm: 'Revoquer {name} ?',
+          revokedBanner: 'Jeton revoque.',
+        },
+        codeExamples: {
+          intro: 'Envoyer depuis votre code.',
+          envNotice: 'Le jeton vient de PUSHIT_TOKEN.',
+          copy: 'Copier',
+          copied: 'Copie',
+        },
         applicationDetail: {
           back: 'Retour',
+          enrolmentTitle: 'Enrolement',
+          sendTokensTitle: 'Jetons d emission',
+          examplesTitle: 'Exemples',
+          legacyWarning: 'Cette application emet encore avec l ancien jeton.',
           eyebrow: 'Application',
           fallbackTitle: 'Application',
           editTooltip: 'Editer',
@@ -338,6 +397,33 @@ describe('ApplicationDetailPage', () => {
 
     expect(api.evictDeviceFromApp).not.toHaveBeenCalled();
     expect(component.devices().length).toBe(1);
+  });
+
+  it('warns only while the application still sends with the legacy token', () => {
+    fixture.detectChanges();
+    expect(component.stillSendsWithLegacyToken()).toBeFalse();
+    expect(fixture.nativeElement.textContent).not.toContain(
+      "Cette application emet encore avec l ancien jeton.",
+    );
+
+    component.application.set(
+      makeApplication({ legacy_send_last_used_at: '2026-07-29T10:00:00Z' }),
+    );
+    fixture.detectChanges();
+
+    expect(component.stillSendsWithLegacyToken()).toBeTrue();
+    expect(fixture.nativeElement.textContent).toContain(
+      "Cette application emet encore avec l ancien jeton.",
+    );
+  });
+
+  it('keeps the displayed enrolment code in sync after a rotation', () => {
+    fixture.detectChanges();
+
+    component.onEnrolmentCodeRotated('apk_Zz99Yy88Xx77');
+
+    expect(component.application()?.enrolment_code).toBe('apk_Zz99Yy88Xx77');
+    expect(component.application()?.enrolment_code_rotated_at).not.toBeNull();
   });
 
   it('shows an active alias when provisioned is true', () => {

@@ -659,6 +659,62 @@
         "differentEndTime": "La hora de fin debe ser diferente de la hora de inicio."
       }
     },
+    "enrolment": {
+      "intro": "Este código está hecho para circular: es lo que escanean tus destinatarios para recibir tus notificaciones. No autoriza ningún envío.",
+      "copy": "Copiar el código",
+      "copied": "Código copiado.",
+      "copyFailed": "No se ha podido copiar el código.",
+      "qrAlt": "Código QR del código de inscripción",
+      "qrLoading": "Generando el código QR...",
+      "qrError": "No se ha podido generar el código QR.",
+      "scanHint": "Haz escanear este código QR desde la aplicación móvil PushIT.",
+      "downloadQr": "Descargar el QR",
+      "rotate": "Nuevo código",
+      "rotatePending": "Generando...",
+      "rotateWarning": "Un código nuevo cierra la puerta a las futuras vinculaciones. No quita a nadie: los dispositivos ya vinculados siguen recibiendo. Para quitar uno, usa la lista de dispositivos de abajo.",
+      "rotateConfirm": "¿Generar un nuevo código de inscripción para «{name}»? El código actual dejará de funcionar; los dispositivos ya vinculados no se ven afectados.",
+      "rotated": "Nuevo código de inscripción generado.",
+      "rotateError": "No se ha podido generar un código nuevo."
+    },
+    "sendTokens": {
+      "intro": "Un token de envío autoriza el envío. Es el único secreto de la aplicación: no lo repartas nunca junto al código de inscripción. Varios tokens permiten sustituir uno sin interrupción — crea el nuevo, despliégalo y luego revoca el antiguo.",
+      "loading": "Cargando los tokens...",
+      "empty": "Ningún token de envío. Crea uno para enviar desde tu código.",
+      "nameLabel": "Nombre del token",
+      "namePlaceholder": "prod, script nocturno, ...",
+      "create": "Crear un token",
+      "createPending": "Creando...",
+      "createdNotice": "Copia este token ahora: no volverá a mostrarse así. Podrás verlo de nuevo volviendo a escribir tu contraseña.",
+      "createdDone": "Copiado",
+      "table": {
+        "name": "Nombre",
+        "prefix": "Prefijo",
+        "lastUsed": "Último uso",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "activeLabel": "activo",
+      "revokedLabel": "revocado",
+      "never": "Nunca",
+      "reveal": "Volver a ver el token",
+      "revealHint": "Vuelve a escribir tu contraseña: una sesión abierta no basta para releer un secreto.",
+      "revealSubmit": "Mostrar",
+      "revealPending": "Comprobando...",
+      "revealTtl": "El token se oculta solo al cabo de unos segundos.",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "cancel": "Cancelar",
+      "hide": "Ocultar",
+      "revoke": "Revocar",
+      "revokeConfirm": "¿Revocar el token «{name}»? Todo lo que envíe con él dejará de funcionar inmediatamente.",
+      "revokedBanner": "Token revocado."
+    },
+    "codeExamples": {
+      "intro": "Enviar una notificación desde tu código, con un token de envío.",
+      "envNotice": "Los ejemplos leen el token de la variable de entorno PUSHIT_TOKEN — no lo pegues nunca en claro en un repositorio. El identificador de aplicación, en cambio, no es un secreto.",
+      "copy": "Copiar el ejemplo",
+      "copied": "Copiado"
+    },
     "applicationDetail": {
       "back": "Volver a las aplicaciones",
       "eyebrow": "Aplicación",
@@ -682,6 +738,10 @@
         "sender": "El remitente debe ser el correo electrónico del propietario de la aplicación."
       },
       "devicesTitle": "Dispositivos vinculados",
+      "enrolmentTitle": "Inscripción",
+      "sendTokensTitle": "Tokens de envío",
+      "examplesTitle": "Ejemplos de envío",
+      "legacyWarning": "Esta aplicación todavía envía con el antiguo token de aplicación. Ese token acabará siendo rechazado para el envío: crea abajo un token de envío y sustitúyelo en tu integración.",
       "devicesEmpty": "No hay ningún dispositivo vinculado a esta aplicación.",
       "evict": {
         "button": "Quitar de la aplicación",

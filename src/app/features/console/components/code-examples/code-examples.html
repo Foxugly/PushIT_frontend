@@ -1,0 +1,28 @@
+<div class="code-examples" data-testid="code-examples">
+  <p class="code-examples__intro">{{ copy().intro }}</p>
+  <p class="code-examples__env">{{ copy().envNotice }}</p>
+
+  <p-tabs [(value)]="activeTab" class="code-examples__tabs">
+    <p-tablist>
+      @for (example of examples(); track example.key) {
+        <p-tab [value]="example.key">{{ example.label }}</p-tab>
+      }
+    </p-tablist>
+    <p-tabpanels>
+      @for (example of examples(); track example.key) {
+        <p-tabpanel [value]="example.key">
+          <div class="code-examples__actions">
+            <p-button
+              icon="pi pi-copy"
+              size="small"
+              severity="secondary"
+              [label]="copied() === example.key ? copy().copied : copy().copy"
+              (onClick)="copyExample(example)"
+            />
+          </div>
+          <pre class="code-examples__code"><code>{{ example.code }}</code></pre>
+        </p-tabpanel>
+      }
+    </p-tabpanels>
+  </p-tabs>
+</div>

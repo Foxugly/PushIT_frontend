@@ -659,6 +659,62 @@
         "differentEndTime": "End time must differ from start time."
       }
     },
+    "enrolment": {
+      "intro": "This code is meant to circulate: it is what your recipients scan to receive your notifications. It authorises no sending.",
+      "copy": "Copy the code",
+      "copied": "Code copied.",
+      "copyFailed": "Could not copy the code.",
+      "qrAlt": "QR code of the enrolment code",
+      "qrLoading": "Generating the QR code...",
+      "qrError": "Could not generate the QR code.",
+      "scanHint": "Have this QR code scanned from the PushIT mobile app.",
+      "downloadQr": "Download the QR",
+      "rotate": "New code",
+      "rotatePending": "Generating...",
+      "rotateWarning": "A new code closes the door to future links. It removes nobody: already-linked devices keep receiving. To remove one, use the device list below.",
+      "rotateConfirm": "Draw a new enrolment code for “{name}”? The current code will stop working; already-linked devices are untouched.",
+      "rotated": "New enrolment code generated.",
+      "rotateError": "Could not generate a new code."
+    },
+    "sendTokens": {
+      "intro": "A send token authorises sending. It is the application's only secret: never hand it out with the enrolment code. Several tokens let you replace one without an interruption — create the new one, deploy it, then revoke the old.",
+      "loading": "Loading tokens...",
+      "empty": "No send token yet. Create one to send from your code.",
+      "nameLabel": "Token name",
+      "namePlaceholder": "prod, nightly script, ...",
+      "create": "Create a token",
+      "createPending": "Creating...",
+      "createdNotice": "Copy this token now: it will not be shown like this again. You can see it again by re-entering your password.",
+      "createdDone": "Copied",
+      "table": {
+        "name": "Name",
+        "prefix": "Prefix",
+        "lastUsed": "Last used",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "activeLabel": "active",
+      "revokedLabel": "revoked",
+      "never": "Never",
+      "reveal": "Show the token again",
+      "revealHint": "Re-enter your password: an open session is not enough to re-read a secret.",
+      "revealSubmit": "Show",
+      "revealPending": "Checking...",
+      "revealTtl": "The token hides itself after a few seconds.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Your password",
+      "cancel": "Cancel",
+      "hide": "Hide",
+      "revoke": "Revoke",
+      "revokeConfirm": "Revoke the token “{name}”? Anything sending with it stops working immediately.",
+      "revokedBanner": "Token revoked."
+    },
+    "codeExamples": {
+      "intro": "Send a notification from your code, using a send token.",
+      "envNotice": "The examples read the token from the PUSHIT_TOKEN environment variable — never paste it into a repository. The application id, on the other hand, is not a secret.",
+      "copy": "Copy the example",
+      "copied": "Copied"
+    },
     "applicationDetail": {
       "back": "Back to applications",
       "eyebrow": "Application",
@@ -682,6 +738,10 @@
         "sender": "The sender must be the application owner email address."
       },
       "devicesTitle": "Linked devices",
+      "enrolmentTitle": "Enrolment",
+      "sendTokensTitle": "Send tokens",
+      "examplesTitle": "Sending examples",
+      "legacyWarning": "This application still sends with the legacy app token. That token will eventually be refused for sending: create a send token below and swap it into your integration.",
       "devicesEmpty": "No devices linked to this application.",
       "evict": {
         "button": "Remove from the application",
