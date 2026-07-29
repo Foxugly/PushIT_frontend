@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -43,6 +44,7 @@ import { PageHeader } from '../../../../shared/page-header/page-header';
   styleUrl: './accounts-page.scss',
 })
 export class AccountsPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly staff = inject(StaffService);
   private readonly consoleCopy = inject(ConsoleCopyService);
 

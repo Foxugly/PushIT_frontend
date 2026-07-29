@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal, Signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, Signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -56,6 +57,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
   styleUrl: './notification-detail-page.scss',
 })
 export class NotificationDetailPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
@@ -272,7 +274,7 @@ export class NotificationDetailPage implements OnInit {
         message: rawValue.message,
         scheduled_for: this.toIsoOrNull(rawValue.scheduled_for),
       })
-      .pipe(finalize(() => this.saving.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.saving.set(false)))
       .subscribe({
         next: (updatedNotification) => {
           this.notification.set(updatedNotification);
@@ -290,10 +292,10 @@ export class NotificationDetailPage implements OnInit {
 
     forkJoin({
       notification: this.api.getNotification(notificationId),
-      futureNotification: this.api.getFutureNotification(notificationId).pipe(catchError(() => of(null))),
+      futureNotification: this.api.getFutureNotification(notificationId).pipe(takeUntilDestroyed(this.destroyRef), catchError(() => of(null))),
       devices: this.api.listDevices(),
     })
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
       .subscribe({
         next: ({ notification, futureNotification, devices }) => {
           const currentNotification = futureNotification ?? notification;

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
@@ -15,6 +16,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
   styleUrl: './check-email-page.scss',
 })
 export class CheckEmailPage {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly api = inject(PushitApiService);
   private readonly router = inject(Router);
@@ -34,7 +36,7 @@ export class CheckEmailPage {
     this.resendPending.set(true);
     this.api
       .resendConfirmation(this.email())
-      .pipe(finalize(() => this.resendPending.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.resendPending.set(false)))
       .subscribe({ next: () => this.resent.set(true), error: () => this.resent.set(true) });
   }
 }

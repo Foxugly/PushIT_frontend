@@ -1,5 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -33,6 +34,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   styleUrl: './reset-password-page.scss',
 })
 export class ResetPasswordPage {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
@@ -73,7 +75,7 @@ export class ResetPasswordPage {
 
     this.api
       .resetPassword(this.uid, this.token, this.form.getRawValue().password)
-      .pipe(finalize(() => this.pending.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.pending.set(false)))
       .subscribe({
         next: () => this.succeeded.set(true),
         error: (err) => this.error.set(coerceApiError(err)),

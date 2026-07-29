@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
   OnDestroy,
   ViewChild,
@@ -11,6 +12,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -48,6 +50,7 @@ import { TurnstileController } from '../turnstile/turnstile';
   styleUrl: './register-panel.scss',
 })
 export class RegisterPanel implements AfterViewInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly api = inject(PushitApiService);
@@ -117,7 +120,7 @@ export class RegisterPanel implements AfterViewInit, OnDestroy {
 
     this.api
       .register({ ...registerPayload, ...(this.turnstile.enabled ? { turnstile_token: turnstileToken } : {}) })
-      .pipe(finalize(() => this.pending.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.pending.set(false)))
       .subscribe({
         next: (pending) => {
           // Account created, pending email confirmation — no auto-login anymore.

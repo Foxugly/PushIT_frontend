@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -54,6 +55,7 @@ const LIVE_STATUSES = new Set(['active', 'trialing']);
   styleUrl: './billing-page.scss',
 })
 export class BillingPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly billing = inject(BillingService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly i18n = inject(PublicI18nService);

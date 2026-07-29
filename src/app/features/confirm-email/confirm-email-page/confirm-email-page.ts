@@ -1,5 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -23,6 +24,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
   styleUrl: './confirm-email-page.scss',
 })
 export class ConfirmEmailPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly api = inject(PushitApiService);
   private readonly session = inject(SessionService);
@@ -53,7 +55,7 @@ export class ConfirmEmailPage implements OnInit {
 
     this.api
       .confirmEmail(this.uid, this.token)
-      .pipe(finalize(() => this.confirming.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.confirming.set(false)))
       .subscribe({
         next: (response) => {
           this.session.startSession(response, true);
@@ -73,7 +75,7 @@ export class ConfirmEmailPage implements OnInit {
     this.resendError.set(null);
     this.api
       .resendConfirmation(this.resendForm.getRawValue().email)
-      .pipe(finalize(() => this.resendPending.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.resendPending.set(false)))
       .subscribe({
         next: () => this.resent.set(true),
         error: (err: unknown) => this.handleResendError(err),

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   ElementRef,
   OnDestroy,
   computed,
@@ -9,6 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -43,6 +45,7 @@ import { TurnstileController } from '../../../shared/turnstile/turnstile';
   styleUrl: './auth-page.scss',
 })
 export class AuthPage implements OnDestroy {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly api = inject(PushitApiService);
@@ -104,7 +107,7 @@ export class AuthPage implements OnDestroy {
         email: this.loginForm.getRawValue().email,
         password: this.loginForm.getRawValue().password,
       })
-      .pipe(finalize(() => this.loginPending.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loginPending.set(false)))
       .subscribe({
         next: (response) => {
           this.session.startSession(response, this.loginForm.getRawValue().rememberMe);
@@ -159,7 +162,7 @@ export class AuthPage implements OnDestroy {
 
     this.api
       .requestMagicLink(this.magicForm.getRawValue().email, turnstileToken || undefined)
-      .pipe(finalize(() => this.magicPending.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.magicPending.set(false)))
       .subscribe({
         next: () => this.magicSent.set(true),
         error: (error) => {

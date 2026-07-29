@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -62,6 +63,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
   styleUrl: './device-detail-page.scss',
 })
 export class DeviceDetailPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
@@ -188,7 +190,7 @@ export class DeviceDetailPage implements OnInit {
 
     this.api
       .updateDevice(currentDevice.id, this.editForm.getRawValue())
-      .pipe(finalize(() => this.saving.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.saving.set(false)))
       .subscribe({
         next: (updatedDevice) => {
           this.device.set(updatedDevice);
@@ -253,7 +255,7 @@ export class DeviceDetailPage implements OnInit {
     this.notifError.set(null);
     this.api
       .listDeviceNotifications(currentDevice.id, { page, application_id: this.notifAppFilter() })
-      .pipe(finalize(() => this.notifLoading.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.notifLoading.set(false)))
       .subscribe({
         next: (response) => {
           this.deviceNotifications.set(response.results);
@@ -283,7 +285,7 @@ export class DeviceDetailPage implements OnInit {
 
     this.api
       .getDevice(deviceId)
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
       .subscribe({
         next: (device) => {
           this.device.set(device);
