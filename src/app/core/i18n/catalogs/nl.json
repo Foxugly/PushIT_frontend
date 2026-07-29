@@ -741,7 +741,7 @@
       "enrolmentTitle": "Inschrijving",
       "sendTokensTitle": "Verzendtokens",
       "examplesTitle": "Verzendvoorbeelden",
-      "legacyWarning": "Deze applicatie verzendt nog met het oude applicatietoken. Dat token wordt op termijn geweigerd voor verzending: maak hieronder een verzendtoken aan en vervang het in uw integratie.",
+      "legacyWarning": "Deze applicatie heeft verzonden met het oude applicatietoken, dat sinds 29-07-2026 niet meer wordt aanvaard om te verzenden. Mislukt een verzending met „app_token_retired”, maak hieronder dan een verzendtoken aan en vervang het in uw integratie. Het koppelen van toestellen blijft werken.",
       "devicesEmpty": "Geen devices gekoppeld aan deze applicatie.",
       "evict": {
         "button": "Uit de applicatie verwijderen",

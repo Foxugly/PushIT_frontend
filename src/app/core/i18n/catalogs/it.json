@@ -741,7 +741,7 @@
       "enrolmentTitle": "Iscrizione",
       "sendTokensTitle": "Token di invio",
       "examplesTitle": "Esempi di invio",
-      "legacyWarning": "Questa applicazione invia ancora con il vecchio token applicativo. Quel token verrà prima o poi rifiutato in invio: crea un token di invio qui sotto e sostituiscilo nella tua integrazione.",
+      "legacyWarning": "Questa applicazione ha inviato con il vecchio token applicativo, che dal 29/07/2026 non è più accettato in invio. Se un invio fallisce con «app_token_retired», crea un token di invio qui sotto e sostituiscilo nella tua integrazione. L'iscrizione dei device continua a funzionare.",
       "devicesEmpty": "Nessun device collegato a questa applicazione.",
       "evict": {
         "button": "Rimuovi dall'applicazione",
