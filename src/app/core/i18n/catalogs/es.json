@@ -143,7 +143,12 @@
       "magicSent": "Si ese email está registrado, se acaba de enviar un enlace de acceso.",
       "magicBack": "Volver al acceso con contraseña",
       "magicCaptchaRequired": "Completa el captcha.",
-      "magicCaptchaFailed": "La verificación del captcha falló. Inténtalo de nuevo."
+      "magicCaptchaFailed": "La verificación del captcha falló. Inténtalo de nuevo.",
+      "validation": {
+        "emailRequired": "El correo electrónico es obligatorio.",
+        "emailInvalid": "Introduce una dirección de correo electrónico válida.",
+        "passwordRequired": "La contraseña es obligatoria."
+      }
     },
     "registerPage": {
       "eyebrow": "Registrarse",

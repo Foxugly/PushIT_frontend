@@ -143,7 +143,12 @@
       "magicSent": "If that email is registered, a sign-in link has just been sent.",
       "magicBack": "Back to password sign-in",
       "magicCaptchaRequired": "Please complete the captcha.",
-      "magicCaptchaFailed": "Captcha verification failed. Please try again."
+      "magicCaptchaFailed": "Captcha verification failed. Please try again.",
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required."
+      }
     },
     "registerPage": {
       "eyebrow": "Sign up",

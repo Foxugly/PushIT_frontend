@@ -13,6 +13,16 @@
       <span>{{ copy().email }}</span>
       <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
     </label>
+    <!-- Validation cliente : sans ce bloc, le markAllAsTouched() de
+         submitLogin() n'avait aucun effet visible et un submit invalide ne
+         produisait rien du tout. Même motif que register-panel.html. -->
+    @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+      @if (loginForm.controls.email.errors?.['required']) {
+        <p class="public-field-error">{{ copy().validation.emailRequired }}</p>
+      } @else if (loginForm.controls.email.errors?.['email']) {
+        <p class="public-field-error">{{ copy().validation.emailInvalid }}</p>
+      }
+    }
     @for (message of fieldErrors(loginError(), 'email'); track message) {
       <p class="public-field-error">{{ message }}</p>
     }
@@ -28,6 +38,9 @@
         inputStyleClass="auth-password__input"
       />
     </label>
+    @if (loginForm.controls.password.touched && loginForm.controls.password.errors?.['required']) {
+      <p class="public-field-error">{{ copy().validation.passwordRequired }}</p>
+    }
     @for (message of fieldErrors(loginError(), 'password'); track message) {
       <p class="public-field-error">{{ message }}</p>
     }
@@ -89,6 +102,17 @@
       <span>{{ copy().email }}</span>
       <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" autocomplete="email" />
     </label>
+    <!-- Sans ce bloc, cliquer « Envoyer le lien » avec un email vide ne
+         produisait AUCUN retour : submitMagic() sortait sur magicForm.invalid
+         et les seules erreurs affichées venaient de magicError(), c'est-à-dire
+         de la réponse serveur — jamais atteinte puisque rien n'était envoyé. -->
+    @if (magicForm.controls.email.touched && magicForm.controls.email.invalid) {
+      @if (magicForm.controls.email.errors?.['required']) {
+        <p class="public-field-error">{{ copy().validation.emailRequired }}</p>
+      } @else if (magicForm.controls.email.errors?.['email']) {
+        <p class="public-field-error">{{ copy().validation.emailInvalid }}</p>
+      }
+    }
     @for (message of fieldErrors(magicError(), 'email'); track message) {
       <p class="public-field-error">{{ message }}</p>
     }

@@ -14,6 +14,16 @@ PushIT is a push notification management platform. This repository is the **Angu
 - **Unit tests:** `npm test` (Vitest via `@angular/build:unit-test`, watches by default)
 - **Unit tests (CI):** `npm run test:ci` (jsdom, coverage check)
 - **E2E tests:** `npm run test:e2e` (builds then runs Playwright against Chromium)
+  - **Diagnostiquer un échec e2e en CI** : le job archive `playwright-report` et
+    `playwright-traces` (uniquement `if: failure()`). Télécharger le second et ouvrir
+    la trace avec `npx playwright show-trace trace.zip` — DOM, réseau et console à
+    chaque étape. Pas de `retries` sur CI, délibérément : un retry masquerait les
+    tests instables au lieu de les signaler.
+  - **Piège** : ne jamais enchaîner un `click` qui change de formulaire et un `fill`
+    sans attendre le nouveau bloc. `auth-page.html` rend deux `input[type="email"]`
+    (`@if (!magicMode())` / `@else`) ; le `fill` pouvait atterrir dans celui qui
+    allait disparaître. Attendre un élément propre au nouveau bloc, puis verrouiller
+    la saisie avec `toHaveValue`.
 - **Single test file:** `ng test --include=**/path-to-spec.ts`
 
 ## Coverage Thresholds
