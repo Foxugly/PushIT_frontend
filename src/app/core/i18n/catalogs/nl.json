@@ -143,7 +143,12 @@
       "magicSent": "Als dat e-mailadres geregistreerd is, is er zojuist een inloglink verzonden.",
       "magicBack": "Terug naar aanmelden met wachtwoord",
       "magicCaptchaRequired": "Voltooi de captcha.",
-      "magicCaptchaFailed": "Captcha-verificatie mislukt. Probeer het opnieuw."
+      "magicCaptchaFailed": "Captcha-verificatie mislukt. Probeer het opnieuw.",
+      "validation": {
+        "emailRequired": "E-mail is verplicht.",
+        "emailInvalid": "Voer een geldig e-mailadres in.",
+        "passwordRequired": "Wachtwoord is verplicht."
+      }
     },
     "registerPage": {
       "eyebrow": "Registratie",

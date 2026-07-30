@@ -62,6 +62,11 @@ describe('AuthPage', () => {
           magicBack: 'Retour',
           magicCaptchaRequired: 'Captcha requis.',
           magicCaptchaFailed: 'Captcha échoué.',
+          validation: {
+            emailRequired: "L'email est requis.",
+            emailInvalid: 'Saisissez une adresse email valide.',
+            passwordRequired: 'Le mot de passe est requis.',
+          },
         },
       }),
     };
@@ -169,6 +174,33 @@ describe('AuthPage', () => {
     component.submitMagic();
 
     expect(api.requestMagicLink).not.toHaveBeenCalled();
+  });
+
+  // Les deux tests suivants assertent le DOM, pas seulement l'etat du
+  // composant : le defaut corrige ici etait justement invisible cote etat.
+  // submitMagic() sortait bien sur magicForm.invalid, mais l'utilisateur ne
+  // voyait STRICTEMENT rien -- les seules erreurs rendues venaient de
+  // magicError(), c'est-a-dire de la reponse serveur, jamais atteinte.
+  it('tells the visitor why an empty magic-link request went nowhere', () => {
+    component.enterMagicMode();
+    fixture.detectChanges();
+
+    component.submitMagic();
+    fixture.detectChanges();
+
+    expect(api.requestMagicLink).not.toHaveBeenCalled();
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain("L'email est requis.");
+  });
+
+  it('tells the visitor why an empty login went nowhere', () => {
+    component.submitLogin();
+    fixture.detectChanges();
+
+    expect(api.login).not.toHaveBeenCalled();
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain("L'email est requis.");
+    expect(text).toContain('Le mot de passe est requis.');
   });
 
   it('redirects an unconfirmed account to the check-email page (no dead-end error)', () => {
