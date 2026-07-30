@@ -30,9 +30,26 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('a visitor can switch to magic-link mode and request a sign-in link', async ({ page }) => {
+  // ---- INSTRUMENTATION TEMPORAIRE (branche diag/magic-link-flake) ----
+  // Discrimine les trois causes possibles de l'echec intermittent :
+  //   A. aucun POST         -> submitMagic est sorti tot (formulaire invalide)
+  //   B. POST -> 404        -> le catch-all a gagne sur la route specifique
+  //   C. POST -> 200        -> la reponse arrive mais le message ne rend pas
+  const diag: string[] = [];
+  page.on('console', (m) => diag.push(`console[${m.type()}] ${m.text()}`));
+  page.on('requestfailed', (r) => diag.push(`requestfailed ${r.method()} ${r.url()}`));
+  page.on('response', async (r) => {
+    if (r.url().includes('/auth/magic-link/')) {
+      diag.push(`response ${r.request().method()} ${r.url()} -> ${r.status()} ${(await r.text().catch(() => '<illisible>')).slice(0, 160)}`);
+    }
+  });
+  let magicPosts = 0;
+  // ---- FIN INSTRUMENTATION ----
+
   // Registered AFTER the console catch-all so this specific route wins.
   await page.route('**/api/v1/auth/magic-link/', async (route) => {
     if (route.request().method() !== 'POST') return route.fallback();
+    magicPosts += 1;
     return route.fulfill(json(200, { code: 'ok', detail: 'sent' }));
   });
 
@@ -48,9 +65,26 @@ test('a visitor can switch to magic-link mode and request a sign-in link', async
   await send.click();
 
   // Anti-leak success confirmation.
-  await expect(
-    page.getByText(/lien de connexion vient d’être envoyé|sign-in link has just been sent/),
-  ).toBeVisible();
+  try {
+    await expect(
+      page.getByText(/lien de connexion vient d’être envoyé|sign-in link has just been sent/),
+    ).toBeVisible({ timeout: 5000 });
+  } catch (err) {
+    // ---- DUMP DE DIAGNOSTIC (branche diag uniquement) ----
+    const emailValue = await page.locator('input[type="email"]').inputValue().catch(() => '<absent>');
+    const bodyText = (await page.locator('body').innerText().catch(() => '<illisible>')).replace(/\s+/g, ' ').slice(0, 900);
+    const emailCount = await page.locator('input[type="email"]').count();
+    console.log('===== DIAG MAGIC-LINK =====');
+    console.log(`POST magic-link interceptes par la route specifique : ${magicPosts}`);
+    console.log(`inputs email presents : ${emailCount} | valeur : ${JSON.stringify(emailValue)}`);
+    console.log('evenements reseau/console :');
+    for (const line of diag.length ? diag : ['(aucun)']) {
+      console.log(`  ${line}`);
+    }
+    console.log(`texte de la page : ${bodyText}`);
+    console.log('===== FIN DIAG =====');
+    throw err;
+  }
 });
 
 test('opening the emailed magic link signs the visitor in and lands on the dashboard', async ({
