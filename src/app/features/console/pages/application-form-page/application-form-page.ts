@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -21,7 +20,6 @@ import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper'
 @Component({
   selector: 'app-application-form-page',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     AppAlert,
     ApiErrorMessagePipe,
@@ -30,8 +28,8 @@ import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper'
     RouterLink,
     ConsoleDialogActions,
     ButtonModule,
-    AvatarCropper,
-  ],
+    AvatarCropper
+],
   templateUrl: './application-form-page.html',
   styleUrl: './application-form-page.scss',
 })

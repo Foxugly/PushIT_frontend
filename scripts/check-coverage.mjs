@@ -1,12 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// karma-coverage ecrivait dans un sous-dossier au nom du projet ; vitest ecrit
-// a la racine de coverage/. On accepte les deux : le second chemin sert encore
-// si un rapport karma traine dans un arbre de travail non nettoye.
+// Le chemin du rapport a change trois fois : karma ecrivait sous
+// coverage/<projet>/, vitest sous Angular 20 a la racine de coverage/, et
+// Angular 21 est revenu a coverage/<projet>/.
+//
+// On ne choisit PAS par ordre de preference : un rapport perime laisse par une
+// version precedente masquerait le rapport frais et le seuil serait verifie
+// contre de vieux chiffres — panne silencieuse observee le 2026-07-30, ou le
+// gate annoncait 86% alors que le run venait de mesurer 70%. On prend donc
+// toujours le plus RECENT, et on dit lequel.
 const candidates = [
-  'coverage/coverage-summary.json',
   'coverage/pushit-frontend/coverage-summary.json',
+  'coverage/coverage-summary.json',
 ];
 const thresholds = {
   statements: 45,
@@ -15,12 +21,25 @@ const thresholds = {
   lines: 45,
 };
 
-const reportPath = candidates.map((c) => path.resolve(c)).find((p) => fs.existsSync(p));
+const found = candidates
+  .map((c) => path.resolve(c))
+  .filter((p) => fs.existsSync(p))
+  .map((p) => ({ p, mtime: fs.statSync(p).mtimeMs }))
+  .sort((a, b) => b.mtime - a.mtime);
 
-if (!reportPath) {
+if (found.length === 0) {
   console.error(`Coverage report not found. Tried:\n  ${candidates.join('\n  ')}`);
   process.exit(1);
 }
+
+const reportPath = found[0].p;
+if (found.length > 1) {
+  console.warn(
+    `Plusieurs rapports de couverture presents ; le plus recent est retenu :\n` +
+      found.map((f) => `  ${f.p}  (${new Date(f.mtime).toISOString()})`).join('\n'),
+  );
+}
+console.log(`Rapport de couverture lu : ${path.relative(process.cwd(), reportPath)}`);
 
 const summary = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
 const totals = summary.total;

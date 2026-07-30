@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -7,7 +6,7 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 
 @Component({
   selector: 'app-dashboard-home-page',
-  imports: [CommonModule, RouterLink, ButtonModule],
+  imports: [RouterLink, ButtonModule],
   templateUrl: './dashboard-home-page.html',
   styleUrl: './dashboard-home-page.scss',
 })

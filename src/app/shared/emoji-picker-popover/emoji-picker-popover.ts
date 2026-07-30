@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { ButtonModule } from 'primeng/button';
@@ -15,7 +14,7 @@ type EmojiPickerEvent = {
 
 @Component({
   selector: 'app-emoji-picker-popover',
-  imports: [CommonModule, PickerComponent, ButtonModule, PopoverModule, TooltipModule],
+  imports: [PickerComponent, ButtonModule, PopoverModule, TooltipModule],
   templateUrl: './emoji-picker-popover.html',
   styleUrl: './emoji-picker-popover.scss',
 })

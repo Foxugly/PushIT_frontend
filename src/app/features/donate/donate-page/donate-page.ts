@@ -1,11 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 
 @Component({
   selector: 'app-donate-page',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './donate-page.html',
   styleUrl: './donate-page.scss',
 })

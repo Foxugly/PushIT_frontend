@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -19,7 +19,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
 
 @Component({
   selector: 'app-confirm-email-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ButtonModule, InputTextModule],
+  imports: [ReactiveFormsModule, RouterLink, AppAlert, ButtonModule, InputTextModule],
   templateUrl: './confirm-email-page.html',
   styleUrl: './confirm-email-page.scss',
 })

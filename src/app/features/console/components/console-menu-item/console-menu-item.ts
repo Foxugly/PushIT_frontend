@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-console-menu-item',
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './console-menu-item.html',
   styleUrl: './console-menu-item.scss',
 })

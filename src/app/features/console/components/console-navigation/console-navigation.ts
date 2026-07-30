@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 
 import { AppCopyService } from '../../../../core/services/app-copy.service';
@@ -10,9 +9,8 @@ import { ConsoleMenuItem } from '../console-menu-item/console-menu-item';
 @Component({
   selector: 'app-console-navigation',
   imports: [
-    CommonModule,
-    ConsoleMenuItem,
-  ],
+    ConsoleMenuItem
+],
   templateUrl: './console-navigation.html',
   styleUrl: './console-navigation.scss',
 })

@@ -29,8 +29,10 @@ PushIT is a push notification management platform. This repository is the **Angu
 ## Coverage Thresholds
 
 Enforced by `scripts/check-coverage.mjs`: statements 45%, branches 30%, functions 38%, lines 45%.
-Le rapport est lu depuis `coverage/coverage-summary.json` (vitest) ; l'ancien chemin karma
-`coverage/pushit-frontend/` reste accepté en repli.
+Le chemin du rapport a changé trois fois (karma → `coverage/<projet>/`, vitest sous Angular 20 →
+`coverage/`, Angular 21 → `coverage/<projet>/`). Le script prend donc toujours le fichier le plus
+**récent** et affiche lequel : choisir par ordre de préférence laissait un rapport périmé masquer
+le rapport frais, et le seuil était vérifié contre de vieux chiffres.
 
 ## Tests : karma → vitest (2026-07-30)
 
@@ -63,8 +65,8 @@ Pièges découverts pendant la bascule, à connaître :
 ## Architecture
 
 ### Stack
-- Angular 20 with standalone components (no NgModules)
-- PrimeNG 20 (Aura theme) for UI components
+- Angular 21 with standalone components (no NgModules)
+- PrimeNG 21 (Aura theme) for UI components
 - SCSS for component styles
 - Strict TypeScript (`strict: true`, `strictTemplates: true`)
 

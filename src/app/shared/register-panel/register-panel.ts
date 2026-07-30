@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -35,7 +34,6 @@ import { TurnstileController } from '../turnstile/turnstile';
 @Component({
   selector: 'app-register-panel',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     AppAlert,
@@ -44,8 +42,8 @@ import { TurnstileController } from '../turnstile/turnstile';
     InputTextModule,
     PasswordModule,
     SelectModule,
-    TextareaModule,
-  ],
+    TextareaModule
+],
   templateUrl: './register-panel.html',
   styleUrl: './register-panel.scss',
 })

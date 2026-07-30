@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { PageHeader } from '../../../../shared/page-header/page-header';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,7 +14,13 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
 @Component({
   selector: 'app-settings-page',
   imports: [
-    PageHeader,CommonModule, ReactiveFormsModule, AppAlert, ButtonModule, InputTextModule, SelectModule],
+    PageHeader,
+    ReactiveFormsModule,
+    AppAlert,
+    ButtonModule,
+    InputTextModule,
+    SelectModule
+],
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.scss',
 })

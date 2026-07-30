@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
@@ -10,7 +9,7 @@ import { getAboutCopy } from './about.i18n';
 
 @Component({
   selector: 'app-about-page',
-  imports: [CommonModule, TabsModule, ButtonModule],
+  imports: [TabsModule, ButtonModule],
   templateUrl: './about-page.html',
   styleUrl: './about-page.scss',
 })

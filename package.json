@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --code-coverage && node scripts/check-coverage.mjs",
+    "test:ci": "ng test --watch=false --coverage && node scripts/check-coverage.mjs",
     "e2e:serve": "node scripts/serve-dist.mjs",
     "test:e2e": "npm run build && playwright test"
   },
@@ -26,33 +26,33 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^20.3.27",
-    "@angular/cdk": "^20.2.14",
-    "@angular/common": "^20.3.27",
-    "@angular/compiler": "^20.3.27",
-    "@angular/core": "^20.3.27",
-    "@angular/forms": "^20.3.27",
-    "@angular/platform-browser": "^20.3.27",
-    "@angular/router": "^20.3.27",
+    "@angular/animations": "^21.2.19",
+    "@angular/cdk": "^21.2.14",
+    "@angular/common": "^21.2.19",
+    "@angular/compiler": "^21.2.19",
+    "@angular/core": "^21.2.19",
+    "@angular/forms": "^21.2.19",
+    "@angular/platform-browser": "^21.2.19",
+    "@angular/router": "^21.2.19",
     "@ctrl/ngx-emoji-mart": "^9.3.0",
     "@jsverse/transloco": "^8.4.0",
     "@primeuix/themes": "^2.0.3",
     "@sentry/angular": "^10.55.0",
     "ngx-image-cropper": "^9.1.6",
     "primeicons": "^7.0.0",
-    "primeng": "^20.4.0",
+    "primeng": "^21.1.9",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "zone.js": "^0.16.2"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.32",
-    "@angular/cli": "^20.3.32",
-    "@angular/compiler-cli": "^20.3.27",
+    "@angular/build": "^21.2.19",
+    "@angular/cli": "^21.2.19",
+    "@angular/compiler-cli": "^21.2.19",
     "@playwright/test": "^1.54.2",
-    "@vitest/coverage-v8": "^3.2.7",
+    "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^28.0.0",
     "typescript": "~5.9.2",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.10"
   }
 }

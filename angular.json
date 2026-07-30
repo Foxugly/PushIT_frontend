@@ -89,14 +89,13 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "pushit-frontend:build:development",
             "runner": "vitest",
             "tsConfig": "tsconfig.spec.json",
             "setupFiles": [
               "src/testing/test-setup.ts",
               "src/testing/jasmine-compat.ts"
             ],
-            "codeCoverageReporters": [
+            "coverageReporters": [
               "text-summary",
               "html",
               "json-summary"

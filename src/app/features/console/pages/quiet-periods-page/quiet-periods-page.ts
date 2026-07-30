@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -40,10 +39,10 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
 @Component({
   selector: 'app-quiet-periods-page',
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    AppAlert, ApiErrorMessagePipe,
+    AppAlert,
+    ApiErrorMessagePipe,
     ConsoleDialogActions,
     ButtonModule,
     PageHeader,
@@ -54,8 +53,8 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     SelectModule,
     TableModule,
     TagModule,
-    TooltipModule,
-  ],
+    TooltipModule
+],
   templateUrl: './quiet-periods-page.html',
   styleUrl: './quiet-periods-page.scss',
 })

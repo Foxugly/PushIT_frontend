@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 
 import { PublicI18nService } from '../../../core/services/public-i18n.service';
@@ -6,7 +5,7 @@ import { getPrivacyCopy } from './privacy.i18n';
 
 @Component({
   selector: 'app-privacy-page',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './privacy-page.html',
   styleUrl: './privacy-page.scss',
 })

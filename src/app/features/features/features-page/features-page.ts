@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -7,7 +6,7 @@ import { SettingsService } from '../../../core/services/settings.service';
 
 @Component({
   selector: 'app-features-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './features-page.html',
   styleUrl: './features-page.scss',
 })

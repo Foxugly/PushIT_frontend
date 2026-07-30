@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
@@ -27,7 +26,7 @@ import { interpolate } from '../../../../core/utils/string.utils';
  */
 @Component({
   selector: 'app-enrolment-panel',
-  imports: [CommonModule, AppAlert, ButtonModule, TooltipModule],
+  imports: [AppAlert, ButtonModule, TooltipModule],
   templateUrl: './enrolment-panel.html',
   styleUrl: './enrolment-panel.scss',
 })

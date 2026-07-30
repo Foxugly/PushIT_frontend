@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -35,7 +34,6 @@ const REVEAL_TTL_MS = 20_000;
 @Component({
   selector: 'app-send-tokens-panel',
   imports: [
-    CommonModule,
     FormsModule,
     AppAlert,
     ApiErrorMessagePipe,
@@ -43,8 +41,8 @@ const REVEAL_TTL_MS = 20_000;
     InputTextModule,
     TableModule,
     TagModule,
-    TooltipModule,
-  ],
+    TooltipModule
+],
   templateUrl: './send-tokens-panel.html',
   styleUrl: './send-tokens-panel.scss',
 })
