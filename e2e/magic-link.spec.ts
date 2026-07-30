@@ -42,8 +42,25 @@ test('a visitor can switch to magic-link mode and request a sign-in link', async
   // like login.spec — the e2e browser locale isn't pinned to FR).
   await page.getByRole('button', { name: /Recevoir un lien de connexion|Get a sign-in link/ }).click();
 
-  await page.locator('input[type="email"]').fill(user.email);
+  // Attendre que le formulaire magic ait REMPLACE celui de login avant de saisir.
+  // auth-page.html rend `@if (!magicMode())` / `@else`, et les deux blocs
+  // contiennent un input[type="email"]. Sans cette attente, `fill()` resout
+  // parfois l'input du formulaire de login, encore dans le DOM juste apres le
+  // clic : la saisie part dans un champ qui disparait, le formulaire magic
+  // reste vide, et comme le bouton d'envoi est `[disabled]="magicPending()"`
+  // (et non gate sur la validite), le clic appelle submitMagic() qui sort
+  // immediatement sur `magicForm.invalid`. Aucun POST, aucun message, timeout.
+  // Le bouton d'envoi n'existe que dans le bloc magic : sa visibilite prouve
+  // que le swap est fait.
   const send = page.getByRole('button', { name: /Envoyer le lien|Send the link/ });
+  await expect(send).toBeVisible();
+
+  const email = page.locator('input[type="email"]');
+  await email.fill(user.email);
+  // Verrouille la saisie : si une course subsiste, l'echec tombe ICI, sur la
+  // vraie cause, au lieu de se manifester 5 s plus tard en « message absent ».
+  await expect(email).toHaveValue(user.email);
+
   await expect(send).toBeEnabled();
   await send.click();
 
