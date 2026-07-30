@@ -27,7 +27,7 @@ describe('AppConfirmService', () => {
 
     service.accept();
 
-    await expectAsync(pending).toBeResolvedTo(true);
+    await expect(pending).resolves.toBe(true);
     expect(service.current()).toBeNull();
   });
 
@@ -41,7 +41,7 @@ describe('AppConfirmService', () => {
 
     service.reject();
 
-    await expectAsync(pending).toBeResolvedTo(false);
+    await expect(pending).resolves.toBe(false);
     expect(service.current()).toBeNull();
   });
 

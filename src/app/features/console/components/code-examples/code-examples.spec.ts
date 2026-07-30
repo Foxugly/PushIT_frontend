@@ -46,9 +46,7 @@ describe('CodeExamples', () => {
   it('reads the token from the environment, never inline', () => {
     // The gesture this avoids: pasting the snippet as-is into a repository.
     for (const example of component.examples()) {
-      expect(example.code)
-        .withContext(`${example.key} must read PUSHIT_TOKEN`)
-        .toContain('PUSHIT_TOKEN');
+      expect(example.code, `${example.key} must read PUSHIT_TOKEN`).toContain('PUSHIT_TOKEN');
     }
   });
 
@@ -56,7 +54,7 @@ describe('CodeExamples', () => {
     // An example that got this wrong would reintroduce the flaw through the
     // documentation: the enrolment code is distributed to every recipient.
     for (const example of component.examples()) {
-      expect(example.code).withContext(`${example.key} must not carry apk_`).not.toContain('apk_');
+      expect(example.code, `${example.key} must not carry apk_`).not.toContain('apk_');
     }
   });
 

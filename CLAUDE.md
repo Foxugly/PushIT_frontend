@@ -11,14 +11,44 @@ PushIT is a push notification management platform. This repository is the **Angu
 - **Dev server:** `npm start` (serves at `http://localhost:4200`, proxies `/api` to backend, HMR disabled)
 - **Dev server with HMR:** `npm run start:hmr`
 - **Build:** `npm run build`
-- **Unit tests:** `npm test` (Karma + Jasmine, watches by default)
-- **Unit tests (CI):** `npm run test:ci` (headless Chrome, coverage check)
+- **Unit tests:** `npm test` (Vitest via `@angular/build:unit-test`, watches by default)
+- **Unit tests (CI):** `npm run test:ci` (jsdom, coverage check)
 - **E2E tests:** `npm run test:e2e` (builds then runs Playwright against Chromium)
 - **Single test file:** `ng test --include=**/path-to-spec.ts`
 
 ## Coverage Thresholds
 
 Enforced by `scripts/check-coverage.mjs`: statements 45%, branches 30%, functions 38%, lines 45%.
+Le rapport est lu depuis `coverage/coverage-summary.json` (vitest) ; l'ancien chemin karma
+`coverage/pushit-frontend/` reste accepté en repli.
+
+## Tests : karma → vitest (2026-07-30)
+
+Le runner est passé de karma/jasmine à **vitest**, pour sortir de karma 6.4 (déprécié, et il
+tirait une chaîne `glob 7 → minimatch 3 → brace-expansion 1.x` responsable de 9 alertes
+Dependabot *high* sans correctif possible dans ces lignes majeures).
+
+Les 28 specs n'ont **pas** été réécrits : `src/testing/jasmine-compat.ts` mappe
+`jasmine.createSpyObj` / `createSpy` / `objectContaining` / `any`, `spyOn`, `.and.*`,
+`spy.calls` et les matchers `toBeTrue` / `toBeFalse` / `toHaveBeenCalledOnceWith` sur leurs
+équivalents vitest. Les nouveaux specs doivent utiliser l'**API vitest native** (`vi.fn()`,
+`vi.spyOn`, `mockReturnValue`) ; le shim disparaîtra quand les 28 fichiers seront convertis.
+
+Pièges découverts pendant la bascule, à connaître :
+
+- **`fakeAsync` / `tick` ne fonctionnent pas.** zone.js ne publie des patches que pour
+  jasmine, mocha et jest — **aucun pour vitest** — donc aucun ProxyZone n'est installé.
+  Utiliser `vi.useFakeTimers()` + `await vi.advanceTimersByTimeAsync(n)`, et les installer
+  **avant** le code qui arme le minuteur.
+- **`src/testing/test-setup.ts`** comble ce que jsdom n'a pas et que Chrome fournissait :
+  `ResizeObserver` (PrimeNG `p-tabs`), `document.execCommand`, `URL.createObjectURL`, et
+  **épingle `navigator.language` à `fr-FR`** — `PublicI18nService` le lit, jsdom répond
+  `en-US`, et les specs qui assertent une chaîne française échouaient.
+- **Ne pas stubber `document.createElement` sans condition** : Angular l'appelle pendant le
+  rendu et jsdom lève `HierarchyRequestError`. Filtrer sur la balise voulue.
+- **Un `.d.ts` ne doit pas partager son nom de base avec un `.ts`** : TypeScript ignore alors
+  le `.d.ts` (il le prend pour la déclaration générée). D'où `jasmine-globals.d.ts` à côté de
+  `jasmine-compat.ts`.
 
 ## Architecture
 

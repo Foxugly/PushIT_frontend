@@ -87,24 +87,19 @@
           "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "karmaConfig": "karma.conf.js",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "buildTarget": "pushit-frontend:build:development",
+            "runner": "vitest",
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
+            "setupFiles": [
+              "src/testing/test-setup.ts",
+              "src/testing/jasmine-compat.ts"
             ],
-            "styles": [
-              "src/styles.scss",
-              "node_modules/@ctrl/ngx-emoji-mart/picker.css"
+            "codeCoverageReporters": [
+              "text-summary",
+              "html",
+              "json-summary"
             ]
           }
         }
