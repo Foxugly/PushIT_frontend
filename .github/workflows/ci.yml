@@ -42,7 +42,7 @@ jobs:
       # magic-link (2026-07-30). `if: failure()` — on n'archive que ce qui sert.
       - name: Archiver le rapport Playwright
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -52,7 +52,7 @@ jobs:
       # `npx playwright show-trace`) et les captures d'écran d'échec.
       - name: Archiver traces et captures
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-traces
           path: test-results/
