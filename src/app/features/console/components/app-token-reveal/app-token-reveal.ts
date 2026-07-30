@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
@@ -20,7 +19,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
  */
 @Component({
   selector: 'app-token-reveal',
-  imports: [CommonModule, AppAlert, ButtonModule, TooltipModule],
+  imports: [AppAlert, ButtonModule, TooltipModule],
   templateUrl: './app-token-reveal.html',
   styleUrl: './app-token-reveal.scss',
 })

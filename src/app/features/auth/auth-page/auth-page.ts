@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -32,15 +31,15 @@ import { TurnstileController } from '../../../shared/turnstile/turnstile';
 @Component({
   selector: 'app-auth-page',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    AppAlert, ApiErrorMessagePipe,
+    AppAlert,
+    ApiErrorMessagePipe,
     ButtonModule,
     CheckboxModule,
     InputTextModule,
-    PasswordModule,
-  ],
+    PasswordModule
+],
   templateUrl: './auth-page.html',
   styleUrl: './auth-page.scss',
 })

@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -29,7 +29,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-reset-password-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, PasswordModule],
+  imports: [ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, PasswordModule],
   templateUrl: './reset-password-page.html',
   styleUrl: './reset-password-page.scss',
 })

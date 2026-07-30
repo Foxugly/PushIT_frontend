@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -11,7 +10,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
 
 @Component({
   selector: 'app-check-email-page',
-  imports: [CommonModule, RouterLink, AppAlert, ButtonModule],
+  imports: [RouterLink, AppAlert, ButtonModule],
   templateUrl: './check-email-page.html',
   styleUrl: './check-email-page.scss',
 })

@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -17,7 +17,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
  */
 @Component({
   selector: 'app-magic-link-page',
-  imports: [CommonModule, RouterLink, AppAlert],
+  imports: [RouterLink, AppAlert],
   templateUrl: './magic-link-page.html',
   styleUrl: './magic-link-page.scss',
 })

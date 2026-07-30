@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
@@ -26,7 +25,7 @@ export interface CodeExample {
  */
 @Component({
   selector: 'app-code-examples',
-  imports: [CommonModule, ButtonModule, TabsModule, TooltipModule],
+  imports: [ButtonModule, TabsModule, TooltipModule],
   templateUrl: './code-examples.html',
   styleUrl: './code-examples.scss',
 })

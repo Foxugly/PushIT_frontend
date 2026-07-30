@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -8,7 +7,7 @@ import { AppCopyService } from '../../../../core/services/app-copy.service';
 
 @Component({
   selector: 'app-application-form-fields',
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule, TextareaModule],
+  imports: [ReactiveFormsModule, InputTextModule, TextareaModule],
   templateUrl: './application-form-fields.html',
 })
 export class ApplicationFormFields {

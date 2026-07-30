@@ -1,5 +1,5 @@
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
@@ -33,7 +33,7 @@ interface NotificationMetric {
 
 @Component({
   selector: 'app-admin-status-page',
-  imports: [CommonModule, RouterLink, ApiErrorMessagePipe, PageHeader, ButtonModule, TableModule, TagModule],
+  imports: [RouterLink, ApiErrorMessagePipe, PageHeader, ButtonModule, TableModule, TagModule],
   templateUrl: './admin-status-page.html',
   styleUrl: './admin-status-page.scss',
 })

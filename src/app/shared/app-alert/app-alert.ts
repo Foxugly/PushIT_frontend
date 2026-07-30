@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -20,7 +19,7 @@ const CLOSE_LABEL: Record<LanguageCode, string> = {
 
 @Component({
   selector: 'app-alert',
-  imports: [CommonModule, ButtonModule, TooltipModule],
+  imports: [ButtonModule, TooltipModule],
   templateUrl: './app-alert.html',
   styleUrl: './app-alert.scss',
 })

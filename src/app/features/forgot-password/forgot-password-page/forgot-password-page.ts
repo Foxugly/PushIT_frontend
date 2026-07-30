@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -26,7 +25,7 @@ import { TurnstileController } from '../../../shared/turnstile/turnstile';
 
 @Component({
   selector: 'app-forgot-password-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, InputTextModule],
+  imports: [ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, InputTextModule],
   templateUrl: './forgot-password-page.html',
   styleUrl: './forgot-password-page.scss',
 })

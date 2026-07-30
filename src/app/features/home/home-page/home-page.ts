@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -7,7 +6,7 @@ import { RegisterPanel } from '../../../shared/register-panel/register-panel';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, RouterLink, RegisterPanel],
+  imports: [RouterLink, RegisterPanel],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })

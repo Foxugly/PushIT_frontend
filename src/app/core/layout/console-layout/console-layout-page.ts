@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -18,15 +17,14 @@ import { Topmenu } from '../../../core/layout/topmenu/topmenu';
 @Component({
   selector: 'app-console-layout-page',
   imports: [
-    CommonModule,
     RouterOutlet,
     AppAlert,
     ButtonModule,
     ConsoleNavigation,
     Footer,
     Topmenu,
-    ToastModule,
-  ],
+    ToastModule
+],
   templateUrl: './console-layout-page.html',
   styleUrl: './console-layout-page.scss',
 })
