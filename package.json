@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@angular/build": "^20.3.32",
-    "@angular/cli": "^21.0.4",
+    "@angular/cli": "^20.3.32",
     "@angular/compiler-cli": "^20.3.27",
     "@playwright/test": "^1.54.2",
     "@types/jasmine": "~5.1.0",
