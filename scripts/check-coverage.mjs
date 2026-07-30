@@ -1,7 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const reportPath = path.resolve('coverage/pushit-frontend/coverage-summary.json');
+// karma-coverage ecrivait dans un sous-dossier au nom du projet ; vitest ecrit
+// a la racine de coverage/. On accepte les deux : le second chemin sert encore
+// si un rapport karma traine dans un arbre de travail non nettoye.
+const candidates = [
+  'coverage/coverage-summary.json',
+  'coverage/pushit-frontend/coverage-summary.json',
+];
 const thresholds = {
   statements: 45,
   branches: 30,
@@ -9,8 +15,10 @@ const thresholds = {
   lines: 45,
 };
 
-if (!fs.existsSync(reportPath)) {
-  console.error(`Coverage report not found: ${reportPath}`);
+const reportPath = candidates.map((c) => path.resolve(c)).find((p) => fs.existsSync(p));
+
+if (!reportPath) {
+  console.error(`Coverage report not found. Tried:\n  ${candidates.join('\n  ')}`);
   process.exit(1);
 }
 

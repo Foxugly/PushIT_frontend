@@ -145,7 +145,15 @@ describe('AppTokenReveal', () => {
 
     const anchor = document.createElement('a');
     const clickSpy = spyOn(anchor, 'click');
-    spyOn(document, 'createElement').and.returnValue(anchor);
+    // Ne detourner QUE la creation de <a>. Un stub inconditionnel renvoyait
+    // l'ancre a tout appelant, y compris au rendu interne d'Angular, qui
+    // tentait de l'inserer dans sa propre arborescence -> jsdom levait
+    // HierarchyRequestError. karma ne le voyait pas : rien d'autre n'appelait
+    // createElement pendant ces tests.
+    const realCreateElement = document.createElement.bind(document);
+    spyOn(document, 'createElement').and.callFake((tag: string) =>
+      tag === 'a' ? anchor : realCreateElement(tag),
+    );
 
     component.downloadQr();
 
@@ -173,7 +181,15 @@ describe('AppTokenReveal', () => {
 
     const anchor = document.createElement('a');
     const clickSpy = spyOn(anchor, 'click');
-    spyOn(document, 'createElement').and.returnValue(anchor);
+    // Ne detourner QUE la creation de <a>. Un stub inconditionnel renvoyait
+    // l'ancre a tout appelant, y compris au rendu interne d'Angular, qui
+    // tentait de l'inserer dans sa propre arborescence -> jsdom levait
+    // HierarchyRequestError. karma ne le voyait pas : rien d'autre n'appelait
+    // createElement pendant ces tests.
+    const realCreateElement = document.createElement.bind(document);
+    spyOn(document, 'createElement').and.callFake((tag: string) =>
+      tag === 'a' ? anchor : realCreateElement(tag),
+    );
 
     component.downloadToken();
 

@@ -1,5 +1,5 @@
 import { signal } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
@@ -105,18 +105,28 @@ describe('SendTokensPanel', () => {
     expect(JSON.stringify(component.tokens())).not.toContain('apt_freshsecret1234567');
   });
 
-  it('hides a revealed token by itself', fakeAsync(() => {
+  // Etait `fakeAsync` + `tick(20_000)` : voir la note dans
+  // console-shell.service.spec.ts — zone.js n'a pas de patch vitest.
+  it('hides a revealed token by itself', async () => {
     // A token left on screen ends up in a screenshot or a shared window.
     api.revealSendToken.and.returnValue(of({ token: 'apt_revealed1234567890' }));
     component.openReveal(makeToken());
     component.revealPassword.set('hunter2');
 
-    component.reveal();
-    expect(component.revealedToken()).toBe('apt_revealed1234567890');
+    // Les faux minuteurs DOIVENT etre installes avant reveal() : c'est lui qui
+    // arme le setTimeout d'auto-masquage. Bascule apres coup, le minuteur reste
+    // enregistre sur les vrais et advanceTimersByTime ne le voit pas.
+    vi.useFakeTimers();
+    try {
+      component.reveal();
+      expect(component.revealedToken()).toBe('apt_revealed1234567890');
 
-    tick(20_000);
-    expect(component.revealedToken()).toBeNull();
-  }));
+      await vi.advanceTimersByTimeAsync(20_000);
+      expect(component.revealedToken()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it('forgets the typed password as soon as the reveal succeeds', () => {
     api.revealSendToken.and.returnValue(of({ token: 'apt_revealed1234567890' }));

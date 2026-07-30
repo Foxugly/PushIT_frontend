@@ -1,5 +1,5 @@
 import { signal } from '@angular/core';
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import {
@@ -188,14 +188,23 @@ describe('ConsoleShellService', () => {
     expect(service.devicesCount()).toBe(1);
   });
 
-  it('sets an error when refreshNavigationCounts fails', fakeAsync(() => {
+  // Etait `fakeAsync` + `tick(2000)`. zone.js ne fournit pas de patch vitest
+  // (seulement jasmine/mocha/jest), donc fakeAsync n'a pas de ProxyZone ou
+  // s'installer. Les minuteurs virtuels de vitest font le meme travail : ils
+  // avancent les setTimeout sur lesquels s'appuie retry({ delay: 800 }).
+  it('sets an error when refreshNavigationCounts fails', async () => {
     api.listApps.and.returnValue(throwError(() => new Error('boom')));
 
-    service.refreshNavigationCounts();
-    tick(2000); // let the retry({ delay: 800 }) attempts elapse before erroring
+    vi.useFakeTimers();
+    try {
+      service.refreshNavigationCounts();
+      await vi.advanceTimersByTimeAsync(2000); // laisse les retries s'epuiser
+    } finally {
+      vi.useRealTimers();
+    }
 
     expect(service.error()).toBe("Impossible de rafraîchir les compteurs de navigation.");
-  }));
+  });
 
   it('stores generated token information when creating an app', () => {
     const onDone = jasmine.createSpy('onDone');

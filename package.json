@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage && node scripts/check-coverage.mjs",
+    "test:ci": "ng test --watch=false --code-coverage && node scripts/check-coverage.mjs",
     "e2e:serve": "node scripts/serve-dist.mjs",
     "test:e2e": "npm run build && playwright test"
   },
@@ -50,13 +50,9 @@
     "@angular/cli": "^20.3.32",
     "@angular/compiler-cli": "^20.3.27",
     "@playwright/test": "^1.54.2",
-    "@types/jasmine": "~5.1.0",
-    "jasmine-core": "~5.9.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "@vitest/coverage-v8": "^3.2.7",
+    "jsdom": "^28.0.0",
+    "typescript": "~5.9.2",
+    "vitest": "^3.2.7"
   }
 }
