@@ -333,6 +333,10 @@
         "platform": "Platform",
         "pushTokenStatus": "Push-tokenstatus"
       }
+    },
+    "update": {
+      "title": "Nieuwe versie beschikbaar",
+      "detail": "De app is bijgewerkt terwijl u bezig was. Herlaad de pagina om verder te gaan."
     }
   },
   "console": {

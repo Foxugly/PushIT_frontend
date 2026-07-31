@@ -333,6 +333,10 @@
         "platform": "Piattaforma",
         "pushTokenStatus": "Stato del push token"
       }
+    },
+    "update": {
+      "title": "Nuova versione disponibile",
+      "detail": "L'app è stata aggiornata mentre eri qui. Ricarica la pagina per continuare."
     }
   },
   "console": {
