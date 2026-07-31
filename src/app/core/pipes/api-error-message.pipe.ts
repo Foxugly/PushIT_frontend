@@ -2,7 +2,8 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 
 import { ApiErrorResponse } from '../models/api.models';
 import { PublicI18nService } from '../services/public-i18n.service';
-import { API_ERROR_COPY, localizeApiError } from '../utils/api-error-copy';
+import { apiErrorCopy, localizeApiError } from '../utils/api-error-copy';
+import { CatalogStore } from '../i18n/catalog-store';
 
 /**
  * Turns a coerced ApiErrorResponse into a localized, user-facing message.
@@ -12,11 +13,12 @@ import { API_ERROR_COPY, localizeApiError } from '../utils/api-error-copy';
 @Pipe({ name: 'apiError', pure: false })
 export class ApiErrorMessagePipe implements PipeTransform {
   private readonly i18n = inject(PublicI18nService);
+  private readonly catalogs = inject(CatalogStore);
 
   transform(error: ApiErrorResponse | null | undefined): string {
     if (!error) {
       return '';
     }
-    return localizeApiError(error, API_ERROR_COPY[this.i18n.language()]);
+    return localizeApiError(error, apiErrorCopy(this.catalogs, this.i18n.language()));
   }
 }

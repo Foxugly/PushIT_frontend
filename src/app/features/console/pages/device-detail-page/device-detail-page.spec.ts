@@ -9,6 +9,7 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { DeviceDetailPage } from './device-detail-page';
+import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 
 describe('DeviceDetailPage', () => {
   let fixture: ComponentFixture<DeviceDetailPage>;
@@ -99,7 +100,7 @@ describe('DeviceDetailPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [DeviceDetailPage],
-      providers: [
+      providers: [provideTestCatalogs(), 
         provideRouter([]),
         provideNoopAnimations(),
         { provide: ActivatedRoute, useValue: routeStub },

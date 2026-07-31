@@ -12,6 +12,7 @@ import { PushitApiService } from './pushit-api.service';
 import { ConsoleShellService } from './console-shell.service';
 import { SessionService } from './session.service';
 import { LanguagePreferenceService } from './language-preference.service';
+import { provideTestCatalogs } from '../../../testing/catalog-store.testing';
 
 describe('ConsoleShellService', () => {
   let service: ConsoleShellService;
@@ -82,7 +83,7 @@ describe('ConsoleShellService', () => {
     api.logout.and.returnValue(of(void 0));
 
     TestBed.configureTestingModule({
-      providers: [
+      providers: [provideTestCatalogs(), 
         ConsoleShellService,
         { provide: PushitApiService, useValue: api },
         { provide: SessionService, useValue: session },

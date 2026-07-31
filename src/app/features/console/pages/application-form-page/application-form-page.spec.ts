@@ -11,6 +11,7 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ApplicationFormPage } from './application-form-page';
+import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 
 const applicationsCopy = {
   errors: { create: 'Creation impossible.', invalidId: 'ID application invalide.' },
@@ -40,7 +41,7 @@ function configure(
 ) {
   return TestBed.configureTestingModule({
     imports: [ApplicationFormPage],
-    providers: [
+    providers: [provideTestCatalogs(), 
       provideRouter([]),
       provideNoopAnimations(),
       provideHttpClient(),

@@ -19,7 +19,8 @@ import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
-import { BundledTranslocoLoader } from './core/i18n/transloco-loader';
+import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
+import { CatalogStore } from './core/i18n/catalog-store';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 // Fleet look: Aura preset with Emerald as primary (same as QuizOnline/TM). The
@@ -62,7 +63,7 @@ export const appConfig: ApplicationConfig = {
     // Toast global : un seul <p-toast/> monté à la racine des layouts de shell,
     // alimenté par ce MessageService partagé (standard flotte).
     MessageService,
-    // i18n : Transloco est le moteur (catalogues bundlés servis par le loader).
+    // i18n : Transloco est le moteur ; les catalogues vivent dans public/i18n/
     // Les façades typées (AppCopyService/ConsoleCopyService) lisent les mêmes
     // catalogues ; PublicI18nService reste l'autorité de langue, synchronisée ici.
     provideTransloco({
@@ -73,13 +74,18 @@ export const appConfig: ApplicationConfig = {
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
-      loader: BundledTranslocoLoader,
+      loader: TranslocoHttpLoader,
     }),
     // Sentry : capture des erreurs non gérées + instrumentation du routing.
     { provide: ErrorHandler, useValue: Sentry.createErrorHandler() },
     { provide: Sentry.TraceService, deps: [Router] },
     provideAppInitializer(() => {
       inject(Sentry.TraceService);
+      // Precharge les 5 catalogues AVANT le premier rendu. Les facades typees
+      // (AppCopyService / ConsoleCopyService) et setLanguage() lisent le
+      // catalogue de facon synchrone : sans cette attente, le premier rendu
+      // trouverait un store vide.
+      return inject(CatalogStore).preload();
       // Rattrape les onglets ouverts avant un deploiement, dont les chunks
       // differes n'existent plus cote serveur.
       inject(StaleChunkService).init();
