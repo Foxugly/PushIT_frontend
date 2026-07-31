@@ -11,6 +11,7 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { AdminStatusPage } from './admin-status-page';
+import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 
 const ADMIN_STATUS_COPY = {
   back: 'Retour',
@@ -71,7 +72,7 @@ describe('AdminStatusPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [AdminStatusPage],
-      providers: [
+      providers: [provideTestCatalogs(), 
         provideRouter([]),
         provideNoopAnimations(),
         provideHttpClient(),

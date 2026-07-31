@@ -1,6 +1,10 @@
-import { API_ERROR_COPY, localizeApiError } from './api-error-copy';
+import { ApiErrorMessages, localizeApiError } from './api-error-copy';
+import frCatalog from '../../../../public/i18n/fr.json';
 
-const fr = API_ERROR_COPY.fr;
+// Le spec teste `localizeApiError`, pas le chargement : il lit donc le namespace
+// `errors` directement dans le fichier de catalogue (public/i18n/, cf.
+// STANDARD-frontend-layout.md §5bis) plutot que de monter un CatalogStore.
+const fr = frCatalog.errors as unknown as ApiErrorMessages;
 
 describe('localizeApiError', () => {
   it('maps known HTTP statuses to a localized message (ignoring the raw detail)', () => {

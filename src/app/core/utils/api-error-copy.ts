@@ -1,4 +1,4 @@
-import { CATALOGS } from '../i18n/catalogs';
+import { CatalogStore } from '../i18n/catalog-store';
 import { ApiErrorResponse } from '../models/api.models';
 import { LanguageCode } from '../services/public-i18n.service';
 
@@ -12,14 +12,23 @@ export interface ApiErrorMessages {
   shellRefreshFailed: string;
 }
 
-// Sourced from the Transloco catalogs (namespace `errors`). Cast because JSON
-// object keys are strings, so `http` comes back with string keys — harmless, the
-// lookup coerces the numeric status to a string key at runtime.
-export const API_ERROR_COPY = {
-  fr: CATALOGS.fr.errors,
-  nl: CATALOGS.nl.errors,
-  en: CATALOGS.en.errors,
-} as unknown as Record<LanguageCode, ApiErrorMessages>;
+/**
+ * Messages d'erreur API pour une langue, extraits du namespace `errors` du
+ * catalogue.
+ *
+ * C'etait une constante de module bâtie a l'import depuis les catalogues
+ * embarques. Ces catalogues vivent desormais dans `public/i18n/` et sont
+ * charges au bootstrap (STANDARD-frontend-layout.md §5bis) : une constante
+ * evaluee a l'import lirait donc un store encore vide. D'ou la fonction, qui
+ * lit au moment de l'appel — les appelants sont deja dans un contexte
+ * d'injection.
+ *
+ * Cast : les cles JSON sont des chaines, donc `http` revient avec des cles
+ * string — sans consequence, la recherche coerce le statut numerique.
+ */
+export function apiErrorCopy(catalogs: CatalogStore, lang: LanguageCode): ApiErrorMessages {
+  return catalogs.get(lang).errors as unknown as ApiErrorMessages;
+}
 
 /**
  * Localized, user-facing message for a coerced API error. Avoids leaking raw

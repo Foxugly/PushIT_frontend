@@ -15,6 +15,7 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationDetailPage } from './application-detail-page';
+import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 
 describe('ApplicationDetailPage', () => {
   let fixture: ComponentFixture<ApplicationDetailPage>;
@@ -265,7 +266,7 @@ describe('ApplicationDetailPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [ApplicationDetailPage],
-      providers: [
+      providers: [provideTestCatalogs(), 
         provideRouter([]),
         provideNoopAnimations(),
         provideHttpClient(),

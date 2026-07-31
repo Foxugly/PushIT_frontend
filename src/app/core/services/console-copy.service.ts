@@ -1,6 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 
-import { CATALOGS } from '../i18n/catalogs';
+import { CatalogStore } from '../i18n/catalog-store';
 import { PublicI18nService } from './public-i18n.service';
 
 /**
@@ -11,6 +11,7 @@ import { PublicI18nService } from './public-i18n.service';
 @Injectable({ providedIn: 'root' })
 export class ConsoleCopyService {
   private readonly i18n = inject(PublicI18nService);
+  private readonly catalogs = inject(CatalogStore);
 
-  readonly current = computed(() => CATALOGS[this.i18n.language()].console);
+  readonly current = computed(() => this.catalogs.get(this.i18n.language()).console);
 }

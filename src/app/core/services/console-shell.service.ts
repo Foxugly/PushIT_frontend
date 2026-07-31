@@ -3,7 +3,8 @@ import { finalize, forkJoin, map, of, retry, switchMap } from 'rxjs';
 import * as Sentry from '@sentry/angular';
 
 import { ApplicationCreateRequest, ApplicationCreateResponse, ApplicationRead, UserMe } from '../models/api.models';
-import { API_ERROR_COPY } from '../utils/api-error-copy';
+import { apiErrorCopy } from '../utils/api-error-copy';
+import { CatalogStore } from '../i18n/catalog-store';
 import { LanguagePreferenceService } from './language-preference.service';
 import { PublicI18nService } from './public-i18n.service';
 import { PushitApiService } from './pushit-api.service';
@@ -15,6 +16,7 @@ export class ConsoleShellService {
   private readonly session = inject(SessionService);
   private readonly languagePreference = inject(LanguagePreferenceService);
   private readonly i18n = inject(PublicI18nService);
+  private readonly catalogs = inject(CatalogStore);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -82,7 +84,7 @@ export class ConsoleShellService {
           if (token !== this.loadToken) {
             return;
           }
-          this.error.set(API_ERROR_COPY[this.i18n.language()].shellLoadFailed);
+          this.error.set(apiErrorCopy(this.catalogs, this.i18n.language()).shellLoadFailed);
           Sentry.captureException(error);
         },
       });
@@ -136,7 +138,7 @@ export class ConsoleShellService {
           this.refreshSupplementaryCounts(apps);
         },
         error: (error) => {
-          this.error.set(API_ERROR_COPY[this.i18n.language()].shellRefreshFailed);
+          this.error.set(apiErrorCopy(this.catalogs, this.i18n.language()).shellRefreshFailed);
           Sentry.captureException(error);
         },
       });

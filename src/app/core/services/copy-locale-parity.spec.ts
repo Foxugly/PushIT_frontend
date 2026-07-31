@@ -1,4 +1,15 @@
-import { CATALOGS } from '../i18n/catalogs';
+// Suffixe `Catalog` obligatoire : un `import it from ...` masquerait la
+// fonction de test `it()` du runner, et le spec ne compilerait plus.
+import enCatalog from '../../../../public/i18n/en.json';
+import esCatalog from '../../../../public/i18n/es.json';
+import frCatalog from '../../../../public/i18n/fr.json';
+import itCatalog from '../../../../public/i18n/it.json';
+import nlCatalog from '../../../../public/i18n/nl.json';
+
+// Les catalogues vivent dans public/i18n/ (STANDARD-frontend-layout.md §5bis).
+// Le spec les lit en direct : c'est un controle de structure sur les FICHIERS,
+// pas sur ce que le store a charge.
+const CATALOGS = { fr: frCatalog, nl: nlCatalog, en: enCatalog, it: itCatalog, es: esCatalog };
 
 /**
  * Guards against locale drift: the FR / NL / EN Transloco catalogs must expose
