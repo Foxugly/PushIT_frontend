@@ -13,6 +13,7 @@ import { provideRouter, Router } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
+import { StaleChunkService } from './core/app-update/stale-chunk.service';
 import * as Sentry from '@sentry/angular';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
@@ -79,6 +80,9 @@ export const appConfig: ApplicationConfig = {
     { provide: Sentry.TraceService, deps: [Router] },
     provideAppInitializer(() => {
       inject(Sentry.TraceService);
+      // Rattrape les onglets ouverts avant un deploiement, dont les chunks
+      // differes n'existent plus cote serveur.
+      inject(StaleChunkService).init();
     }),
   ],
 };

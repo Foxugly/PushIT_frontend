@@ -116,7 +116,12 @@ jobs:
             "$GB:deploy/nginx/pushit-frontend.conf > /etc/nginx/sites-available/pushit-frontend.conf && ln -sf /etc/nginx/sites-available/pushit-frontend.conf /etc/nginx/sites-enabled/pushit-frontend.conf",
             "systemctl daemon-reload && systemctl enable --quiet pushit-frontend-runtime-fetch",
             "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/pushit-frontend/$SHA.tar.gz /tmp/pfe.tar.gz --region eu-west-1",
-            "rm -rf /tmp/pfe && mkdir -p /tmp/pfe && tar -xzf /tmp/pfe.tar.gz -C /tmp/pfe && mkdir -p $DOC && rsync -a --delete /tmp/pfe/ $DOC/ && rm -rf /tmp/pfe /tmp/pfe.tar.gz",
+            "rm -rf /tmp/pfe && mkdir -p /tmp/pfe && tar -xzf /tmp/pfe.tar.gz -C /tmp/pfe",
+            "rm -rf $APP/dist/.bundle-prev; [ -d $APP/dist/.bundle-current ] && mv $APP/dist/.bundle-current $APP/dist/.bundle-prev || true",
+            "rm -rf $APP/dist/.bundle-current && cp -a /tmp/pfe $APP/dist/.bundle-current",
+            "mkdir -p $DOC && rsync -a --delete $APP/dist/.bundle-current/ $DOC/",
+            "[ -d $APP/dist/.bundle-prev ] && rsync -a --ignore-existing $APP/dist/.bundle-prev/ $DOC/ || true",
+            "rm -rf /tmp/pfe /tmp/pfe.tar.gz",
             "systemctl restart pushit-frontend-runtime-fetch",
             "nginx -t && systemctl reload nginx",
             "chown -R django:www-data $APP && chmod -R g-w,o-rwx $APP"
