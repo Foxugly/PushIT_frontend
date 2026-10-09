@@ -28,12 +28,12 @@
   "dependencies": {
     "@angular/animations": "^21.2.19",
     "@angular/cdk": "^21.2.14",
-    "@angular/common": "^21.2.19",
-    "@angular/compiler": "^21.2.19",
-    "@angular/core": "^21.2.19",
+    "@angular/common": "^21.2.20",
+    "@angular/compiler": "^22.2.2",
+    "@angular/core": "^21.2.20",
     "@angular/forms": "^21.2.19",
     "@angular/platform-browser": "^21.2.19",
-    "@angular/router": "^21.2.19",
+    "@angular/router": "^21.2.24",
     "@ctrl/ngx-emoji-mart": "^9.3.0",
     "@jsverse/transloco": "^8.4.0",
     "@primeuix/themes": "^2.0.3",
@@ -53,6 +53,6 @@
     "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^28.0.0",
     "typescript": "~5.9.2",
-    "vitest": "^4.1.10"
+    "vitest": "^5.0.3"
   }
 }
