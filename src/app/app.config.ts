@@ -88,10 +88,10 @@ export const appConfig: ApplicationConfig = {
       // (AppCopyService / ConsoleCopyService) et setLanguage() lisent le
       // catalogue de facon synchrone : sans cette attente, le premier rendu
       // trouverait un store vide.
-      return inject(CatalogStore).preload();
       // Rattrape les onglets ouverts avant un deploiement, dont les chunks
       // differes n'existent plus cote serveur.
       inject(StaleChunkService).init();
+      return inject(CatalogStore).preload();
     }),
   ],
 };
