@@ -123,7 +123,6 @@
       ]
     },
     "auth": {
-      "eyebrow": "Iniciar sesión",
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
       "password": "Contraseña",
@@ -136,7 +135,6 @@
       "or": "o",
       "magicRequest": "Recibir un enlace de acceso",
       "magicTitle": "Acceso por enlace",
-      "magicDescription": "Introduce tu email y te enviaremos un enlace de acceso de un solo uso.",
       "magicSend": "Enviar el enlace",
       "magicPending": "Enviando...",
       "magicSent": "Si ese email está registrado, se acaba de enviar un enlace de acceso.",

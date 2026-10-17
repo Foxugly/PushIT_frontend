@@ -41,7 +41,6 @@ describe('AuthPage', () => {
     const appCopy = {
       current: () => ({
         auth: {
-          eyebrow: 'Connexion',
           title: 'Connexion',
           email: 'Email',
           password: 'Mot de passe',
@@ -54,7 +53,6 @@ describe('AuthPage', () => {
           or: 'ou',
           magicRequest: 'Recevoir un lien de connexion',
           magicTitle: 'Connexion par lien',
-          magicDescription: 'Saisissez votre email.',
           magicSend: 'Envoyer le lien',
           magicPending: 'Envoi...',
           magicSent: 'Lien envoyé.',
@@ -94,6 +92,17 @@ describe('AuthPage', () => {
     const heading = el.querySelector('.card-heading');
 
     expect(heading?.querySelector('h1')?.textContent?.trim()).toBe('Connexion');
+    expect(heading?.querySelector('.public-eyebrow')).toBeNull();
+    expect(el.querySelector('.hero-copy')).toBeNull();
+  });
+
+  it('shows a single title above the magic-link form too', () => {
+    component.enterMagicMode();
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    const heading = el.querySelector('.card-heading');
+
+    expect(heading?.querySelectorAll('h1').length).toBe(1);
     expect(heading?.querySelector('.public-eyebrow')).toBeNull();
     expect(el.querySelector('.hero-copy')).toBeNull();
   });

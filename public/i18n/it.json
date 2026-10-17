@@ -123,7 +123,6 @@
       ]
     },
     "auth": {
-      "eyebrow": "Accesso",
       "title": "Accedi",
       "email": "Email",
       "password": "Password",
@@ -136,7 +135,6 @@
       "or": "o",
       "magicRequest": "Ricevi un link di accesso",
       "magicTitle": "Accesso tramite link",
-      "magicDescription": "Inserisci la tua email: ti invieremo un link di accesso monouso.",
       "magicSend": "Invia il link",
       "magicPending": "Invio...",
       "magicSent": "Se questa email è registrata, è stato appena inviato un link di accesso.",

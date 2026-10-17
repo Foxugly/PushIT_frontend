@@ -123,7 +123,6 @@
       ]
     },
     "auth": {
-      "eyebrow": "Connexion",
       "title": "Connexion",
       "email": "Email",
       "password": "Mot de passe",
@@ -136,7 +135,6 @@
       "or": "ou",
       "magicRequest": "Recevoir un lien de connexion",
       "magicTitle": "Connexion par lien",
-      "magicDescription": "Saisissez votre email : nous vous enverrons un lien de connexion à usage unique.",
       "magicSend": "Envoyer le lien",
       "magicPending": "Envoi...",
       "magicSent": "Si cet email est enregistré, un lien de connexion vient d’être envoyé.",
