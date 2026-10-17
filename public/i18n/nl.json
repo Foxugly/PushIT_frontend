@@ -302,9 +302,7 @@
         "activeLanguage": "Actieve taal"
       },
       "changePassword": {
-        "eyebrow": "Wachtwoord",
         "title": "Wachtwoord wijzigen",
-        "description": "De frontend is klaar voor deze actie, maar de meegeleverde backend exposeert nog geen specifieke endpoint.",
         "backendEyebrow": "Backendstatus",
         "backendTitle": "Actie niet beschikbaar",
         "note": "De Swagger exposeert momenteel `login`, `logout`, `me`, `refresh` en `register`, maar geen route `change-password`. Zodra die endpoint beschikbaar is, kan deze pagina het updateformulier bevatten."

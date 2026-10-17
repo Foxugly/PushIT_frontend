@@ -302,9 +302,7 @@
         "activeLanguage": "Lingua attiva"
       },
       "changePassword": {
-        "eyebrow": "Password",
         "title": "Cambia password",
-        "description": "Il frontend è pronto a ricevere questa azione, ma il backend Swagger fornito non espone ancora un endpoint dedicato.",
         "backendEyebrow": "Stato backend",
         "backendTitle": "Azione non disponibile",
         "note": "Attualmente Swagger espone `login`, `logout`, `me`, `refresh` e `register`, ma nessuna rotta `change-password`. Quando l'endpoint sarà disponibile, questa pagina potrà ospitare il modulo di aggiornamento."
