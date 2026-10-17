@@ -125,6 +125,7 @@
     "auth": {
       "title": "Accedi",
       "email": "Email",
+      "emailPlaceholder": "tu@esempio.com",
       "password": "Password",
       "passwordPlaceholder": "Password",
       "rememberMe": "Ricordami",
@@ -150,6 +151,7 @@
     "registerPanel": {
       "defaultTitle": "Registrazione",
       "email": "Email",
+      "emailPlaceholder": "tu@esempio.com",
       "password": "Password",
       "passwordPlaceholder": "Minimo 8 caratteri",
       "language": "Lingua",
@@ -171,6 +173,7 @@
     "forgotPassword": {
       "title": "Password dimenticata",
       "email": "Email",
+      "emailPlaceholder": "tu@esempio.com",
       "submit": "Continua",
       "submitted": "Se esiste un account con questa email, ti è appena stato inviato un link di reimpostazione. Ricordati di controllare la posta indesiderata.",
       "registerPrompt": "Ti serve un account?",

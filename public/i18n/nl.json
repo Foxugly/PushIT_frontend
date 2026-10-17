@@ -125,6 +125,7 @@
     "auth": {
       "title": "Inloggen",
       "email": "Email",
+      "emailPlaceholder": "jij@voorbeeld.com",
       "password": "Wachtwoord",
       "passwordPlaceholder": "Wachtwoord",
       "rememberMe": "Onthoud mij",
@@ -150,6 +151,7 @@
     "registerPanel": {
       "defaultTitle": "Registratie",
       "email": "Email",
+      "emailPlaceholder": "jij@voorbeeld.com",
       "password": "Wachtwoord",
       "passwordPlaceholder": "Minimaal 8 tekens",
       "language": "Taal",
@@ -171,6 +173,7 @@
     "forgotPassword": {
       "title": "Wachtwoord vergeten",
       "email": "Email",
+      "emailPlaceholder": "jij@voorbeeld.com",
       "submit": "Doorgaan",
       "submitted": "Als er een account met dit email bestaat, is er zojuist een reset-link verstuurd. Controleer ook je spam-map.",
       "registerPrompt": "Nog geen account?",
