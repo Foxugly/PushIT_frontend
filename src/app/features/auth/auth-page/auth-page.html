@@ -85,13 +85,8 @@
 } @else {
   <form class="public-card public-card--compact public-form auth-card" [formGroup]="magicForm" (ngSubmit)="submitMagic()">
     <div class="card-heading">
-      <div>
-        <span class="public-eyebrow">{{ copy().eyebrow }}</span>
-        <h1>{{ copy().magicTitle }}</h1>
-      </div>
+      <h1>{{ copy().magicTitle }}</h1>
     </div>
-
-    <p class="hero-copy">{{ copy().magicDescription }}</p>
 
     <label>
       <span>{{ copy().email }}</span>

@@ -123,7 +123,6 @@
       ]
     },
     "auth": {
-      "eyebrow": "Inloggen",
       "title": "Inloggen",
       "email": "Email",
       "password": "Wachtwoord",
@@ -136,7 +135,6 @@
       "or": "of",
       "magicRequest": "Ontvang een inloglink",
       "magicTitle": "Aanmelden via link",
-      "magicDescription": "Voer je e-mail in en we sturen je een eenmalige inloglink.",
       "magicSend": "Stuur de link",
       "magicPending": "Verzenden...",
       "magicSent": "Als dat e-mailadres geregistreerd is, is er zojuist een inloglink verzonden.",

@@ -123,7 +123,6 @@
       ]
     },
     "auth": {
-      "eyebrow": "Log in",
       "title": "Sign in",
       "email": "Email",
       "password": "Password",
@@ -136,7 +135,6 @@
       "or": "or",
       "magicRequest": "Get a sign-in link",
       "magicTitle": "Sign in by link",
-      "magicDescription": "Enter your email and we’ll send you a single-use sign-in link.",
       "magicSend": "Send the link",
       "magicPending": "Sending...",
       "magicSent": "If that email is registered, a sign-in link has just been sent.",
