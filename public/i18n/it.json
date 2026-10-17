@@ -11,6 +11,11 @@
       "changePassword": "Cambia password",
       "logout": "Esci",
       "skipToContent": "Vai al contenuto",
+      "openMenu": "Apri il menu",
+      "closeMenu": "Chiudi il menu",
+      "mainNavigation": "Navigazione principale",
+      "consoleNavigation": "Navigazione della console",
+      "languageSwitcher": "Cambia lingua",
       "toggleTheme": "Cambia tema"
     },
     "home": {
@@ -20,21 +25,20 @@
       "primary": "Scopri le funzionalità",
       "secondary": "Accedi",
       "register": {
-        "title": "Crea un account",
-        "subtitle": "Registrati direttamente dalla home."
+        "title": "Crea un account"
       }
     },
     "features": {
       "badge": "Funzionalità",
-      "title": "Tutto ciò che il frontend copre già.",
-      "description": "La pagina raccoglie i flussi di lavoro esposti dal backend e la configurazione della destinazione API.",
+      "title": "Tutto ciò che serve per inviare le tue notifiche.",
+      "description": "Applicazioni, dispositivi, notifiche programmate e periodi di silenzio: PushIT riunisce l'intero ciclo di invio in un'unica console.",
       "sections": [
         {
           "title": "Funzionalità generali",
           "items": [
             "Registrazione, accesso, disconnessione e aggiornamento del token JWT.",
             "Recupero del profilo corrente e aggiornamento della lingua utente.",
-            "Lingue supportate: FR, NL e EN.",
+            "Lingue disponibili: francese, olandese, inglese, italiano e spagnolo.",
             "Gestione sicura della sessione tramite JWT sul frontend classico."
           ]
         },
@@ -83,11 +87,7 @@
             "Gestione dell'idempotenza tramite `message_id`, con rifiuto dei replay dal contenuto diverso."
           ]
         }
-      ],
-      "backendTitle": "Configurazione backend",
-      "backendDescription": "Definisci qui l'URL di base dell'API utilizzata da tutto il frontend Angular.",
-      "submit": "Salva",
-      "saved": "Salvato"
+      ]
     },
     "donate": {
       "badge": "Sostieni",
@@ -124,13 +124,12 @@
     },
     "auth": {
       "title": "Accedi",
-      "email": "Email",
-      "emailPlaceholder": "tu@esempio.com",
+      "email": "Indirizzo email",
       "password": "Password",
-      "passwordPlaceholder": "Password",
       "rememberMe": "Ricordami",
       "forgotPassword": "Password dimenticata?",
-      "register": "Registrazione",
+      "register": "Crea un account",
+      "registerPrompt": "Non hai ancora un account?",
       "submit": "Accedi",
       "pending": "Accesso in corso...",
       "or": "o",
@@ -139,7 +138,7 @@
       "magicSend": "Invia il link",
       "magicPending": "Invio...",
       "magicSent": "Se questa email è registrata, è stato appena inviato un link di accesso.",
-      "magicBack": "Torna all’accesso con password",
+      "magicBack": "Torna all'accesso",
       "magicCaptchaRequired": "Completa il captcha.",
       "magicCaptchaFailed": "Verifica captcha non riuscita. Riprova.",
       "validation": {
@@ -150,13 +149,12 @@
     },
     "registerPanel": {
       "defaultTitle": "Registrazione",
-      "email": "Email",
-      "emailPlaceholder": "tu@esempio.com",
+      "email": "Indirizzo email",
       "password": "Password",
-      "passwordPlaceholder": "Minimo 8 caratteri",
+      "passwordHint": "Minimo 8 caratteri",
       "language": "Lingua",
       "languagePlaceholder": "Scegli una lingua",
-      "submit": "Crea l'account",
+      "submit": "Crea il mio account",
       "pending": "Creazione in corso...",
       "loginPrompt": "Hai già un account?",
       "loginLink": "Accedi",
@@ -172,19 +170,19 @@
     },
     "forgotPassword": {
       "title": "Password dimenticata",
-      "email": "Email",
-      "emailPlaceholder": "tu@esempio.com",
-      "submit": "Continua",
+      "email": "Indirizzo email",
+      "submit": "Invia il link",
       "submitted": "Se esiste un account con questa email, ti è appena stato inviato un link di reimpostazione. Ricordati di controllare la posta indesiderata.",
-      "registerPrompt": "Ti serve un account?",
-      "registerLink": "Registrazione",
+      "registerPrompt": "Non hai ancora un account?",
+      "registerLink": "Crea un account",
+      "backToLogin": "Torna all'accesso",
       "captchaRequired": "Completa il captcha anti-robot.",
       "captchaFailed": "Verifica anti-robot non riuscita. Riprova."
     },
     "resetPassword": {
       "title": "Scegli una nuova password",
       "password": "Nuova password",
-      "passwordPlaceholder": "Minimo 8 caratteri",
+      "passwordHint": "Minimo 8 caratteri",
       "confirmPassword": "Conferma la password",
       "passwordTooShort": "La password deve contenere almeno 8 caratteri.",
       "passwordMismatch": "Le password non corrispondono.",
@@ -206,7 +204,7 @@
       "confirming": "Conferma in corso…",
       "invalid": "Questo link di conferma non è valido o è scaduto.",
       "resendHint": "Inserisci la tua email per ricevere un nuovo link.",
-      "emailLabel": "Email",
+      "emailLabel": "Indirizzo email",
       "resend": "Invia di nuovo il link",
       "resent": "Se è necessaria una conferma, è stato inviato un nuovo link.",
       "resendError": "Impossibile inviare il link al momento. Riprova più tardi.",
@@ -217,11 +215,13 @@
       "verifying": "Verifica del link di accesso in corso…",
       "invalid": "Questo link di accesso non è valido, è scaduto o è già stato usato.",
       "invalidHint": "Richiedi un nuovo link dalla pagina di accesso.",
-      "backToLogin": "Torna all’accesso"
+      "backToLogin": "Torna all'accesso"
     },
     "footer": {
-      "rightsReserved": "Tutti i diritti riservati.",
-      "privacy": "Informativa sulla privacy"
+      "tagline": "Le tue notifiche push, semplicemente.",
+      "version": "Versione",
+      "privacy": "Privacy",
+      "rights": "Tutti i diritti riservati."
     },
     "console": {
       "navigation": {

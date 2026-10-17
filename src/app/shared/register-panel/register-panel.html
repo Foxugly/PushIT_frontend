@@ -1,16 +1,17 @@
 <form class="public-card public-form register-panel" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
   <div class="panel-heading">
     <div>
-      <h2>{{ resolvedTitle() }}</h2>
-      @if (subtitle()) {
-        <p>{{ subtitle() }}</p>
+      @if (headingLevel() === 1) {
+        <h1>{{ resolvedTitle() }}</h1>
+      } @else {
+        <h2>{{ resolvedTitle() }}</h2>
       }
     </div>
   </div>
 
-  <label>
+  <label for="register-email">
     <span>{{ copy().email }}</span>
-    <input pInputText type="email" formControlName="email" [placeholder]="copy().emailPlaceholder" class="public-input" />
+    <input id="register-email" pInputText type="email" formControlName="email" autocomplete="email" class="public-input" />
   </label>
   @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
     @if (registerForm.controls.email.errors?.['required']) {
@@ -23,17 +24,19 @@
     <p class="public-field-error">{{ message }}</p>
   }
 
-  <label>
+  <label for="register-password">
     <span>{{ copy().password }}</span>
     <p-password
+      inputId="register-password"
       formControlName="password"
+      autocomplete="new-password"
       [feedback]="false"
       [toggleMask]="true"
-      [placeholder]="copy().passwordPlaceholder"
       styleClass="public-password register-password"
       inputStyleClass="register-password__input"
     />
   </label>
+  <small class="public-field-hint">{{ copy().passwordHint }}</small>
   @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
     @if (registerForm.controls.password.errors?.['required']) {
       <p class="public-field-error">{{ copy().validation.passwordRequired }}</p>
@@ -45,9 +48,10 @@
     <p class="public-field-error">{{ message }}</p>
   }
 
-  <label>
+  <label for="register-language">
     <span>{{ copy().language }}</span>
     <p-select
+      inputId="register-language"
       formControlName="language"
       [options]="languagePreference.options"
       optionLabel="label"

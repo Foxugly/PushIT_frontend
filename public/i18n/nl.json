@@ -11,6 +11,11 @@
       "changePassword": "Wachtwoord wijzigen",
       "logout": "Uitloggen",
       "skipToContent": "Naar de inhoud",
+      "openMenu": "Menu openen",
+      "closeMenu": "Menu sluiten",
+      "mainNavigation": "Hoofdnavigatie",
+      "consoleNavigation": "Consolenavigatie",
+      "languageSwitcher": "Taal wijzigen",
       "toggleTheme": "Thema wisselen"
     },
     "home": {
@@ -20,21 +25,20 @@
       "primary": "Bekijk de features",
       "secondary": "Inloggen",
       "register": {
-        "title": "Account aanmaken",
-        "subtitle": "Registreer je rechtstreeks vanaf de homepagina."
+        "title": "Account aanmaken"
       }
     },
     "features": {
       "badge": "Features",
-      "title": "Alles wat de frontend al ondersteunt.",
-      "description": "Deze pagina groepeert de backend-workflows en de configuratie van de API-doelomgeving.",
+      "title": "Alles wat je nodig hebt om je meldingen te versturen.",
+      "description": "Applicaties, apparaten, geplande meldingen en stille periodes: PushIT brengt de volledige verzendcyclus samen in één console.",
       "sections": [
         {
           "title": "Algemene functionaliteiten",
           "items": [
             "Registratie, login, logout en refresh van het JWT-token.",
             "Ophalen van het huidige profiel en bijwerken van de gebruikerstaal.",
-            "Ondersteunde talen: FR, NL en EN.",
+            "Beschikbare talen: Frans, Nederlands, Engels, Italiaans en Spaans.",
             "Veilige sessiebeheer met JWT aan frontendzijde."
           ]
         },
@@ -83,11 +87,7 @@
             "Idempotentie via `message_id`, met weigering bij hergebruik met andere inhoud."
           ]
         }
-      ],
-      "backendTitle": "Backendconfiguratie",
-      "backendDescription": "Definieer hier de basis-URL van de API die door de Angular-frontend wordt gebruikt.",
-      "submit": "Opslaan",
-      "saved": "Opgeslagen"
+      ]
     },
     "donate": {
       "badge": "Donate",
@@ -124,13 +124,12 @@
     },
     "auth": {
       "title": "Inloggen",
-      "email": "Email",
-      "emailPlaceholder": "jij@voorbeeld.com",
+      "email": "E-mailadres",
       "password": "Wachtwoord",
-      "passwordPlaceholder": "Wachtwoord",
       "rememberMe": "Onthoud mij",
       "forgotPassword": "Wachtwoord vergeten?",
-      "register": "Registreren",
+      "register": "Account aanmaken",
+      "registerPrompt": "Nog geen account?",
       "submit": "Inloggen",
       "pending": "Bezig met inloggen...",
       "or": "of",
@@ -139,7 +138,7 @@
       "magicSend": "Stuur de link",
       "magicPending": "Verzenden...",
       "magicSent": "Als dat e-mailadres geregistreerd is, is er zojuist een inloglink verzonden.",
-      "magicBack": "Terug naar aanmelden met wachtwoord",
+      "magicBack": "Terug naar inloggen",
       "magicCaptchaRequired": "Voltooi de captcha.",
       "magicCaptchaFailed": "Captcha-verificatie mislukt. Probeer het opnieuw.",
       "validation": {
@@ -150,13 +149,12 @@
     },
     "registerPanel": {
       "defaultTitle": "Registratie",
-      "email": "Email",
-      "emailPlaceholder": "jij@voorbeeld.com",
+      "email": "E-mailadres",
       "password": "Wachtwoord",
-      "passwordPlaceholder": "Minimaal 8 tekens",
+      "passwordHint": "Minimaal 8 tekens",
       "language": "Taal",
       "languagePlaceholder": "Kies een taal",
-      "submit": "Account aanmaken",
+      "submit": "Mijn account aanmaken",
       "pending": "Bezig met aanmaken...",
       "loginPrompt": "Al een account?",
       "loginLink": "Inloggen",
@@ -172,19 +170,19 @@
     },
     "forgotPassword": {
       "title": "Wachtwoord vergeten",
-      "email": "Email",
-      "emailPlaceholder": "jij@voorbeeld.com",
-      "submit": "Doorgaan",
+      "email": "E-mailadres",
+      "submit": "Link verzenden",
       "submitted": "Als er een account met dit email bestaat, is er zojuist een reset-link verstuurd. Controleer ook je spam-map.",
       "registerPrompt": "Nog geen account?",
-      "registerLink": "Registreren",
+      "registerLink": "Account aanmaken",
+      "backToLogin": "Terug naar inloggen",
       "captchaRequired": "Bevestig de anti-robotcaptcha.",
       "captchaFailed": "Anti-robotverificatie mislukt. Probeer opnieuw."
     },
     "resetPassword": {
       "title": "Kies een nieuw wachtwoord",
       "password": "Nieuw wachtwoord",
-      "passwordPlaceholder": "Minimaal 8 tekens",
+      "passwordHint": "Minimaal 8 tekens",
       "confirmPassword": "Bevestig wachtwoord",
       "passwordTooShort": "Het wachtwoord moet minstens 8 tekens bevatten.",
       "passwordMismatch": "De wachtwoorden komen niet overeen.",
@@ -206,7 +204,7 @@
       "confirming": "Bezig met bevestigen…",
       "invalid": "Deze bevestigingslink is ongeldig of verlopen.",
       "resendHint": "Voer je e-mail in om een nieuwe link te ontvangen.",
-      "emailLabel": "E-mail",
+      "emailLabel": "E-mailadres",
       "resend": "Link opnieuw versturen",
       "resent": "Indien een bevestiging nodig is, is een nieuwe link verstuurd.",
       "resendError": "De link kan nu niet worden verzonden. Probeer het later opnieuw.",
@@ -217,11 +215,13 @@
       "verifying": "Je inloglink wordt geverifieerd…",
       "invalid": "Deze inloglink is ongeldig, verlopen of al gebruikt.",
       "invalidHint": "Vraag een nieuwe link aan op de aanmeldpagina.",
-      "backToLogin": "Terug naar aanmelden"
+      "backToLogin": "Terug naar inloggen"
     },
     "footer": {
-      "rightsReserved": "Alle rechten voorbehouden.",
-      "privacy": "Privacybeleid"
+      "tagline": "Pushmeldingen, eenvoudig beheerd.",
+      "version": "Versie",
+      "privacy": "Privacy",
+      "rights": "Alle rechten voorbehouden."
     },
     "console": {
       "navigation": {

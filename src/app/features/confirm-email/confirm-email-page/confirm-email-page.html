@@ -12,9 +12,9 @@
       } @else {
         <p class="public-muted">{{ copy().resendHint }}</p>
         <form class="public-form" [formGroup]="resendForm" (ngSubmit)="resend()">
-          <label>
+          <label for="confirm-email">
             <span>{{ copy().emailLabel }}</span>
-            <input pInputText type="email" formControlName="email" class="public-input" autocomplete="email" />
+            <input id="confirm-email" pInputText type="email" formControlName="email" class="public-input" autocomplete="email" />
           </label>
           @if (resendError()) {
             <app-alert [message]="resendError()!" tone="danger" (dismissed)="resendError.set(null)" />
