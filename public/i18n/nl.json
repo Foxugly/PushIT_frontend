@@ -147,14 +147,8 @@
         "passwordRequired": "Wachtwoord is verplicht."
       }
     },
-    "registerPage": {
-      "eyebrow": "Registratie",
-      "title": "Maak een PushIT-account aan.",
-      "description": "Registreer je om toegang te krijgen tot de console en je applicaties en notificaties te beheren."
-    },
     "registerPanel": {
       "defaultTitle": "Registratie",
-      "defaultSubtitle": "Gebruikersaccount",
       "email": "Email",
       "password": "Wachtwoord",
       "passwordPlaceholder": "Minimaal 8 tekens",
@@ -175,9 +169,7 @@
       }
     },
     "forgotPassword": {
-      "eyebrow": "Wachtwoord vergeten",
-      "title": "Toegang herstellen.",
-      "description": "Voer je email in. Als er een account bestaat, sturen we je een link om je wachtwoord opnieuw in te stellen.",
+      "title": "Wachtwoord vergeten",
       "email": "Email",
       "submit": "Doorgaan",
       "submitted": "Als er een account met dit email bestaat, is er zojuist een reset-link verstuurd. Controleer ook je spam-map.",

@@ -147,14 +147,8 @@
         "passwordRequired": "La contraseña es obligatoria."
       }
     },
-    "registerPage": {
-      "eyebrow": "Registrarse",
-      "title": "Crear una cuenta de PushIT.",
-      "description": "Regístrate para acceder a la consola y empezar a gestionar tus aplicaciones y tus notificaciones."
-    },
     "registerPanel": {
       "defaultTitle": "Registrarse",
-      "defaultSubtitle": "Cuenta de usuario",
       "email": "Correo electrónico",
       "password": "Contraseña",
       "passwordPlaceholder": "Mínimo 8 caracteres",
@@ -175,9 +169,7 @@
       }
     },
     "forgotPassword": {
-      "eyebrow": "Contraseña olvidada",
-      "title": "Recuperar el acceso.",
-      "description": "Introduce tu correo electrónico. Si existe una cuenta, te enviaremos un enlace para restablecer tu contraseña.",
+      "title": "Contraseña olvidada",
       "email": "Correo electrónico",
       "submit": "Continuar",
       "submitted": "Si existe una cuenta con este correo electrónico, se acaba de enviar un enlace de restablecimiento. Recuerda revisar tu carpeta de spam.",
