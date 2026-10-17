@@ -179,9 +179,7 @@
       "captchaFailed": "Error en la verificación antirrobots. Inténtalo de nuevo."
     },
     "resetPassword": {
-      "eyebrow": "Restablecimiento",
-      "title": "Elegir una nueva contraseña.",
-      "description": "Introduce tu nueva contraseña a continuación.",
+      "title": "Elegir una nueva contraseña",
       "password": "Nueva contraseña",
       "passwordPlaceholder": "Mínimo 8 caracteres",
       "confirmPassword": "Confirmar la contraseña",

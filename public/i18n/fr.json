@@ -179,9 +179,7 @@
       "captchaFailed": "Échec de la vérification anti-robot. Réessayez."
     },
     "resetPassword": {
-      "eyebrow": "Réinitialisation",
-      "title": "Choisir un nouveau mot de passe.",
-      "description": "Saisissez votre nouveau mot de passe ci-dessous.",
+      "title": "Choisir un nouveau mot de passe",
       "password": "Nouveau mot de passe",
       "passwordPlaceholder": "Minimum 8 caractères",
       "confirmPassword": "Confirmer le mot de passe",
