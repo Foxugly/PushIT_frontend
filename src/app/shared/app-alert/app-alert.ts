@@ -4,6 +4,8 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { LanguageCode, PublicI18nService } from '../../core/services/public-i18n.service';
 
+const DEFAULT_TIMEOUT_MS = 5000;
+
 export type AppAlertTone = 'success' | 'info' | 'danger';
 
 /** Localized "close" label for the dismiss button. Kept inline (single generic
@@ -28,7 +30,9 @@ export class AppAlert {
 
   readonly message = input.required<string>();
   readonly tone = input<AppAlertTone>('info');
-  readonly timeoutMs = input(5000);
+  /** Délai avant disparition automatique (ms). Par défaut : 5 s, sauf pour `danger` qui reste affiché
+   * jusqu'à fermeture manuelle (une erreur ne disparaît jamais seule). `0` = jamais. */
+  readonly timeoutMs = input<number | null>(null);
   /** Override the localized default close label (e.g. to use a page's copy). */
   readonly closeLabel = input<string>('');
 
@@ -46,7 +50,7 @@ export class AppAlert {
   constructor() {
     effect((onCleanup) => {
       const message = this.message();
-      const timeoutMs = this.timeoutMs();
+      const timeoutMs = this.timeoutMs() ?? (this.tone() === 'danger' ? 0 : DEFAULT_TIMEOUT_MS);
 
       this.resetVisibility();
 
