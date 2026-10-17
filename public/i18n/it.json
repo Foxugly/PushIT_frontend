@@ -179,9 +179,7 @@
       "captchaFailed": "Verifica anti-robot non riuscita. Riprova."
     },
     "resetPassword": {
-      "eyebrow": "Reimpostazione",
-      "title": "Scegli una nuova password.",
-      "description": "Inserisci qui sotto la tua nuova password.",
+      "title": "Scegli una nuova password",
       "password": "Nuova password",
       "passwordPlaceholder": "Minimo 8 caratteri",
       "confirmPassword": "Conferma la password",

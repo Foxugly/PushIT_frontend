@@ -179,9 +179,7 @@
       "captchaFailed": "Anti-robotverificatie mislukt. Probeer opnieuw."
     },
     "resetPassword": {
-      "eyebrow": "Opnieuw instellen",
-      "title": "Kies een nieuw wachtwoord.",
-      "description": "Voer hieronder je nieuwe wachtwoord in.",
+      "title": "Kies een nieuw wachtwoord",
       "password": "Nieuw wachtwoord",
       "passwordPlaceholder": "Minimaal 8 tekens",
       "confirmPassword": "Bevestig wachtwoord",
