@@ -57,7 +57,8 @@ export class RegisterPanel implements AfterViewInit, OnDestroy {
   readonly languagePreference = inject(LanguagePreferenceService);
 
   readonly title = input('');
-  readonly subtitle = input('');
+  /** Niveau du titre : 1 quand le panneau est la page (/register), 2 quand il est embarqué (home, qui a déjà son h1). */
+  readonly headingLevel = input<1 | 2>(2);
   readonly showLoginLink = input(true);
 
   // Empty site key when Turnstile is not provisioned → the widget is hidden and

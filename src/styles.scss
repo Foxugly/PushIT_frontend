@@ -243,6 +243,13 @@ a {
   font-size: 0.86rem;
 }
 
+// Aide sous un champ (ex. « Minimum 8 caractères ») : texte, pas un placeholder.
+.public-field-hint {
+  margin-top: -0.4rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .console-page {
   display: grid;
   gap: 1rem;

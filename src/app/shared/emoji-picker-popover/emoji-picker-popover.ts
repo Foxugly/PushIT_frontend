@@ -4,12 +4,20 @@ import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 
-import { PublicI18nService } from '../../core/services/public-i18n.service';
+import { LanguageCode, PublicI18nService } from '../../core/services/public-i18n.service';
 
 type EmojiPickerEvent = {
   emoji?: {
     native?: string;
   };
+};
+
+const DEFAULT_TOOLTIP: Record<LanguageCode, string> = {
+  fr: 'Insérer un emoji',
+  nl: 'Emoji invoegen',
+  en: 'Insert an emoji',
+  it: 'Inserisci una emoji',
+  es: 'Insertar un emoji',
 };
 
 @Component({
@@ -21,7 +29,9 @@ type EmojiPickerEvent = {
 export class EmojiPickerPopover {
   private readonly i18n = inject(PublicI18nService);
 
-  readonly tooltip = input('Inserer un emoji');
+  /** Surcharge optionnelle du libellé du bouton ; vide = libellé traduit par défaut. */
+  readonly tooltip = input('');
+  protected readonly resolvedTooltip = computed(() => this.tooltip() || DEFAULT_TOOLTIP[this.i18n.language()]);
   readonly icon = input('pi pi-face-smile');
   readonly emojiSelected = output<string>();
   protected readonly pickerRequested = signal(false);

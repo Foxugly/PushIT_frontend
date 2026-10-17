@@ -86,6 +86,7 @@
                   [text]="true"
                   [rounded]="true"
                   [disabled]="pending()"
+                  [ariaLabel]="app.is_active ? copy().actions.deactivate : copy().actions.activate"
                   [pTooltip]="app.is_active ? copy().actions.deactivate : copy().actions.activate"
                   tooltipPosition="top"
                   (onClick)="toggleState(app)"

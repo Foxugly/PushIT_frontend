@@ -1,16 +1,22 @@
 <footer class="footer">
-  <p class="footer__credit">
+  <div class="footer__inner">
     <span class="footer__brand">PushIT</span>
     <span class="footer__sep" aria-hidden="true">·</span>
+    <span class="footer__tagline">{{ copy().tagline }}</span>
+    <span class="footer__fill"></span>
     @if (version) {
-      <span class="footer__version">v{{ version }}</span>
+      <span class="footer__meta">{{ copy().version }}&nbsp;{{ version }}</span>
       <span class="footer__sep" aria-hidden="true">·</span>
     }
-    © {{ year }}
-    <a class="footer__author-link" href="https://www.foxugly.com" target="_blank" rel="noopener noreferrer">
-      <img class="footer__author-logo" src="foxugly-logo.svg" alt="" aria-hidden="true" /> Foxugly
-    </a>. {{ copy().rightsReserved }}
+    <span class="footer__meta">
+      © {{ year }}
+      <a class="footer__author-link" href="https://www.foxugly.com" target="_blank" rel="noopener noreferrer">
+        <img class="footer__author-logo" src="foxugly-logo.svg" alt="" aria-hidden="true" /> Foxugly
+      </a>
+    </span>
     <span class="footer__sep" aria-hidden="true">·</span>
     <a class="footer__privacy-link" routerLink="/privacy">{{ copy().privacy }}</a>
-  </p>
+    <span class="footer__sep" aria-hidden="true">·</span>
+    <span class="footer__meta">{{ copy().rights }}</span>
+  </div>
 </footer>

@@ -517,7 +517,7 @@ export class QuietPeriodsPage implements OnInit {
       if (Number.isNaN(rawValue.start_at.getTime()) || Number.isNaN(rawValue.end_at.getTime()) || rawValue.end_at <= rawValue.start_at) {
         this.error.set({
           code: 'validation_error',
-          detail: 'Validation error.',
+          detail: this.copy().validation.endAfterStart,
           errors: {
             end_at: [this.copy().validation.endAfterStart],
           },
@@ -550,7 +550,7 @@ export class QuietPeriodsPage implements OnInit {
     if (rawValue.start_time.getTime() === rawValue.end_time.getTime()) {
       this.error.set({
         code: 'validation_error',
-          detail: 'Validation error.',
+          detail: this.copy().validation.differentEndTime,
           errors: {
             end_time: [this.copy().validation.differentEndTime],
           },

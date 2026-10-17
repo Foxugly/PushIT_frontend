@@ -4,9 +4,9 @@
       <h1>{{ copy().title }}</h1>
     </div>
 
-    <label>
+    <label for="login-email">
       <span>{{ copy().email }}</span>
-      <input pInputText type="email" formControlName="email" [placeholder]="copy().emailPlaceholder" class="public-input" />
+      <input id="login-email" pInputText type="email" formControlName="email" autocomplete="email" class="public-input" />
     </label>
     <!-- Validation cliente : sans ce bloc, le markAllAsTouched() de
          submitLogin() n'avait aucun effet visible et un submit invalide ne
@@ -22,13 +22,14 @@
       <p class="public-field-error">{{ message }}</p>
     }
 
-    <label>
+    <label for="login-password">
       <span>{{ copy().password }}</span>
       <p-password
+        inputId="login-password"
         formControlName="password"
+        autocomplete="current-password"
         [feedback]="false"
         [toggleMask]="true"
-        [placeholder]="copy().passwordPlaceholder"
         styleClass="public-password auth-password"
         inputStyleClass="auth-password__input"
       />
@@ -72,13 +73,14 @@
         type="button"
         [label]="copy().magicRequest"
         icon="pi pi-envelope"
-        [outlined]="true"
+        severity="secondary"
         styleClass="auth-magic"
         (onClick)="enterMagicMode()"
       />
     </div>
 
     <p class="auth-alt link-row">
+      {{ copy().registerPrompt }}
       <a routerLink="/register">{{ copy().register }}</a>
     </p>
   </form>
@@ -88,9 +90,9 @@
       <h1>{{ copy().magicTitle }}</h1>
     </div>
 
-    <label>
+    <label for="magic-email">
       <span>{{ copy().email }}</span>
-      <input pInputText type="email" formControlName="email" [placeholder]="copy().emailPlaceholder" class="public-input" autocomplete="email" />
+      <input id="magic-email" pInputText type="email" formControlName="email" class="public-input" autocomplete="email" />
     </label>
     <!-- Sans ce bloc, cliquer « Envoyer le lien » avec un email vide ne
          produisait AUCUN retour : submitMagic() sortait sur magicForm.invalid

@@ -2,12 +2,14 @@ import { UpperCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   signal,
   viewChildren,
 } from '@angular/core';
 
+import { AppCopyService } from '../../core/services/app-copy.service';
 import { LanguagePreferenceService } from '../../core/services/language-preference.service';
 import { LanguageCode, PublicI18nService } from '../../core/services/public-i18n.service';
 
@@ -47,6 +49,9 @@ export class LanguageSwitcher {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly i18n = inject(PublicI18nService);
   private readonly languagePreference = inject(LanguagePreferenceService);
+  private readonly appCopy = inject(AppCopyService);
+
+  protected readonly label = computed(() => this.appCopy.current().header.languageSwitcher);
 
   protected readonly languages = LANGUAGES;
   protected readonly current = this.i18n.language;

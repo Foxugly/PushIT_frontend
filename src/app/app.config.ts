@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, TitleStrategy } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
@@ -21,6 +21,7 @@ import Aura from '@primeuix/themes/aura';
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
 import { CatalogStore } from './core/i18n/catalog-store';
+import { PageTitleStrategy } from './core/services/page-title.strategy';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 // Fleet look: Aura preset with Emerald as primary (same as QuizOnline/TM). The
@@ -59,6 +60,8 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideRouter(routes),
+    // Titre d'onglet « {page} — PushIT » (data.titleKey des routes), suivi de la langue.
+    { provide: TitleStrategy, useExisting: PageTitleStrategy },
     provideHttpClient(withInterceptors([authInterceptor])),
     // Toast global : un seul <p-toast/> monté à la racine des layouts de shell,
     // alimenté par ce MessageService partagé (standard flotte).
@@ -85,10 +88,10 @@ export const appConfig: ApplicationConfig = {
       // (AppCopyService / ConsoleCopyService) et setLanguage() lisent le
       // catalogue de facon synchrone : sans cette attente, le premier rendu
       // trouverait un store vide.
-      return inject(CatalogStore).preload();
       // Rattrape les onglets ouverts avant un deploiement, dont les chunks
       // differes n'existent plus cote serveur.
       inject(StaleChunkService).init();
+      return inject(CatalogStore).preload();
     }),
   ],
 };

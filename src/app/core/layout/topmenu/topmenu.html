@@ -9,13 +9,13 @@
       type="button"
       class="topbar__toggle"
       [attr.aria-expanded]="mobileOpen()"
-      aria-label="Menu"
+      [attr.aria-label]="mobileOpen() ? labels().closeMenu : labels().openMenu"
       (click)="toggleMobile()"
     >
       <i class="pi" [class.pi-bars]="!mobileOpen()" [class.pi-times]="mobileOpen()"></i>
     </button>
 
-    <nav class="topbar__nav" aria-label="Main navigation">
+    <nav class="topbar__nav" [attr.aria-label]="labels().mainNavigation">
       <a class="topbar__link" routerLink="/" routerLinkActive="topbar__link--active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
         <i class="pi pi-home" aria-hidden="true"></i>{{ labels().home }}
       </a>

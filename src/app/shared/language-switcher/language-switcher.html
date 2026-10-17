@@ -2,7 +2,7 @@
   <button
     type="button"
     class="ls-trigger"
-    aria-label="Language switcher"
+    [attr.aria-label]="label()"
     [attr.aria-haspopup]="'menu'"
     [attr.aria-expanded]="open()"
     aria-controls="ls-menu"

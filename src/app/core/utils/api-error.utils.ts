@@ -2,6 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { ApiErrorResponse } from '../models/api.models';
 
+// Les `detail` de repli sont des sentinelles techniques : l'UI n'affiche jamais le
+// detail brut mais le message traduit de `localizeApiError` (pipe `apiError`).
 export function coerceApiError(error: unknown): ApiErrorResponse {
   if (error instanceof HttpErrorResponse) {
     if (error.error && typeof error.error === 'object') {
@@ -17,7 +19,7 @@ export function coerceApiError(error: unknown): ApiErrorResponse {
 
     return {
       code: `http_${error.status}`,
-      detail: error.message || 'La requete a echoue.',
+      detail: error.message || 'Request failed.',
       errors: {},
     };
   }
@@ -32,7 +34,7 @@ export function coerceApiError(error: unknown): ApiErrorResponse {
 
   return {
     code: 'unexpected_error',
-    detail: 'Une erreur inattendue est survenue.',
+    detail: 'Unexpected error.',
     errors: {},
   };
 }

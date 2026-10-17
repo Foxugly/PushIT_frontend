@@ -6,11 +6,16 @@
       "about": "About",
       "features": "Features",
       "donate": "Support",
-      "login": "Log in",
+      "login": "Sign in",
       "settings": "Settings",
       "changePassword": "Change password",
-      "logout": "Log out",
+      "logout": "Sign out",
       "skipToContent": "Skip to content",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "mainNavigation": "Main navigation",
+      "consoleNavigation": "Console navigation",
+      "languageSwitcher": "Change language",
       "toggleTheme": "Toggle theme"
     },
     "home": {
@@ -18,23 +23,22 @@
       "title": "Manage your push notifications easily.",
       "description": "Centralize push campaigns in a modern workspace designed to feel lighter and easier to operate.",
       "primary": "See features",
-      "secondary": "Log in",
+      "secondary": "Sign in",
       "register": {
-        "title": "Create an account",
-        "subtitle": "Sign up directly from the homepage."
+        "title": "Create an account"
       }
     },
     "features": {
       "badge": "Features",
-      "title": "Everything the frontend already covers.",
-      "description": "This page gathers the backend workflows already exposed in the UI along with API target configuration.",
+      "title": "Everything you need to send your notifications.",
+      "description": "Applications, devices, scheduled notifications and quiet periods: PushIT brings the whole delivery cycle into a single console.",
       "sections": [
         {
           "title": "General capabilities",
           "items": [
             "User sign-up, sign-in, sign-out and JWT refresh.",
             "Current profile retrieval and user language update.",
-            "Supported languages: FR, NL and EN.",
+            "Available languages: French, Dutch, English, Italian and Spanish.",
             "Secure JWT-based session handling on the frontend."
           ]
         },
@@ -83,11 +87,7 @@
             "Handle idempotency through `message_id`, rejecting replays with different content."
           ]
         }
-      ],
-      "backendTitle": "Backend configuration",
-      "backendDescription": "Set here the API base URL used across the Angular frontend.",
-      "submit": "Save",
-      "saved": "Saved"
+      ]
     },
     "donate": {
       "badge": "Donate",
@@ -124,14 +124,13 @@
     },
     "auth": {
       "title": "Sign in",
-      "email": "Email",
-      "emailPlaceholder": "you@example.com",
+      "email": "Email address",
       "password": "Password",
-      "passwordPlaceholder": "Password",
       "rememberMe": "Remember me",
       "forgotPassword": "Forgot password?",
-      "register": "Sign up",
-      "submit": "Log in",
+      "register": "Create an account",
+      "registerPrompt": "No account yet?",
+      "submit": "Sign in",
       "pending": "Logging in...",
       "or": "or",
       "magicRequest": "Get a sign-in link",
@@ -139,7 +138,7 @@
       "magicSend": "Send the link",
       "magicPending": "Sending...",
       "magicSent": "If that email is registered, a sign-in link has just been sent.",
-      "magicBack": "Back to password sign-in",
+      "magicBack": "Back to sign in",
       "magicCaptchaRequired": "Please complete the captcha.",
       "magicCaptchaFailed": "Captcha verification failed. Please try again.",
       "validation": {
@@ -150,16 +149,15 @@
     },
     "registerPanel": {
       "defaultTitle": "Sign up",
-      "email": "Email",
-      "emailPlaceholder": "you@example.com",
+      "email": "Email address",
       "password": "Password",
-      "passwordPlaceholder": "Minimum 8 characters",
+      "passwordHint": "Minimum 8 characters",
       "language": "Language",
       "languagePlaceholder": "Choose a language",
-      "submit": "Create account",
+      "submit": "Create my account",
       "pending": "Creating...",
       "loginPrompt": "Already have an account?",
-      "loginLink": "Log in",
+      "loginLink": "Sign in",
       "captchaRequired": "Please complete the anti-bot captcha.",
       "captchaFailed": "Anti-bot verification failed. Please try again.",
       "validation": {
@@ -172,19 +170,19 @@
     },
     "forgotPassword": {
       "title": "Forgot password",
-      "email": "Email",
-      "emailPlaceholder": "you@example.com",
-      "submit": "Continue",
+      "email": "Email address",
+      "submit": "Send the link",
       "submitted": "If an account exists for that email, a reset link has just been sent. Remember to check your spam folder.",
-      "registerPrompt": "Need an account?",
-      "registerLink": "Sign up",
+      "registerPrompt": "No account yet?",
+      "registerLink": "Create an account",
+      "backToLogin": "Back to sign in",
       "captchaRequired": "Please complete the anti-bot captcha.",
       "captchaFailed": "Anti-bot verification failed. Please try again."
     },
     "resetPassword": {
       "title": "Choose a new password",
       "password": "New password",
-      "passwordPlaceholder": "Minimum 8 characters",
+      "passwordHint": "Minimum 8 characters",
       "confirmPassword": "Confirm password",
       "passwordTooShort": "Password must be at least 8 characters.",
       "passwordMismatch": "Passwords do not match.",
@@ -206,7 +204,7 @@
       "confirming": "Confirming…",
       "invalid": "This confirmation link is invalid or has expired.",
       "resendHint": "Enter your email to get a new link.",
-      "emailLabel": "Email",
+      "emailLabel": "Email address",
       "resend": "Resend the link",
       "resent": "If a confirmation is needed, a new link has been sent.",
       "resendError": "Could not send the link right now. Please try again later.",
@@ -220,8 +218,10 @@
       "backToLogin": "Back to sign in"
     },
     "footer": {
-      "rightsReserved": "All rights reserved.",
-      "privacy": "Privacy policy"
+      "tagline": "Push notifications, made simple.",
+      "version": "Version",
+      "privacy": "Privacy",
+      "rights": "All rights reserved."
     },
     "console": {
       "navigation": {
