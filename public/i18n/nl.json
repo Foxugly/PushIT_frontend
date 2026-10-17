@@ -124,8 +124,7 @@
     },
     "auth": {
       "eyebrow": "Inloggen",
-      "title": "Toegang tot je ruimte.",
-      "description": "Log in om het PushIT-dashboard te openen en je campagnes te beheren.",
+      "title": "Inloggen",
       "email": "Email",
       "password": "Wachtwoord",
       "passwordPlaceholder": "Wachtwoord",

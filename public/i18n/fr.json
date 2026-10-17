@@ -124,8 +124,7 @@
     },
     "auth": {
       "eyebrow": "Connexion",
-      "title": "Accéder à votre espace.",
-      "description": "Connectez-vous pour accéder au dashboard PushIT et gérer vos campagnes.",
+      "title": "Connexion",
       "email": "Email",
       "password": "Mot de passe",
       "passwordPlaceholder": "Mot de passe",
