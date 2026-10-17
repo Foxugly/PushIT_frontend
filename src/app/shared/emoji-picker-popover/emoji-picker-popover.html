@@ -4,7 +4,8 @@
   [text]="true"
   [rounded]="true"
   size="small"
-  [pTooltip]="tooltip()"
+  [ariaLabel]="resolvedTooltip()"
+  [pTooltip]="resolvedTooltip()"
   tooltipPosition="top"
   (onClick)="openPopover($event, pickerPopover)"
 />

@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  <nav class="console-shell__nav" aria-label="Console navigation">
+  <nav class="console-shell__nav" [attr.aria-label]="headerCopy().consoleNavigation">
     @for (item of navigationItems(); track item.link) {
       <app-console-menu-item
         [link]="item.link"
