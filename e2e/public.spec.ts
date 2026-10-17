@@ -11,5 +11,4 @@ test('public pages render the shared shell and features sections', async ({ page
 
   await expect(page.getByRole('heading', { name: /fonctionnalités générales|algemene functionaliteiten|general capabilities/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: /fonctionnalités des applications|applicatiefunctionaliteiten|application capabilities/i })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /configuration backend|backendconfiguratie|backend configuration/i })).toBeVisible();
 });

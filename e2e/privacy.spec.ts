@@ -23,7 +23,7 @@ test.describe('Public privacy policy page', () => {
 
     const footer = page.locator('footer.footer').first();
     const privacyLink = footer.getByRole('link', {
-      name: /Politique de confidentialité|Privacybeleid|Privacy policy/i,
+      name: /^(Confidentialité|Privacy)$/i,
     });
     await expect(privacyLink).toBeVisible();
 
