@@ -125,6 +125,7 @@
     "auth": {
       "title": "Connexion",
       "email": "Email",
+      "emailPlaceholder": "vous@exemple.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "Mot de passe",
       "rememberMe": "Se souvenir de moi",
@@ -150,6 +151,7 @@
     "registerPanel": {
       "defaultTitle": "Inscription",
       "email": "Email",
+      "emailPlaceholder": "vous@exemple.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "Minimum 8 caractères",
       "language": "Langue",
@@ -171,6 +173,7 @@
     "forgotPassword": {
       "title": "Mot de passe oublié",
       "email": "Email",
+      "emailPlaceholder": "vous@exemple.com",
       "submit": "Continuer",
       "submitted": "Si un compte existe avec cet email, un lien de réinitialisation vient de vous être envoyé. Pensez à vérifier vos spams.",
       "registerPrompt": "Besoin d'un compte ?",
@@ -302,9 +305,7 @@
         "activeLanguage": "Langue active"
       },
       "changePassword": {
-        "eyebrow": "Mot de passe",
         "title": "Changer de mot de passe",
-        "description": "Le frontend est prêt à recevoir cette action, mais le backend Swagger fourni n'expose pas encore d'endpoint dédié.",
         "backendEyebrow": "État backend",
         "backendTitle": "Action non disponible",
         "note": "Le Swagger expose actuellement `login`, `logout`, `me`, `refresh` et `register`, mais pas de route `change-password`. Quand l'endpoint sera disponible, cette page pourra accueillir le formulaire de mise à jour."

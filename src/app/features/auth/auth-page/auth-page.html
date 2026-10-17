@@ -6,7 +6,7 @@
 
     <label>
       <span>{{ copy().email }}</span>
-      <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" />
+      <input pInputText type="email" formControlName="email" [placeholder]="copy().emailPlaceholder" class="public-input" />
     </label>
     <!-- Validation cliente : sans ce bloc, le markAllAsTouched() de
          submitLogin() n'avait aucun effet visible et un submit invalide ne
@@ -90,7 +90,7 @@
 
     <label>
       <span>{{ copy().email }}</span>
-      <input pInputText type="email" formControlName="email" placeholder="ops@pushit.local" class="public-input" autocomplete="email" />
+      <input pInputText type="email" formControlName="email" [placeholder]="copy().emailPlaceholder" class="public-input" autocomplete="email" />
     </label>
     <!-- Sans ce bloc, cliquer « Envoyer le lien » avec un email vide ne
          produisait AUCUN retour : submitMagic() sortait sur magicForm.invalid
