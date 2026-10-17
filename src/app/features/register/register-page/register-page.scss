@@ -2,18 +2,12 @@
   display: contents;
 }
 
+// Un seul bloc : le formulaire et son titre (« Inscription »), sans colonne d'accroche.
 .register-layout {
   display: grid;
-  gap: 1.5rem;
-  align-items: center;
+  justify-items: center;
 }
 
-.register-copy p {
-  max-width: 52ch;
-}
-
-@media (min-width: 1024px) {
-  .register-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(380px, 420px);
-  }
+.register-layout app-register-panel {
+  width: min(100%, 420px);
 }

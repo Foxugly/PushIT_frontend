@@ -2,7 +2,9 @@
   <div class="panel-heading">
     <div>
       <h2>{{ resolvedTitle() }}</h2>
-      <p>{{ resolvedSubtitle() }}</p>
+      @if (subtitle()) {
+        <p>{{ subtitle() }}</p>
+      }
     </div>
   </div>
 

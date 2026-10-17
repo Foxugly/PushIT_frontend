@@ -147,14 +147,8 @@
         "passwordRequired": "Password is required."
       }
     },
-    "registerPage": {
-      "eyebrow": "Sign up",
-      "title": "Create a PushIT account.",
-      "description": "Sign up to access the console and start managing your applications and notifications."
-    },
     "registerPanel": {
       "defaultTitle": "Sign up",
-      "defaultSubtitle": "User account",
       "email": "Email",
       "password": "Password",
       "passwordPlaceholder": "Minimum 8 characters",
@@ -175,9 +169,7 @@
       }
     },
     "forgotPassword": {
-      "eyebrow": "Forgot password",
-      "title": "Recover access.",
-      "description": "Enter your email. If an account exists, we will send you a link to reset your password.",
+      "title": "Forgot password",
       "email": "Email",
       "submit": "Continue",
       "submitted": "If an account exists for that email, a reset link has just been sent. Remember to check your spam folder.",

@@ -68,7 +68,6 @@ export class RegisterPanel implements AfterViewInit, OnDestroy {
   readonly registerError = signal<ApiErrorResponse | null>(null);
   readonly copy = computed(() => this.appCopy.current().registerPanel);
   readonly resolvedTitle = computed(() => this.title() || this.copy().defaultTitle);
-  readonly resolvedSubtitle = computed(() => this.subtitle() || this.copy().defaultSubtitle);
 
   @ViewChild('turnstile', { static: false })
   protected turnstileContainer?: ElementRef<HTMLDivElement>;
