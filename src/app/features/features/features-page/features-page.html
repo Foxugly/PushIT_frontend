@@ -6,9 +6,6 @@
         <h1>{{ copy().title }}</h1>
         <p>{{ copy().description }}</p>
       </div>
-      @if (saved()) {
-        <span class="public-badge public-badge--success saved-pill">{{ copy().saved }}</span>
-      }
     </div>
 
     <div class="features-grid">
@@ -26,16 +23,5 @@
         </article>
       }
     </div>
-
-    <div class="backend-copy">
-      <span class="public-badge public-badge--soft">API</span>
-      <h2>{{ copy().backendTitle }}</h2>
-      <p>{{ copy().backendDescription }}</p>
-    </div>
-
-    <form class="backend-form" [formGroup]="form" (ngSubmit)="save()">
-      <input class="public-input" type="url" formControlName="apiBaseUrl" placeholder="http://127.0.0.1:8000/api/v1" />
-      <button class="public-button" type="submit">{{ copy().submit }}</button>
-    </form>
   </section>
 </main>

@@ -7,14 +7,21 @@
   padding: 0.6rem 1.25rem;
   border-top: 1px solid var(--border);
   background: var(--surface-2);
-  text-align: center;
 }
 
-.footer__credit {
-  margin: 0;
+// Ligne unique en flex wrap : marque · tagline · (fill) · version · © · confidentialité · droits.
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0;
   color: var(--muted);
   font-size: 0.8rem;
   line-height: 1.5;
+}
+
+.footer__fill {
+  flex: 1 1 0;
 }
 
 .footer__brand {

@@ -8,8 +8,7 @@
   gap: 1rem;
 }
 
-.backend-head,
-.backend-form {
+.backend-head {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
@@ -54,20 +53,12 @@
   line-height: 1.45;
 }
 
-.backend-copy {
-  display: grid;
-  gap: 0.6rem;
-  padding-top: 0.4rem;
-  border-top: 1px solid var(--border);
-}
-
 @media (max-width: 768px) {
   .features-grid {
     grid-template-columns: 1fr;
   }
 
-  .backend-head,
-  .backend-form {
+  .backend-head {
     flex-direction: column;
     align-items: stretch;
   }
