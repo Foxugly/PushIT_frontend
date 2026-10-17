@@ -124,8 +124,7 @@
     },
     "auth": {
       "eyebrow": "Iniciar sesión",
-      "title": "Accede a tu espacio.",
-      "description": "Inicia sesión para acceder al panel de PushIT y gestionar tus campañas.",
+      "title": "Iniciar sesión",
       "email": "Correo electrónico",
       "password": "Contraseña",
       "passwordPlaceholder": "Contraseña",

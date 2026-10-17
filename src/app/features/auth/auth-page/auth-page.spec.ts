@@ -42,8 +42,7 @@ describe('AuthPage', () => {
       current: () => ({
         auth: {
           eyebrow: 'Connexion',
-          title: 'Acceder a votre espace.',
-          description: 'Desc',
+          title: 'Connexion',
           email: 'Email',
           password: 'Mot de passe',
           passwordPlaceholder: 'Mot de passe',
@@ -88,6 +87,15 @@ describe('AuthPage', () => {
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.resolveTo(true);
     fixture.detectChanges();
+  });
+
+  it('shows a single title above the login form (no eyebrow, no intro text)', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const heading = el.querySelector('.card-heading');
+
+    expect(heading?.querySelector('h1')?.textContent?.trim()).toBe('Connexion');
+    expect(heading?.querySelector('.public-eyebrow')).toBeNull();
+    expect(el.querySelector('.hero-copy')).toBeNull();
   });
 
   it('does not submit when the form is invalid', () => {

@@ -124,8 +124,7 @@
     },
     "auth": {
       "eyebrow": "Log in",
-      "title": "Access your workspace.",
-      "description": "Log in to access the PushIT dashboard and manage your campaigns.",
+      "title": "Sign in",
       "email": "Email",
       "password": "Password",
       "passwordPlaceholder": "Password",
