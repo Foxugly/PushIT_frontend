@@ -1,8 +1,15 @@
 import { expect, Page, test } from '@playwright/test';
-import { ConsoleState, mockConsoleApi, seedAuthenticatedSession } from './support/console-helpers';
+import {
+  ConsoleState,
+  mockConsoleApi,
+  REFRESH_COOKIE,
+  requestCookies,
+  seedAuthenticatedSession,
+} from './support/console-helpers';
 
-// Authenticated plumbing: token refresh on 401 (with refresh-token rotation),
-// a rejected refresh ending the session, the change-password page, and the
+// Authenticated plumbing: the HttpOnly refresh cookie (silent restore, refresh
+// on 401, legacy-token migration, logout across tabs), a rejected refresh
+// ending the session, the change-password page, and the
 // client-side admin / superuser guards. The real authorization boundary is the
 // backend (IsAdminUser / IsSuperUser); these only check the UI does not offer
 // the pages to accounts that cannot use them.
@@ -40,12 +47,13 @@ function state(user: ConsoleState['user']): ConsoleState {
 }
 
 /**
- * Every API call presenting the stale `access-token` answers 401, as the
+ * Application calls presenting the stale `access-token` answer 401, as the
  * backend does once the access JWT expired. Registered AFTER mockConsoleApi so
- * it is matched first (Playwright: most recent route wins).
+ * it is matched first (Playwright: most recent route wins). `/auth/me/` is left
+ * alone so the silent restore succeeds with that token.
  */
 async function expireAccessToken(page: Page): Promise<void> {
-  await page.route('**/api/v1/**', async (route) => {
+  await page.route('**/api/v1/apps/**', async (route) => {
     const auth = route.request().headers()['authorization'];
     if (auth === 'Bearer access-token') {
       return route.fulfill({
@@ -58,19 +66,53 @@ async function expireAccessToken(page: Page): Promise<void> {
   });
 }
 
-test('an expired access token is refreshed, the call retried, and the rotated refresh kept', async ({ page }) => {
+async function storageDump(page: Page): Promise<string> {
+  return page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }));
+}
+
+test('a reload restores the session from the HttpOnly cookie, with no token in storage', async ({ page }) => {
+  await seedAuthenticatedSession(page, baseUser);
+  await mockConsoleApi(page, state(baseUser));
+  const refreshes: Array<{ cookies: Record<string, string>; mode?: string; body: unknown }> = [];
+  page.on('request', (request) => {
+    if (request.url().endsWith('/api/v1/auth/refresh/')) {
+      refreshes.push({
+        cookies: requestCookies(request.headers()),
+        mode: request.headers()['x-auth-mode'],
+        body: request.postDataJSON(),
+      });
+    }
+  });
+
+  await page.goto('/dashboard/applications');
+  await expect(page.getByText('PushIT Mobile')).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('PushIT Mobile')).toBeVisible();
+
+  expect(refreshes).toHaveLength(2);
+  for (const refresh of refreshes) {
+    expect(refresh.cookies[REFRESH_COOKIE]).toBe('refresh-token');
+    expect(refresh.mode).toBe('cookie');
+    expect(refresh.body).toEqual({});
+  }
+  const cookie = (await page.context().cookies()).find((item) => item.name === REFRESH_COOKIE);
+  expect(cookie?.httpOnly).toBe(true);
+  expect(await page.evaluate(() => document.cookie)).not.toContain(REFRESH_COOKIE);
+  expect(await storageDump(page)).not.toContain('access-token');
+  expect(await storageDump(page)).not.toContain('refresh-token');
+});
+
+test('an expired access token is refreshed through the cookie and the call retried', async ({ page }) => {
   await seedAuthenticatedSession(page, baseUser);
   await mockConsoleApi(page, state(baseUser));
   await expireAccessToken(page);
 
-  const refreshBodies: unknown[] = [];
+  let refreshCount = 0;
   await page.route('**/api/v1/auth/refresh/', async (route) => {
-    refreshBodies.push(route.request().postDataJSON());
-    return route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ access: 'fresh-access', refresh: 'rotated-refresh' }),
-    });
+    refreshCount += 1;
+    // 1st = silent restore (still the soon-expired token), 2nd = after the 401.
+    const access = refreshCount === 1 ? 'access-token' : 'fresh-access';
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ access }) });
   });
 
   await page.goto('/dashboard/applications');
@@ -78,19 +120,13 @@ test('an expired access token is refreshed, the call retried, and the rotated re
   // The retried call (Bearer fresh-access) reached the console mock.
   await expect(page.getByText('PushIT Mobile')).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard\/applications$/);
-  expect(refreshBodies[0]).toEqual({ refresh: 'refresh-token' });
-
-  // The backend blacklists the old refresh token: the new one must be persisted.
-  await expect
-    .poll(() => page.evaluate(() => localStorage.getItem('pushit.refreshToken')))
-    .toBe('rotated-refresh');
-  expect(await page.evaluate(() => localStorage.getItem('pushit.accessToken'))).toBe('fresh-access');
+  expect(refreshCount).toBe(2);
+  expect(await storageDump(page)).not.toContain('fresh-access');
 });
 
-test('a rejected refresh token ends the session and sends the user to /auth', async ({ page }) => {
+test('a rejected refresh cookie ends the session and sends the user to /auth', async ({ page }) => {
   await seedAuthenticatedSession(page, baseUser);
   await mockConsoleApi(page, state(baseUser));
-  await expireAccessToken(page);
   await page.route('**/api/v1/auth/refresh/', (route) =>
     route.fulfill({
       status: 401,
@@ -102,9 +138,75 @@ test('a rejected refresh token ends the session and sends the user to /auth', as
   await page.goto('/dashboard/applications');
 
   await expect(page).toHaveURL(/\/auth$/);
-  await expect
-    .poll(() => page.evaluate(() => localStorage.getItem('pushit.refreshToken')))
-    .toBeNull();
+});
+
+test('a legacy refresh token in localStorage is migrated once to the cookie, then deleted', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('e2e.seeded')) return;
+    sessionStorage.setItem('e2e.seeded', '1');
+    localStorage.setItem('pushit.accessToken', 'legacy-access');
+    localStorage.setItem('pushit.refreshToken', 'legacy-refresh');
+    localStorage.setItem('pushit.user', '{"id":1}');
+  });
+  await mockConsoleApi(page, state(baseUser));
+  const bodies: unknown[] = [];
+  await page.route('**/api/v1/auth/refresh/', async (route) => {
+    const request = route.request();
+    bodies.push(request.postDataJSON());
+    const migrating = request.postDataJSON()?.refresh === 'legacy-refresh';
+    const hasCookie = Boolean(requestCookies(request.headers())[REFRESH_COOKIE]);
+    if (request.headers()['x-auth-mode'] !== 'cookie' || (!migrating && !hasCookie)) {
+      return route.fulfill({ status: 401, contentType: 'application/json', body: '{}' });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'set-cookie': `${REFRESH_COOKIE}=rotated; Path=/api/v1/auth/; HttpOnly; SameSite=Lax` },
+      body: JSON.stringify({ access: 'access-token' }),
+    });
+  });
+
+  await page.goto('/dashboard/applications');
+  await expect(page.getByText('PushIT Mobile')).toBeVisible();
+
+  expect(bodies).toEqual([{ refresh: 'legacy-refresh' }]);
+  const legacy = await page.evaluate(() => [
+    localStorage.getItem('pushit.accessToken'),
+    localStorage.getItem('pushit.refreshToken'),
+    localStorage.getItem('pushit.user'),
+  ]);
+  expect(legacy).toEqual([null, null, null]);
+  expect(await page.evaluate(() => localStorage.getItem('pushit.session'))).not.toBeNull();
+
+  // The next load uses the cookie set by the migration, without a body token.
+  await page.reload();
+  await expect(page.getByText('PushIT Mobile')).toBeVisible();
+  expect(bodies).toEqual([{ refresh: 'legacy-refresh' }, {}]);
+});
+
+test('logging out clears the cookie session and the other tabs follow', async ({ page }) => {
+  await seedAuthenticatedSession(page, baseUser);
+  await mockConsoleApi(page, state(baseUser));
+  const other = await page.context().newPage();
+  await mockConsoleApi(other, state(baseUser));
+  let logoutMode: string | undefined;
+  await page.route('**/api/v1/auth/logout/', (route) => {
+    logoutMode = route.request().headers()['x-auth-mode'];
+    return route.fallback();
+  });
+
+  await page.goto('/dashboard/applications');
+  await other.goto('/dashboard/applications');
+  await expect(other.getByText('PushIT Mobile')).toBeVisible();
+
+  await page.getByRole('button', { name: baseUser.email }).first().click();
+  await page.getByRole('menuitem', { name: 'Déconnexion' }).click();
+
+  await expect(page).toHaveURL(/\/auth$/);
+  expect(logoutMode).toBe('cookie');
+  await expect(other).toHaveURL(/\/auth$/);
+  const cookie = (await page.context().cookies()).find((item) => item.name === REFRESH_COOKIE);
+  expect(cookie).toBeUndefined();
 });
 
 test('the change-password page is reachable when signed in', async ({ page }) => {

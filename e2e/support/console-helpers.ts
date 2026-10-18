@@ -78,12 +78,44 @@ export type ConsoleState = {
   sendTokens?: Record<number, SendToken[]>;
 };
 
-export async function seedAuthenticatedSession(page: Page, user: User): Promise<void> {
-  await page.addInitScript(([storedUser]) => {
-    localStorage.setItem('pushit.accessToken', 'access-token');
-    localStorage.setItem('pushit.refreshToken', 'refresh-token');
-    localStorage.setItem('pushit.user', JSON.stringify(storedUser));
-  }, [user]);
+/** Name/path of the backend's HttpOnly refresh cookie (PushIT_server refresh_cookie.py). */
+export const REFRESH_COOKIE = 'pushit_refresh';
+export const REFRESH_COOKIE_PATH = '/api/v1/auth/';
+
+/**
+ * A signed-in browser as the cookie flow leaves it: the HttpOnly refresh cookie
+ * (scoped to the auth endpoints) plus the non-secret `pushit.session` hint. No
+ * token in storage: at load the SPA restores the session through
+ * `POST auth/refresh/` (mocked by mockConsoleApi) and `GET auth/me/`.
+ */
+export async function seedAuthenticatedSession(page: Page, _user?: User): Promise<void> {
+  await page.context().addCookies([
+    {
+      name: REFRESH_COOKIE,
+      value: 'refresh-token',
+      domain: '127.0.0.1',
+      path: REFRESH_COOKIE_PATH,
+      httpOnly: true,
+      sameSite: 'Lax',
+    },
+  ]);
+  await page.addInitScript(() => {
+    localStorage.setItem('pushit.session', '1');
+  });
+}
+
+/** Cookie header of a request as a name -> value map. */
+export function requestCookies(headers: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(
+    (headers['cookie'] ?? '')
+      .split(';')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .map((part) => {
+        const index = part.indexOf('=');
+        return [part.slice(0, index), part.slice(index + 1)];
+      }),
+  );
 }
 
 /**
@@ -97,10 +129,14 @@ export async function mockLogin(page: Page, user: User): Promise<void> {
     if (route.request().method() !== 'POST') {
       return route.fallback();
     }
-    return fulfillJson(route, 200, {
-      access: 'access-token',
-      refresh: 'refresh-token',
-      user,
+    // Cookie mode: the refresh token is set as an HttpOnly cookie, never in the body.
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: {
+        'set-cookie': `${REFRESH_COOKIE}=refresh-token; Path=${REFRESH_COOKIE_PATH}; HttpOnly; SameSite=Lax`,
+      },
+      body: JSON.stringify({ access: 'access-token', user }),
     });
   });
 }
@@ -126,6 +162,24 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
 
     if (path.endsWith('/auth/me/') && method === 'GET') {
       return fulfillJson(route, 200, state.user);
+    }
+
+    // Silent restore / refresh through the HttpOnly cookie (rotation keeps the
+    // same value here). No cookie -> 401, like the backend.
+    if (path.endsWith('/auth/refresh/') && method === 'POST') {
+      const cookies = requestCookies(request.headers());
+      if (request.headers()['x-auth-mode'] !== 'cookie' || !cookies[REFRESH_COOKIE]) {
+        return fulfillJson(route, 401, { code: 'refresh_cookie_missing', detail: 'No refresh cookie.' });
+      }
+      return fulfillJson(route, 200, { access: 'access-token' });
+    }
+
+    if (path.endsWith('/auth/logout/') && method === 'POST') {
+      return route.fulfill({
+        status: 204,
+        headers: { 'set-cookie': `${REFRESH_COOKIE}=; Path=${REFRESH_COOKIE_PATH}; Max-Age=0` },
+        body: '',
+      });
     }
 
     if (path.endsWith('/apps/') && method === 'GET') {

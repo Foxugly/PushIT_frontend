@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { UserMe } from '../../models/api.models';
 import { AppCopyService } from '../../services/app-copy.service';
@@ -16,7 +16,6 @@ describe('UserMenu', () => {
   let session: {
     isAuthenticated: ReturnType<typeof signal<boolean>>;
     user: ReturnType<typeof signal<UserMe | null>>;
-    refreshToken: jasmine.Spy<() => string | null>;
     clear: jasmine.Spy<(redirect?: boolean) => void>;
   };
   let api: jasmine.SpyObj<PushitApiService>;
@@ -25,7 +24,6 @@ describe('UserMenu', () => {
     session = {
       isAuthenticated: signal(false),
       user: signal<UserMe | null>(null),
-      refreshToken: jasmine.createSpy('refreshToken').and.returnValue(null),
       clear: jasmine.createSpy('clear'),
     };
     api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['logout']);
@@ -71,16 +69,15 @@ describe('UserMenu', () => {
     expect(text).not.toContain('Se connecter');
   });
 
-  it('clears the session immediately when no refresh token is available', () => {
+  it('logs out through the API (the backend clears the refresh cookie)', () => {
     component.requestLogout();
-    expect(api.logout).not.toHaveBeenCalled();
+    expect(api.logout).toHaveBeenCalledWith();
     expect(session.clear).toHaveBeenCalledWith(true);
   });
 
-  it('logs out through the API when a refresh token exists', () => {
-    session.refreshToken.and.returnValue('refresh-token');
+  it('clears the local session even when the logout call fails', () => {
+    api.logout.and.returnValue(throwError(() => new Error('boom')));
     component.requestLogout();
-    expect(api.logout).toHaveBeenCalledWith('refresh-token');
     expect(session.clear).toHaveBeenCalledWith(true);
   });
 });

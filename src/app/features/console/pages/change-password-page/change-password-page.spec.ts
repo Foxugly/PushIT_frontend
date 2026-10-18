@@ -26,7 +26,6 @@ const success: PasswordChangeResponse = {
   code: 'password_changed',
   detail: 'Your password has been changed.',
   access: 'access-new',
-  refresh: 'refresh-new',
   user,
 };
 

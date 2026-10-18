@@ -19,7 +19,6 @@ describe('ConsoleShellService', () => {
   let api: jasmine.SpyObj<PushitApiService>;
   let session: {
     user: ReturnType<typeof signal<ReturnType<typeof makeUser> | null>>;
-    refreshToken: jasmine.Spy<() => string | null>;
     updateUser: jasmine.Spy<(user: ReturnType<typeof makeUser>) => void>;
     clear: jasmine.Spy<(redirect?: boolean) => void>;
   };
@@ -46,7 +45,6 @@ describe('ConsoleShellService', () => {
     ]);
     session = {
       user: signal<ReturnType<typeof makeUser> | null>(null),
-      refreshToken: jasmine.createSpy('refreshToken').and.returnValue(null),
       updateUser: jasmine.createSpy('updateUser'),
       clear: jasmine.createSpy('clear'),
     };
@@ -243,20 +241,21 @@ describe('ConsoleShellService', () => {
     expect(api.revokeAppToken).toHaveBeenCalledWith(101);
   });
 
-  it('logs out immediately when no refresh token exists', () => {
+  it('logs out through the API (the backend clears the refresh cookie)', () => {
+    api.logout.and.returnValue(of(void 0));
+
     service.logout();
 
-    expect(api.logout).not.toHaveBeenCalled();
+    expect(api.logout).toHaveBeenCalledWith();
     expect(session.clear).toHaveBeenCalledWith(true);
   });
 
-  it('logs out through the API and clears the session even on API failure', () => {
-    session.refreshToken.and.returnValue('refresh-token');
+  it('clears the local session even on API failure', () => {
     api.logout.and.returnValue(throwError(() => new Error('boom')));
 
     service.logout();
 
-    expect(api.logout).toHaveBeenCalledWith('refresh-token');
+    expect(api.logout).toHaveBeenCalled();
     expect(session.clear).toHaveBeenCalledWith(true);
   });
 });

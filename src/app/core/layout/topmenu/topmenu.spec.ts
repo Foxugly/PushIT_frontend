@@ -16,7 +16,6 @@ describe('Topmenu', () => {
   let session: {
     isAuthenticated: ReturnType<typeof signal<boolean>>;
     user: ReturnType<typeof signal<UserMe | null>>;
-    refreshToken: jasmine.Spy<() => string | null>;
     clear: jasmine.Spy<(redirect?: boolean) => void>;
   };
 
@@ -24,7 +23,6 @@ describe('Topmenu', () => {
     session = {
       isAuthenticated: signal(false),
       user: signal<UserMe | null>(null),
-      refreshToken: jasmine.createSpy('refreshToken').and.returnValue(null),
       clear: jasmine.createSpy('clear'),
     };
     const api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['logout']);

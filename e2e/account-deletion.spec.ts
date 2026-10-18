@@ -66,11 +66,7 @@ test.describe('Console: delete my account', () => {
     await expect(page.getByText('Votre compte a été supprimé.')).toBeVisible();
     expect(bodies).toEqual([{ current_password: 'wrong' }, { current_password: 'hunter2' }]);
 
-    const stored = await page.evaluate(() => [
-      localStorage.getItem('pushit.refreshToken'),
-      localStorage.getItem('pushit.accessToken'),
-    ]);
-    expect(stored).toEqual([null, null]);
+    expect(await page.evaluate(() => localStorage.getItem('pushit.session'))).toBeNull();
   });
 
   test('cancel closes the dialog without calling the API', async ({ page }) => {

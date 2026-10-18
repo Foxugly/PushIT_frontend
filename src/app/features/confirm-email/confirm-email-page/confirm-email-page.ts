@@ -58,7 +58,7 @@ export class ConfirmEmailPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.confirming.set(false)))
       .subscribe({
         next: (response) => {
-          this.session.startSession(response, true);
+          this.session.startSession(response);
           this.languagePreference.applyBackendLanguage(response.user.language);
           void this.router.navigate(['/dashboard']);
         },

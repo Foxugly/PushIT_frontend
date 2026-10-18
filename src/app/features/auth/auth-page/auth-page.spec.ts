@@ -127,8 +127,9 @@ describe('AuthPage', () => {
     expect(api.login).toHaveBeenCalledWith({
       email: 'renaud@example.com',
       password: 'secret',
+      remember_me: true,
     });
-    expect(session.startSession).toHaveBeenCalledWith(loginResponse, true);
+    expect(session.startSession).toHaveBeenCalledWith(loginResponse);
     expect(languagePreference.applyBackendLanguage).toHaveBeenCalledWith('FR');
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });

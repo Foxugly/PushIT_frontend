@@ -342,13 +342,7 @@ export class ConsoleShellService {
 
   logout(): void {
     this.clearGeneratedToken();
-    const refreshToken = this.session.refreshToken();
-    if (!refreshToken) {
-      this.session.clear(true);
-      return;
-    }
-
-    this.api.logout(refreshToken).subscribe({
+    this.api.logout().subscribe({
       next: () => this.session.clear(true),
       error: () => this.session.clear(true),
     });

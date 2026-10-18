@@ -105,11 +105,13 @@ export class AuthPage implements OnDestroy {
       .login({
         email: this.loginForm.getRawValue().email,
         password: this.loginForm.getRawValue().password,
+        // Cookie mode: false = the refresh cookie ends with the browser session.
+        remember_me: this.loginForm.getRawValue().rememberMe,
       })
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loginPending.set(false)))
       .subscribe({
         next: (response) => {
-          this.session.startSession(response, this.loginForm.getRawValue().rememberMe);
+          this.session.startSession(response);
           this.languagePreference.applyBackendLanguage(response.user.language);
           void this.router.navigate(['/dashboard']);
         },
