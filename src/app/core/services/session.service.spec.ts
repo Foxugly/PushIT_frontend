@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 import { LoginResponse, UserMe } from '../models/api.models';
 import { SessionService } from './session.service';
@@ -115,6 +116,112 @@ describe('SessionService', () => {
 
     expect(service.refreshToken()).toBe('refresh-token');
     expect(localStorage.getItem('pushit.refreshToken')).toBe('refresh-token');
+  });
+
+  describe('multi-tab', () => {
+    const emitStorage = (key: string | null) =>
+      window.dispatchEvent(new StorageEvent('storage', { key, storageArea: localStorage }));
+
+    afterEach(() => {
+      delete (navigator as { locks?: unknown }).locks;
+    });
+
+    it('adopts tokens rotated by another tab on a storage event', () => {
+      service.startSession(loginResponse, true);
+
+      localStorage.setItem('pushit.refreshToken', 'rotated-elsewhere');
+      localStorage.setItem('pushit.accessToken', 'access-elsewhere');
+      emitStorage('pushit.refreshToken');
+
+      expect(service.refreshToken()).toBe('rotated-elsewhere');
+      expect(service.accessToken()).toBe('access-elsewhere');
+      expect(service.user()).toEqual(user);
+    });
+
+    it('logs out when another tab clears the session', () => {
+      service.startSession(loginResponse, true);
+
+      localStorage.clear();
+      emitStorage(null);
+
+      expect(service.accessToken()).toBeNull();
+      expect(service.refreshToken()).toBeNull();
+      expect(service.isAuthenticated()).toBe(false);
+      expect(router.navigate).toHaveBeenCalledWith(['/auth']);
+    });
+
+    it('ignores storage events for unrelated keys', () => {
+      service.startSession(loginResponse, true);
+      localStorage.setItem('pushit.refreshToken', 'rotated-elsewhere');
+
+      emitStorage('pushit.theme');
+
+      expect(service.refreshToken()).toBe('refresh-token');
+    });
+
+    it('logging in in another tab does not transiently drop the refresh token', () => {
+      service.startSession(loginResponse, true);
+      const removeSpy = vi.spyOn(Storage.prototype, 'removeItem');
+
+      service.startSession({ ...loginResponse, refresh: 'second-login' }, true);
+
+      const localRefreshRemovals = removeSpy.mock.calls.filter(
+        ([key], index) =>
+          key === 'pushit.refreshToken' && removeSpy.mock.contexts[index] === localStorage,
+      );
+      expect(localRefreshRemovals).toEqual([]);
+      expect(localStorage.getItem('pushit.refreshToken')).toBe('second-login');
+      removeSpy.mockRestore();
+    });
+
+    it('adopts a refresh already rotated by another tab instead of calling the API', () => {
+      service.startSession(loginResponse, true);
+      // Another tab rotated; its storage event has not reached us yet.
+      localStorage.setItem('pushit.refreshToken', 'rotated-elsewhere');
+      localStorage.setItem('pushit.accessToken', 'access-elsewhere');
+
+      let result: string | null = null;
+      service.refreshAccessToken().subscribe((token) => (result = token));
+
+      httpMock.expectNone('/api/v1/auth/refresh/');
+      expect(result as string | null).toBe('access-elsewhere');
+      expect(service.refreshToken()).toBe('rotated-elsewhere');
+    });
+
+    it('serialises the refresh across tabs with the Web Locks API', async () => {
+      const request = vi.fn((_name: string, callback: () => Promise<unknown>) => callback());
+      Object.defineProperty(navigator, 'locks', { configurable: true, value: { request } });
+      service.startSession(loginResponse, true);
+
+      const result = firstValueFrom(service.refreshAccessToken());
+      httpMock
+        .expectOne('/api/v1/auth/refresh/')
+        .flush({ access: 'new-access-token', refresh: 'rotated-refresh-token' });
+
+      await expect(result).resolves.toBe('new-access-token');
+      expect(request).toHaveBeenCalledWith('pushit.refresh', expect.any(Function));
+      expect(localStorage.getItem('pushit.refreshToken')).toBe('rotated-refresh-token');
+    });
+
+    it('re-reads storage inside the lock (rotation done while waiting for it)', async () => {
+      let release!: () => void;
+      const gate = new Promise<void>((resolve) => (release = resolve));
+      const request = vi.fn(async (_name: string, callback: () => Promise<unknown>) => {
+        await gate; // the other tab holds the lock
+        return callback();
+      });
+      Object.defineProperty(navigator, 'locks', { configurable: true, value: { request } });
+      service.startSession(loginResponse, true);
+
+      const result = firstValueFrom(service.refreshAccessToken());
+      // The other tab finishes its refresh, then releases the lock.
+      localStorage.setItem('pushit.refreshToken', 'rotated-elsewhere');
+      localStorage.setItem('pushit.accessToken', 'access-elsewhere');
+      release();
+
+      await expect(result).resolves.toBe('access-elsewhere');
+      httpMock.expectNone('/api/v1/auth/refresh/');
+    });
   });
 
   it('clears the session and redirects to auth when requested', () => {
