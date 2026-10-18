@@ -306,9 +306,23 @@
       },
       "changePassword": {
         "title": "Cambiar contraseña",
-        "backendEyebrow": "Estado del backend",
-        "backendTitle": "Acción no disponible",
-        "note": "El Swagger expone actualmente `login`, `logout`, `me`, `refresh` y `register`, pero no una ruta `change-password`. Cuando el endpoint esté disponible, esta página podrá alojar el formulario de actualización."
+        "intro": "Tras el cambio, tus otras sesiones (otros navegadores, dispositivos) se cerrarán. Esta sesión sigue abierta.",
+        "currentPassword": "Contraseña actual",
+        "newPassword": "Nueva contraseña",
+        "confirmPassword": "Confirmar la nueva contraseña",
+        "passwordHint": "Al menos 8 caracteres, ni demasiado común ni demasiado parecida a tu dirección de correo.",
+        "required": "Este campo es obligatorio.",
+        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+        "passwordMismatch": "Las dos contraseñas no coinciden.",
+        "submit": "Cambiar contraseña",
+        "success": "Tu contraseña se ha cambiado. Tus otras sesiones se han cerrado.",
+        "errors": {
+          "currentPasswordInvalid": "La contraseña actual es incorrecta.",
+          "passwordUnchanged": "La nueva contraseña debe ser distinta de la actual.",
+          "passwordInvalid": "Esta contraseña ha sido rechazada:",
+          "validation": "Rellena todos los campos.",
+          "throttled": "Demasiados intentos. Inténtalo de nuevo dentro de un minuto."
+        }
       },
       "applicationForm": {
         "name": "Nombre",

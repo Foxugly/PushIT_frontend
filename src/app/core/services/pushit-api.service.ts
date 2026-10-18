@@ -28,6 +28,8 @@ import {
   Paginated,
   LoginRequest,
   LoginResponse,
+  PasswordChangeRequest,
+  PasswordChangeResponse,
   NotificationCreateRequest,
   NotificationFilters,
   NotificationFutureUpdateRequest,
@@ -119,6 +121,12 @@ export class PushitApiService {
 
   logout(refresh: string): Observable<void> {
     return this.http.post<void>(this.url('/auth/logout/'), { refresh });
+  }
+
+  /** Change the signed-in user's password. On success every other session is
+   * signed out and a fresh token pair is returned for this one. */
+  changePassword(payload: PasswordChangeRequest): Observable<PasswordChangeResponse> {
+    return this.http.post<PasswordChangeResponse>(this.url('/auth/password/change/'), payload);
   }
 
   me(): Observable<UserMe> {

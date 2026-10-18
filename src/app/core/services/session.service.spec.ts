@@ -72,6 +72,29 @@ describe('SessionService', () => {
     expect(localStorage.getItem('pushit.accessToken')).toBeNull();
   });
 
+  it('adoptTokens replaces the pair in the current scope (browser-only session kept)', () => {
+    service.startSession(loginResponse, false);
+
+    service.adoptTokens({ access: 'access-2', refresh: 'refresh-2', user: { ...user, email: 'new@example.com' } });
+
+    expect(service.accessToken()).toBe('access-2');
+    expect(service.refreshToken()).toBe('refresh-2');
+    expect(service.user()?.email).toBe('new@example.com');
+    expect(sessionStorage.getItem('pushit.accessToken')).toBe('access-2');
+    expect(sessionStorage.getItem('pushit.refreshToken')).toBe('refresh-2');
+    expect(localStorage.getItem('pushit.refreshToken')).toBeNull();
+  });
+
+  it('adoptTokens persists a remembered session in localStorage', () => {
+    service.startSession(loginResponse, true);
+
+    service.adoptTokens({ access: 'access-2', refresh: 'refresh-2', user });
+
+    expect(localStorage.getItem('pushit.accessToken')).toBe('access-2');
+    expect(localStorage.getItem('pushit.refreshToken')).toBe('refresh-2');
+    expect(service.isAuthenticated()).toBe(true);
+  });
+
   it('shares a single refresh request and updates the access token', () => {
     service.startSession(loginResponse, true);
 

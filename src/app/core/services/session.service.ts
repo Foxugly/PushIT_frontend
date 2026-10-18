@@ -145,6 +145,18 @@ export class SessionService {
     this.storage.setString(REFRESH_TOKEN_KEY, refreshToken, this.currentScope());
   }
 
+  /**
+   * Replace the tokens of the *current* session (same storage scope, so the
+   * "remember me" choice is kept) — e.g. after a password change, where the
+   * backend blacklisted every previous refresh token. Refresh is written last:
+   * other tabs resync on its `storage` event and then read the new access too.
+   */
+  adoptTokens(response: LoginResponse): void {
+    this.updateAccessToken(response.access);
+    this.updateUser(response.user);
+    this.updateRefreshToken(response.refresh);
+  }
+
   clear(redirectToAuth = false): void {
     this.accessTokenSignal.set(null);
     this.refreshTokenSignal.set(null);

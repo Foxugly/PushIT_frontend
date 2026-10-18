@@ -306,9 +306,23 @@
       },
       "changePassword": {
         "title": "Wachtwoord wijzigen",
-        "backendEyebrow": "Backendstatus",
-        "backendTitle": "Actie niet beschikbaar",
-        "note": "De Swagger exposeert momenteel `login`, `logout`, `me`, `refresh` en `register`, maar geen route `change-password`. Zodra die endpoint beschikbaar is, kan deze pagina het updateformulier bevatten."
+        "intro": "Na de wijziging worden uw andere sessies (andere browsers, toestellen) afgemeld. Deze sessie blijft open.",
+        "currentPassword": "Huidig wachtwoord",
+        "newPassword": "Nieuw wachtwoord",
+        "confirmPassword": "Nieuw wachtwoord bevestigen",
+        "passwordHint": "Minstens 8 tekens, niet te gangbaar en niet te gelijkend op uw e-mailadres.",
+        "required": "Dit veld is verplicht.",
+        "passwordTooShort": "Het wachtwoord moet minstens 8 tekens bevatten.",
+        "passwordMismatch": "De twee wachtwoorden komen niet overeen.",
+        "submit": "Wachtwoord wijzigen",
+        "success": "Uw wachtwoord is gewijzigd. Uw andere sessies zijn afgemeld.",
+        "errors": {
+          "currentPasswordInvalid": "Het huidige wachtwoord is onjuist.",
+          "passwordUnchanged": "Het nieuwe wachtwoord moet verschillen van het huidige.",
+          "passwordInvalid": "Dit wachtwoord werd geweigerd:",
+          "validation": "Vul alle velden in.",
+          "throttled": "Te veel pogingen. Probeer het over een minuut opnieuw."
+        }
       },
       "applicationForm": {
         "name": "Naam",
