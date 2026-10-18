@@ -131,6 +131,20 @@ captcha non requis, le backend étant gated sur son secret de la même façon),
 `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_RELEASE`, `FEATURES` (objet JSON,
 placeholder `{}`).
 
+Le fetch **refuse** (exit 1, snippet précédent conservé) toute valeur scalaire hors
+`[A-Za-z0-9:/._@+-]` — elle est injectée entre guillemets dans le `<script nonce>` —
+et ne garde de `FEATURES` qu'un objet plat `{nom: booléen}` qu'il re-sérialise (sinon `{}`).
+
+**Release Sentry** : la CI fige le SHA dans le bundle (`ng build --define
+PUSHIT_BUILD_SHA=...`, lu par `src/app/core/build-info.ts`) → release
+`pushit-frontend@<sha>`, qui **prime** sur `SENTRY_RELEASE` (SSM, désormais simple
+repli hors CI). Le build prod émet des source maps **hidden** ; `deploy.yml` les
+envoie à Sentry (org `foxugly-srl`, projet `pushit-frontend`, `de.sentry.io`) **si**
+le secret `SENTRY_AUTH_TOKEN` existe, puis les **supprime** du bundle (le vhost
+renvoie aussi 404 sur `*.map`). Les URLs portant un jeton (reset / confirm-email /
+magic-link, params `uid`/`token`/`code`) sont masquées avant envoi
+(`src/app/core/sentry-scrub.ts`).
+
 ### Appliquer un changement de config
 
 ```bash
@@ -161,7 +175,7 @@ blankées) et l'**atomic-swap** dans `dist/pushit-frontend/browser/`, (4) restar
 les perms. L'unité de fetch exécute `/usr/local/sbin/pushit-frontend-runtime-fetch.sh`
 (**root:root, hors arbre applicatif**) — un RCE du process web (`django`) ne peut
 influencer aucun code exécuté en root. **Secrets CI** : `AWS_DEPLOY_ROLE_ARN`,
-`EC2_INSTANCE_ID`, `S3_DEPLOY_BUCKET` (plus de `EC2_SSH_KEY`/`EC2_HOST`/`EC2_USER`).
+`EC2_INSTANCE_ID`, `S3_DEPLOY_BUCKET`, + optionnel `SENTRY_AUTH_TOKEN` (upload des source maps) (plus de `EC2_SSH_KEY`/`EC2_HOST`/`EC2_USER`).
 `deploy/deploy.sh` (modèle rsync, et le sudoers `pushit-frontend-deploy` /
 l'authorized_keys de django) sont **obsolètes** depuis la bascule OIDC.
 

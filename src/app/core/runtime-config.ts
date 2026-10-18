@@ -7,6 +7,8 @@
  * Cette config est 100 % publique (visible dans le HTML servi) : n'y mettre
  * que des valeurs publiques par nature (URL d'API, DSN Sentry, feature flags).
  */
+import { BUILD_SHA, sentryReleaseFor } from './build-info';
+
 export interface RuntimeSentryConfig {
   dsn: string;
   environment: string;
@@ -31,6 +33,18 @@ interface RuntimeGlobals {
 
 const DEFAULT_API_BASE_URL = '/api/v1';
 const DEFAULT_SENTRY_ENV = 'production';
+
+/**
+ * Release Sentry : le SHA du build quand la CI l'a injecté (c'est sous ce nom
+ * que les source maps sont uploadées), sinon la valeur runtime SSM
+ * (SENTRY_RELEASE), sinon rien.
+ */
+export function resolveSentryRelease(buildSha: string, runtimeRelease: string | undefined): string {
+  if (buildSha) {
+    return sentryReleaseFor(buildSha);
+  }
+  return (runtimeRelease ?? '').trim();
+}
 
 function trimmedOr(value: string | undefined, fallback: string): string {
   const trimmed = (value ?? '').trim();
@@ -62,7 +76,7 @@ export function getRuntimeConfig(): RuntimeConfig {
     sentry: {
       dsn: (globals.__PUSHIT_SENTRY_DSN ?? '').trim(),
       environment: trimmedOr(globals.__PUSHIT_SENTRY_ENV, DEFAULT_SENTRY_ENV),
-      release: (globals.__PUSHIT_SENTRY_RELEASE ?? '').trim(),
+      release: resolveSentryRelease(BUILD_SHA, globals.__PUSHIT_SENTRY_RELEASE),
     },
     features,
   };

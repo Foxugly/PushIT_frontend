@@ -1,4 +1,4 @@
-import { getRuntimeConfig } from './runtime-config';
+import { getRuntimeConfig, resolveSentryRelease } from './runtime-config';
 
 interface MutableGlobals {
   __PUSHIT_API_BASE_URL?: string;
@@ -68,5 +68,16 @@ describe('getRuntimeConfig', () => {
     expect(config.apiBaseUrl).toBe('/api/v1');
     expect(config.sentry.environment).toBe('production');
     expect(config.features).toEqual({});
+  });
+});
+
+describe('resolveSentryRelease', () => {
+  it('prefers the build SHA injected by CI (source maps are uploaded under it)', () => {
+    expect(resolveSentryRelease('0123abcd', 'pushit-frontend-1.0.0')).toBe('pushit-frontend@0123abcd');
+  });
+
+  it('falls back to the runtime (SSM) release when the build carries no SHA', () => {
+    expect(resolveSentryRelease('', ' pushit-frontend-1.0.0 ')).toBe('pushit-frontend-1.0.0');
+    expect(resolveSentryRelease('', undefined)).toBe('');
   });
 });

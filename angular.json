@@ -54,6 +54,12 @@
                 }
               ],
               "outputHashing": "all",
+              "sourceMap": {
+                "scripts": true,
+                "styles": false,
+                "vendor": true,
+                "hidden": true
+              },
               "optimization": {
                 "scripts": true,
                 "styles": {
