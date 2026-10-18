@@ -22,6 +22,10 @@
               }
             </ul>
           }
+
+          @if (section.link; as link) {
+            <p><a class="privacy-link" [routerLink]="link.path">{{ link.label }}</a></p>
+          }
         </section>
       }
     </div>

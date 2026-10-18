@@ -5,6 +5,8 @@ export interface PrivacySection {
   // Optional intro paragraph rendered before the list (or alone when no items).
   body?: string[];
   items?: string[];
+  // Optional in-app link rendered after the body/list.
+  link?: { label: string; path: string };
 }
 
 export interface PrivacyCopy {
@@ -21,7 +23,7 @@ const CONTACT_EMAIL = 'rvilain@foxugly.com';
 const FR: PrivacyCopy = {
   badge: 'Légal',
   title: 'Politique de confidentialité',
-  lastUpdated: 'Dernière mise à jour : juin 2026.',
+  lastUpdated: 'Dernière mise à jour : octobre 2026.',
   contactEmail: CONTACT_EMAIL,
   sections: [
     {
@@ -58,8 +60,10 @@ const FR: PrivacyCopy = {
     {
       title: 'Conservation et suppression',
       body: [
-        `Vous pouvez demander la suppression de votre compte et des données associées en nous contactant à ${CONTACT_EMAIL} ; les données sont alors supprimées.`,
+        'Vous pouvez supprimer vous-même votre compte et les données associées depuis la console web (Paramètres → Supprimer mon compte). La suppression est immédiate et définitive.',
+        `Si vous ne pouvez plus vous connecter, écrivez à ${CONTACT_EMAIL} : les données sont alors supprimées dans un délai de 30 jours.`,
       ],
+      link: { label: 'Comment supprimer votre compte', path: '/account-deletion' },
     },
     {
       title: 'Vos droits (RGPD)',
@@ -77,7 +81,7 @@ const FR: PrivacyCopy = {
 const NL: PrivacyCopy = {
   badge: 'Juridisch',
   title: 'Privacybeleid',
-  lastUpdated: 'Laatst bijgewerkt: juni 2026.',
+  lastUpdated: 'Laatst bijgewerkt: oktober 2026.',
   contactEmail: CONTACT_EMAIL,
   sections: [
     {
@@ -114,8 +118,10 @@ const NL: PrivacyCopy = {
     {
       title: 'Bewaring en verwijdering',
       body: [
-        `U kunt de verwijdering van uw account en bijbehorende gegevens aanvragen door contact met ons op te nemen via ${CONTACT_EMAIL}; de gegevens worden dan verwijderd.`,
+        'U kunt uw account en de bijbehorende gegevens zelf verwijderen via de webconsole (Instellingen → Mijn account verwijderen). De verwijdering is onmiddellijk en definitief.',
+        `Kunt u niet meer inloggen, schrijf dan naar ${CONTACT_EMAIL}: de gegevens worden dan binnen 30 dagen verwijderd.`,
       ],
+      link: { label: 'Zo verwijdert u uw account', path: '/account-deletion' },
     },
     {
       title: 'Uw rechten (AVG)',
@@ -133,7 +139,7 @@ const NL: PrivacyCopy = {
 const EN: PrivacyCopy = {
   badge: 'Legal',
   title: 'Privacy policy',
-  lastUpdated: 'Last updated: June 2026.',
+  lastUpdated: 'Last updated: October 2026.',
   contactEmail: CONTACT_EMAIL,
   sections: [
     {
@@ -170,8 +176,10 @@ const EN: PrivacyCopy = {
     {
       title: 'Retention and deletion',
       body: [
-        `You can request the deletion of your account and associated data by contacting us at ${CONTACT_EMAIL}; the data is then deleted.`,
+        'You can delete your account and its data yourself from the web console (Settings → Delete my account). Deletion is immediate and permanent.',
+        `If you can no longer sign in, write to ${CONTACT_EMAIL}: the data is then deleted within 30 days.`,
       ],
+      link: { label: 'How to delete your account', path: '/account-deletion' },
     },
     {
       title: 'Your rights (GDPR)',
@@ -189,7 +197,7 @@ const EN: PrivacyCopy = {
 const IT: PrivacyCopy = {
   badge: 'Legale',
   title: 'Informativa sulla privacy',
-  lastUpdated: 'Ultimo aggiornamento: giugno 2026.',
+  lastUpdated: 'Ultimo aggiornamento: ottobre 2026.',
   contactEmail: CONTACT_EMAIL,
   sections: [
     {
@@ -226,8 +234,10 @@ const IT: PrivacyCopy = {
     {
       title: 'Conservazione ed eliminazione',
       body: [
-        `Puoi richiedere l’eliminazione del tuo account e dei dati associati contattandoci all’indirizzo ${CONTACT_EMAIL}; i dati vengono quindi eliminati.`,
+        'Puoi eliminare da solo il tuo account e i dati associati dalla console web (Impostazioni → Elimina il mio account). L’eliminazione è immediata e definitiva.',
+        `Se non riesci più ad accedere, scrivi a ${CONTACT_EMAIL}: i dati vengono eliminati entro 30 giorni.`,
       ],
+      link: { label: 'Come eliminare il tuo account', path: '/account-deletion' },
     },
     {
       title: 'I tuoi diritti (GDPR)',
@@ -245,7 +255,7 @@ const IT: PrivacyCopy = {
 const ES: PrivacyCopy = {
   badge: 'Legal',
   title: 'Política de privacidad',
-  lastUpdated: 'Última actualización: junio de 2026.',
+  lastUpdated: 'Última actualización: octubre de 2026.',
   contactEmail: CONTACT_EMAIL,
   sections: [
     {
@@ -282,8 +292,10 @@ const ES: PrivacyCopy = {
     {
       title: 'Conservación y eliminación',
       body: [
-        `Puedes solicitar la eliminación de tu cuenta y de los datos asociados contactándonos en ${CONTACT_EMAIL}; los datos se eliminan entonces.`,
+        'Puedes eliminar tú mismo tu cuenta y los datos asociados desde la consola web (Ajustes → Eliminar mi cuenta). La eliminación es inmediata y definitiva.',
+        `Si ya no puedes iniciar sesión, escribe a ${CONTACT_EMAIL}: los datos se eliminan en un plazo de 30 días.`,
       ],
+      link: { label: 'Cómo eliminar tu cuenta', path: '/account-deletion' },
     },
     {
       title: 'Tus derechos (RGPD)',

@@ -302,7 +302,29 @@
         "fallbackUser": "User",
         "fallbackEmail": "Email unavailable",
         "activePrefix": "Active prefix",
-        "activeLanguage": "Active language"
+        "activeLanguage": "Active language",
+        "deleteAccount": {
+          "eyebrow": "Danger zone",
+          "title": "Delete my account",
+          "lead": "Deletion is permanent: your account, your devices and the applications you own are erased.",
+          "password": "Current password",
+          "button": "Delete my account",
+          "moreInfo": "What gets deleted",
+          "dialogTitle": "Permanently delete your account?",
+          "dialogIntro": "This cannot be undone. The applications you own are deleted for everyone, subscribers included, with all their data:",
+          "dialogItems": [
+            "notifications and their delivery history;",
+            "links with subscribed devices;",
+            "templates;",
+            "send tokens."
+          ],
+          "dialogOwn": "Your own devices and their push tokens are deleted too, and all your sessions are signed out.",
+          "cancel": "Cancel",
+          "confirm": "Delete permanently",
+          "passwordRequired": "Enter your current password to confirm.",
+          "passwordInvalid": "Current password is incorrect.",
+          "success": "Your account has been deleted."
+        }
       },
       "changePassword": {
         "title": "Change password",
@@ -325,6 +347,35 @@
     "update": {
       "title": "A new version is available",
       "detail": "The app was updated while you were here. Reload the page to continue."
+    },
+    "accountDeletion": {
+      "badge": "Account",
+      "title": "Delete your PushIT account",
+      "lead": "PushIT is published by Foxugly SRL. You can delete your account and its data yourself, at any time, from the web console.",
+      "stepsTitle": "How to delete your account",
+      "steps": [
+        "Sign in to the console at https://pushit.foxugly.com, with the same account as in the mobile app.",
+        "Open “Settings”.",
+        "In the “Delete my account” section, enter your current password and click “Delete my account”.",
+        "Confirm. Deletion is immediate."
+      ],
+      "forgotPassword": "Forgot your password? Reset it first from the sign-in page.",
+      "openConsole": "Open settings",
+      "deletedTitle": "Data deleted",
+      "deleted": [
+        "Your account: email address, password and preferences.",
+        "Your devices and their notification tokens (Firebase Cloud Messaging).",
+        "The applications you own, for all their subscribers, with their notifications, delivery history, templates, send tokens and device links.",
+        "All your sessions, on every device."
+      ],
+      "retentionTitle": "Retention",
+      "retention": [
+        "Data is erased from the production database immediately. Nothing is kept once the account is deleted.",
+        "Copies may remain in the platform’s encrypted backups, which are erased on rotation, at most about 8 weeks later."
+      ],
+      "noAccessTitle": "Can’t sign in any more?",
+      "noAccess": "Write to rvilain@foxugly.com from your account’s email address: we delete the account and its data within 30 days.",
+      "privacy": "Privacy policy"
     }
   },
   "console": {

@@ -302,7 +302,29 @@
         "fallbackUser": "Utilisateur",
         "fallbackEmail": "Email indisponible",
         "activePrefix": "Préfixe actif",
-        "activeLanguage": "Langue active"
+        "activeLanguage": "Langue active",
+        "deleteAccount": {
+          "eyebrow": "Zone sensible",
+          "title": "Supprimer mon compte",
+          "lead": "La suppression est définitive : votre compte, vos terminaux et les applications dont vous êtes propriétaire sont effacés.",
+          "password": "Mot de passe actuel",
+          "button": "Supprimer mon compte",
+          "moreInfo": "Ce qui est supprimé",
+          "dialogTitle": "Supprimer définitivement votre compte ?",
+          "dialogIntro": "Cette action est irréversible. Les applications dont vous êtes propriétaire sont supprimées pour tout le monde, abonnés compris, avec toutes leurs données :",
+          "dialogItems": [
+            "les notifications et leur historique d’envoi ;",
+            "les liens avec les terminaux abonnés ;",
+            "les modèles ;",
+            "les jetons d’envoi."
+          ],
+          "dialogOwn": "Vos propres terminaux et leurs jetons push sont aussi supprimés, et toutes vos sessions sont fermées.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer définitivement",
+          "passwordRequired": "Saisissez votre mot de passe actuel pour confirmer.",
+          "passwordInvalid": "Mot de passe actuel incorrect.",
+          "success": "Votre compte a été supprimé."
+        }
       },
       "changePassword": {
         "title": "Changer de mot de passe",
@@ -325,6 +347,35 @@
     "update": {
       "title": "Nouvelle version disponible",
       "detail": "L'application a été mise à jour pendant votre visite. Rechargez la page pour continuer."
+    },
+    "accountDeletion": {
+      "badge": "Compte",
+      "title": "Supprimer votre compte PushIT",
+      "lead": "PushIT est édité par Foxugly SRL. Vous pouvez supprimer vous-même, à tout moment, votre compte et les données associées depuis la console web.",
+      "stepsTitle": "Comment supprimer votre compte",
+      "steps": [
+        "Connectez-vous à la console sur https://pushit.foxugly.com, avec le même compte que dans l’application mobile.",
+        "Ouvrez « Paramètres ».",
+        "Dans la section « Supprimer mon compte », saisissez votre mot de passe actuel puis cliquez sur « Supprimer mon compte ».",
+        "Confirmez. La suppression est immédiate."
+      ],
+      "forgotPassword": "Mot de passe oublié ? Réinitialisez-le d’abord depuis la page de connexion.",
+      "openConsole": "Ouvrir les paramètres",
+      "deletedTitle": "Données supprimées",
+      "deleted": [
+        "Votre compte : adresse e-mail, mot de passe et préférences.",
+        "Vos terminaux et leurs jetons de notification (Firebase Cloud Messaging).",
+        "Les applications dont vous êtes propriétaire, pour tous leurs abonnés, avec leurs notifications, l’historique d’envoi, les modèles, les jetons d’envoi et les liens avec les terminaux.",
+        "Toutes vos sessions, sur tous vos appareils."
+      ],
+      "retentionTitle": "Conservation",
+      "retention": [
+        "Les données sont effacées immédiatement de la base de production. Aucune donnée n’est conservée après la suppression du compte.",
+        "Des copies peuvent subsister dans les sauvegardes chiffrées de la plateforme, effacées par rotation au plus tard environ 8 semaines plus tard."
+      ],
+      "noAccessTitle": "Vous ne pouvez plus vous connecter ?",
+      "noAccess": "Écrivez à rvilain@foxugly.com depuis l’adresse e-mail de votre compte : nous supprimons le compte et les données associées dans un délai de 30 jours.",
+      "privacy": "Politique de confidentialité"
     }
   },
   "console": {
