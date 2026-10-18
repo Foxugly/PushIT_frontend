@@ -475,7 +475,9 @@
         "invalidId": "Ongeldige device-id.",
         "loading": "Device laden..."
       },
-      "confirmDelete": "Device \"{name}\" verwijderen?"
+      "confirmDelete": "Device \"{name}\" verwijderen?",
+      "readOnly": "Alleen-lezen",
+      "readOnlyHint": "Device van een abonnee: alleen de eigenaar kan het wijzigen."
     },
     "notifications": {
       "title": "Gebruikersnotificaties",
@@ -654,7 +656,9 @@
         "selectOneDay": "Selecteer minstens een dag.",
         "endAfterStart": "Het einde van de stille periode moet na het begin liggen.",
         "differentEndTime": "De eindtijd moet verschillen van de begintijd."
-      }
+      },
+      "readOnly": "Alleen-lezen",
+      "readOnlyHint": "Stil venster van het device van een abonnee: alleen de eigenaar kan het wijzigen."
     },
     "enrolment": {
       "intro": "Deze code is bedoeld om rond te gaan: uw ontvangers scannen hem om uw meldingen te ontvangen. Hij geeft geen recht om te verzenden.",
@@ -897,7 +901,9 @@
           "sentAt": "Verzonden op",
           "actions": "Acties"
         }
-      }
+      },
+      "readOnly": "Alleen-lezen",
+      "readOnlyHint": "Device van een abonnee: alleen de eigenaar kan het wijzigen."
     },
     "notificationDetail": {
       "back": "Terug naar notificaties",

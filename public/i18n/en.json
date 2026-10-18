@@ -475,7 +475,9 @@
         "invalidId": "Invalid device id.",
         "loading": "Loading device..."
       },
-      "confirmDelete": "Delete device \"{name}\"?"
+      "confirmDelete": "Delete device \"{name}\"?",
+      "readOnly": "Read-only",
+      "readOnlyHint": "Subscriber device: only its owner can change it."
     },
     "notifications": {
       "title": "User notifications",
@@ -654,7 +656,9 @@
         "selectOneDay": "Select at least one day.",
         "endAfterStart": "The end of the quiet period must be after the start.",
         "differentEndTime": "End time must differ from start time."
-      }
+      },
+      "readOnly": "Read-only",
+      "readOnlyHint": "Quiet window of a subscriber device: only the device owner can change it."
     },
     "enrolment": {
       "intro": "This code is meant to circulate: it is what your recipients scan to receive your notifications. It authorises no sending.",
@@ -897,7 +901,9 @@
           "sentAt": "Sent at",
           "actions": "Actions"
         }
-      }
+      },
+      "readOnly": "Read-only",
+      "readOnlyHint": "Subscriber device: only its owner can change it."
     },
     "notificationDetail": {
       "back": "Back to notifications",

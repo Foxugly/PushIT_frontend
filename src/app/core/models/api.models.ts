@@ -221,6 +221,10 @@ export interface DeviceRead {
   // Past (deactivated) links, with audit — lets the console explain a device that
   // received notifications from an app it's no longer linked to.
   unlinked_applications: DeviceUnlinkedApplication[];
+  // True when the device belongs to the signed-in user. App owners also see
+  // their subscribers' devices, read-only: edit, delete and quiet-period
+  // management are refused (404) on those, so the console hides them.
+  is_mine: boolean;
 }
 
 export interface DeviceUpdateRequest {

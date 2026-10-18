@@ -5,15 +5,26 @@
     </a>
     <div slot="right" class="ph-actions">
       @if (device(); as currentDevice) {
-        <p-button
-          icon="pi pi-pencil"
-          [text]="true"
-          [rounded]="true"
-          [ariaLabel]="copy().editTooltip"
-          [pTooltip]="copy().editTooltip"
-          tooltipPosition="top"
-          (onClick)="openEditModal()"
-        />
+        @if (currentDevice.is_mine) {
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            [rounded]="true"
+            [ariaLabel]="copy().editTooltip"
+            [pTooltip]="copy().editTooltip"
+            tooltipPosition="top"
+            (onClick)="openEditModal()"
+          />
+        } @else {
+          <p-tag
+            icon="pi pi-lock"
+            [value]="copy().readOnly"
+            severity="secondary"
+            [pTooltip]="copy().readOnlyHint"
+            tooltipPosition="top"
+            data-testid="device-read-only"
+          />
+        }
         <p-tag [value]="currentDevice.platform" severity="info" />
         <p-tag [value]="currentDevice.push_token_status" [severity]="statusSeverity(currentDevice.push_token_status)" />
       }

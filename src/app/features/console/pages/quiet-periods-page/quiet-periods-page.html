@@ -11,10 +11,10 @@
     <div slot="right" class="ph-actions">
       <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="loadQuietPeriods()" />
       <span
-        [pTooltip]="(!shell.apps().length && !devices().length) ? copy().missingTargets : ''"
+        [pTooltip]="!hasTargets() ? copy().missingTargets : ''"
         tooltipPosition="top"
       >
-        <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" [disabled]="!shell.apps().length && !devices().length" />
+        <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" [disabled]="!hasTargets()" />
       </span>
     </div>
   </app-page-header>
@@ -58,10 +58,15 @@
             </td>
             <td class="console-table__actions">
               <div class="console-icon-actions">
-                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
-          [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
-                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
-          [pTooltip]="copy().actions.delete" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
+                @if (canManage(quietPeriod)) {
+                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
+            [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="editQuietPeriod(quietPeriod)" />
+                  <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+            [pTooltip]="copy().actions.delete" tooltipPosition="top" (onClick)="deleteQuietPeriod(quietPeriod)" />
+                } @else {
+                  <i class="pi pi-lock console-read-only" role="img" [attr.aria-label]="copy().readOnly + ' — ' + copy().readOnlyHint"
+            [pTooltip]="copy().readOnlyHint" tooltipPosition="top" data-testid="quiet-period-read-only"></i>
+                }
               </div>
             </td>
           </tr>

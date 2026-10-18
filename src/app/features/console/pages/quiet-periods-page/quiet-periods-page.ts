@@ -68,7 +68,11 @@ export class QuietPeriodsPage implements OnInit {
 
   readonly scopeOptions = computed(() => [
     { label: this.copy().scopeLabels.application, value: 'application' as QuietPeriodScope },
-    { label: this.copy().scopeLabels.device, value: 'device' as QuietPeriodScope },
+    // Only the device's own user may manage its quiet periods: subscriber
+    // devices an app owner sees are read-only, so they are not targets.
+    ...(this.deviceOptions().length
+      ? [{ label: this.copy().scopeLabels.device, value: 'device' as QuietPeriodScope }]
+      : []),
   ]);
   readonly periodTypeOptions = computed(() => [
     { label: this.copy().typeLabels.once, value: 'ONCE' as QuietPeriodType },
@@ -113,10 +117,16 @@ export class QuietPeriodsPage implements OnInit {
   );
 
   readonly deviceOptions = computed(() =>
-    this.devices().map((device) => ({
-      label: `${device.device_name} (${device.platform})`,
-      value: device.id,
-    })),
+    this.devices()
+      .filter((device) => device.is_mine)
+      .map((device) => ({
+        label: `${device.device_name} (${device.platform})`,
+        value: device.id,
+      })),
+  );
+
+  readonly hasTargets = computed(
+    () => this.shell.apps().length > 0 || this.deviceOptions().length > 0,
   );
 
   readonly modalTargetLabel = computed(() => {
@@ -217,7 +227,7 @@ export class QuietPeriodsPage implements OnInit {
   }
 
   openCreateModal(): void {
-    if (!this.shell.apps().length && !this.devices().length) {
+    if (!this.hasTargets()) {
       this.error.set({
         code: 'missing_targets',
         detail: this.copy().missingTargets,
@@ -239,7 +249,19 @@ export class QuietPeriodsPage implements OnInit {
     this.isModalOpen.set(true);
   }
 
+  /** App quiet periods are only listed for the caller's own apps; a device's
+   * only for its own user (subscriber devices are read-only for app owners). */
+  canManage(quietPeriod: QuietPeriodView): boolean {
+    if ('application' in quietPeriod) {
+      return true;
+    }
+    return this.devices().find((device) => device.id === quietPeriod.device)?.is_mine === true;
+  }
+
   editQuietPeriod(quietPeriod: QuietPeriodView): void {
+    if (!this.canManage(quietPeriod)) {
+      return;
+    }
     const context = this.contextForQuietPeriod(quietPeriod);
     this.selectedQuietPeriodId.set(quietPeriod.id);
     this.editingQuietPeriodId.set(quietPeriod.id);
@@ -369,6 +391,9 @@ export class QuietPeriodsPage implements OnInit {
   }
 
   async deleteQuietPeriod(quietPeriod: QuietPeriodView): Promise<void> {
+    if (!this.canManage(quietPeriod)) {
+      return;
+    }
     const context = this.contextForQuietPeriod(quietPeriod);
     const shouldDelete = await this.confirm.ask({
       message: this.interpolate(this.copy().confirmDelete, { name: quietPeriod.name }),

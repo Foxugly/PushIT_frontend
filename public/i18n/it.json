@@ -475,7 +475,9 @@
         "invalidId": "Identificativo device non valido.",
         "loading": "Caricamento del device..."
       },
-      "confirmDelete": "Eliminare il device \"{name}\"?"
+      "confirmDelete": "Eliminare il device \"{name}\"?",
+      "readOnly": "Sola lettura",
+      "readOnlyHint": "Device di un abbonato: solo il proprietario può modificarlo."
     },
     "notifications": {
       "title": "Notifiche utente",
@@ -654,7 +656,9 @@
         "selectOneDay": "Seleziona almeno un giorno.",
         "endAfterStart": "La fine del periodo di silenzio deve essere successiva all'inizio.",
         "differentEndTime": "L'ora di fine deve essere diversa dall'ora di inizio."
-      }
+      },
+      "readOnly": "Sola lettura",
+      "readOnlyHint": "Finestra di silenzio del device di un abbonato: solo il proprietario può modificarla."
     },
     "enrolment": {
       "intro": "Questo codice è fatto per circolare: è quello che i destinatari scansionano per ricevere le notifiche. Non autorizza alcun invio.",
@@ -897,7 +901,9 @@
           "sentAt": "Inviata il",
           "actions": "Azioni"
         }
-      }
+      },
+      "readOnly": "Sola lettura",
+      "readOnlyHint": "Device di un abbonato: solo il proprietario può modificarlo."
     },
     "notificationDetail": {
       "back": "Torna alle notifiche",

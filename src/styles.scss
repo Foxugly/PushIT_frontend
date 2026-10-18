@@ -519,6 +519,17 @@ a {
   color: var(--muted);
 }
 
+/* Lock shown in place of edit/delete on rows the user can see but not change
+   (e.g. a subscriber's device, for an application owner). */
+.console-read-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--muted);
+}
+
 .console-note,
 .console-flash,
 .console-error,
