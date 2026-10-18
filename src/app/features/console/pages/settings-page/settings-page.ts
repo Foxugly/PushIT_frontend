@@ -10,6 +10,7 @@ import { LanguagePreferenceService } from '../../../../core/services/language-pr
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { DeleteAccountPanel } from '../../components/delete-account-panel/delete-account-panel';
 
 @Component({
   selector: 'app-settings-page',
@@ -17,6 +18,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
     PageHeader,
     ReactiveFormsModule,
     AppAlert,
+    DeleteAccountPanel,
     ButtonModule,
     InputTextModule,
     SelectModule

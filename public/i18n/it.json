@@ -302,7 +302,29 @@
         "fallbackUser": "Utente",
         "fallbackEmail": "Email non disponibile",
         "activePrefix": "Prefisso attivo",
-        "activeLanguage": "Lingua attiva"
+        "activeLanguage": "Lingua attiva",
+        "deleteAccount": {
+          "eyebrow": "Zona sensibile",
+          "title": "Elimina il mio account",
+          "lead": "L’eliminazione è definitiva: il tuo account, i tuoi dispositivi e le applicazioni di cui sei proprietario vengono cancellati.",
+          "password": "Password attuale",
+          "button": "Elimina il mio account",
+          "moreInfo": "Cosa viene eliminato",
+          "dialogTitle": "Eliminare definitivamente il tuo account?",
+          "dialogIntro": "Questa azione è irreversibile. Le applicazioni di cui sei proprietario vengono eliminate per tutti, abbonati compresi, con tutti i loro dati:",
+          "dialogItems": [
+            "le notifiche e la loro cronologia di invio;",
+            "i collegamenti con i dispositivi abbonati;",
+            "i modelli;",
+            "i token di invio."
+          ],
+          "dialogOwn": "Anche i tuoi dispositivi e i loro token push vengono eliminati, e tutte le tue sessioni vengono chiuse.",
+          "cancel": "Annulla",
+          "confirm": "Elimina definitivamente",
+          "passwordRequired": "Inserisci la password attuale per confermare.",
+          "passwordInvalid": "Password attuale errata.",
+          "success": "Il tuo account è stato eliminato."
+        }
       },
       "changePassword": {
         "title": "Cambia password",
@@ -325,6 +347,35 @@
     "update": {
       "title": "Nuova versione disponibile",
       "detail": "L'app è stata aggiornata mentre eri qui. Ricarica la pagina per continuare."
+    },
+    "accountDeletion": {
+      "badge": "Account",
+      "title": "Eliminare il tuo account PushIT",
+      "lead": "PushIT è pubblicato da Foxugly SRL. Puoi eliminare da solo, in qualsiasi momento, il tuo account e i dati associati dalla console web.",
+      "stepsTitle": "Come eliminare il tuo account",
+      "steps": [
+        "Accedi alla console su https://pushit.foxugly.com, con lo stesso account dell’app mobile.",
+        "Apri « Impostazioni ».",
+        "Nella sezione « Elimina il mio account », inserisci la password attuale e fai clic su « Elimina il mio account ».",
+        "Conferma. L’eliminazione è immediata."
+      ],
+      "forgotPassword": "Password dimenticata? Reimpostala prima dalla pagina di accesso.",
+      "openConsole": "Apri le impostazioni",
+      "deletedTitle": "Dati eliminati",
+      "deleted": [
+        "Il tuo account: indirizzo e-mail, password e preferenze.",
+        "I tuoi dispositivi e i loro token di notifica (Firebase Cloud Messaging).",
+        "Le applicazioni di cui sei proprietario, per tutti i loro abbonati, con notifiche, cronologia di invio, modelli, token di invio e collegamenti con i dispositivi.",
+        "Tutte le tue sessioni, su tutti i dispositivi."
+      ],
+      "retentionTitle": "Conservazione",
+      "retention": [
+        "I dati vengono cancellati immediatamente dal database di produzione. Nessun dato viene conservato dopo l’eliminazione dell’account.",
+        "Alcune copie possono restare nei backup cifrati della piattaforma, cancellati a rotazione entro circa 8 settimane."
+      ],
+      "noAccessTitle": "Non riesci più ad accedere?",
+      "noAccess": "Scrivi a rvilain@foxugly.com dall’indirizzo e-mail del tuo account: eliminiamo l’account e i dati associati entro 30 giorni.",
+      "privacy": "Informativa sulla privacy"
     }
   },
   "console": {

@@ -302,7 +302,29 @@
         "fallbackUser": "Gebruiker",
         "fallbackEmail": "Email niet beschikbaar",
         "activePrefix": "Actieve prefix",
-        "activeLanguage": "Actieve taal"
+        "activeLanguage": "Actieve taal",
+        "deleteAccount": {
+          "eyebrow": "Gevarenzone",
+          "title": "Mijn account verwijderen",
+          "lead": "Verwijderen is definitief: je account, je toestellen en de applicaties waarvan je eigenaar bent worden gewist.",
+          "password": "Huidig wachtwoord",
+          "button": "Mijn account verwijderen",
+          "moreInfo": "Wat wordt verwijderd",
+          "dialogTitle": "Je account definitief verwijderen?",
+          "dialogIntro": "Dit kan niet ongedaan worden gemaakt. De applicaties waarvan je eigenaar bent worden voor iedereen verwijderd, ook voor abonnees, met al hun gegevens:",
+          "dialogItems": [
+            "de notificaties en hun verzendgeschiedenis;",
+            "de koppelingen met geabonneerde toestellen;",
+            "de sjablonen;",
+            "de verzendtokens."
+          ],
+          "dialogOwn": "Je eigen toestellen en hun pushtokens worden ook verwijderd, en al je sessies worden afgesloten.",
+          "cancel": "Annuleren",
+          "confirm": "Definitief verwijderen",
+          "passwordRequired": "Vul je huidige wachtwoord in om te bevestigen.",
+          "passwordInvalid": "Huidig wachtwoord onjuist.",
+          "success": "Je account is verwijderd."
+        }
       },
       "changePassword": {
         "title": "Wachtwoord wijzigen",
@@ -325,6 +347,35 @@
     "update": {
       "title": "Nieuwe versie beschikbaar",
       "detail": "De app is bijgewerkt terwijl u bezig was. Herlaad de pagina om verder te gaan."
+    },
+    "accountDeletion": {
+      "badge": "Account",
+      "title": "Je PushIT-account verwijderen",
+      "lead": "PushIT wordt uitgegeven door Foxugly SRL. Je kunt je account en de bijbehorende gegevens op elk moment zelf verwijderen via de webconsole.",
+      "stepsTitle": "Zo verwijder je je account",
+      "steps": [
+        "Meld je aan op de console via https://pushit.foxugly.com, met hetzelfde account als in de mobiele app.",
+        "Open « Instellingen ».",
+        "Vul in de sectie « Mijn account verwijderen » je huidige wachtwoord in en klik op « Mijn account verwijderen ».",
+        "Bevestig. De verwijdering gebeurt onmiddellijk."
+      ],
+      "forgotPassword": "Wachtwoord vergeten? Stel het eerst opnieuw in via de aanmeldpagina.",
+      "openConsole": "Instellingen openen",
+      "deletedTitle": "Verwijderde gegevens",
+      "deleted": [
+        "Je account: e-mailadres, wachtwoord en voorkeuren.",
+        "Je toestellen en hun notificatietokens (Firebase Cloud Messaging).",
+        "De applicaties waarvan je eigenaar bent, voor al hun abonnees, met hun notificaties, verzendgeschiedenis, sjablonen, verzendtokens en koppelingen met toestellen.",
+        "Al je sessies, op al je toestellen."
+      ],
+      "retentionTitle": "Bewaring",
+      "retention": [
+        "De gegevens worden onmiddellijk uit de productiedatabase gewist. Na de verwijdering van het account worden geen gegevens bewaard.",
+        "Kopieën kunnen nog bestaan in de versleutelde back-ups van het platform; die worden roterend gewist, uiterlijk ongeveer 8 weken later."
+      ],
+      "noAccessTitle": "Kun je niet meer inloggen?",
+      "noAccess": "Schrijf naar rvilain@foxugly.com vanaf het e-mailadres van je account: we verwijderen het account en de bijbehorende gegevens binnen 30 dagen.",
+      "privacy": "Privacybeleid"
     }
   },
   "console": {

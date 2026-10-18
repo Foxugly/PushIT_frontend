@@ -129,6 +129,16 @@ export class PushitApiService {
     return this.http.patch<UserMe>(this.url('/auth/me/'), payload);
   }
 
+  /**
+   * Irreversibly erase the signed-in account (GDPR). The backend re-checks the
+   * password, cascades the owned applications for every subscriber and
+   * blacklists all the user's refresh tokens: 204 on success, 400
+   * `current_password_invalid` / `validation_error` otherwise.
+   */
+  deleteMe(currentPassword: string): Observable<void> {
+    return this.http.delete<void>(this.url('/auth/me/'), { body: { current_password: currentPassword } });
+  }
+
   listApps(): Observable<ApplicationRead[]> {
     return this.http.get<ApplicationRead[]>(this.url('/apps/'));
   }

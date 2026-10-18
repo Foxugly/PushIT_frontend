@@ -1,0 +1,76 @@
+<section class="console-card delete-account" data-testid="delete-account-panel">
+  <div class="console-card__header">
+    <div>
+      <p class="console-shell__eyebrow">{{ copy().eyebrow }}</p>
+      <h3>{{ copy().title }}</h3>
+    </div>
+  </div>
+
+  <p class="console-muted">{{ copy().lead }}</p>
+  <p class="delete-account__more">
+    <a routerLink="/account-deletion">{{ copy().moreInfo }}</a>
+  </p>
+
+  <div class="console-actions">
+    <p-button
+      type="button"
+      severity="danger"
+      icon="pi pi-trash"
+      [label]="copy().button"
+      (onClick)="open()"
+    />
+  </div>
+</section>
+
+<p-confirmdialog
+  [key]="confirmKey"
+  [closable]="!pending()"
+  [closeOnEscape]="!pending()"
+  [style]="{ width: '34rem' }"
+  [breakpoints]="{ '640px': '94vw' }"
+>
+  <ng-template #message>
+    <form class="delete-account__dialog" (submit)="$event.preventDefault(); submit()">
+      <p>{{ copy().dialogIntro }}</p>
+      <ul>
+        @for (item of copy().dialogItems; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+      <p>{{ copy().dialogOwn }}</p>
+
+      <label for="delete-account-password">{{ copy().password }}</label>
+      <p-password
+        inputId="delete-account-password"
+        autocomplete="current-password"
+        [formControl]="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        [fluid]="true"
+      />
+
+      @if (error(); as message) {
+        <p-message severity="error" data-testid="delete-account-error">{{ message }}</p-message>
+      }
+    </form>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button
+      type="button"
+      severity="secondary"
+      [text]="true"
+      [label]="copy().cancel"
+      [disabled]="pending()"
+      (onClick)="cancel()"
+    />
+    <p-button
+      type="button"
+      severity="danger"
+      [label]="copy().confirm"
+      [loading]="pending()"
+      [disabled]="pending()"
+      (onClick)="submit()"
+    />
+  </ng-template>
+</p-confirmdialog>

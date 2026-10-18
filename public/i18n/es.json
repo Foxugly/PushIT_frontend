@@ -302,7 +302,29 @@
         "fallbackUser": "Usuario",
         "fallbackEmail": "Correo electrónico no disponible",
         "activePrefix": "Prefijo activo",
-        "activeLanguage": "Idioma activo"
+        "activeLanguage": "Idioma activo",
+        "deleteAccount": {
+          "eyebrow": "Zona sensible",
+          "title": "Eliminar mi cuenta",
+          "lead": "La eliminación es definitiva: se borran tu cuenta, tus dispositivos y las aplicaciones de las que eres propietario.",
+          "password": "Contraseña actual",
+          "button": "Eliminar mi cuenta",
+          "moreInfo": "Qué se elimina",
+          "dialogTitle": "¿Eliminar definitivamente tu cuenta?",
+          "dialogIntro": "Esta acción es irreversible. Las aplicaciones de las que eres propietario se eliminan para todos, incluidos los suscriptores, con todos sus datos:",
+          "dialogItems": [
+            "las notificaciones y su historial de envío;",
+            "los vínculos con los dispositivos suscritos;",
+            "las plantillas;",
+            "los tokens de envío."
+          ],
+          "dialogOwn": "Tus propios dispositivos y sus tokens push también se eliminan, y se cierran todas tus sesiones.",
+          "cancel": "Cancelar",
+          "confirm": "Eliminar definitivamente",
+          "passwordRequired": "Introduce tu contraseña actual para confirmar.",
+          "passwordInvalid": "Contraseña actual incorrecta.",
+          "success": "Tu cuenta ha sido eliminada."
+        }
       },
       "changePassword": {
         "title": "Cambiar contraseña",
@@ -325,6 +347,35 @@
     "update": {
       "title": "Nueva versión disponible",
       "detail": "La aplicación se actualizó mientras estabas aquí. Recarga la página para continuar."
+    },
+    "accountDeletion": {
+      "badge": "Cuenta",
+      "title": "Eliminar tu cuenta de PushIT",
+      "lead": "PushIT es publicado por Foxugly SRL. Puedes eliminar tú mismo, en cualquier momento, tu cuenta y los datos asociados desde la consola web.",
+      "stepsTitle": "Cómo eliminar tu cuenta",
+      "steps": [
+        "Inicia sesión en la consola en https://pushit.foxugly.com, con la misma cuenta que en la aplicación móvil.",
+        "Abre « Ajustes ».",
+        "En la sección « Eliminar mi cuenta », introduce tu contraseña actual y haz clic en « Eliminar mi cuenta ».",
+        "Confirma. La eliminación es inmediata."
+      ],
+      "forgotPassword": "¿Olvidaste tu contraseña? Restablécela primero desde la página de inicio de sesión.",
+      "openConsole": "Abrir los ajustes",
+      "deletedTitle": "Datos eliminados",
+      "deleted": [
+        "Tu cuenta: dirección de correo, contraseña y preferencias.",
+        "Tus dispositivos y sus tokens de notificación (Firebase Cloud Messaging).",
+        "Las aplicaciones de las que eres propietario, para todos sus suscriptores, con sus notificaciones, historial de envío, plantillas, tokens de envío y vínculos con dispositivos.",
+        "Todas tus sesiones, en todos tus dispositivos."
+      ],
+      "retentionTitle": "Conservación",
+      "retention": [
+        "Los datos se borran inmediatamente de la base de datos de producción. No se conserva ningún dato tras la eliminación de la cuenta.",
+        "Pueden quedar copias en las copias de seguridad cifradas de la plataforma, que se borran por rotación como máximo unas 8 semanas después."
+      ],
+      "noAccessTitle": "¿Ya no puedes iniciar sesión?",
+      "noAccess": "Escribe a rvilain@foxugly.com desde la dirección de correo de tu cuenta: eliminamos la cuenta y los datos asociados en un plazo de 30 días.",
+      "privacy": "Política de privacidad"
     }
   },
   "console": {

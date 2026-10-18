@@ -53,3 +53,14 @@
 .privacy-contact-cta a:focus-visible {
   text-decoration: underline;
 }
+
+.privacy-block a.privacy-link {
+  color: var(--accent-strong);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.privacy-block a.privacy-link:hover,
+.privacy-block a.privacy-link:focus-visible {
+  text-decoration: underline;
+}

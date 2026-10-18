@@ -34,6 +34,15 @@ export const routes: Routes = [
           import('./features/privacy/privacy-page/privacy-page').then((m) => m.PrivacyPage),
       },
       {
+        // Stable public URL (Google Play Data safety "account deletion URL"): keep it.
+        path: 'account-deletion',
+        data: { titleKey: 'accountDeletion.title' },
+        loadComponent: () =>
+          import('./features/account-deletion/account-deletion-page/account-deletion-page').then(
+            (m) => m.AccountDeletionPage,
+          ),
+      },
+      {
         path: 'auth',
         data: { titleKey: 'auth.title' },
         loadComponent: () => import('./features/auth/auth-page/auth-page').then((m) => m.AuthPage),

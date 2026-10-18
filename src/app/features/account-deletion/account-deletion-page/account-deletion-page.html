@@ -1,0 +1,49 @@
+<main class="public-content account-deletion-content">
+  <section class="public-card">
+    <span class="public-badge">{{ copy().badge }}</span>
+    <h1>{{ copy().title }}</h1>
+    <p class="account-deletion-lead">{{ copy().lead }}</p>
+
+    <div class="account-deletion-sections">
+      <section class="account-deletion-block" id="steps">
+        <h2>{{ copy().stepsTitle }}</h2>
+        <ol>
+          @for (step of copy().steps; track step) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+        <p>
+          <a routerLink="/forgot-password">{{ copy().forgotPassword }}</a>
+        </p>
+        <div>
+          <p-button [label]="copy().openConsole" icon="pi pi-cog" routerLink="/dashboard/settings" />
+        </div>
+      </section>
+
+      <section class="account-deletion-block" id="deleted-data">
+        <h2>{{ copy().deletedTitle }}</h2>
+        <ul>
+          @for (item of copy().deleted; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      <section class="account-deletion-block" id="retention">
+        <h2>{{ copy().retentionTitle }}</h2>
+        @for (paragraph of copy().retention; track paragraph) {
+          <p>{{ paragraph }}</p>
+        }
+      </section>
+
+      <section class="account-deletion-block" id="no-access">
+        <h2>{{ copy().noAccessTitle }}</h2>
+        <p>{{ copy().noAccess }}</p>
+      </section>
+    </div>
+
+    <p class="account-deletion-privacy">
+      <a routerLink="/privacy">{{ copy().privacy }}</a>
+    </p>
+  </section>
+</main>

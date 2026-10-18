@@ -1,0 +1,59 @@
+:host {
+  display: contents;
+}
+
+.account-deletion-lead {
+  margin: 0.5rem 0 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.account-deletion-sections {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.account-deletion-block {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.account-deletion-block h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.account-deletion-block p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.account-deletion-block ul,
+.account-deletion-block ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.account-deletion-block a,
+.account-deletion-privacy a {
+  color: var(--accent-strong);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.account-deletion-block a:hover,
+.account-deletion-block a:focus-visible,
+.account-deletion-privacy a:hover,
+.account-deletion-privacy a:focus-visible {
+  text-decoration: underline;
+}
+
+.account-deletion-privacy {
+  margin: 1.5rem 0 0;
+}
