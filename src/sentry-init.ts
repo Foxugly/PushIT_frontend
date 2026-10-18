@@ -9,6 +9,7 @@
 import * as Sentry from '@sentry/angular';
 
 import { getRuntimeConfig } from './app/core/runtime-config';
+import { scrubBreadcrumb, scrubEvent } from './app/core/sentry-scrub';
 
 const { sentry } = getRuntimeConfig();
 
@@ -22,5 +23,10 @@ if (sentry.dsn) {
     tracesSampleRate: 0.1,
     // Propager les en-têtes de trace uniquement vers notre backend.
     tracePropagationTargets: [/^https:\/\/pushit-api\.foxugly\.com\/api/],
+    // Jetons à usage unique (reset / confirm-email / magic-link) masqués dans
+    // les URLs, noms de transaction, spans et breadcrumbs (sentry-scrub.ts).
+    beforeSend: (event) => scrubEvent(event),
+    beforeSendTransaction: (event) => scrubEvent(event),
+    beforeBreadcrumb: (breadcrumb) => scrubBreadcrumb(breadcrumb),
   });
 }

@@ -1053,6 +1053,7 @@
       "invoiceView": "Vedi",
       "noInvoices": "Nessuna fattura.",
       "checkoutSuccess": "Pagamento registrato. Il tuo abbonamento si sta attivando.",
+      "redirectRefused": "Reindirizzamento rifiutato: l'indirizzo di pagamento ricevuto non è riconosciuto. Riprova o contatta l'assistenza.",
       "statuses": {
         "active": "Attivo",
         "trialing": "Prova",

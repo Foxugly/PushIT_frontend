@@ -6,6 +6,8 @@ type User = {
   userkey: string;
   is_active: boolean;
   language: 'FR' | 'NL' | 'EN';
+  is_staff?: boolean;
+  is_superuser?: boolean;
 };
 
 type Application = {
@@ -64,7 +66,7 @@ type SendToken = {
 
 type QuietPeriod = unknown[];
 
-type ConsoleState = {
+export type ConsoleState = {
   user: User;
   apps: Application[];
   devices: Device[];

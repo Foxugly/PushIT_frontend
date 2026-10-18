@@ -1053,6 +1053,7 @@
       "invoiceView": "View",
       "noInvoices": "No invoices.",
       "checkoutSuccess": "Payment recorded. Your subscription is being activated.",
+      "redirectRefused": "Redirect refused: the payment address received is not recognised. Try again or contact support.",
       "statuses": {
         "active": "Active",
         "trialing": "Trial",

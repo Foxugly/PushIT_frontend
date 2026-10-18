@@ -1053,6 +1053,7 @@
       "invoiceView": "Bekijken",
       "noInvoices": "Geen facturen.",
       "checkoutSuccess": "Betaling geregistreerd. Uw abonnement wordt zo geactiveerd.",
+      "redirectRefused": "Doorverwijzing geweigerd: het ontvangen betaaladres wordt niet herkend. Probeer opnieuw of neem contact op met support.",
       "statuses": {
         "active": "Actief",
         "trialing": "Proefperiode",
