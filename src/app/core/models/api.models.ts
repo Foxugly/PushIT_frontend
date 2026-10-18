@@ -66,6 +66,22 @@ export interface LoginResponse {
   user: UserMe;
 }
 
+/** Body of POST auth/password/change/. */
+export interface PasswordChangeRequest {
+  current_password: string;
+  new_password: string;
+}
+
+/**
+ * Success body of POST auth/password/change/. The backend blacklists every
+ * refresh token of the user and hands back a fresh pair: the caller MUST store
+ * it (SessionService.adoptTokens) or its next refresh is rejected.
+ */
+export interface PasswordChangeResponse extends LoginResponse {
+  code: 'password_changed';
+  detail: string;
+}
+
 export interface TokenRefreshResponse {
   access: string;
   // The backend rotates + blacklists refresh tokens (ROTATE_REFRESH_TOKENS +

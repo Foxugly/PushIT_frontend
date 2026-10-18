@@ -328,9 +328,23 @@
       },
       "changePassword": {
         "title": "Change password",
-        "backendEyebrow": "Backend status",
-        "backendTitle": "Action unavailable",
-        "note": "The Swagger currently exposes `login`, `logout`, `me`, `refresh` and `register`, but no `change-password` route. When the endpoint becomes available, this page can host the update form."
+        "intro": "After the change, your other sessions (other browsers, devices) will be signed out. This session stays signed in.",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm new password",
+        "passwordHint": "At least 8 characters, not too common and not too close to your email address.",
+        "required": "This field is required.",
+        "passwordTooShort": "The password must be at least 8 characters long.",
+        "passwordMismatch": "The two passwords do not match.",
+        "submit": "Change password",
+        "success": "Your password has been changed. Your other sessions have been signed out.",
+        "errors": {
+          "currentPasswordInvalid": "The current password is incorrect.",
+          "passwordUnchanged": "The new password must be different from the current one.",
+          "passwordInvalid": "This password was rejected:",
+          "validation": "Please fill in every field.",
+          "throttled": "Too many attempts. Please try again in a minute."
+        }
       },
       "applicationForm": {
         "name": "Name",

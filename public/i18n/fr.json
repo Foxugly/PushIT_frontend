@@ -328,9 +328,23 @@
       },
       "changePassword": {
         "title": "Changer de mot de passe",
-        "backendEyebrow": "État backend",
-        "backendTitle": "Action non disponible",
-        "note": "Le Swagger expose actuellement `login`, `logout`, `me`, `refresh` et `register`, mais pas de route `change-password`. Quand l'endpoint sera disponible, cette page pourra accueillir le formulaire de mise à jour."
+        "intro": "Après le changement, vos autres sessions (autres navigateurs, appareils) seront déconnectées. Cette session reste ouverte.",
+        "currentPassword": "Mot de passe actuel",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le nouveau mot de passe",
+        "passwordHint": "8 caractères minimum, ni trop courant ni trop proche de votre adresse e-mail.",
+        "required": "Ce champ est obligatoire.",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+        "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
+        "submit": "Changer de mot de passe",
+        "success": "Votre mot de passe a été changé. Vos autres sessions ont été déconnectées.",
+        "errors": {
+          "currentPasswordInvalid": "Le mot de passe actuel est incorrect.",
+          "passwordUnchanged": "Le nouveau mot de passe doit être différent de l'actuel.",
+          "passwordInvalid": "Ce mot de passe a été refusé :",
+          "validation": "Veuillez remplir tous les champs.",
+          "throttled": "Trop de tentatives. Veuillez réessayer dans une minute."
+        }
       },
       "applicationForm": {
         "name": "Nom",
