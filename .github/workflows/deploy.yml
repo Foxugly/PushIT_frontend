@@ -10,6 +10,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Gate : tests unitaires + seuil de couverture.
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Vitest (jsdom) + seuil de couverture (scripts/check-coverage.mjs).
+      - name: Run unit tests with coverage threshold
+        run: npm run test:ci
+
   # Gate : le déploiement n'a lieu que si l'e2e (Playwright, mocké) passe.
   e2e:
     name: E2E (Playwright)
@@ -34,7 +55,7 @@ jobs:
         run: npm run test:e2e
 
   build-and-deploy:
-    needs: e2e
+    needs: [unit, e2e]
     runs-on: ubuntu-latest
     # OIDC → SSM + S3-bundle (no long-lived SSH key). Mirrors the fleet model
     # (trainingmanager_frontend / OPERATIONS.md §3.11): build in CI → upload the
