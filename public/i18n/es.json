@@ -475,7 +475,9 @@
         "invalidId": "Identificador de dispositivo no válido.",
         "loading": "Cargando el dispositivo..."
       },
-      "confirmDelete": "¿Eliminar el dispositivo \"{name}\"?"
+      "confirmDelete": "¿Eliminar el dispositivo \"{name}\"?",
+      "readOnly": "Solo lectura",
+      "readOnlyHint": "Dispositivo de un suscriptor: solo su propietario puede modificarlo."
     },
     "notifications": {
       "title": "Notificaciones del usuario",
@@ -654,7 +656,9 @@
         "selectOneDay": "Selecciona al menos un día.",
         "endAfterStart": "El fin del periodo de silencio debe ser posterior al inicio.",
         "differentEndTime": "La hora de fin debe ser diferente de la hora de inicio."
-      }
+      },
+      "readOnly": "Solo lectura",
+      "readOnlyHint": "Ventana de silencio del dispositivo de un suscriptor: solo su propietario puede modificarla."
     },
     "enrolment": {
       "intro": "Este código está hecho para circular: es lo que escanean tus destinatarios para recibir tus notificaciones. No autoriza ningún envío.",
@@ -897,7 +901,9 @@
           "sentAt": "Enviada el",
           "actions": "Acciones"
         }
-      }
+      },
+      "readOnly": "Solo lectura",
+      "readOnlyHint": "Dispositivo de un suscriptor: solo su propietario puede modificarlo."
     },
     "notificationDetail": {
       "back": "Volver a las notificaciones",

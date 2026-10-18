@@ -59,6 +59,8 @@ describe('DeviceDetailPage', () => {
           eyebrow: 'Device',
           fallbackTitle: 'Device',
           editTooltip: 'Editer',
+          readOnly: 'Lecture seule',
+          readOnlyHint: "Device d'un abonne.",
           loading: 'Chargement...',
           applicationsTitle: 'Applications',
           applicationsEmpty: 'Aucune application',
@@ -152,5 +154,25 @@ describe('DeviceDetailPage', () => {
     });
     expect(component.device()?.device_name).toBe('Pixel QA');
     expect(shell.refreshNavigationCounts).toHaveBeenCalled();
+  });
+
+  it("hides the edit action on a subscriber's device and refuses to open the dialog", () => {
+    api.getDevice.and.returnValue(of(makeDevice({ id: 201, is_mine: false })));
+    fixture.detectChanges();
+
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector('[data-testid="device-read-only"]')).not.toBeNull();
+    expect(host.querySelector('p-button[icon="pi pi-pencil"]')).toBeNull();
+
+    component.openEditModal();
+    expect(component.isEditModalOpen()).toBe(false);
+  });
+
+  it("shows the edit action on the user's own device", () => {
+    fixture.detectChanges();
+
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector('[data-testid="device-read-only"]')).toBeNull();
+    expect(host.querySelector('p-button[icon="pi pi-pencil"]')).not.toBeNull();
   });
 });

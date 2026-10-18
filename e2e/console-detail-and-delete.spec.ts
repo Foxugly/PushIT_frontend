@@ -41,6 +41,7 @@ test.beforeEach(async ({ page }) => {
         last_seen_at: '2026-03-27T18:00:00+01:00',
         created_at: '2026-03-27T10:00:00+01:00',
         application_ids: [10],
+        is_mine: true,
       },
       {
         id: 21,
@@ -50,6 +51,8 @@ test.beforeEach(async ({ page }) => {
         last_seen_at: null,
         created_at: '2026-03-27T09:00:00+01:00',
         application_ids: [10],
+        // A subscriber's device: the app owner sees it, read-only.
+        is_mine: false,
       },
     ],
     notifications: [
@@ -157,4 +160,30 @@ test('application deletion uses the shared confirmation dialog', async ({ page }
 
   await expect(page.getByText('Application PushIT Mobile supprimée.')).toBeVisible();
   await expect(page.locator('tr', { hasText: 'PushIT Mobile Application mobile' })).toHaveCount(0);
+});
+
+test("devices list offers edit/delete only on the user's own devices", async ({ page }) => {
+  await page.goto('/dashboard/devices');
+
+  const ownRow = page.locator('tr', { hasText: 'iPhone Marie' });
+  await expect(ownRow.getByRole('button', { name: 'Éditer' })).toBeVisible();
+  await expect(ownRow.getByRole('button', { name: 'Supprimer' })).toBeVisible();
+  await expect(ownRow.getByTestId('device-read-only')).toHaveCount(0);
+
+  const subscriberRow = page.locator('tr', { hasText: 'Pixel QA' });
+  await expect(subscriberRow.getByRole('button', { name: 'Voir le détail' })).toBeVisible();
+  await expect(subscriberRow.getByRole('button', { name: 'Éditer' })).toHaveCount(0);
+  await expect(subscriberRow.getByRole('button', { name: 'Supprimer' })).toHaveCount(0);
+  await expect(subscriberRow.getByTestId('device-read-only')).toBeVisible();
+});
+
+test("a subscriber's device detail is read-only", async ({ page }) => {
+  await page.goto('/dashboard/devices/21');
+
+  await expect(page.getByTestId('device-read-only')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Éditer le device' })).toHaveCount(0);
+
+  await page.goto('/dashboard/devices/20');
+  await expect(page.getByRole('button', { name: 'Éditer le device' })).toBeVisible();
+  await expect(page.getByTestId('device-read-only')).toHaveCount(0);
 });

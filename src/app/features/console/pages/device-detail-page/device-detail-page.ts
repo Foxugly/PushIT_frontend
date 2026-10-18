@@ -150,7 +150,7 @@ export class DeviceDetailPage implements OnInit {
 
   openEditModal(): void {
     const currentDevice = this.device();
-    if (!currentDevice) {
+    if (!currentDevice || !currentDevice.is_mine) {
       return;
     }
 

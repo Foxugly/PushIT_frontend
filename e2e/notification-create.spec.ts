@@ -36,6 +36,7 @@ const devices = [
     last_seen_at: '2026-03-27T18:00:00+01:00',
     created_at: '2026-03-27T10:00:00+01:00',
     application_ids: [10],
+    is_mine: true,
   },
 ];
 

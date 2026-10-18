@@ -57,10 +57,15 @@
             <div class="console-icon-actions">
               <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.view"
         [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
-              <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
-        [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
-              <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
-        [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
+              @if (device.is_mine) {
+                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
+          [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+          [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
+              } @else {
+                <i class="pi pi-lock console-read-only" role="img" [attr.aria-label]="copy().readOnly + ' — ' + copy().readOnlyHint"
+          [pTooltip]="copy().readOnlyHint" tooltipPosition="top" data-testid="device-read-only"></i>
+              }
             </div>
           </td>
         </tr>

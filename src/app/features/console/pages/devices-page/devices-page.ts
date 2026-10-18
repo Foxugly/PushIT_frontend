@@ -165,6 +165,9 @@ export class DevicesPage implements OnInit {
   }
 
   openEditModal(device: DeviceRead): void {
+    if (!device.is_mine) {
+      return;
+    }
     this.error.set(null);
     this.selectDevice(device);
     this.modalMode.set('edit');
@@ -218,7 +221,7 @@ export class DevicesPage implements OnInit {
   async deleteDevice(): Promise<void> {
     const deviceId = this.selectedDeviceId();
     const device = this.devices().find((item) => item.id === deviceId);
-    if (!deviceId || !device) {
+    if (!deviceId || !device || !device.is_mine) {
       return;
     }
 

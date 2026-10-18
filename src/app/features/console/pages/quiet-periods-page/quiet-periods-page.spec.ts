@@ -4,6 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 
 import { ApplicationQuietPeriod, DeviceQuietPeriod } from '../../../../core/models/api.models';
+import { makeDevice } from '../../../../../testing/console-fixtures';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { QuietPeriodsPage } from './quiet-periods-page';
@@ -70,6 +71,8 @@ describe('QuietPeriodsPage', () => {
           defaultNames: { application: 'Silence application', device: 'Silence device' },
           alerts: { created: 'Periode blanche creee.', updated: 'Periode blanche mise a jour.', deleted: 'Periode blanche "{name}" supprimee.' },
           actions: { edit: 'Editer', delete: 'Supprimer' },
+          readOnly: 'Lecture seule',
+          readOnlyHint: "Fenetre de silence du device d'un abonne.",
           confirmDelete: 'Supprimer la periode blanche "{name}" ?',
           validation: { onceRequired: 'Une periode ponctuelle demande une date de debut et une date de fin.', recurringRequired: 'Une periode recurrente demande des jours et une plage horaire.', required: 'Ce champ est obligatoire.', selectOneDay: 'Selectionnez au moins un jour.', endAfterStart: 'La fin de la periode blanche doit etre apres le debut.', differentEndTime: "L'heure de fin doit etre differente de l'heure de debut." },
         },
@@ -180,5 +183,50 @@ describe('QuietPeriodsPage', () => {
     expect(component.error()?.errors?.['end_time']).toEqual([
       "L'heure de fin doit etre differente de l'heure de debut.",
     ]);
+  });
+
+  describe("subscriber devices (is_mine=false) are read-only", () => {
+    const deviceQuietPeriod = (device: number) =>
+      ({ id: 900 + device, device, name: 'Nuit' }) as unknown as DeviceQuietPeriod;
+
+    beforeEach(() => {
+      component.devices.set([
+        makeDevice({ id: 1, device_name: 'Mine', is_mine: true }),
+        makeDevice({ id: 2, device_name: 'Subscriber', is_mine: false }),
+      ]);
+    });
+
+    it('offers only the user own devices as quiet-period targets', () => {
+      expect(component.deviceOptions().map((option) => option.value)).toEqual([1]);
+      expect(component.scopeOptions().map((option) => option.value)).toEqual([
+        'application',
+        'device',
+      ]);
+    });
+
+    it('drops the device scope and blocks creation when no device is the user own', () => {
+      component.devices.set([makeDevice({ id: 2, is_mine: false })]);
+
+      expect(component.scopeOptions().map((option) => option.value)).toEqual(['application']);
+      expect(component.hasTargets()).toBe(false);
+      component.openCreateModal();
+      expect(component.isModalOpen()).toBe(false);
+    });
+
+    it('allows managing own-device and app quiet periods only', () => {
+      expect(component.canManage(deviceQuietPeriod(1))).toBe(true);
+      expect(component.canManage(deviceQuietPeriod(2))).toBe(false);
+      expect(
+        component.canManage({ id: 5, application: 10 } as unknown as ApplicationQuietPeriod),
+      ).toBe(true);
+    });
+
+    it('ignores edit and delete on a subscriber device quiet period', async () => {
+      component.editQuietPeriod(deviceQuietPeriod(2));
+      expect(component.isModalOpen()).toBe(false);
+
+      await component.deleteQuietPeriod(deviceQuietPeriod(2));
+      expect(api.deleteDeviceQuietPeriod).not.toHaveBeenCalled();
+    });
   });
 });
