@@ -46,14 +46,13 @@ test.beforeEach(async ({ page }) => {
   await mockConsoleApi(page, { user, apps: [], devices: [], notifications: [], futureNotifications: [] });
 });
 
-test('changing the password stores the fresh tokens and keeps the session', async ({ page }) => {
+test('changing the password keeps the session (fresh access, cookie re-set server-side)', async ({ page }) => {
   const calls = await mockPasswordChange(page, () => ({
     status: 200,
     body: {
       code: 'password_changed',
       detail: 'Your password has been changed.',
       access: 'access-after-change',
-      refresh: 'refresh-after-change',
       user,
     },
   }));
@@ -73,11 +72,10 @@ test('changing the password stores the fresh tokens and keeps the session', asyn
     new_password: 'NouveauSecret456?',
   });
 
-  const stored = await page.evaluate(() => ({
-    access: localStorage.getItem('pushit.accessToken'),
-    refresh: localStorage.getItem('pushit.refreshToken'),
-  }));
-  expect(stored).toEqual({ access: 'access-after-change', refresh: 'refresh-after-change' });
+  expect(calls[0].headers()['x-auth-mode']).toBe('cookie');
+  // No token ever lands in storage.
+  const stored = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }));
+  expect(stored).not.toContain('access-after-change');
   await expect(page).toHaveURL(/\/dashboard\/change-password$/);
   await expect(page.locator('#change-password-current')).toHaveValue('');
 });
@@ -93,7 +91,7 @@ test('a wrong current password shows a translated error and keeps the tokens', a
   await page.getByRole('button', { name: 'Changer de mot de passe' }).click();
 
   await expect(page.getByTestId('change-password-error')).toContainText('Le mot de passe actuel est incorrect.');
-  expect(await page.evaluate(() => localStorage.getItem('pushit.refreshToken'))).toBe('refresh-token');
+  expect(await page.evaluate(() => localStorage.getItem('pushit.session'))).not.toBeNull();
 });
 
 test('validator messages are listed for a rejected password', async ({ page }) => {

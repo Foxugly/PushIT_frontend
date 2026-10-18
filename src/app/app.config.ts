@@ -23,6 +23,7 @@ import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
 import { CatalogStore } from './core/i18n/catalog-store';
 import { PageTitleStrategy } from './core/services/page-title.strategy';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { SessionService } from './core/services/session.service';
 
 // Fleet look: Aura preset with Emerald as primary (same as QuizOnline/TM). The
 // `{emerald.*}` tokens shift the whole primary scale (buttons, tags, focus rings)
@@ -91,7 +92,10 @@ export const appConfig: ApplicationConfig = {
       // Rattrape les onglets ouverts avant un deploiement, dont les chunks
       // differes n'existent plus cote serveur.
       inject(StaleChunkService).init();
-      return inject(CatalogStore).preload();
+      // Silent restore: the access token lives in memory only, so a fresh load
+      // re-obtains it from the HttpOnly refresh cookie before the first route
+      // guard runs. Never rejects (bounded by a timeout).
+      return Promise.all([inject(CatalogStore).preload(), inject(SessionService).restore()]);
     }),
   ],
 };

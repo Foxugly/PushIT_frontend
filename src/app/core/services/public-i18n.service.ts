@@ -1,8 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 
-import { UserMe } from '../models/api.models';
-import { USER_KEY } from './session.service';
 import { StorageService } from './storage.service';
 
 export type LanguageCode = 'fr' | 'nl' | 'en' | 'it' | 'es';
@@ -35,12 +33,8 @@ export class PublicI18nService {
   }
 
   private readInitialLanguage(): LanguageCode {
-    const storedUser = this.storage.findObject<UserMe>(USER_KEY)?.value;
-    const backendLang = storedUser?.language?.toLowerCase() as LanguageCode | undefined;
-    if (backendLang && UI_LANGS.includes(backendLang)) {
-      return backendLang;
-    }
-
+    // The backend language is applied once the session is restored
+    // (LanguagePreferenceService); it is persisted under LANGUAGE_KEY.
     const storedLanguage = this.storage.getString(LANGUAGE_KEY) as LanguageCode | null;
     if (storedLanguage && UI_LANGS.includes(storedLanguage)) {
       return storedLanguage;

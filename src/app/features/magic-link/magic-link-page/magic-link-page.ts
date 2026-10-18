@@ -53,7 +53,7 @@ export class MagicLinkPage implements OnInit {
         // Magic-link is an explicit "sign me in" action: persist the session
         // (like confirm-email auto-login) since the remember-me choice made on
         // the login card doesn't survive the emailed round-trip.
-        this.session.startSession(response, true);
+        this.session.startSession(response);
         this.languagePreference.applyBackendLanguage(response.user.language);
         void this.router.navigate(['/dashboard']);
       },

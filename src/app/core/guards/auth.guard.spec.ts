@@ -11,7 +11,6 @@ describe('auth guards', () => {
     isAuthenticated: ReturnType<typeof signal<boolean>>;
     isAdmin: ReturnType<typeof signal<boolean>>;
     accessTokenExpired: jasmine.Spy<() => boolean>;
-    refreshToken: jasmine.Spy<() => string | null>;
     clear: jasmine.Spy;
   };
   const route = {} as ActivatedRouteSnapshot;
@@ -24,7 +23,6 @@ describe('auth guards', () => {
       isAuthenticated: signal(false),
       isAdmin: signal(false),
       accessTokenExpired: jasmine.createSpy('accessTokenExpired').and.returnValue(false),
-      refreshToken: jasmine.createSpy('refreshToken').and.returnValue('refresh-token'),
       clear: jasmine.createSpy('clear'),
     };
 
@@ -44,24 +42,13 @@ describe('auth guards', () => {
     expect(result).toBeTrue();
   });
 
-  it('authGuard redirects a dead session (expired token, no refresh) to /auth', () => {
+  it('authGuard allows an expired access token (the interceptor refreshes it via the cookie)', () => {
     session.isAuthenticated.set(true);
     session.accessTokenExpired.and.returnValue(true);
-    session.refreshToken.and.returnValue(null);
 
     const result = TestBed.runInInjectionContext(() => authGuard(route, state));
 
-    expect(session.clear).toHaveBeenCalled();
-    expect(result).toEqual(jasmine.objectContaining({ commands: ['/auth'] }));
-  });
-
-  it('authGuard allows an expired token when a refresh token exists', () => {
-    session.isAuthenticated.set(true);
-    session.accessTokenExpired.and.returnValue(true);
-    session.refreshToken.and.returnValue('refresh-token');
-
-    const result = TestBed.runInInjectionContext(() => authGuard(route, state));
-
+    expect(session.clear).not.toHaveBeenCalled();
     expect(result).toBeTrue();
   });
 

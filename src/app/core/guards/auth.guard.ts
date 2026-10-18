@@ -7,19 +7,10 @@ export const authGuard: CanActivateFn = () => {
   const session = inject(SessionService);
   const router = inject(Router);
 
-  if (!session.isAuthenticated()) {
-    return router.createUrlTree(['/auth']);
-  }
-
-  // Dead session: the access token is expired AND there's no refresh token to
-  // recover from it → don't render a protected page that will only 401. (An
-  // expired token WITH a refresh token is fine — the interceptor refreshes it.)
-  if (session.accessTokenExpired() && !session.refreshToken()) {
-    session.clear();
-    return router.createUrlTree(['/auth']);
-  }
-
-  return true;
+  // The session was restored from the HttpOnly refresh cookie at boot (app
+  // initializer). An expired access token is fine: the interceptor refreshes it
+  // through the cookie, and clears the session if the cookie is rejected.
+  return session.isAuthenticated() ? true : router.createUrlTree(['/auth']);
 };
 
 /**

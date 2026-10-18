@@ -2,6 +2,7 @@ import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/commo
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
+import { cookieAuthOptions } from '../http/auth-cookie';
 import { SKIP_AUTH } from '../http/http-context.tokens';
 import {
   AdminStatus,
@@ -82,7 +83,7 @@ export class PushitApiService {
     return this.http.post<LoginResponse>(
       this.url('/auth/email/confirm/'),
       { uid, token },
-      { context: new HttpContext().set(SKIP_AUTH, true) },
+      { ...cookieAuthOptions(), context: new HttpContext().set(SKIP_AUTH, true) },
     );
   }
 
@@ -97,6 +98,7 @@ export class PushitApiService {
 
   login(payload: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(this.url('/auth/login/'), payload, {
+      ...cookieAuthOptions(),
       context: new HttpContext().set(SKIP_AUTH, true),
     });
   }
@@ -115,18 +117,31 @@ export class PushitApiService {
     return this.http.post<LoginResponse>(
       this.url('/auth/magic-link/verify/'),
       { token },
-      { context: new HttpContext().set(SKIP_AUTH, true) },
+      { ...cookieAuthOptions(), context: new HttpContext().set(SKIP_AUTH, true) },
     );
   }
 
-  logout(refresh: string): Observable<void> {
-    return this.http.post<void>(this.url('/auth/logout/'), { refresh });
+  /**
+   * Sign out: the backend blacklists the HttpOnly refresh cookie and clears it.
+   * No Bearer (SKIP_AUTH): an expired access token must not turn the logout
+   * into a 401 — cookie mode needs nothing else.
+   */
+  logout(): Observable<void> {
+    return this.http.post<void>(
+      this.url('/auth/logout/'),
+      {},
+      { ...cookieAuthOptions(), context: new HttpContext().set(SKIP_AUTH, true) },
+    );
   }
 
   /** Change the signed-in user's password. On success every other session is
    * signed out and a fresh token pair is returned for this one. */
   changePassword(payload: PasswordChangeRequest): Observable<PasswordChangeResponse> {
-    return this.http.post<PasswordChangeResponse>(this.url('/auth/password/change/'), payload);
+    return this.http.post<PasswordChangeResponse>(
+      this.url('/auth/password/change/'),
+      payload,
+      cookieAuthOptions(),
+    );
   }
 
   me(): Observable<UserMe> {
@@ -144,7 +159,11 @@ export class PushitApiService {
    * `current_password_invalid` / `validation_error` otherwise.
    */
   deleteMe(currentPassword: string): Observable<void> {
-    return this.http.delete<void>(this.url('/auth/me/'), { body: { current_password: currentPassword } });
+    // Cookie mode: the 204 also clears the refresh cookie.
+    return this.http.delete<void>(this.url('/auth/me/'), {
+      ...cookieAuthOptions(),
+      body: { current_password: currentPassword },
+    });
   }
 
   listApps(): Observable<ApplicationRead[]> {

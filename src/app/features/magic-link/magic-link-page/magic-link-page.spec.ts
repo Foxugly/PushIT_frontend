@@ -66,7 +66,7 @@ describe('MagicLinkPage', () => {
     fixture.detectChanges();
 
     expect(api.verifyMagicLink).toHaveBeenCalledWith('good-token');
-    expect(session.startSession).toHaveBeenCalledWith(loginResponse, true);
+    expect(session.startSession).toHaveBeenCalledWith(loginResponse);
     expect(navigate).toHaveBeenCalledWith(['/dashboard']);
   });
 

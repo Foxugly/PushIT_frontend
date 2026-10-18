@@ -75,7 +75,7 @@ test('opening the emailed magic link signs the visitor in and lands on the dashb
 }) => {
   await page.route('**/api/v1/auth/magic-link/verify/', async (route) => {
     if (route.request().method() !== 'POST') return route.fallback();
-    return route.fulfill(json(200, { access: 'access-token', refresh: 'refresh-token', user }));
+    return route.fulfill(json(200, { access: 'access-token', user }));
   });
 
   await page.goto('/auth/magic-link/a-valid-token');

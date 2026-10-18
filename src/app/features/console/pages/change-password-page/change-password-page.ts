@@ -112,8 +112,8 @@ export class ChangePasswordPage {
       )
       .subscribe({
         next: (response) => {
-          // Every previous refresh token is now blacklisted server-side: store
-          // the fresh pair or the next refresh would sign this session out.
+          // Every previous refresh token is now blacklisted server-side; the
+          // backend re-set the HttpOnly cookie, we keep the fresh access token.
           this.session.adoptTokens(response);
           this.form.reset();
           this.succeeded.set(true);

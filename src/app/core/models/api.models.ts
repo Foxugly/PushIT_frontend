@@ -46,6 +46,8 @@ export interface RegisterPendingResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  /** false = the refresh cookie lives for the browser session only. */
+  remember_me?: boolean;
 }
 
 export interface RegisterRequest {
@@ -62,7 +64,12 @@ export interface UserMeUpdateRequest {
 
 export interface LoginResponse {
   access: string;
-  refresh: string;
+  /**
+   * Absent for the SPA: it opts into the HttpOnly refresh cookie
+   * (`X-Auth-Mode: cookie`), so the backend keeps the refresh token out of
+   * the body. Only body-mode clients (mobile app) receive it.
+   */
+  refresh?: string;
   user: UserMe;
 }
 
@@ -74,8 +81,8 @@ export interface PasswordChangeRequest {
 
 /**
  * Success body of POST auth/password/change/. The backend blacklists every
- * refresh token of the user and hands back a fresh pair: the caller MUST store
- * it (SessionService.adoptTokens) or its next refresh is rejected.
+ * refresh token of the user, re-sets the refresh cookie and returns a fresh
+ * access token, which the caller adopts (SessionService.adoptTokens).
  */
 export interface PasswordChangeResponse extends LoginResponse {
   code: 'password_changed';
@@ -84,9 +91,7 @@ export interface PasswordChangeResponse extends LoginResponse {
 
 export interface TokenRefreshResponse {
   access: string;
-  // The backend rotates + blacklists refresh tokens (ROTATE_REFRESH_TOKENS +
-  // BLACKLIST_AFTER_ROTATION), so a fresh refresh is returned and MUST be
-  // persisted — otherwise the next refresh presents a blacklisted token.
+  // Cookie mode: the rotated refresh token is in the HttpOnly cookie, not here.
   refresh?: string;
 }
 
