@@ -323,6 +323,7 @@
           "confirm": "Supprimer définitivement",
           "passwordRequired": "Saisissez votre mot de passe actuel pour confirmer.",
           "passwordInvalid": "Mot de passe actuel incorrect.",
+          "billingUnavailable": "Service de facturation indisponible : votre compte n'a pas été supprimé. Réessayez dans quelques minutes.",
           "success": "Votre compte a été supprimé."
         }
       },

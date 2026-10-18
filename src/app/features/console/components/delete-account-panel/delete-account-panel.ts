@@ -121,6 +121,10 @@ export class DeleteAccountPanel {
     if (apiError.code === 'validation_error') {
       return this.copy().passwordRequired;
     }
+    if (apiError.code === 'billing_unavailable') {
+      // The central billing service could not erase: nothing was deleted, retry.
+      return this.copy().billingUnavailable;
+    }
     return localizeApiError(apiError, apiErrorCopy(this.catalogs, this.i18n.language()));
   }
 }
