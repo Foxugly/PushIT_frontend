@@ -67,6 +67,7 @@ const BILLING_COPY = {
   invoiceView: 'Voir',
   noInvoices: 'Aucune',
   checkoutSuccess: 'Paiement enregistre.',
+  redirectRefused: 'Redirection refusee.',
   goToBilling: 'Voir la facturation',
   changePlanTitle: 'Changer de formule',
   changePlanHint: 'Vous avez deja un abonnement.',
@@ -269,6 +270,52 @@ describe('BillingPage', () => {
 
     expect(component.error()).not.toBeNull();
     expect(component.pendingPlan()).toBe('');
+  });
+
+  describe('redirect allow-list', () => {
+    function spyRedirect() {
+      return vi
+        .spyOn(component as unknown as { redirect: (url: string) => void }, 'redirect')
+        .mockImplementation(() => undefined);
+    }
+
+    it('follows a Stripe Checkout URL', async () => {
+      await setup(makeSubscription({ isPaid: false, plan: '', quota: 0 }));
+      const redirect = spyRedirect();
+      billing.checkout.and.returnValue(of({ url: 'https://checkout.stripe.com/c/pay/cs_test_1' }));
+
+      component.subscribe(PER_UNIT_PLAN);
+
+      expect(redirect).toHaveBeenCalledWith('https://checkout.stripe.com/c/pay/cs_test_1');
+      expect(component.error()).toBeNull();
+    });
+
+    it('refuses a checkout URL on an unexpected origin', async () => {
+      await setup(makeSubscription({ isPaid: false, plan: '', quota: 0 }));
+      const redirect = spyRedirect();
+      billing.checkout.and.returnValue(of({ url: 'https://checkout.stripe.com.evil.example/pay' }));
+
+      component.subscribe(PER_UNIT_PLAN);
+
+      expect(redirect).not.toHaveBeenCalled();
+      expect(component.error()?.detail).toBe('Redirection refusee.');
+      expect(component.pendingPlan()).toBe('');
+    });
+
+    it('follows a Stripe portal URL and refuses a javascript: one', async () => {
+      await setup(makeSubscription());
+      const redirect = spyRedirect();
+
+      billing.portal.and.returnValue(of({ url: 'https://billing.stripe.com/p/session/x' }));
+      component.openPortal();
+      expect(redirect).toHaveBeenCalledWith('https://billing.stripe.com/p/session/x');
+
+      redirect.mockClear();
+      billing.portal.and.returnValue(of({ url: 'javascript:alert(1)' }));
+      component.openPortal();
+      expect(redirect).not.toHaveBeenCalled();
+      expect(component.error()?.code).toBe('invalid_redirect');
+    });
   });
 
   it('never offers to subscribe to someone already subscribed', async () => {

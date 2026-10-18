@@ -22,6 +22,7 @@ import { BillingService } from '../../../../core/services/billing.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { PublicI18nService } from '../../../../core/services/public-i18n.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
+import { allowedBillingRedirect } from '../../../../core/utils/billing-redirect.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { PageHeader } from '../../../../shared/page-header/page-header';
@@ -203,7 +204,9 @@ export class BillingPage implements OnInit {
     const quantity = this.isPerUnit(plan) ? this.quantityFor(plan) : 1;
     this.billing.checkout(plan.code, this.interval(), quantity).subscribe({
       next: ({ url }) => {
-        window.location.href = url;
+        if (!this.leaveFor(url)) {
+          this.pendingPlan.set('');
+        }
       },
       error: (err) => {
         this.pendingPlan.set('');
@@ -216,10 +219,29 @@ export class BillingPage implements OnInit {
     this.error.set(null);
     this.billing.portal().subscribe({
       next: ({ url }) => {
-        window.location.href = url;
+        this.leaveFor(url);
       },
       error: (err) => this.error.set(coerceApiError(err)),
     });
+  }
+
+  /**
+   * Quitte l'app vers Stripe / le service de facturation — uniquement vers une
+   * origine attendue (billing-redirect.utils.ts). Renvoie false si refusé.
+   */
+  private leaveFor(url: unknown): boolean {
+    const target = allowedBillingRedirect(url);
+    if (!target) {
+      this.error.set({ code: 'invalid_redirect', detail: this.copy().redirectRefused });
+      return false;
+    }
+    this.redirect(target);
+    return true;
+  }
+
+  /** Point d'indirection pour les tests (jsdom n'implémente pas la navigation). */
+  protected redirect(url: string): void {
+    window.location.assign(url);
   }
 
   // --- Ajustement de quantité --------------------------------------------------

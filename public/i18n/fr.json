@@ -1053,6 +1053,7 @@
       "invoiceView": "Voir",
       "noInvoices": "Aucune facture.",
       "checkoutSuccess": "Paiement enregistré. Votre abonnement s'active dans un instant.",
+      "redirectRefused": "Redirection refusée : l'adresse de paiement reçue n'est pas reconnue. Réessayez ou contactez le support.",
       "statuses": {
         "active": "Actif",
         "trialing": "Essai",

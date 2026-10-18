@@ -1053,6 +1053,7 @@
       "invoiceView": "Ver",
       "noInvoices": "Sin facturas.",
       "checkoutSuccess": "Pago registrado. Tu suscripción se está activando.",
+      "redirectRefused": "Redirección rechazada: la dirección de pago recibida no es reconocida. Inténtalo de nuevo o contacta con el soporte.",
       "statuses": {
         "active": "Activo",
         "trialing": "Prueba",
