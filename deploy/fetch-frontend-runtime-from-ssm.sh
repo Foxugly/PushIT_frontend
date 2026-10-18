@@ -37,7 +37,7 @@ aws ssm get-parameters-by-path \
 # (python3 -), les données depuis un FICHIER passé en argument : pas de conflit
 # "programme sur stdin" vs "données sur stdin". Clés absentes -> défaut.
 python3 - "$SSM_PREFIX" "$TMP_FILE" "$RAW_FILE" <<'PY'
-import json, sys
+import json, re, sys
 from urllib.parse import urlparse
 
 prefix, out_path, raw_path = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -65,20 +65,43 @@ for p in params:
     if key in values:
         values[key] = value
 
-# FEATURES doit être un JSON valide, sinon on retombe sur {} pour ne pas casser
-# la page. Le sub_filter du vhost injecte la variable SANS guillemets dans le
-# <script> (window.__PUSHIT_FEATURES=$pushit_features → littéral objet JS), MAIS
-# la directive nginx `set` ci-dessous DOIT être quotée : un `{}` nu serait lu
-# comme un bloc nginx ("set is not terminated by ;"). nginx retire les guillemets
-# en stockant la variable, donc la valeur reste le JSON brut. On échappe les "
-# internes (nginx gère \" dans les chaînes quotées) pour les vrais objets JSON.
-features = values["FEATURES"].strip() or "{}"
+# Les valeurs scalaires finissent DEUX fois entre guillemets : dans la directive
+# nginx `set $x "...";` puis, via sub_filter, dans le <script nonce> de
+# index.html (window.__PUSHIT_X="..."). Un `"`, `\`, `$`, `;`, `<` ou un espace
+# permettrait de sortir de la chaîne JS, d'interpoler une variable nginx, ou
+# d'allonger le header CSP via le report-uri dérivé du DSN. SSM n'est
+# inscriptible que par l'admin, mais ce script tourne en root et la valeur est
+# servie à chaque visiteur : liste blanche stricte, refus sinon (exit 1 -> le
+# snippet précédent reste en place, l'unité échoue bruyamment, le deploy aussi).
+SAFE_VALUE = re.compile(r"[A-Za-z0-9:/._@+-]*")
+for name in ("API_BASE_URL", "TURNSTILE_SITE_KEY", "SENTRY_DSN", "SENTRY_ENV", "SENTRY_RELEASE"):
+    if not SAFE_VALUE.fullmatch(values[name]):
+        sys.stderr.write(
+            f"ERROR: value for {name} has characters outside [A-Za-z0-9:/._@+-]; refusing.\n"
+        )
+        sys.exit(1)
+
+# FEATURES est injecté SANS guillemets dans le <script>
+# (window.__PUSHIT_FEATURES=$pushit_features -> littéral objet JS) : un JSON
+# arbitraire pourrait y glisser `</script>`. On n'accepte donc que la forme que
+# runtime-config.ts consomme - un objet plat {nom: booléen} aux noms sûrs - et on
+# le RE-sérialise nous-mêmes. JSON invalide ou forme inattendue -> {} (la page
+# reste fonctionnelle, features désactivées). La directive nginx `set` doit être
+# quotée (un `{}` nu serait lu comme un bloc nginx) ; nginx retire les guillemets
+# en stockant la variable, et on échappe les " internes (\" en chaîne nginx).
+FEATURE_NAME = re.compile(r"[A-Za-z0-9_.-]{1,64}")
+raw_features = values["FEATURES"].strip() or "{}"
 try:
-    json.loads(features)
-except ValueError:
-    sys.stderr.write(f"WARN: FEATURES is not valid JSON ({features!r}); using {{}}.\n")
-    features = "{}"
-features_nginx = features.replace("\\", "\\\\").replace('"', '\\"')
+    parsed = json.loads(raw_features)
+    if not isinstance(parsed, dict) or not all(
+        FEATURE_NAME.fullmatch(k) and isinstance(v, bool) for k, v in parsed.items()
+    ):
+        raise ValueError("FEATURES must be a flat object of {name: boolean}")
+except ValueError as exc:
+    sys.stderr.write(f"WARN: FEATURES rejected ({exc}); using {{}}.\n")
+    parsed = {}
+features = json.dumps(parsed, separators=(",", ":"), sort_keys=True)
+features_nginx = features.replace('"', '\\"')
 
 # CSP report-uri, dérivé du Sentry DSN pour reporter les violations à Sentry.
 # DSN https://<key>@<host>/<project> -> endpoint Security Header
