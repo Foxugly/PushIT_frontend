@@ -323,6 +323,7 @@
           "confirm": "Delete permanently",
           "passwordRequired": "Enter your current password to confirm.",
           "passwordInvalid": "Current password is incorrect.",
+          "billingUnavailable": "Billing service unavailable: your account was not deleted. Please try again in a few minutes.",
           "success": "Your account has been deleted."
         }
       },

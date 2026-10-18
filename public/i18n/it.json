@@ -323,6 +323,7 @@
           "confirm": "Elimina definitivamente",
           "passwordRequired": "Inserisci la password attuale per confermare.",
           "passwordInvalid": "Password attuale errata.",
+          "billingUnavailable": "Servizio di fatturazione non disponibile: il tuo account non è stato eliminato. Riprova tra qualche minuto.",
           "success": "Il tuo account è stato eliminato."
         }
       },

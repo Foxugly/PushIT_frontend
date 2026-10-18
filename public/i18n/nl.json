@@ -323,6 +323,7 @@
           "confirm": "Definitief verwijderen",
           "passwordRequired": "Vul je huidige wachtwoord in om te bevestigen.",
           "passwordInvalid": "Huidig wachtwoord onjuist.",
+          "billingUnavailable": "Facturatiedienst niet beschikbaar: je account werd niet verwijderd. Probeer het over enkele minuten opnieuw.",
           "success": "Je account is verwijderd."
         }
       },

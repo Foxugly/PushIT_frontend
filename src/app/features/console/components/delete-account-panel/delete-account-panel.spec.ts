@@ -108,6 +108,19 @@ describe('DeleteAccountPanel', () => {
     expect(component.pending()).toBe(false);
   });
 
+  it('maps billing_unavailable to the translated message and keeps the session', () => {
+    api.deleteMe.mockReturnValue(
+      throwError(() => apiError(503, { code: 'billing_unavailable', detail: 'Billing down.' })),
+    );
+
+    openWithPassword('hunter2');
+    component.submit();
+
+    expect(component.error()).toBe(COPY.billingUnavailable);
+    expect(session.clear).not.toHaveBeenCalled();
+    expect(component.pending()).toBe(false);
+  });
+
   it('maps validation_error to the password-required message', () => {
     api.deleteMe.mockReturnValue(
       throwError(() => apiError(400, { code: 'validation_error', detail: 'Invalid', errors: { current_password: ['x'] } })),
