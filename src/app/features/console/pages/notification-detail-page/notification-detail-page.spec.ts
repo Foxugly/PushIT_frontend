@@ -167,4 +167,22 @@ describe('NotificationDetailPage', () => {
     expect(component.notification()?.title).toBe('Promo mise a jour');
     expect(component.isEditModalOpen()).toBeFalse();
   });
+
+  it('keeps the known device_ids when the PATCH answer omits them', () => {
+    const partial = makeNotification({ id: 301, title: 'Sans devices', status: 'scheduled' }) as Partial<
+      ReturnType<typeof makeNotification>
+    >;
+    delete partial.device_ids;
+    api.updateFutureNotification.and.returnValue(of(partial as ReturnType<typeof makeNotification>));
+    fixture.detectChanges();
+    component.openEditModal();
+    component.editForm.setValue({ title: 'Sans devices', message: 'x', scheduled_for: null });
+
+    component.saveNotification();
+    fixture.detectChanges();
+
+    expect(component.notification()?.title).toBe('Sans devices');
+    expect(component.notification()?.device_ids).toEqual([201, 202]);
+    expect(component.notificationFactsComputed().find((fact) => fact.label === 'Devices')?.value).toBe('2');
+  });
 });

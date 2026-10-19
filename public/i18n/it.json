@@ -610,7 +610,9 @@
         "createdScheduled": "Notifica pianificata creata.",
         "updated": "Notifica futura aggiornata.",
         "deleted": "Notifica futura \"{title}\" eliminata.",
-        "queued": "Notifica {notificationId} inserita nella coda {taskId}."
+        "queued": "Notifica {notificationId} inserita nella coda {taskId}.",
+        "inactiveApp": "Questa applicazione è disattivata: riattivala prima di inviare notifiche.",
+        "goToBilling": "Vai alla fatturazione"
       },
       "confirmDelete": "Eliminare la notifica futura \"{title}\"?",
       "statusLabels": {
@@ -1178,6 +1180,11 @@
       "504": "Il server ha impiegato troppo tempo a rispondere."
     },
     "shellLoadFailed": "Impossibile caricare lo spazio console.",
-    "shellRefreshFailed": "Impossibile aggiornare i contatori di navigazione."
+    "shellRefreshFailed": "Impossibile aggiornare i contatori di navigazione.",
+    "codes": {
+      "subscription_required": "Per questa azione serve un abbonamento attivo. Scegli un piano nella pagina di fatturazione.",
+      "quota_exceeded": "La quota del tuo abbonamento è stata raggiunta. Aumentala nella pagina di fatturazione per continuare.",
+      "application_inactive": "Questa applicazione è disattivata: riattivala prima di inviare notifiche."
+    }
   }
 }

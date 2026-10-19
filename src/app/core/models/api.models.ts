@@ -163,7 +163,15 @@ export interface ApplicationUpdateRequest {
   description?: string;
 }
 
-export interface ApplicationCreateResponse extends ApplicationRead {
+/**
+ * What `POST /apps/` returns (ApplicationCreateSerializer): the read shape
+ * minus the two audit fields the create serializer does not emit
+ * (`enrolment_code_rotated_at`, `legacy_send_last_used_at`), plus
+ * `webhook_url` and the one-time raw `app_token`.
+ */
+export interface ApplicationCreateResponse
+  extends Omit<ApplicationRead, 'enrolment_code_rotated_at' | 'legacy_send_last_used_at'> {
+  webhook_url: string;
   app_token: string;
 }
 

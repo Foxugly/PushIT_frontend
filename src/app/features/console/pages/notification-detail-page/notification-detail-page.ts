@@ -106,8 +106,8 @@ export class NotificationDetailPage implements OnInit {
       },
       {
         label: this.copy().facts.targetedDevices,
-        value: String(notification.device_ids.length),
-        severity: notification.device_ids.length ? 'contrast' as const : 'secondary' as const,
+        value: String(notification.device_ids?.length ?? 0),
+        severity: notification.device_ids?.length ? 'contrast' as const : 'secondary' as const,
       },
     ] as ConsoleFactItem[];
   });
@@ -277,7 +277,15 @@ export class NotificationDetailPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.saving.set(false)))
       .subscribe({
         next: (updatedNotification) => {
-          this.notification.set(updatedNotification);
+          // The PATCH answer may be a partial shape (older servers returned the
+          // write serializer, without device_ids/deliveries): keep what we
+          // already know rather than blanking the page.
+          this.notification.set({
+            ...currentNotification,
+            ...updatedNotification,
+            device_ids: updatedNotification.device_ids ?? currentNotification.device_ids ?? [],
+            deliveries: updatedNotification.deliveries ?? currentNotification.deliveries,
+          });
           this.closeEditModal();
         },
         error: (error) => {
@@ -302,7 +310,7 @@ export class NotificationDetailPage implements OnInit {
           this.notification.set(currentNotification);
           this.isFuture.set(Boolean(futureNotification));
           this.targetedDevices.set(
-            devices.filter((device) => currentNotification.device_ids.includes(device.id)),
+            devices.filter((device) => (currentNotification.device_ids ?? []).includes(device.id)),
           );
         },
         error: (error) => {

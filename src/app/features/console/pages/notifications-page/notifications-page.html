@@ -3,8 +3,16 @@
     <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
 
-  @if (error()?.detail) {
+  @if (error()?.detail && modalMode() !== 'create') {
     <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
+    @if (billingRefused()) {
+      <p-button
+        [label]="copy().alerts.goToBilling"
+        icon="pi pi-credit-card"
+        [outlined]="true"
+        routerLink="/dashboard/billing"
+      />
+    }
   }
 
   <app-page-header [title]="copy().title">
@@ -297,6 +305,9 @@
         @for (message of fieldErrors('application_id'); track message) {
           <p class="console-field-error">{{ message }}</p>
         }
+        @if (selectedAppInactive()) {
+          <p class="console-field-error" data-testid="inactive-app-warning">{{ copy().alerts.inactiveApp }}</p>
+        }
 
         <label>
           <span class="notifications-form__label-inline">
@@ -363,6 +374,19 @@
             styleClass="notifications-form__control"
           ></p-datepicker>
         </label>
+
+        @if (error()?.detail) {
+          <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
+          @if (billingRefused()) {
+            <p-button
+              [label]="copy().alerts.goToBilling"
+              icon="pi pi-credit-card"
+              [outlined]="true"
+              routerLink="/dashboard/billing"
+              (onClick)="closeModal()"
+            />
+          }
+        }
 
         <app-console-dialog-actions (cancelled)="closeModal()">
           <p-button

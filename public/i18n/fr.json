@@ -610,7 +610,9 @@
         "createdScheduled": "Notification planifiée créée.",
         "updated": "Notification future mise à jour.",
         "deleted": "Notification future \"{title}\" supprimée.",
-        "queued": "Notification {notificationId} placée dans la file {taskId}."
+        "queued": "Notification {notificationId} placée dans la file {taskId}.",
+        "inactiveApp": "Cette application est désactivée : réactivez-la avant d’envoyer des notifications.",
+        "goToBilling": "Aller à la facturation"
       },
       "confirmDelete": "Supprimer la notification future \"{title}\" ?",
       "statusLabels": {
@@ -1178,6 +1180,11 @@
       "504": "Le serveur a mis trop de temps à répondre."
     },
     "shellLoadFailed": "Impossible de charger l'espace console.",
-    "shellRefreshFailed": "Impossible de rafraîchir les compteurs de navigation."
+    "shellRefreshFailed": "Impossible de rafraîchir les compteurs de navigation.",
+    "codes": {
+      "subscription_required": "Un abonnement actif est nécessaire pour cette action. Choisissez une formule sur la page de facturation.",
+      "quota_exceeded": "Le quota de votre abonnement est atteint. Augmentez-le sur la page de facturation pour continuer.",
+      "application_inactive": "Cette application est désactivée : réactivez-la avant d’envoyer des notifications."
+    }
   }
 }

@@ -28,6 +28,7 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PageHeader } from '../../../../shared/page-header/page-header';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { isBillingRefusal } from '../../../../core/utils/api-error-copy';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
@@ -131,6 +132,20 @@ export class NotificationsPage implements OnInit {
     ),
     { initialValue: this.notificationForm.controls.application_id.value },
   );
+
+  // The server refuses (400) a notification on a deactivated application: say so
+  // up front instead of letting the user fill the form for nothing.
+  readonly selectedAppInactive = computed(() => {
+    const applicationId = Number(this.createFormApplicationId());
+    if (!applicationId) {
+      return false;
+    }
+    const app = this.shell.apps().find((candidate) => candidate.id === applicationId);
+    return app ? !app.is_active : false;
+  });
+
+  /** A billing 402 (no subscription / quota reached): offer the billing page. */
+  readonly billingRefused = computed(() => isBillingRefusal(this.error()));
 
   // Active devices linked to the currently selected create-form application.
   readonly availableDeviceOptions = computed(() => {
@@ -321,6 +336,11 @@ export class NotificationsPage implements OnInit {
     if (this.notificationForm.invalid) {
       this.notificationForm.markAllAsTouched();
       this.warnInvalidForm();
+      return;
+    }
+
+    if (this.selectedAppInactive()) {
+      this.error.set({ code: 'application_inactive', detail: this.copy().alerts.inactiveApp, errors: {} });
       return;
     }
 

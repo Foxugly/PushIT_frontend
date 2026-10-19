@@ -10,6 +10,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
+import { isBillingRefusal } from '../../../../core/utils/api-error-copy';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
@@ -142,7 +143,7 @@ export class ApplicationFormPage implements OnInit {
 
   /** Les deux 402 du gating de facturation, qui menent tous deux a la page dediee. */
   isBillingRefusal(error: ApiErrorResponse | null): boolean {
-    return error?.code === 'subscription_required' || error?.code === 'quota_exceeded';
+    return isBillingRefusal(error);
   }
 
   readonly billingRefused = computed(() => this.isBillingRefusal(this.error()));

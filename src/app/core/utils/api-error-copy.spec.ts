@@ -1,4 +1,4 @@
-import { ApiErrorMessages, localizeApiError } from './api-error-copy';
+import { ApiErrorMessages, isBillingRefusal, localizeApiError } from './api-error-copy';
 import frCatalog from '../../../../public/i18n/fr.json';
 
 // Le spec teste `localizeApiError`, pas le chargement : il lit donc le namespace
@@ -7,6 +7,30 @@ import frCatalog from '../../../../public/i18n/fr.json';
 const fr = frCatalog.errors as unknown as ApiErrorMessages;
 
 describe('localizeApiError', () => {
+  it('localizes the billing 402 codes instead of showing the server detail', () => {
+    expect(
+      localizeApiError({ code: 'subscription_required', detail: 'Subscription required.', errors: {} }, fr),
+    ).toBe(frCatalog.errors.codes.subscription_required);
+    expect(localizeApiError({ code: 'quota_exceeded', detail: 'Quota exceeded.', errors: {} }, fr)).toBe(
+      frCatalog.errors.codes.quota_exceeded,
+    );
+  });
+
+  it('maps every inactive-application code to the same localized message', () => {
+    for (const code of ['application_inactive', 'app_inactive', 'app_token_inactive']) {
+      expect(localizeApiError({ code, detail: 'Inactive application.', errors: {} }, fr)).toBe(
+        frCatalog.errors.codes.application_inactive,
+      );
+    }
+  });
+
+  it('flags the billing refusals', () => {
+    expect(isBillingRefusal({ code: 'subscription_required' })).toBe(true);
+    expect(isBillingRefusal({ code: 'quota_exceeded' })).toBe(true);
+    expect(isBillingRefusal({ code: 'validation_error' })).toBe(false);
+    expect(isBillingRefusal(null)).toBe(false);
+  });
+
   it('maps known HTTP statuses to a localized message (ignoring the raw detail)', () => {
     expect(localizeApiError({ code: 'http_500', detail: 'Http failure 500', errors: {} }, fr)).toBe(
       fr.http[500],
