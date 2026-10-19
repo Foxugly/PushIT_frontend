@@ -10,7 +10,27 @@ export interface ApiErrorMessages {
   http: Record<number, string>;
   shellLoadFailed: string;
   shellRefreshFailed: string;
+  /**
+   * Localized messages for backend codes whose server `detail` is not good
+   * enough to show as-is (billing 402s, inactive application). Optional so a
+   * catalog without it keeps the server-detail fallback.
+   */
+  codes?: Record<string, string>;
 }
+
+/** The two billing 402s, both of which send the user to the billing page. */
+export const BILLING_REFUSAL_CODES: readonly string[] = ['subscription_required', 'quota_exceeded'];
+
+export function isBillingRefusal(error: { code?: string } | null | undefined): boolean {
+  return BILLING_REFUSAL_CODES.includes(error?.code ?? '');
+}
+
+/**
+ * Inactive application refusal. The server may answer with a dedicated code or
+ * with a validation error on `application_id`; the app-token flavour
+ * (`app_token_inactive`) means the same thing to the user.
+ */
+export const APPLICATION_INACTIVE_CODES: readonly string[] = ['application_inactive', 'app_inactive', 'app_token_inactive'];
 
 /**
  * Messages d'erreur API pour une langue, extraits du namespace `errors` du
@@ -56,6 +76,12 @@ export function localizeApiError(error: ApiErrorResponse, messages: ApiErrorMess
 
   if (code === 'unexpected_error' || !code) {
     return messages.generic;
+  }
+
+  const known = messages.codes?.[code]
+    ?? (APPLICATION_INACTIVE_CODES.includes(code) ? messages.codes?.['application_inactive'] : undefined);
+  if (known) {
+    return known;
   }
 
   // Backend-specific code (e.g. notification_not_found): the server detail is

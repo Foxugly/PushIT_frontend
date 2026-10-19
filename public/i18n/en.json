@@ -610,7 +610,9 @@
         "createdScheduled": "Scheduled notification created.",
         "updated": "Future notification updated.",
         "deleted": "Future notification \"{title}\" deleted.",
-        "queued": "Notification {notificationId} queued in task {taskId}."
+        "queued": "Notification {notificationId} queued in task {taskId}.",
+        "inactiveApp": "This application is deactivated: reactivate it before sending notifications.",
+        "goToBilling": "Go to billing"
       },
       "confirmDelete": "Delete future notification \"{title}\"?",
       "statusLabels": {
@@ -1178,6 +1180,11 @@
       "504": "The server took too long to respond."
     },
     "shellLoadFailed": "Could not load the console.",
-    "shellRefreshFailed": "Could not refresh the navigation counts."
+    "shellRefreshFailed": "Could not refresh the navigation counts.",
+    "codes": {
+      "subscription_required": "An active subscription is required for this action. Choose a plan on the billing page.",
+      "quota_exceeded": "Your subscription quota is reached. Increase it on the billing page to continue.",
+      "application_inactive": "This application is deactivated: reactivate it before sending notifications."
+    }
   }
 }

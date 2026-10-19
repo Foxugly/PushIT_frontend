@@ -65,6 +65,7 @@ describe('ConsoleShellService', () => {
     api.createApp.and.returnValue(
       of({
         ...makeApplication({ id: 999 }),
+        webhook_url: '',
         app_token: 'app-token-secret',
       }),
     );

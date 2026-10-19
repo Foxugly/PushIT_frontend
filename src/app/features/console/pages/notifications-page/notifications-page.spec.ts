@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
 
 import {
   makeApplication,
@@ -15,6 +16,7 @@ import { DeviceRead, NotificationRead } from '../../../../core/models/api.models
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 import { NotificationsPage } from './notifications-page';
 
 describe('NotificationsPage', () => {
@@ -171,6 +173,8 @@ describe('NotificationsPage', () => {
             updated: 'Notification future mise a jour.',
             deleted: 'Notification {title} supprimee.',
             queued: 'Notification {notificationId} en file ({taskId}).',
+            inactiveApp: 'Application desactivee.',
+            goToBilling: 'Aller a la facturation',
           },
           confirmDelete: 'Supprimer {title} ?',
           statusLabels: {
@@ -198,6 +202,7 @@ describe('NotificationsPage', () => {
         provideRouter([]),
         provideNoopAnimations(),
         MessageService,
+        provideTestCatalogs(),
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },
@@ -276,6 +281,68 @@ describe('NotificationsPage', () => {
     });
     expect(component.banner()).toBe('Notification planifiee creee.');
     expect(component.modalMode()).toBeNull();
+  });
+
+  it('shows the billing refusal (402) inside the create modal with a link to billing', () => {
+    api.createNotification.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 402,
+            error: { code: 'subscription_required', detail: 'Subscription required.' },
+          }),
+      ),
+    );
+    fixture.detectChanges();
+    component.openCreateModal();
+    component.notificationForm.setValue({
+      application_id: '101',
+      device_ids: [201],
+      title: 'Promo',
+      message: 'Texte',
+      scheduled_for: new Date('2026-03-28T20:00:00Z'),
+    });
+
+    component.createNotification();
+    fixture.detectChanges();
+
+    expect(component.error()?.code).toBe('subscription_required');
+    expect(component.billingRefused()).toBe(true);
+    expect(component.modalMode()).toBe('create');
+    expect(document.body.textContent).toContain('Aller a la facturation');
+  });
+
+  it('flags a billing refusal when sending an existing draft', () => {
+    api.sendNotification.and.returnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: 402, error: { code: 'quota_exceeded', detail: 'Quota.' } }),
+      ),
+    );
+    fixture.detectChanges();
+
+    component.sendNotification(makeNotification({ id: 301, status: 'draft', scheduled_for: null }));
+
+    expect(component.error()?.code).toBe('quota_exceeded');
+    expect(component.billingRefused()).toBe(true);
+  });
+
+  it('refuses to submit on a deactivated application, with a clear message', () => {
+    shell.apps.set([makeApplication({ is_active: false })]);
+    fixture.detectChanges();
+    component.openCreateModal();
+    component.notificationForm.setValue({
+      application_id: '101',
+      device_ids: [201],
+      title: 'Promo',
+      message: 'Texte',
+      scheduled_for: null,
+    });
+
+    expect(component.selectedAppInactive()).toBe(true);
+    component.createNotification();
+
+    expect(api.createNotification).not.toHaveBeenCalled();
+    expect(component.error()?.code).toBe('application_inactive');
   });
 
   it('updates a future notification in place', () => {
