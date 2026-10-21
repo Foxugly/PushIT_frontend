@@ -1,4 +1,4 @@
-import { loadTurnstileScript, TURNSTILE_SCRIPT_SRC } from './turnstile';
+import { isTurnstileLoaded, loadTurnstileScript, TURNSTILE_SCRIPT_SRC } from './turnstile';
 
 describe('loadTurnstileScript', () => {
   const scripts = () => document.querySelectorAll(`script[src="${TURNSTILE_SCRIPT_SRC}"]`);
@@ -15,5 +15,11 @@ describe('loadTurnstileScript', () => {
 
     expect(scripts().length).toBe(1);
     expect((scripts()[0] as HTMLScriptElement).async).toBe(true);
+  });
+
+  it('reports whether the API was pulled into the document', () => {
+    expect(isTurnstileLoaded()).toBe(false);
+    loadTurnstileScript();
+    expect(isTurnstileLoaded()).toBe(true);
   });
 });

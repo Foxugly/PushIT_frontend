@@ -2,15 +2,28 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
 import { SessionService } from '../services/session.service';
+import { documentNavigation, isTurnstileLoaded } from '../../shared/turnstile/turnstile';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state) => {
   const session = inject(SessionService);
   const router = inject(Router);
 
   // The session was restored from the HttpOnly refresh cookie at boot (app
   // initializer). An expired access token is fine: the interceptor refreshes it
   // through the cookie, and clears the session if the cookie is rejected.
-  return session.isAuthenticated() ? true : router.createUrlTree(['/auth']);
+  if (!session.isAuthenticated()) {
+    return router.createUrlTree(['/auth']);
+  }
+  // Signed in from a document that loaded Cloudflare Turnstile (register,
+  // forgot-password or the magic-link form, then an in-app hop to the login):
+  // the third-party script would keep running inside the console. Enter it
+  // through a full page load instead; the session is restored from the
+  // HttpOnly cookie, and the new document never loads Turnstile.
+  if (isTurnstileLoaded()) {
+    documentNavigation.assign(state.url);
+    return false;
+  }
+  return true;
 };
 
 /**
