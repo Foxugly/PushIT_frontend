@@ -17,32 +17,30 @@
           [descriptionMessages]="fieldErrors('description')"
         />
 
-        @if (isEdit()) {
-          <div class="app-logo-field">
-            <span class="app-logo-field__label">{{ copy().logo.label }}</span>
-            <div class="app-logo-field__row">
-              @if (application()?.logo) {
-                <img class="app-logo-preview" [src]="application()!.logo!" alt="" />
-              } @else {
-                <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
-              }
-              @if (application()?.logo) {
-                <p-button
-                  [label]="copy().logo.remove"
-                  [text]="true"
-                  severity="danger"
-                  [disabled]="logoPending()"
-                  (onClick)="removeLogo()"
-                />
-              }
-            </div>
-            <app-avatar-cropper
-              [labels]="copy().logo"
-              [pending]="logoPending()"
-              (cropped)="onLogoCropped($event)"
-            />
+        <div class="app-logo-field">
+          <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+          <div class="app-logo-field__row">
+            @if (logoPreview(); as logo) {
+              <img class="app-logo-preview" [src]="logo" alt="" />
+            } @else {
+              <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+            }
+            @if (logoPreview()) {
+              <p-button
+                [label]="copy().logo.remove"
+                [text]="true"
+                severity="danger"
+                [disabled]="logoPending()"
+                (onClick)="removeLogo()"
+              />
+            }
           </div>
-        }
+          <app-avatar-cropper
+            [labels]="copy().logo"
+            [pending]="logoPending()"
+            (cropped)="onLogoCropped($event)"
+          />
+        </div>
 
         @if (error()?.detail) {
           <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />

@@ -179,6 +179,11 @@ export class ApplicationDetailPage implements OnInit {
     }
 
     this.appId = appId;
+    // Set by the create form when the app was created but its logo upload failed.
+    if (typeof history !== 'undefined' && history.state?.logoUploadFailed) {
+      this.bannerTone.set('danger');
+      this.banner.set(this.copy().errors.logo);
+    }
     const cachedApplication = this.shell.apps().find((app) => app.id === appId) ?? null;
     this.application.set(cachedApplication);
     this.loadApplication(appId);

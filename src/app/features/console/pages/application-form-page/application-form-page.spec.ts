@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { makeApplication } from '../../../../../testing/console-fixtures';
 import { ApplicationRead } from '../../../../core/models/api.models';
@@ -139,6 +139,58 @@ describe('ApplicationFormPage', () => {
       component.save();
 
       expect(component.error()?.detail).toBe('Creation impossible.');
+    });
+
+    it('keeps a cropped logo pending (no upload) until the app exists', () => {
+      const file = new File(['x'], 'logo.png', { type: 'image/png' });
+
+      component.onLogoCropped(file);
+
+      expect(api.uploadAppLogo).not.toHaveBeenCalled();
+      expect(component.pendingLogo()).toBe(file);
+      expect(component.logoPreview()).not.toBeNull();
+
+      component.removeLogo();
+
+      expect(component.pendingLogo()).toBeNull();
+      expect(component.logoPreview()).toBeNull();
+      expect(api.deleteAppLogo).not.toHaveBeenCalled();
+    });
+
+    it('uploads the pending logo right after creation, then opens the detail page', () => {
+      api.uploadAppLogo.and.returnValue(of(makeApplication({ id: 999, logo: 'https://cdn/logo.png' })));
+      const file = new File(['x'], 'logo.png', { type: 'image/png' });
+      component.onLogoCropped(file);
+      component.form.setValue({ name: 'Nouvelle app', description: '' });
+
+      component.save();
+
+      expect(api.uploadAppLogo).toHaveBeenCalledWith(999, file);
+      expect(shell.loadShell).toHaveBeenCalledWith(999);
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999]);
+      expect(component.pending()).toBeFalse();
+    });
+
+    it('still opens the detail page (token reveal) when the logo upload fails', () => {
+      api.uploadAppLogo.and.returnValue(throwError(() => ({ status: 400 })));
+      component.onLogoCropped(new File(['x'], 'logo.png', { type: 'image/png' }));
+      component.form.setValue({ name: 'Nouvelle app', description: '' });
+
+      component.save();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], {
+        state: { logoUploadFailed: true },
+      });
+      expect(shell.lastGeneratedToken()?.appId).toBe(999);
+    });
+
+    it('creates without any upload when no logo was chosen', () => {
+      component.form.setValue({ name: 'Nouvelle app', description: '' });
+
+      component.save();
+
+      expect(api.uploadAppLogo).not.toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999]);
     });
   });
 

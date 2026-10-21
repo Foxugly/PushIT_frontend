@@ -61,6 +61,16 @@ export class ApplicationFormPage implements OnInit {
   readonly application = signal<ApplicationRead | null>(null);
   readonly logoPending = signal(false);
 
+  // Create mode: the cropped logo waits here until the app exists (the upload
+  // endpoint needs its id), then goes up right after creation.
+  readonly pendingLogo = signal<File | null>(null);
+  readonly pendingLogoPreview = signal<string | null>(null);
+  readonly logoPreview = computed(() => this.pendingLogoPreview() ?? this.application()?.logo ?? null);
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.setPendingLogo(null));
+  }
+
   ngOnInit(): void {
     const rawId = this.route.snapshot.paramMap.get('appId');
     if (rawId === null) {
@@ -122,9 +132,27 @@ export class ApplicationFormPage implements OnInit {
         // Navigate to the detail page, which reveals the freshly-created one-time
         // token (QR + raw token) via <app-token-reveal>: the shell stored it via
         // rememberGeneratedToken, and the detail page's revealToken() surfaces it
-        // while it is still held. Without that reveal the token would be lost.
-        this.pending.set(false);
-        void this.router.navigate(['/dashboard/applications', app.id]);
+        // while it is still held. Without that reveal the token would be lost --
+        // so a failed logo upload still lands there, with a warning banner.
+        const logo = this.pendingLogo();
+        if (!logo) {
+          this.pending.set(false);
+          void this.router.navigate(['/dashboard/applications', app.id]);
+          return;
+        }
+        this.api
+          .uploadAppLogo(app.id, logo)
+          .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.pending.set(false)))
+          .subscribe({
+            next: () => {
+              this.shell.loadShell(app.id);
+              void this.router.navigate(['/dashboard/applications', app.id]);
+            },
+            error: () =>
+              void this.router.navigate(['/dashboard/applications', app.id], {
+                state: { logoUploadFailed: true },
+              }),
+          });
       },
       (err) => {
         this.pending.set(false);
@@ -170,8 +198,12 @@ export class ApplicationFormPage implements OnInit {
   }
 
   onLogoCropped(file: File): void {
+    if (!file) {
+      return;
+    }
     const appId = this.appId();
-    if (!file || appId === null) {
+    if (appId === null) {
+      this.setPendingLogo(file);
       return;
     }
 
@@ -192,6 +224,7 @@ export class ApplicationFormPage implements OnInit {
   removeLogo(): void {
     const appId = this.appId();
     if (appId === null) {
+      this.setPendingLogo(null);
       return;
     }
 
@@ -210,6 +243,15 @@ export class ApplicationFormPage implements OnInit {
         },
         error: (err) => this.error.set(coerceApiError(err)),
       });
+  }
+
+  private setPendingLogo(file: File | null): void {
+    const previous = this.pendingLogoPreview();
+    if (previous) {
+      URL.revokeObjectURL(previous);
+    }
+    this.pendingLogo.set(file);
+    this.pendingLogoPreview.set(file ? URL.createObjectURL(file) : null);
   }
 
   cancel(): void {
