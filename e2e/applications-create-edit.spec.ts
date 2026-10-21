@@ -58,10 +58,12 @@ test('creating an application navigates to its detail page and reveals the one-t
   await expect(page).toHaveURL(/\/dashboard\/applications\/11$/);
   await expect(page.getByRole('heading', { name: 'Nouvelle App E2E' })).toBeVisible();
 
-  // ...and the one-time token-reveal surface is shown (QR rendered for the token).
+  // ...and the one-time token-reveal surface shows the raw send token, with no
+  // QR: the only scannable QR is the enrolment code (apk_), never apt_.
   const reveal = page.getByTestId('app-token-reveal');
   await expect(reveal).toBeVisible();
-  await expect(reveal.locator('img')).toBeVisible();
+  await expect(reveal.locator('code')).toContainText('apt_');
+  await expect(reveal.locator('img')).toHaveCount(0);
 });
 
 test('editing an application saves and returns to its detail page', async ({ page }) => {
