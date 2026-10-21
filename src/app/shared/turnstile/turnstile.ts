@@ -49,6 +49,23 @@ export function loadTurnstileScript(): void {
   document.head.appendChild(script);
 }
 
+/**
+ * Whether the Turnstile API was pulled into THIS document. Removing the
+ * <script> would not unload it: once executed, Cloudflare's code keeps running
+ * (and keeps same-origin access) until the document is replaced.
+ */
+export function isTurnstileLoaded(): boolean {
+  if (typeof document === 'undefined') return false;
+  return Boolean(window.turnstile) || document.querySelector(`script[src="${TURNSTILE_SCRIPT_SRC}"]`) !== null;
+}
+
+/** Full document load (indirection so specs can observe it; jsdom's location is not spyable). */
+export const documentNavigation = {
+  assign(url: string): void {
+    window.location.assign(url);
+  },
+};
+
 export class TurnstileController {
   readonly siteKey = getRuntimeConfig().turnstileSiteKey;
   readonly enabled = this.siteKey.length > 0;
