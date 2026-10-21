@@ -764,6 +764,13 @@
       "revokeConfirm": "Révoquer le jeton « {name} » ? Tout envoi qui l'utilise cessera immédiatement de fonctionner.",
       "revokedBanner": "Jeton révoqué."
     },
+    "unsavedChanges": {
+      "title": "Modifications non enregistrées",
+      "hint": "Modifications non enregistrées",
+      "confirm": "Vous avez des modifications non enregistrées. Quitter sans enregistrer ?",
+      "leave": "Quitter sans enregistrer",
+      "stay": "Rester"
+    },
     "inboundSenderPolicy": {
       "title": "Qui peut envoyer par e-mail",
       "intro": "Choisissez quelles adresses peuvent créer une notification en écrivant à l'adresse de réception.",

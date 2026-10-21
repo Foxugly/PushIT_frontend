@@ -119,6 +119,11 @@
   }
 
   <div class="sender-policy__actions">
+    @if (dirty()) {
+      <span class="sender-policy__unsaved" data-testid="sender-policy-unsaved">
+        <i class="pi pi-circle-fill" aria-hidden="true"></i>{{ unsavedCopy().hint }}
+      </span>
+    }
     <p-button
       type="submit"
       icon="pi pi-check"

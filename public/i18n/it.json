@@ -764,6 +764,13 @@
       "revokeConfirm": "Revocare il token «{name}»? Tutto ciò che invia con esso smette subito di funzionare.",
       "revokedBanner": "Token revocato."
     },
+    "unsavedChanges": {
+      "title": "Modifiche non salvate",
+      "hint": "Modifiche non salvate",
+      "confirm": "Hai modifiche non salvate. Uscire senza salvare?",
+      "leave": "Esci senza salvare",
+      "stay": "Rimani"
+    },
     "inboundSenderPolicy": {
       "title": "Chi può inviare via e-mail",
       "intro": "Scegli quali indirizzi possono creare una notifica scrivendo all'indirizzo di ricezione.",

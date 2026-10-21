@@ -82,6 +82,11 @@
                   }
 
                   <div class="application-detail-settings__actions">
+                    @if (settingsForm.dirty) {
+                      <span class="application-detail-unsaved" data-testid="app-settings-unsaved">
+                        <i class="pi pi-circle-fill" aria-hidden="true"></i>{{ unsavedCopy().hint }}
+                      </span>
+                    }
                     <p-button
                       type="submit"
                       icon="pi pi-check"

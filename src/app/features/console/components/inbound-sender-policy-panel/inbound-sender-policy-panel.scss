@@ -72,5 +72,19 @@
 
 .sender-policy__actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.sender-policy__unsaved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--warn-text);
+  font-size: 0.875rem;
+}
+
+.sender-policy__unsaved .pi {
+  font-size: 0.5rem;
 }
