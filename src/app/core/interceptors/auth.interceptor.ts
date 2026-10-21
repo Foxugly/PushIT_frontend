@@ -36,9 +36,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       ) {
         // No refresh possible: always surface the error so callers' error
         // handlers and loading flags settle (never EMPTY). Without any session
-        // left, send the user to /auth. A 401 on the retry that follows a
-        // successful refresh does not end the session: only a rejected refresh
-        // (401/403 on /auth/refresh/) does (OPERATIONS.md §3.25).
+        // left, send the user to /auth; otherwise only a rejected refresh
+        // (401/403 on /auth/refresh/) ends the session (OPERATIONS.md §3.25).
         if (httpError.status === 401 && usesUserAuth && !session.hasSession()) {
           session.clear(true);
         }
@@ -47,6 +46,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return session.refreshAccessToken().pipe(
+        // Placed BEFORE the retry: only an error of the refresh itself may end
+        // the session. A 401 on the retried request (fresh access token
+        // refused) reaches the caller but keeps the session (§3.25).
+        catchError((refreshError: unknown) => {
+          // Only a rejected refresh token ends the session. A network error or
+          // a 5xx (e.g. backend restarting during a deploy) keeps the session:
+          // the error reaches the caller and the next call retries the refresh.
+          if (isRejectedRefresh(refreshError)) {
+            session.clear(true);
+          }
+          return throwError(() => refreshError);
+        }),
         switchMap((newAccessToken) =>
           next(
             authorizedRequest.clone({
@@ -57,15 +68,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             }),
           ),
         ),
-        catchError((refreshError: unknown) => {
-          // Only a rejected refresh token ends the session. A network error or
-          // a 5xx (e.g. backend restarting during a deploy) keeps the session:
-          // the error reaches the caller and the next call retries the refresh.
-          if (isRejectedRefresh(refreshError)) {
-            session.clear(true);
-          }
-          return throwError(() => refreshError);
-        }),
       );
     }),
   );
