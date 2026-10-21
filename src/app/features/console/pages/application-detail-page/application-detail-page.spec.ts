@@ -366,26 +366,12 @@ describe('ApplicationDetailPage', () => {
     expect(fixture.nativeElement.querySelector('app-token-reveal')).toBeNull();
   });
 
-  it('switches to the settings tab from the header edit action', () => {
-    fixture.detectChanges();
-
-    component.openEdit();
-
-    expect(component.activeTab()).toBe('settings');
-    expect(router.navigate).toHaveBeenCalledWith([], {
-      relativeTo: routeStub,
-      queryParams: { tab: 'settings' },
-      queryParamsHandling: 'merge',
-      replaceUrl: true,
-    });
-  });
-
   describe('tabs and the tab query param', () => {
     it('defaults to the overview', () => {
       fixture.detectChanges();
 
       expect(component.activeTab()).toBe('overview');
-      expect(fixture.nativeElement.querySelectorAll('p-tab[data-testid^="app-tab-"]').length).toBe(6);
+      expect(fixture.nativeElement.querySelectorAll('p-tab[data-testid^="app-tab-"]').length).toBe(5);
     });
 
     it('opens the tab named in the query param', () => {
@@ -442,11 +428,11 @@ describe('ApplicationDetailPage', () => {
 
     it('an explicit tab wins over the token auto-open', () => {
       shell.lastGeneratedToken.set({ appId: 101, token: 'apt_freshsecret123', prefix: 'apt_fresh' });
-      routeStub.queryParamMap.next(convertToParamMap({ tab: 'settings' }));
+      routeStub.queryParamMap.next(convertToParamMap({ tab: 'recipients' }));
 
       fixture.detectChanges();
 
-      expect(component.activeTab()).toBe('settings');
+      expect(component.activeTab()).toBe('recipients');
     });
 
     it('stays on the overview when the minted token belongs to another app', () => {
@@ -468,7 +454,7 @@ describe('ApplicationDetailPage', () => {
     });
   });
 
-  describe('settings tab', () => {
+  describe('overview editing (former settings tab)', () => {
     it('prefills the form and saves name/description inline', () => {
       fixture.detectChanges();
       expect(component.settingsForm.getRawValue()).toEqual({

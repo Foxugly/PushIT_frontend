@@ -187,8 +187,8 @@ test('the applications list offers three row actions and opens the app on row cl
   await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
 });
 
-test('application deletion lives in the Paramètres danger zone', async ({ page }) => {
-  await page.goto('/dashboard/applications/10?tab=settings');
+test('application deletion lives in the Aperçu danger zone', async ({ page }) => {
+  await page.goto('/dashboard/applications/10');
 
   const danger = page.getByTestId('danger-zone');
   await expect(danger.getByRole('heading', { name: 'Zone de danger' })).toBeVisible();

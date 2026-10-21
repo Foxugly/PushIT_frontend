@@ -68,12 +68,12 @@ test('creating an application lands on its Envoi tab and reveals the one-time to
   await expect(reveal.locator('img')).toHaveCount(0);
 });
 
-test('the old edit URL opens the Paramètres tab, which saves inline', async ({ page }) => {
+test('the old edit URL opens the Aperçu tab, which saves inline', async ({ page }) => {
   await page.goto('/dashboard/applications/10/edit');
 
-  // Redirected to the detail page's settings tab.
-  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=settings$/);
-  await expect(page.getByRole('tab', { name: 'Paramètres' })).toHaveAttribute('aria-selected', 'true');
+  // Redirected to the detail page's overview, where editing now lives.
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
+  await expect(page.getByRole('tab', { name: 'Aperçu' })).toHaveAttribute('aria-selected', 'true');
 
   const form = page.getByTestId('app-settings-form');
   const nameInput = form.getByRole('textbox').first();
@@ -81,10 +81,10 @@ test('the old edit URL opens the Paramètres tab, which saves inline', async ({ 
   await nameInput.fill('PushIT Mobile V2');
   await form.getByRole('button', { name: /enregistrer/i }).click();
 
-  // Still on the settings tab, with the updated name reflected in the header.
+  // Still on the overview, with the updated name reflected in the header.
   await expect(page.getByText('Application mise à jour.')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'PushIT Mobile V2' })).toBeVisible();
-  await expect(page).toHaveURL(/\?tab=settings$/);
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
 });
 
 test('switching tabs mirrors the tab in the URL', async ({ page }) => {
@@ -106,10 +106,10 @@ test('switching tabs mirrors the tab in the URL', async ({ page }) => {
 test('the logo cropper uploads after the image is zoomed', async ({ page }) => {
   await page.goto('/dashboard/applications/10/edit');
 
-  // The logo field of an existing app lives in the Paramètres tab (the edit URL
+  // The logo field of an existing app lives in the Aperçu tab (the edit URL
   // redirects there); pick the fixture image (PrimeNG's advanced fileupload
   // renders two file inputs — the first is the real one).
-  await expect(page).toHaveURL(/\?tab=settings$/);
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
   await page.locator('input[type="file"]').first().setInputFiles('e2e/fixtures/logo.png');
 
   // The cropper appears and signals readiness by enabling Apply.

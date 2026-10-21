@@ -921,8 +921,7 @@
         "recipients": "Ontvangers",
         "sending": "Verzenden",
         "notifications": "Notificaties",
-        "quietPeriods": "Stille periodes",
-        "settings": "Instellingen"
+        "quietPeriods": "Stille periodes"
       },
       "counters": {
         "devices": "Gekoppelde devices",

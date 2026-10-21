@@ -921,8 +921,7 @@
         "recipients": "Recipients",
         "sending": "Sending",
         "notifications": "Notifications",
-        "quietPeriods": "Quiet periods",
-        "settings": "Settings"
+        "quietPeriods": "Quiet periods"
       },
       "counters": {
         "devices": "Linked devices",

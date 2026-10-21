@@ -921,8 +921,7 @@
         "recipients": "Destinatari",
         "sending": "Invio",
         "notifications": "Notifiche",
-        "quietPeriods": "Periodi di silenzio",
-        "settings": "Impostazioni"
+        "quietPeriods": "Periodi di silenzio"
       },
       "counters": {
         "devices": "Device collegati",
