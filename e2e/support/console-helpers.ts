@@ -474,7 +474,15 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     }
 
     if (path.endsWith('/notifications/') && method === 'GET') {
-      return fulfillJson(route, 200, paginatedOrBare(url, state.notifications));
+      // Like the server: optional ?status= / ?application_id= filters.
+      const status = url.searchParams.get('status');
+      const applicationId = url.searchParams.get('application_id');
+      const filtered = state.notifications.filter(
+        (item) =>
+          (!status || item.status === status) &&
+          (!applicationId || item.application_id === Number(applicationId)),
+      );
+      return fulfillJson(route, 200, paginatedOrBare(url, filtered));
     }
 
     if (path.endsWith('/notifications/future/') && method === 'GET') {

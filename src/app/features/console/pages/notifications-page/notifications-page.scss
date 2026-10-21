@@ -16,7 +16,8 @@
   flex: none;
 }
 
-.notifications-status-badges {
+// One row of status chips: each one is a filter toggle (aria-pressed).
+.notifications-status-chips {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -24,42 +25,94 @@
   margin-bottom: 1rem;
 }
 
+.notifications-chip {
+  --chip-ink: var(--ink-soft);
+  --chip-bg: var(--neutral-wash);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--chip-ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.notifications-chip[data-tone='success'] {
+  --chip-ink: var(--success-text);
+  --chip-bg: var(--success-wash);
+}
+
+.notifications-chip[data-tone='info'] {
+  --chip-ink: var(--ink-soft);
+  --chip-bg: var(--info-wash);
+}
+
+.notifications-chip[data-tone='warn'] {
+  --chip-ink: var(--warn-text);
+  --chip-bg: var(--warn-wash);
+}
+
+.notifications-chip[data-tone='danger'] {
+  --chip-ink: var(--danger-text);
+  --chip-bg: var(--danger-wash);
+}
+
+.notifications-chip:hover {
+  border-color: var(--border);
+}
+
+.notifications-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.notifications-chip--active {
+  border-color: var(--chip-ink);
+  box-shadow: inset 0 0 0 1px var(--chip-ink);
+}
+
+.notifications-chip__count {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+// Filters wrap onto a new line instead of overlapping (no fixed widths).
 .notifications-filters {
   display: flex;
-  align-items: end;
-  flex-wrap: nowrap;
-  align-items: end;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
-.notifications-filters label {
+.notifications-filters__field {
+  display: grid;
   gap: 0.3rem;
+  flex: 1 1 11rem;
   min-width: 0;
+  max-width: 16rem;
+}
+
+.notifications-filters__field--date {
+  flex-basis: 13rem;
 }
 
 .notifications-filters span {
   font-size: 0.82rem;
 }
 
-.notifications-filters > label:nth-child(1) {
-  flex: 0 0 10rem;
-}
-
-.notifications-filters > label:nth-child(2) {
-  flex: 0 0 7.5rem;
-}
-
-.notifications-filters > label:nth-child(3),
-.notifications-filters > label:nth-child(4) {
-  flex: 0 0 11rem;
-}
-
 .notifications-filters__actions {
-  flex: 0 0 auto;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-left: auto;
+  display: flex;
+  align-items: flex-end;
 }
 
 :host ::ng-deep .notifications-filters__select,
@@ -79,6 +132,7 @@
 
 :host ::ng-deep .notifications-filters__date .p-datepicker-input {
   width: 100%;
+  min-width: 0;
 }
 
 .notifications-form__control {
@@ -107,22 +161,9 @@
   margin: 0;
 }
 
-@media (max-width: 1024px) {
-  .notifications-filters {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .notifications-filters > label:nth-child(1),
-  .notifications-filters > label:nth-child(2),
-  .notifications-filters > label:nth-child(3),
-  .notifications-filters > label:nth-child(4) {
-    flex: initial;
-  }
-}
-
 @media (max-width: 640px) {
-  .notifications-filters {
-    grid-template-columns: minmax(0, 1fr);
+  .notifications-filters__field {
+    flex-basis: 100%;
+    max-width: none;
   }
 }

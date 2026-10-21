@@ -73,7 +73,23 @@
         </ng-template>
       </p-table>
     } @else {
-      <p class="console-empty">{{ copy().empty }}</p>
+      <app-empty-state
+        icon="pi pi-moon"
+        [title]="copy().emptyState.title"
+        [message]="hasTargets() ? copy().emptyState.message : copy().missingTargets"
+      >
+        @if (hasTargets()) {
+          <p-button [label]="copy().emptyState.cta" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" />
+        } @else {
+          <a
+            pButton
+            routerLink="/dashboard/applications/new"
+            [label]="copy().emptyState.noAppCta"
+            icon="pi pi-plus"
+            severity="success"
+          ></a>
+        }
+      </app-empty-state>
     }
   </section>
 

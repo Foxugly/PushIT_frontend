@@ -287,7 +287,45 @@
           "devices": "Device",
           "notifications": "Notifiche",
           "quietPeriods": "Periodi di silenzio"
-        }
+        },
+        "metricsLabel": "Contatori della console",
+        "quickActions": {
+          "newApplication": "Nuova applicazione",
+          "newNotification": "Nuova notifica"
+        },
+        "gettingStarted": {
+          "title": "Per iniziare",
+          "description": "Tre passaggi per inviare la tua prima notifica.",
+          "progress": "{done} su {total} completati",
+          "done": "Completato",
+          "steps": {
+            "app": {
+              "title": "Crea un'applicazione",
+              "description": "Un'applicazione raggruppa i tuoi dispositivi e i tuoi invii.",
+              "cta": "Crea un'applicazione"
+            },
+            "device": {
+              "title": "Aggiungi un dispositivo",
+              "description": "Scansiona il QR code dell'applicazione con l'app mobile PushIT.",
+              "cta": "Mostra il QR code"
+            },
+            "notification": {
+              "title": "Invia una notifica",
+              "description": "Invia un primo messaggio per verificare che tutto funzioni.",
+              "cta": "Invia una notifica"
+            }
+          }
+        },
+        "recent": {
+          "title": "Ultime notifiche",
+          "viewAll": "Vedi tutte"
+        },
+        "failures": {
+          "title": "Errori recenti",
+          "empty": "Nessun errore: tutto è stato inviato.",
+          "viewAll": "Vedi gli errori"
+        },
+        "feedError": "Impossibile caricare le notifiche."
       },
       "settings": {
         "title": "Il mio account",
@@ -474,7 +512,12 @@
       },
       "confirmDelete": "Eliminare l'applicazione \"{name}\"?",
       "confirmRegenerate": "Rigenerare il token di \"{name}\"? Tutti i dispositivi che utilizzano il token attuale smetteranno di ricevere notifiche finché non verranno ricollegati al nuovo token.",
-      "confirmRevoke": "Revocare il token di \"{name}\"? Tutti i dispositivi che utilizzano il token attuale smetteranno immediatamente di ricevere notifiche."
+      "confirmRevoke": "Revocare il token di \"{name}\"? Tutti i dispositivi che utilizzano il token attuale smetteranno immediatamente di ricevere notifiche.",
+      "emptyState": {
+        "title": "Ancora nessuna applicazione",
+        "message": "Crea un'applicazione per ottenere un QR code di iscrizione e iniziare a inviare notifiche.",
+        "cta": "Crea la mia prima applicazione"
+      }
     },
     "devices": {
       "title": "Inventario e collegamento dei device",
@@ -533,7 +576,14 @@
       },
       "confirmDelete": "Eliminare il device \"{name}\"?",
       "readOnly": "Sola lettura",
-      "readOnlyHint": "Device di un abbonato: solo il proprietario può modificarlo."
+      "readOnlyHint": "Device di un abbonato: solo il proprietario può modificarlo.",
+      "emptyState": {
+        "title": "Ancora nessun dispositivo",
+        "message": "Un dispositivo si aggiunge scansionando il QR code di un'applicazione con l'app mobile PushIT.",
+        "cta": "Mostra il QR code",
+        "noAppMessage": "Crea prima un'applicazione: il suo QR code ti permetterà di aggiungere i tuoi dispositivi.",
+        "noAppCta": "Crea un'applicazione"
+      }
     },
     "notifications": {
       "title": "Notifiche utente",
@@ -556,7 +606,9 @@
         "allDevices": "Tutti",
         "allStatuses": "Tutti",
         "apply": "Applica",
-        "reset": "Reimposta"
+        "reset": "Reimposta",
+        "statusChips": "Filtra per stato",
+        "allStatusesChip": "Tutte"
       },
       "table": {
         "name": "Nome",
@@ -627,6 +679,18 @@
       "validation": {
         "title": "Campi mancanti",
         "detail": "Compila tutti i campi obbligatori (applicazione, dispositivi, titolo e messaggio)."
+      },
+      "emptyState": {
+        "title": "Nessuna notifica inviata",
+        "message": "Le notifiche inviate e programmate appariranno qui.",
+        "cta": "Invia una notifica",
+        "noAppMessage": "Crea prima un'applicazione, poi aggiungi un dispositivo a cui inviare notifiche.",
+        "noAppCta": "Crea un'applicazione"
+      },
+      "emptyFiltered": {
+        "title": "Nessuna notifica per questi filtri",
+        "message": "Modifica o reimposta i filtri per vedere più notifiche.",
+        "cta": "Reimposta i filtri"
       }
     },
     "quietPeriods": {
@@ -716,7 +780,13 @@
         "differentEndTime": "L'ora di fine deve essere diversa dall'ora di inizio."
       },
       "readOnly": "Sola lettura",
-      "readOnlyHint": "Finestra di silenzio del device di un abbonato: solo il proprietario può modificarla."
+      "readOnlyHint": "Finestra di silenzio del device di un abbonato: solo il proprietario può modificarla.",
+      "emptyState": {
+        "title": "Nessun periodo di silenzio",
+        "message": "Un periodo di silenzio trattiene le notifiche durante una fascia oraria (di notte, nel fine settimana…).",
+        "cta": "Aggiungi un periodo di silenzio",
+        "noAppCta": "Crea un'applicazione"
+      }
     },
     "enrolment": {
       "intro": "Questo codice è fatto per circolare: è quello che i destinatari scansionano per ricevere le notifiche. Non autorizza alcun invio.",

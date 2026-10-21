@@ -96,7 +96,9 @@
         </ng-template>
       </p-table>
     } @else {
-      <app-empty-state icon="pi pi-mobile" [title]="copy().empty" />
+      <app-empty-state icon="pi pi-th-large" [title]="copy().emptyState.title" [message]="copy().emptyState.message">
+        <p-button [label]="copy().emptyState.cta" icon="pi pi-plus" severity="success" (onClick)="openCreate()" />
+      </app-empty-state>
     }
 
   </section>

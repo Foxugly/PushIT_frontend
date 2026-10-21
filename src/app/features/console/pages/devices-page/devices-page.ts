@@ -31,6 +31,7 @@ import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pi
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { DeviceEditFormFields } from '../../components/device-edit-form-fields/device-edit-form-fields';
+import { EmptyState } from '../../../../shared/empty-state/empty-state';
 
 @Component({
   selector: 'app-devices-page',
@@ -42,6 +43,7 @@ import { DeviceEditFormFields } from '../../components/device-edit-form-fields/d
     AppAlert, ApiErrorMessagePipe,
     ConsoleDialogActions,
     DeviceEditFormFields,
+    EmptyState,
     ButtonModule,
     PageHeader,
     DialogModule,
@@ -75,6 +77,10 @@ export class DevicesPage implements OnInit {
   readonly deviceRows = 25;
   readonly deviceFirst = signal(0);
   readonly tableLoading = signal(false);
+  /** False until the first page answered: no empty state before that. */
+  readonly devicesLoaded = signal(false);
+  /** Devices are enrolled from an application's QR code: the empty state links there. */
+  readonly firstAppId = computed(() => this.shell.apps()[0]?.id ?? null);
   readonly selectedDeviceId = signal<number | null>(null);
   readonly modalMode = signal<'create' | 'edit' | null>(null);
   readonly saving = signal(false);
@@ -157,6 +163,7 @@ export class DevicesPage implements OnInit {
         next: (response) => {
           this.devices.set(response.results);
           this.devicesTotal.set(response.count);
+          this.devicesLoaded.set(true);
           this.shell.setDevicesCount(response.count);
 
           const selectedId = this.selectedDeviceId();

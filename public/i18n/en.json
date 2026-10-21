@@ -287,7 +287,45 @@
           "devices": "Devices",
           "notifications": "Notifications",
           "quietPeriods": "Quiet periods"
-        }
+        },
+        "metricsLabel": "Console counters",
+        "quickActions": {
+          "newApplication": "New application",
+          "newNotification": "New notification"
+        },
+        "gettingStarted": {
+          "title": "Getting started",
+          "description": "Three steps to send your first notification.",
+          "progress": "{done} of {total} done",
+          "done": "Done",
+          "steps": {
+            "app": {
+              "title": "Create an application",
+              "description": "An application groups your devices and your sends.",
+              "cta": "Create an application"
+            },
+            "device": {
+              "title": "Add a device",
+              "description": "Scan the application's QR code with the PushIT mobile app.",
+              "cta": "Show the QR code"
+            },
+            "notification": {
+              "title": "Send a notification",
+              "description": "Send a first message to check that everything works.",
+              "cta": "Send a notification"
+            }
+          }
+        },
+        "recent": {
+          "title": "Latest notifications",
+          "viewAll": "View all"
+        },
+        "failures": {
+          "title": "Recent failures",
+          "empty": "No failures: everything went out.",
+          "viewAll": "View failures"
+        },
+        "feedError": "Could not load the notifications."
       },
       "settings": {
         "title": "My account",
@@ -474,7 +512,12 @@
       },
       "confirmDelete": "Delete application \"{name}\"?",
       "confirmRegenerate": "Regenerate the token for \"{name}\"? All devices using the current token will stop receiving notifications until they are re-linked with the new token.",
-      "confirmRevoke": "Revoke the token for \"{name}\"? All devices using the current token will immediately stop receiving notifications."
+      "confirmRevoke": "Revoke the token for \"{name}\"? All devices using the current token will immediately stop receiving notifications.",
+      "emptyState": {
+        "title": "No applications yet",
+        "message": "Create an application to get an enrolment QR code and start sending notifications.",
+        "cta": "Create my first application"
+      }
     },
     "devices": {
       "title": "Device inventory and linking",
@@ -533,7 +576,14 @@
       },
       "confirmDelete": "Delete device \"{name}\"?",
       "readOnly": "Read-only",
-      "readOnlyHint": "Subscriber device: only its owner can change it."
+      "readOnlyHint": "Subscriber device: only its owner can change it.",
+      "emptyState": {
+        "title": "No devices yet",
+        "message": "A device is added by scanning an application's QR code with the PushIT mobile app.",
+        "cta": "Show the QR code",
+        "noAppMessage": "First create an application: its QR code is how you add your devices.",
+        "noAppCta": "Create an application"
+      }
     },
     "notifications": {
       "title": "User notifications",
@@ -556,7 +606,9 @@
         "allDevices": "All",
         "allStatuses": "All",
         "apply": "Apply",
-        "reset": "Reset"
+        "reset": "Reset",
+        "statusChips": "Filter by status",
+        "allStatusesChip": "All"
       },
       "table": {
         "name": "Name",
@@ -627,6 +679,18 @@
       "validation": {
         "title": "Missing fields",
         "detail": "Please fill in all required fields (application, devices, title and message)."
+      },
+      "emptyState": {
+        "title": "No notifications sent",
+        "message": "Your sent and scheduled notifications will appear here.",
+        "cta": "Send a notification",
+        "noAppMessage": "First create an application, then add a device to send it notifications.",
+        "noAppCta": "Create an application"
+      },
+      "emptyFiltered": {
+        "title": "No notifications match these filters",
+        "message": "Change or reset the filters to see more notifications.",
+        "cta": "Reset filters"
       }
     },
     "quietPeriods": {
@@ -716,7 +780,13 @@
         "differentEndTime": "End time must differ from start time."
       },
       "readOnly": "Read-only",
-      "readOnlyHint": "Quiet window of a subscriber device: only the device owner can change it."
+      "readOnlyHint": "Quiet window of a subscriber device: only the device owner can change it.",
+      "emptyState": {
+        "title": "No quiet periods",
+        "message": "A quiet period holds notifications back during a time slot (at night, at the weekend…).",
+        "cta": "Add a quiet period",
+        "noAppCta": "Create an application"
+      }
     },
     "enrolment": {
       "intro": "This code is meant to circulate: it is what your recipients scan to receive your notifications. It authorises no sending.",

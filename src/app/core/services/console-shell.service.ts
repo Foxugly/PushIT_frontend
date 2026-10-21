@@ -19,6 +19,8 @@ export class ConsoleShellService {
   private readonly catalogs = inject(CatalogStore);
 
   readonly loading = signal(false);
+  /** True once a shell load has succeeded: apps and the device count are real, not defaults. */
+  readonly loaded = signal(false);
   readonly error = signal<string | null>(null);
   readonly user = signal<UserMe | null>(null);
   readonly apps = signal<ApplicationRead[]>([]);
@@ -77,6 +79,7 @@ export class ConsoleShellService {
           this.languagePreference.applyBackendLanguage(user.language);
           this.apps.set(apps);
           this.devicesCount.set(devicesCount);
+          this.loaded.set(true);
           this.syncSelectedApp(apps, preferredAppId);
           this.refreshSupplementaryCounts(apps, token);
         },
@@ -342,6 +345,7 @@ export class ConsoleShellService {
 
   logout(): void {
     this.clearGeneratedToken();
+    this.loaded.set(false);
     this.api.logout().subscribe({
       next: () => this.session.clear(true),
       error: () => this.session.clear(true),

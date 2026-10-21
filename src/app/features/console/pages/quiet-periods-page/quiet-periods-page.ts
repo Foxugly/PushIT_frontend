@@ -1,7 +1,7 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { combineLatest, filter, finalize, forkJoin, Observable, of, take } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -32,6 +32,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
+import { EmptyState } from '../../../../shared/empty-state/empty-state';
 
 type QuietPeriodScope = 'application' | 'device';
 type QuietPeriodView = ApplicationQuietPeriod | DeviceQuietPeriod;
@@ -45,6 +46,8 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     AppAlert,
     ApiErrorMessagePipe,
     ConsoleDialogActions,
+    EmptyState,
+    RouterLink,
     ButtonModule,
     PageHeader,
     CheckboxModule,

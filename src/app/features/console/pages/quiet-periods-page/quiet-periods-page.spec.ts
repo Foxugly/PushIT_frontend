@@ -58,6 +58,12 @@ describe('QuietPeriodsPage', () => {
           refresh: 'Rafraichir',
           add: 'Ajouter',
           empty: 'Aucune periode blanche configuree.',
+          emptyState: {
+            title: 'Aucune periode blanche',
+            message: 'Une periode blanche suspend les envois.',
+            cta: 'Ajouter une periode blanche',
+            noAppCta: 'Creer une application',
+          },
           loading: 'Chargement des periodes blanches...',
           targetNone: 'Aucune cible',
           targetUnknownApplication: 'Application inconnue',
