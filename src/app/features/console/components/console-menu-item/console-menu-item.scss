@@ -11,8 +11,8 @@ a {
   padding: 0.85rem 1rem;
   border-radius: 18px;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.64);
-  border: 1px solid rgba(16, 185, 129, 0.08);
+  background: var(--surface-glass);
+  border: 1px solid var(--line-accent-soft);
   transition:
     background 0.2s ease,
     color 0.2s ease,
@@ -21,7 +21,7 @@ a {
 
 a:hover,
 a.is-active {
-  background: rgba(209, 250, 229, 0.96);
+  background: var(--accent-wash);
   color: var(--accent-strong);
   transform: translateX(-2px);
 }
@@ -41,7 +41,7 @@ a.is-active {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 999px;
-  background: rgba(209, 250, 229, 0.92);
+  background: var(--accent-wash);
   color: var(--accent-strong);
 }
 
@@ -63,7 +63,7 @@ a.is-active {
 
 a.is-active .console-menu-item__copy span,
 a:hover .console-menu-item__copy span {
-  color: rgba(5, 150, 105, 0.82);
+  color: var(--accent-wash-ink);
 }
 
 .console-menu-item__badge {

@@ -62,3 +62,8 @@
 .footer__privacy-link:focus-visible {
   text-decoration: underline;
 }
+
+// The Foxugly mark is drawn in near-black: lighten it on the dark footer.
+:host-context(.dark-mode) .footer__author-logo {
+  filter: invert(1) hue-rotate(180deg);
+}

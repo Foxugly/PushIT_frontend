@@ -9,7 +9,7 @@
   gap: 0.75rem;
   padding: 0.85rem 1rem;
   border-radius: 18px;
-  background: rgba(220, 236, 255, 0.58);
+  background: var(--info-wash);
   color: var(--ink);
   opacity: 1;
   transition:
@@ -22,12 +22,12 @@
 }
 
 .app-alert--success {
-  background: rgba(233, 247, 239, 0.88);
+  background: var(--success-wash);
   color: var(--success-text);
 }
 
 .app-alert--danger {
-  background: rgba(255, 237, 239, 0.92);
+  background: var(--danger-wash);
   color: var(--danger-text);
 }
 

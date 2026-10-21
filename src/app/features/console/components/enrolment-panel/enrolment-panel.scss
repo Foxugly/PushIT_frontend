@@ -22,9 +22,9 @@
   gap: 0.5rem;
   width: 100%;
   padding: 0.5rem 0.65rem;
-  border: 1px solid rgba(16, 185, 129, 0.16);
+  border: 1px solid var(--line-accent);
   border-radius: 10px;
-  background: var(--surface-muted, rgba(246, 249, 255, 0.95));
+  background: var(--surface-muted);
 }
 
 .enrolment__code code {
@@ -40,9 +40,11 @@
   width: 14rem;
   height: 14rem;
   image-rendering: pixelated;
-  border: 1px solid rgba(16, 185, 129, 0.16);
+  border: 1px solid var(--line-accent);
   border-radius: 12px;
-  background: var(--surface);
+  // Always dark-on-white with a quiet zone, even in dark mode: scanners need it.
+  padding: 0.6rem;
+  background: var(--qr-bg);
 }
 
 .enrolment__rotate {
@@ -56,9 +58,9 @@
   margin: 0;
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  border: 1px solid var(--warn-line);
   border-radius: 10px;
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--warn-wash);
   color: var(--warn);
   font-size: 0.82rem;
   line-height: 1.45;

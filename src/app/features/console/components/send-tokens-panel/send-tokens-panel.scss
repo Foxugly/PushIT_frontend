@@ -34,9 +34,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  border: 1px solid var(--warn-line);
   border-radius: 10px;
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--warn-wash);
 }
 
 .send-tokens__created code,
@@ -59,7 +59,7 @@
   display: grid;
   gap: 0.6rem;
   padding: 0.75rem;
-  border: 1px solid var(--border, rgba(16, 185, 129, 0.16));
+  border: 1px solid var(--border);
   border-radius: 10px;
 }
 
