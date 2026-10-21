@@ -111,4 +111,31 @@ describe('authInterceptor', () => {
     expect(session.accessToken()).toBe('old-access');
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  it('surfaces a 401 on the retried request without clearing the session', () => {
+    let error: unknown;
+    http.get('/api/v1/apps/').subscribe({ error: (err) => (error = err) });
+
+    expire();
+    httpMock.expectOne('/api/v1/auth/refresh/').flush({ access: 'new-access' });
+    httpMock
+      .expectOne('/api/v1/apps/')
+      .flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect((error as HttpErrorResponse).status).toBe(401);
+    expect(session.accessToken()).toBe('new-access');
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('surfaces a 401 without session and redirects to /auth', () => {
+    session.clear();
+    let error: unknown;
+    http.get('/api/v1/apps/').subscribe({ error: (err) => (error = err) });
+
+    expire();
+    httpMock.expectNone('/api/v1/auth/refresh/');
+
+    expect((error as HttpErrorResponse).status).toBe(401);
+    expect(navigate).toHaveBeenCalledWith(['/auth']);
+  });
 });

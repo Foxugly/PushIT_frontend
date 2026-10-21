@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 
 import { RETRY_ON_AUTH_FAILURE, SKIP_AUTH } from '../http/http-context.tokens';
 import { isRejectedRefresh, SessionService } from '../services/session.service';
@@ -34,9 +34,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         !session.hasSession() ||
         !authorizedRequest.context.get(RETRY_ON_AUTH_FAILURE)
       ) {
-        if (httpError.status === 401 && usesUserAuth) {
+        // No refresh possible: always surface the error so callers' error
+        // handlers and loading flags settle (never EMPTY). Without any session
+        // left, send the user to /auth. A 401 on the retry that follows a
+        // successful refresh does not end the session: only a rejected refresh
+        // (401/403 on /auth/refresh/) does (OPERATIONS.md §3.25).
+        if (httpError.status === 401 && usesUserAuth && !session.hasSession()) {
           session.clear(true);
-          return EMPTY;
         }
 
         return throwError(() => error);
