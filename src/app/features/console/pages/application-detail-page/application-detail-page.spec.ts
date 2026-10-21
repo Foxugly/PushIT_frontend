@@ -47,7 +47,6 @@ describe('ApplicationDetailPage', () => {
       'deleteAppLogo',
       'regenerateAppEmail',
       'getAliasStatus',
-      'getAppQrCode',
       'evictDeviceFromApp',
       'getEnrolmentQrCode',
       'rotateEnrolmentCode',
@@ -56,7 +55,6 @@ describe('ApplicationDetailPage', () => {
     api.evictDeviceFromApp.and.returnValue(of(void 0));
     api.getEnrolmentQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
     api.listSendTokens.and.returnValue(of([]));
-    api.getAppQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
       of([
@@ -313,10 +311,10 @@ describe('ApplicationDetailPage', () => {
     // The token is reachable via the reveal gate...
     expect(component.revealToken()).toBe('apt_freshsecret123');
 
-    // ...and the reveal surface is rendered with the QR request fired for it.
+    // ...and the reveal surface shows the raw token (no send-token QR any more).
     const reveal = fixture.nativeElement.querySelector('app-token-reveal');
     expect(reveal).not.toBeNull();
-    expect(api.getAppQrCode).toHaveBeenCalledWith(101, 'apt_freshsecret123');
+    expect(reveal.textContent).toContain('apt_freshsecret123');
 
     // The created guidance is shown so the user knows to copy/download it now.
     expect(fixture.nativeElement.textContent).toContain(

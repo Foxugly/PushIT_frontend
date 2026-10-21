@@ -426,7 +426,7 @@
         "qrCode": "QR-code"
       },
       "qr": {
-        "title": "QR-code van het token",
+        "title": "Inschrijvings-QR-code",
         "scanHint": "Scan deze QR-code met de mobiele PushIT-app om een toestel te koppelen.",
         "tokenOnce": "Het token is slechts eenmaal zichtbaar. Vernieuw het om de QR-code te tonen (reeds gekoppelde toestellen blijven werken).",
         "regenerate": "Vernieuwen en tonen",
@@ -469,7 +469,7 @@
         "loading": "Applicatie laden..."
       },
       "alerts": {
-        "created": "Applicatie aangemaakt. Open de QR-code om het token te bekijken, kopiëren of downloaden.",
+        "created": "Applicatie aangemaakt. Kopieer of download het verzendtoken nu: het wordt maar één keer getoond.",
         "updated": "Applicatie {name} bijgewerkt.",
         "activated": "Applicatie succesvol geactiveerd.",
         "deactivated": "Applicatie succesvol gedeactiveerd.",

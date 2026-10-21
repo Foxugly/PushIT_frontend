@@ -218,20 +218,6 @@ export class PushitApiService {
   }
 
   /**
-   * QR-code PNG encoding the raw app token (the same string the mobile app
-   * scans to link a device). The backend verifies `app_token` against the
-   * application's current token, so the caller must hold the raw token — only
-   * available right after create/regenerate (it's stored hashed server-side).
-   */
-  getAppQrCode(appId: number, appToken: string): Observable<Blob> {
-    return this.http.post(
-      this.url(`/apps/${appId}/qrcode/`),
-      { app_token: appToken },
-      { responseType: 'blob' },
-    );
-  }
-
-  /**
    * QR code of the application's enrolment code. A plain GET: the code is
    * stored in clear server-side because it is meant to be distributed, so the
    * console can ask for it again at any time — unlike the legacy token QR,

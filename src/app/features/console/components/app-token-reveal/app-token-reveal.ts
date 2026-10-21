@@ -1,18 +1,17 @@
-import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { finalize, switchMap } from 'rxjs';
 
 import { ApplicationRead } from '../../../../core/models/api.models';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
-import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 
 /**
- * One-time app-token reveal: renders the token's QR code (for the mobile app to
- * link a device) plus the raw token, with copy/download affordances and the
- * "shown only once" warning. The raw token is a secret only available right
+ * One-time send-token reveal: the raw `apt_` token, with copy/download
+ * affordances and the "shown only once" warning. No QR code any more
+ * (2026-10-21): the only QR a phone should scan is the enrolment code
+ * (`apk_`, <app-enrolment-panel>); a send-token QR next to it got scanned by
+ * mistake, and the app refuses send tokens. The raw token is a secret only available right
  * after create/regenerate, so this surface is the single place it is exposed —
  * shared by the applications list QR dialog and the application detail page so
  * a freshly-created app's token stays reachable wherever the user lands.
@@ -24,9 +23,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
   styleUrl: './app-token-reveal.scss',
 })
 export class AppTokenReveal {
-  private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
-  private readonly destroyRef = inject(DestroyRef);
 
   /** The application the token belongs to. */
   readonly app = input.required<ApplicationRead>();
@@ -35,36 +32,7 @@ export class AppTokenReveal {
 
   readonly copy = computed(() => this.consoleCopy.current().applications.qr);
 
-  readonly qrImageUrl = signal<string | null>(null);
-  readonly qrLoading = signal(false);
-  readonly qrError = signal<string | null>(null);
   readonly banner = signal<string | null>(null);
-
-  constructor() {
-    // Fetch (and re-fetch) the QR image whenever the app/token inputs change.
-    toObservable(computed(() => ({ appId: this.app().id, token: this.token() })))
-      .pipe(
-        switchMap(({ appId, token }) => {
-          this.qrImageUrl.set(null);
-          this.qrError.set(null);
-          this.qrLoading.set(true);
-          return this.api.getAppQrCode(appId, token).pipe(finalize(() => this.qrLoading.set(false)));
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: (blob) => {
-          // Read as a data: URL rather than a blob: object URL — the enforced
-          // CSP allows `img-src data:` but not `blob:`, so a blob URL would be
-          // silently blocked and the QR would never render.
-          const reader = new FileReader();
-          reader.onloadend = () => this.qrImageUrl.set(reader.result as string);
-          reader.onerror = () => this.qrError.set(this.copy().error);
-          reader.readAsDataURL(blob);
-        },
-        error: () => this.qrError.set(this.copy().error),
-      });
-  }
 
   async copyToken(): Promise<void> {
     const token = this.token();
@@ -78,20 +46,6 @@ export class AppTokenReveal {
     } catch {
       this.banner.set(this.copy().copyFailed);
     }
-  }
-
-  /** Download the QR image as `<ts>_qrcode_token_<app>.<ext>` (ext from the
-   * blob's mime). The QR is held as a data: URL, so an anchor download works
-   * under the enforced CSP (no blob: needed). */
-  downloadQr(): void {
-    const url = this.qrImageUrl();
-    if (!url) {
-      return;
-    }
-    const mime = url.slice(5, url.indexOf(';')); // "image/png" from "data:image/png;base64,…"
-    const sub = (mime.split('/')[1] ?? 'png').split('+')[0]; // svg+xml -> svg
-    const ext = sub === 'jpeg' ? 'jpg' : sub;
-    this.triggerDownload(url, `${this.fileStamp()}_qrcode_token_${this.appSlug(this.app().name)}.${ext}`);
   }
 
   /** Download the raw token as `<ts>_token_<app>.txt` via a text data: URL. */
