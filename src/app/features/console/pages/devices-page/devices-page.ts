@@ -78,6 +78,8 @@ export class DevicesPage implements OnInit {
   readonly selectedDeviceId = signal<number | null>(null);
   readonly modalMode = signal<'create' | 'edit' | null>(null);
   readonly saving = signal(false);
+  readonly apkDownloading = signal(false);
+  readonly apkError = signal(false);
   readonly linking = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
   readonly banner = signal<string | null>(null);
@@ -104,6 +106,31 @@ export class DevicesPage implements OnInit {
   }
 
   /** Reset the lazy table to its first page and reload (refresh/after a mutation). */
+  /** Fetch the APK with the session (the endpoint needs auth) and hand it to the browser. */
+  downloadAndroidApp(): void {
+    this.apkError.set(false);
+    this.apkDownloading.set(true);
+    this.api
+      .downloadAndroidApp()
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.apkDownloading.set(false)))
+      .subscribe({
+        next: (blob) => {
+          if (typeof document === 'undefined') {
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = 'pushit.apk';
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+          setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        },
+        error: () => this.apkError.set(true),
+      });
+  }
+
   reloadDevices(): void {
     this.deviceFirst.set(0);
     this.loadDevices();

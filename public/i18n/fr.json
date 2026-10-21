@@ -493,6 +493,8 @@
       "countLabel": "devices",
       "refresh": "Rafraîchir",
       "add": "Ajouter",
+      "downloadAndroid": "App Android",
+      "downloadAndroidError": "Impossible de télécharger l'app Android.",
       "empty": "Aucun device lié pour ce compte.",
       "loading": "Chargement des devices...",
       "none": "aucune",

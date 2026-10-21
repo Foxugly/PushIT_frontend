@@ -3,6 +3,10 @@
     <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
   }
 
+  @if (apkError()) {
+    <app-alert [message]="copy().downloadAndroidError" tone="danger" (dismissed)="apkError.set(false)" />
+  }
+
   @if (error()?.detail) {
     <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
   }
@@ -12,6 +16,7 @@
       <div class="console-resource-header__badges">
         <p-tag [value]="devicesTotal() + ' ' + copy().countLabel" severity="secondary" />
       </div>
+      <p-button [label]="copy().downloadAndroid" icon="pi pi-android" severity="secondary" [loading]="apkDownloading()" (onClick)="downloadAndroidApp()" />
       <p-button [label]="copy().refresh" icon="pi pi-refresh" severity="secondary" (onClick)="reloadDevices()" />
       <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" />
     </div>

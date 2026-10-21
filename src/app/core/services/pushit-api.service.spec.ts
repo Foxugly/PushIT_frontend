@@ -85,3 +85,25 @@ describe('PushitApiService cookie-mode auth calls', () => {
     req.flush({});
   });
 });
+
+describe('PushitApiService.downloadAndroidApp', () => {
+  it('GETs /devices/android-app/ as a blob, without cookie credentials', () => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    const api = TestBed.inject(PushitApiService);
+    const http = TestBed.inject(HttpTestingController);
+
+    let received: Blob | null = null;
+    api.downloadAndroidApp().subscribe((blob) => (received = blob));
+
+    const req = http.expectOne((r) => r.url.endsWith('/devices/android-app/'));
+    expect(req.request.method).toBe('GET');
+    expect(req.request.responseType).toBe('blob');
+    expect(req.request.withCredentials).toBe(false);
+    req.flush(new Blob(['apk']));
+
+    expect(received).not.toBeNull();
+    http.verify();
+  });
+});
