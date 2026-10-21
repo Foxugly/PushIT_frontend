@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RedirectFunction, Router, UrlTree } from '@angular/router';
 
-import { applicationEditRedirect, routes } from './app.routes';
+import { applicationEditRedirect, changePasswordRedirect, routes } from './app.routes';
 
 describe('app routes', () => {
   beforeEach(() => {
@@ -21,6 +21,21 @@ describe('app routes', () => {
     ) as UrlTree;
 
     expect(TestBed.inject(Router).serializeUrl(target)).toBe('/dashboard/applications/42?tab=settings');
+  });
+
+  it('redirects the old change-password page to the security block of « Mon compte »', () => {
+    const changePassword = routes
+      .find((route) => route.path === 'dashboard')
+      ?.children?.find((route) => route.path === 'change-password');
+
+    expect(changePassword?.redirectTo).toBe(changePasswordRedirect);
+    expect(changePassword?.loadComponent).toBeUndefined();
+
+    const target = TestBed.runInInjectionContext(() =>
+      changePasswordRedirect({ params: {} } as unknown as Parameters<RedirectFunction>[0]),
+    ) as UrlTree;
+
+    expect(TestBed.inject(Router).serializeUrl(target)).toBe('/dashboard/settings#security');
   });
 
   it('keeps the create route on the form page', () => {

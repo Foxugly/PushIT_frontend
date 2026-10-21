@@ -164,6 +164,12 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
       return fulfillJson(route, 200, state.user);
     }
 
+    // « Mon compte » saves the language on change (PATCH auth/me/ {language}).
+    if (path.endsWith('/auth/me/') && method === 'PATCH') {
+      state.user = { ...state.user, ...(request.postDataJSON() as Partial<ConsoleState['user']>) };
+      return fulfillJson(route, 200, state.user);
+    }
+
     // Silent restore / refresh through the HttpOnly cookie (rotation keeps the
     // same value here). No cookie -> 401, like the backend.
     if (path.endsWith('/auth/refresh/') && method === 'POST') {

@@ -10,9 +10,10 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 import frCatalog from '../../../../../../public/i18n/fr.json';
-import { ChangePasswordPage } from './change-password-page';
+import { ChangePasswordPanel } from './change-password-panel';
 
 const COPY = frCatalog.app.console.changePassword;
+const SECURITY_TITLE = frCatalog.app.console.settings.securityTitle;
 
 const user: UserMe = {
   id: 1,
@@ -33,9 +34,9 @@ function httpError(status: number, body: unknown): Observable<never> {
   return throwError(() => new HttpErrorResponse({ status, error: body }));
 }
 
-describe('ChangePasswordPage', () => {
-  let fixture: ComponentFixture<ChangePasswordPage>;
-  let component: ChangePasswordPage;
+describe('ChangePasswordPanel', () => {
+  let fixture: ComponentFixture<ChangePasswordPanel>;
+  let component: ChangePasswordPanel;
   let changePassword: Mock;
   let adoptTokens: Mock;
 
@@ -44,7 +45,7 @@ describe('ChangePasswordPage', () => {
     adoptTokens = vi.fn();
 
     await TestBed.configureTestingModule({
-      imports: [ChangePasswordPage],
+      imports: [ChangePasswordPanel],
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
@@ -54,7 +55,7 @@ describe('ChangePasswordPage', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ChangePasswordPage);
+    fixture = TestBed.createComponent(ChangePasswordPanel);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -67,6 +68,16 @@ describe('ChangePasswordPage', () => {
     fixture.detectChanges();
     return (fixture.nativeElement as HTMLElement).textContent ?? '';
   }
+
+  it('is the « Sécurité » card, reachable through the #security anchor', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const card = root.querySelector('#security');
+
+    expect(card?.classList).toContain('console-card');
+    expect(card?.querySelector('h3')?.textContent?.trim()).toBe(SECURITY_TITLE);
+    expect(root.querySelector('h1')).toBeNull();
+    expect(root.textContent).toContain(COPY.intro);
+  });
 
   it('renders three password fields wired to labels with the right autocomplete', () => {
     const root = fixture.nativeElement as HTMLElement;

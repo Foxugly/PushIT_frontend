@@ -9,7 +9,7 @@ import {
 
 // Authenticated plumbing: the HttpOnly refresh cookie (silent restore, refresh
 // on 401, legacy-token migration, logout across tabs), a rejected refresh
-// ending the session, the change-password page, and the
+// ending the session, the change-password redirect, and the
 // client-side admin / superuser guards. The real authorization boundary is the
 // backend (IsAdminUser / IsSuperUser); these only check the UI does not offer
 // the pages to accounts that cannot use them.
@@ -209,14 +209,14 @@ test('logging out clears the cookie session and the other tabs follow', async ({
   expect(cookie).toBeUndefined();
 });
 
-test('the change-password page is reachable when signed in', async ({ page }) => {
+test('the old change-password URL redirects to « Mon compte » when signed in', async ({ page }) => {
   await seedAuthenticatedSession(page, baseUser);
   await mockConsoleApi(page, state(baseUser));
 
   await page.goto('/dashboard/change-password');
 
-  await expect(page).toHaveURL(/\/dashboard\/change-password$/);
-  await expect(page.getByText('Changer de mot de passe').first()).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard\/settings#security$/);
+  await expect(page.getByRole('button', { name: 'Changer de mot de passe' })).toBeVisible();
 });
 
 test('the change-password page requires a session', async ({ page }) => {

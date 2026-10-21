@@ -60,7 +60,7 @@ const FR: PrivacyCopy = {
     {
       title: 'Conservation et suppression',
       body: [
-        'Vous pouvez supprimer vous-même votre compte et les données associées depuis la console web (Paramètres → Supprimer mon compte). La suppression est immédiate et définitive.',
+        'Vous pouvez supprimer vous-même votre compte et les données associées depuis la console web (Mon compte → Zone de danger). La suppression est immédiate et définitive.',
         `Si vous ne pouvez plus vous connecter, écrivez à ${CONTACT_EMAIL} : les données sont alors supprimées dans un délai de 30 jours.`,
       ],
       link: { label: 'Comment supprimer votre compte', path: '/account-deletion' },
@@ -118,7 +118,7 @@ const NL: PrivacyCopy = {
     {
       title: 'Bewaring en verwijdering',
       body: [
-        'U kunt uw account en de bijbehorende gegevens zelf verwijderen via de webconsole (Instellingen → Mijn account verwijderen). De verwijdering is onmiddellijk en definitief.',
+        'U kunt uw account en de bijbehorende gegevens zelf verwijderen via de webconsole (Mijn account → Gevarenzone). De verwijdering is onmiddellijk en definitief.',
         `Kunt u niet meer inloggen, schrijf dan naar ${CONTACT_EMAIL}: de gegevens worden dan binnen 30 dagen verwijderd.`,
       ],
       link: { label: 'Zo verwijdert u uw account', path: '/account-deletion' },
@@ -176,7 +176,7 @@ const EN: PrivacyCopy = {
     {
       title: 'Retention and deletion',
       body: [
-        'You can delete your account and its data yourself from the web console (Settings → Delete my account). Deletion is immediate and permanent.',
+        'You can delete your account and its data yourself from the web console (My account → Danger zone). Deletion is immediate and permanent.',
         `If you can no longer sign in, write to ${CONTACT_EMAIL}: the data is then deleted within 30 days.`,
       ],
       link: { label: 'How to delete your account', path: '/account-deletion' },
@@ -234,7 +234,7 @@ const IT: PrivacyCopy = {
     {
       title: 'Conservazione ed eliminazione',
       body: [
-        'Puoi eliminare da solo il tuo account e i dati associati dalla console web (Impostazioni → Elimina il mio account). L’eliminazione è immediata e definitiva.',
+        'Puoi eliminare da solo il tuo account e i dati associati dalla console web (Il mio account → Zona pericolosa). L’eliminazione è immediata e definitiva.',
         `Se non riesci più ad accedere, scrivi a ${CONTACT_EMAIL}: i dati vengono eliminati entro 30 giorni.`,
       ],
       link: { label: 'Come eliminare il tuo account', path: '/account-deletion' },
@@ -292,7 +292,7 @@ const ES: PrivacyCopy = {
     {
       title: 'Conservación y eliminación',
       body: [
-        'Puedes eliminar tú mismo tu cuenta y los datos asociados desde la consola web (Ajustes → Eliminar mi cuenta). La eliminación es inmediata y definitiva.',
+        'Puedes eliminar tú mismo tu cuenta y los datos asociados desde la consola web (Mi cuenta → Zona de peligro). La eliminación es inmediata y definitiva.',
         `Si ya no puedes iniciar sesión, escribe a ${CONTACT_EMAIL}: los datos se eliminan en un plazo de 30 días.`,
       ],
       link: { label: 'Cómo eliminar tu cuenta', path: '/account-deletion' },

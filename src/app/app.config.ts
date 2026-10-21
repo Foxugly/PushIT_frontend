@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter, Router, TitleStrategy } from '@angular/router';
+import { provideRouter, Router, TitleStrategy, withInMemoryScrolling } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
@@ -60,7 +60,8 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideRouter(routes),
+    // anchorScrolling : « Changer de mot de passe » mène à /dashboard/settings#security.
+    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     // Titre d'onglet « {page} — PushIT » (data.titleKey des routes), suivi de la langue.
     { provide: TitleStrategy, useExisting: PageTitleStrategy },
     provideHttpClient(withInterceptors([authInterceptor])),

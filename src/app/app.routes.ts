@@ -12,6 +12,10 @@ export const applicationEditRedirect: RedirectFunction = ({ params }) =>
     queryParams: { tab: 'settings' },
   });
 
+/** The change-password form now lives in the « Sécurité » block of « Mon compte ». */
+export const changePasswordRedirect: RedirectFunction = () =>
+  inject(Router).createUrlTree(['/dashboard/settings'], { fragment: 'security' });
+
 export const routes: Routes = [
   {
     path: '',
@@ -195,11 +199,7 @@ export const routes: Routes = [
       },
       {
         path: 'change-password',
-        data: { titleKey: 'header.changePassword' },
-        loadComponent: () =>
-          import('./features/console/pages/change-password-page/change-password-page').then(
-            (m) => m.ChangePasswordPage,
-          ),
+        redirectTo: changePasswordRedirect,
       },
       {
         path: 'accounts',
