@@ -897,8 +897,7 @@
         "recipients": "Destinataires",
         "sending": "Envoi",
         "notifications": "Notifications",
-        "quietPeriods": "Périodes blanches",
-        "settings": "Paramètres"
+        "quietPeriods": "Périodes blanches"
       },
       "counters": {
         "devices": "Devices liés",

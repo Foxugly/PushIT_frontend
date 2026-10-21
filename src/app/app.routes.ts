@@ -5,12 +5,10 @@ import { adminGuard, authGuard, guestGuard, superuserGuard } from './core/guards
 
 /**
  * `applications/:appId/edit` predates the tabbed detail page: editing now lives
- * in its Paramètres tab, so old links land there.
+ * in its Aperçu tab (the default), so old links land there.
  */
 export const applicationEditRedirect: RedirectFunction = ({ params }) =>
-  inject(Router).createUrlTree(['/dashboard/applications', params['appId']], {
-    queryParams: { tab: 'settings' },
-  });
+  inject(Router).createUrlTree(['/dashboard/applications', params['appId']]);
 
 /** The change-password form now lives in the « Sécurité » block of « Mon compte ». */
 export const changePasswordRedirect: RedirectFunction = () =>

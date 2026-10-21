@@ -20,7 +20,7 @@ import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper'
 
 /**
  * Creation of an application (`/dashboard/applications/new`). Editing an
- * existing one lives in the detail page's Paramètres tab (`?tab=settings`);
+ * existing one lives in the detail page's Aperçu tab;
  * the old `/edit` route redirects there.
  */
 @Component({

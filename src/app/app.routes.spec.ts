@@ -20,7 +20,7 @@ describe('app routes', () => {
       applicationEditRedirect({ params: { appId: '42' } } as unknown as Parameters<RedirectFunction>[0]),
     ) as UrlTree;
 
-    expect(TestBed.inject(Router).serializeUrl(target)).toBe('/dashboard/applications/42?tab=settings');
+    expect(TestBed.inject(Router).serializeUrl(target)).toBe('/dashboard/applications/42');
   });
 
   it('redirects the old change-password page to the security block of « Mon compte »', () => {
