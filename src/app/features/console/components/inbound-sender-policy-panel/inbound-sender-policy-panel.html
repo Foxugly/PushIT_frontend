@@ -37,7 +37,19 @@
 
   @if (mode() === 'owner') {
     <div class="sender-policy__field" data-testid="sender-allowlist-field">
-      <label for="sender-allowlist">{{ copy().allowlistLabel }}</label>
+      <div class="sender-policy__label-row">
+        <label for="sender-allowlist">{{ copy().allowlistLabel }}</label>
+        <i
+          class="pi pi-info-circle sender-policy__help"
+          tabindex="0"
+          role="img"
+          data-testid="sender-allowlist-help"
+          [attr.aria-label]="copy().formatsLabel + '. ' + copy().formatsHelp"
+          [pTooltip]="copy().formatsHelp"
+          tooltipPosition="top"
+          tooltipEvent="both"
+        ></i>
+      </div>
       <textarea
         pTextarea
         id="sender-allowlist"
@@ -55,7 +67,19 @@
   }
 
   <div class="sender-policy__field">
-    <label for="sender-blocklist">{{ copy().blocklistLabel }}</label>
+    <div class="sender-policy__label-row">
+      <label for="sender-blocklist">{{ copy().blocklistLabel }}</label>
+      <i
+        class="pi pi-info-circle sender-policy__help"
+        tabindex="0"
+        role="img"
+        data-testid="sender-blocklist-help"
+        [attr.aria-label]="copy().formatsLabel + '. ' + copy().formatsHelp"
+        [pTooltip]="copy().formatsHelp"
+        tooltipPosition="top"
+        tooltipEvent="both"
+      ></i>
+    </div>
     <textarea
       pTextarea
       id="sender-blocklist"

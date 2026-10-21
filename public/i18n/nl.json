@@ -782,9 +782,9 @@
       "authNote": "Elke toegelaten afzender moet de authenticatiecontrole van zijn domein doorstaan (SPF/DKIM/DMARC).",
       "allowlistLabel": "Toegestane afzenders",
       "blocklistLabel": "Geblokkeerde afzenders",
-      "listHint": "Eén item per regel: een adres (alice@voorbeeld.be) of een volledig domein (@voorbeeld.be).",
+      "listHint": "Eén item per regel: een adres (alice@voorbeeld.be), een domein (@voorbeeld.be) of een domein met al zijn subdomeinen (@*.voorbeeld.be).",
       "blocklistHint": "Blokkeren geldt nooit voor uw eigen adres.",
-      "listPlaceholder": "alice@voorbeeld.be\n@voorbeeld.be",
+      "listPlaceholder": "alice@voorbeeld.be\n@voorbeeld.be\n@*.voorbeeld.be",
       "rejectionTitle": "Als een e-mail wordt geweigerd",
       "notifyEmail": "Mij verwittigen per e-mail",
       "notifyPush": "Mij verwittigen via pushmelding",
@@ -793,7 +793,37 @@
       "invalidEntries": "Ongeldige items: {entries}",
       "save": "Opslaan",
       "saving": "Opslaan…",
-      "saved": "Regels voor inkomende e-mail opgeslagen."
+      "saved": "Regels voor inkomende e-mail opgeslagen.",
+      "formatsLabel": "Toegestane formaten",
+      "formatsHelp": "alice@voorbeeld.be: één specifiek adres · @voorbeeld.be: het hele domein voorbeeld.be (zonder subdomeinen) · @*.voorbeeld.be: het domein en al zijn subdomeinen (mail.voorbeeld.be…)"
+    },
+    "inboundEmailLog": {
+      "title": "Ontvangen e-mails",
+      "intro": "De laatste 50 e-mails ontvangen op het adres van deze applicatie, de recentste eerst.",
+      "refresh": "Vernieuwen",
+      "loading": "Ontvangen e-mails laden…",
+      "empty": "Nog geen e-mail ontvangen",
+      "noSubject": "(geen onderwerp)",
+      "columns": {
+        "date": "Datum",
+        "sender": "Afzender",
+        "subject": "Onderwerp",
+        "status": "Status",
+        "reason": "Reden"
+      },
+      "statuses": {
+        "created": "Melding aangemaakt",
+        "existing": "Duplicaat genegeerd",
+        "rejected": "Geweigerd",
+        "conflict": "Conflict",
+        "error": "Fout"
+      },
+      "reasons": {
+        "sender_not_allowed": "Afzender niet toegestaan",
+        "sender_blocked": "Afzender geblokkeerd",
+        "dmarc_failed": "Anti-spoofingcontrole mislukt (DMARC)"
+      },
+      "viewNotification": "Melding bekijken"
     },
     "codeExamples": {
       "intro": "Een melding verzenden vanuit uw code, met een verzendtoken.",

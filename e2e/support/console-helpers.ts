@@ -45,7 +45,8 @@ const SENDER_POLICY_DEFAULTS = {
   inbound_rejection_reply_to_sender: false,
 };
 
-const SENDER_ENTRY_RE = /^([^\s@]+@[^\s@]+\.[^\s@]+|@[^\s@]+\.[^\s@]+)$/;
+// Like the server: `*` only as the whole first label of a domain (`@*.example.com`).
+const SENDER_ENTRY_RE = /^([^\s@*]+@[^\s@*]+\.[^\s@*]+|@(\*\.)?[^\s@*]+\.[^\s@*]+)$/;
 
 type Device = {
   id: number;
@@ -82,6 +83,16 @@ type SendToken = {
   is_active: boolean;
 };
 
+type InboundEmailLog = {
+  id: number;
+  processed_at: string;
+  status: 'created' | 'existing' | 'rejected' | 'conflict' | 'error';
+  sender: string;
+  subject: string;
+  error_message: string;
+  notification_id: number | null;
+};
+
 type QuietPeriod = unknown[];
 
 export type ConsoleState = {
@@ -94,6 +105,7 @@ export type ConsoleState = {
   appQuietPeriods?: Record<number, QuietPeriod>;
   deviceQuietPeriods?: Record<number, QuietPeriod>;
   sendTokens?: Record<number, SendToken[]>;
+  inboundEmailLogs?: Record<number, InboundEmailLog[]>;
 };
 
 /** Name/path of the backend's HttpOnly refresh cookie (PushIT_server refresh_cookie.py). */
@@ -170,6 +182,7 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     appQuietPeriods: { ...(initialState.appQuietPeriods ?? {}) },
     deviceQuietPeriods: { ...(initialState.deviceQuietPeriods ?? {}) },
     sendTokens: { ...(initialState.sendTokens ?? {}) },
+    inboundEmailLogs: { ...(initialState.inboundEmailLogs ?? {}) },
   };
 
   await page.route('**/api/v1/**', async (route) => {
@@ -405,6 +418,12 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
           : item,
       );
       return route.fulfill({ status: 204, body: '' });
+    }
+
+    // Owner-only inbound e-mail journal: bare array, newest first.
+    const inboundLogsMatch = path.match(/\/api\/v1\/apps\/(\d+)\/inbound-email-logs\/$/);
+    if (inboundLogsMatch && method === 'GET') {
+      return fulfillJson(route, 200, state.inboundEmailLogs?.[Number(inboundLogsMatch[1])] ?? []);
     }
 
     const appQuietPeriodsMatch = path.match(/\/api\/v1\/apps\/(\d+)\/quiet-periods\/$/);

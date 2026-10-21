@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.inbound-log {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.inbound-log h4 {
+  margin: 0 0 0.25rem;
+}
+
+.inbound-log__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.inbound-log__hint {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.inbound-log__nowrap {
+  white-space: nowrap;
+}
+
+.inbound-log__sender,
+.inbound-log__reason {
+  overflow-wrap: anywhere;
+}

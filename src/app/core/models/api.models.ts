@@ -437,6 +437,24 @@ export interface AliasStatus {
   detail: string;
 }
 
+/** Outcome of one inbound e-mail (GET /apps/{id}/inbound-email-logs/). */
+export type InboundEmailLogStatus = 'created' | 'existing' | 'rejected' | 'conflict' | 'error';
+
+/**
+ * One row of an application's inbound e-mail journal (owner only, newest first,
+ * at most 50, bare array). A refusal's `error_message` is `"<code>: <text>"` with
+ * a stable code: `sender_not_allowed`, `sender_blocked` or `dmarc_failed`.
+ */
+export interface InboundEmailLog {
+  id: number;
+  processed_at: string;
+  status: InboundEmailLogStatus;
+  sender: string;
+  subject: string;
+  error_message: string;
+  notification_id: number | null;
+}
+
 /** DRF PageNumberPagination envelope. */
 export interface Paginated<T> {
   count: number;

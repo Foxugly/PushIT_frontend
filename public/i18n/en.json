@@ -782,9 +782,9 @@
       "authNote": "Every accepted sender must pass their domain's authentication check (SPF/DKIM/DMARC).",
       "allowlistLabel": "Allowed senders",
       "blocklistLabel": "Blocked senders",
-      "listHint": "One entry per line: an address (alice@example.com) or a whole domain (@example.com).",
+      "listHint": "One entry per line: an address (alice@example.com), a domain (@example.com) or a domain and its subdomains (@*.example.com).",
       "blocklistHint": "Blocking never applies to your own address.",
-      "listPlaceholder": "alice@example.com\n@example.com",
+      "listPlaceholder": "alice@example.com\n@example.com\n@*.example.com",
       "rejectionTitle": "When a mail is refused",
       "notifyEmail": "Notify me by e-mail",
       "notifyPush": "Notify me by push notification",
@@ -793,7 +793,37 @@
       "invalidEntries": "Invalid entries: {entries}",
       "save": "Save",
       "saving": "Saving…",
-      "saved": "Inbound e-mail rules saved."
+      "saved": "Inbound e-mail rules saved.",
+      "formatsLabel": "Accepted formats",
+      "formatsHelp": "alice@example.com: one specific address · @example.com: the whole example.com domain (without subdomains) · @*.example.com: the domain and all its subdomains (mail.example.com…)"
+    },
+    "inboundEmailLog": {
+      "title": "Received e-mails",
+      "intro": "The last 50 e-mails received at this application's address, newest first.",
+      "refresh": "Refresh",
+      "loading": "Loading received e-mails…",
+      "empty": "No e-mail received yet",
+      "noSubject": "(no subject)",
+      "columns": {
+        "date": "Date",
+        "sender": "Sender",
+        "subject": "Subject",
+        "status": "Status",
+        "reason": "Reason"
+      },
+      "statuses": {
+        "created": "Notification created",
+        "existing": "Duplicate ignored",
+        "rejected": "Refused",
+        "conflict": "Conflict",
+        "error": "Error"
+      },
+      "reasons": {
+        "sender_not_allowed": "Sender not allowed",
+        "sender_blocked": "Sender blocked",
+        "dmarc_failed": "Anti-spoofing check failed (DMARC)"
+      },
+      "viewNotification": "View the notification"
     },
     "codeExamples": {
       "intro": "Send a notification from your code, using a send token.",

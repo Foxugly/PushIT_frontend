@@ -120,3 +120,76 @@ test('unsaved policy edits survive an overview save and a tab switch, and leavin
   await page.getByRole('dialog').getByRole('button', { name: 'Quitter sans enregistrer' }).click();
   await expect(page).toHaveURL(/\/dashboard\/applications$/);
 });
+
+test('@*.domain entries are accepted and the formats are explained on the info icon', async ({ page }) => {
+  await page.goto('/dashboard/applications/10?tab=sending');
+  const panel = page.getByTestId('inbound-sender-policy');
+
+  const help = panel.getByTestId('sender-allowlist-help');
+  await help.focus();
+  await expect(page.locator('.p-tooltip')).toContainText('@*.exemple.com : le domaine et tous ses sous-domaines');
+  await expect(help).toHaveAttribute('aria-label', /@exemple\.com : tout le domaine exemple\.com \(sans les sous-domaines\)/);
+
+  const allowlist = panel.getByRole('textbox', { name: 'Expéditeurs autorisés' });
+  await allowlist.fill('@*.Partner.io\n@*bad.io');
+  await expect(panel.getByText('Entrées invalides : @*bad.io')).toBeVisible();
+  await allowlist.fill('@*.Partner.io');
+  await expect(allowlist).toHaveValue('@*.Partner.io');
+  await panel.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(panel.getByText('Règles de réception par e-mail enregistrées.')).toBeVisible();
+  expect(state.apps[0].inbound_sender_allowlist).toEqual(['@*.partner.io']);
+});
+
+test('« Mails reçus » lists what each inbound mail became, loaded with the Envoi tab', async ({ page }) => {
+  let calls = 0;
+  page.on('request', (request) => {
+    if (request.url().includes('/inbound-email-logs/')) {
+      calls += 1;
+    }
+  });
+  state.inboundEmailLogs = {
+    10: [
+      {
+        id: 3,
+        processed_at: '2026-10-21T09:30:00Z',
+        status: 'rejected',
+        sender: 'mallory@evil.io',
+        subject: 'Promo',
+        error_message: 'dmarc_failed: spf=fail dkim=none',
+        notification_id: null,
+      },
+      {
+        id: 2,
+        processed_at: '2026-10-21T08:00:00Z',
+        status: 'created',
+        sender: 'renaud@example.com',
+        subject: 'Coupure réseau',
+        error_message: '',
+        notification_id: 77,
+      },
+    ],
+  };
+
+  await page.goto('/dashboard/applications/10');
+  await expect(page.getByRole('tab', { name: 'Aperçu' })).toHaveAttribute('aria-selected', 'true');
+  expect(calls).toBe(0);
+
+  await page.getByRole('tab', { name: 'Envoi' }).click();
+  const journal = page.getByTestId('inbound-email-log');
+  await expect(journal.getByRole('heading', { name: 'Mails reçus' })).toBeVisible();
+
+  const refused = journal.getByTestId('inbound-log-row-3');
+  await expect(refused).toContainText('mallory@evil.io');
+  await expect(refused).toContainText('Refusé');
+  await expect(refused).toContainText('Échec du contrôle anti-usurpation (DMARC)');
+
+  const created = journal.getByTestId('inbound-log-row-2');
+  await expect(created).toContainText('Notification créée');
+  await expect(created.getByRole('link')).toHaveAttribute('href', '/dashboard/notifications/77');
+
+  // « Actualiser » reloads; an empty journal says so.
+  state.inboundEmailLogs = { 10: [] };
+  await journal.getByRole('button', { name: 'Actualiser' }).click();
+  await expect(journal.getByTestId('inbound-log-empty')).toHaveText("Aucun mail reçu pour l'instant");
+  expect(calls).toBe(2);
+});

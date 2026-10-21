@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { TextareaModule } from 'primeng/textarea';
+import { TooltipModule } from 'primeng/tooltip';
 import { finalize } from 'rxjs';
 
 import {
@@ -20,10 +21,16 @@ import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-e
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 
-const ADDRESS_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const DOMAIN_RE = /^@[^\s@]+\.[^\s@]+$/;
+// `*` is only meaningful as the whole first label of a domain entry
+// (`@*.example.com`), like the server: never in an address, never elsewhere.
+const ADDRESS_RE = /^[^\s@*]+@[^\s@*]+\.[^\s@*]+$/;
+const DOMAIN_RE = /^@(\*\.)?[^\s@*]+\.[^\s@*]+$/;
 
-/** A list entry the server will accept: `alice@example.com` or `@example.com`. */
+/**
+ * A list entry the server will accept: an address (`alice@example.com`), a
+ * domain (`@example.com`, subdomains excluded) or a domain with all its
+ * subdomains (`@*.example.com`).
+ */
 export function isValidSenderEntry(entry: string): boolean {
   return ADDRESS_RE.test(entry) || DOMAIN_RE.test(entry);
 }
@@ -68,6 +75,7 @@ function policyKey(policy: InboundSenderPolicy): string {
     CheckboxModule,
     RadioButtonModule,
     TextareaModule,
+    TooltipModule,
   ],
   templateUrl: './inbound-sender-policy-panel.html',
   styleUrl: './inbound-sender-policy-panel.scss',

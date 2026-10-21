@@ -782,9 +782,9 @@
       "authNote": "Chaque expéditeur accepté doit passer le contrôle d'authentification de son domaine (SPF/DKIM/DMARC).",
       "allowlistLabel": "Expéditeurs autorisés",
       "blocklistLabel": "Expéditeurs bloqués",
-      "listHint": "Une entrée par ligne : une adresse (alice@exemple.com) ou un domaine entier (@exemple.com).",
+      "listHint": "Une entrée par ligne : une adresse (alice@exemple.com), un domaine (@exemple.com) ou un domaine et ses sous-domaines (@*.exemple.com).",
       "blocklistHint": "Le blocage ne s'applique jamais à votre propre adresse.",
-      "listPlaceholder": "alice@exemple.com\n@exemple.com",
+      "listPlaceholder": "alice@exemple.com\n@exemple.com\n@*.exemple.com",
       "rejectionTitle": "En cas de mail refusé",
       "notifyEmail": "Me prévenir par e-mail",
       "notifyPush": "Me prévenir par notification push",
@@ -793,7 +793,37 @@
       "invalidEntries": "Entrées invalides : {entries}",
       "save": "Enregistrer",
       "saving": "Enregistrement…",
-      "saved": "Règles de réception par e-mail enregistrées."
+      "saved": "Règles de réception par e-mail enregistrées.",
+      "formatsLabel": "Formats acceptés",
+      "formatsHelp": "alice@exemple.com : une adresse précise · @exemple.com : tout le domaine exemple.com (sans les sous-domaines) · @*.exemple.com : le domaine et tous ses sous-domaines (mail.exemple.com…)"
+    },
+    "inboundEmailLog": {
+      "title": "Mails reçus",
+      "intro": "Les 50 derniers mails reçus à l'adresse de cette application, du plus récent au plus ancien.",
+      "refresh": "Actualiser",
+      "loading": "Chargement des mails reçus…",
+      "empty": "Aucun mail reçu pour l'instant",
+      "noSubject": "(sans objet)",
+      "columns": {
+        "date": "Date",
+        "sender": "Expéditeur",
+        "subject": "Objet",
+        "status": "Statut",
+        "reason": "Raison"
+      },
+      "statuses": {
+        "created": "Notification créée",
+        "existing": "Doublon ignoré",
+        "rejected": "Refusé",
+        "conflict": "Conflit",
+        "error": "Erreur"
+      },
+      "reasons": {
+        "sender_not_allowed": "Expéditeur non autorisé",
+        "sender_blocked": "Expéditeur bloqué",
+        "dmarc_failed": "Échec du contrôle anti-usurpation (DMARC)"
+      },
+      "viewNotification": "Voir la notification"
     },
     "codeExamples": {
       "intro": "Envoyer une notification depuis votre code, avec un jeton d'émission.",

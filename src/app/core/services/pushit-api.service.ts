@@ -7,6 +7,7 @@ import { SKIP_AUTH } from '../http/http-context.tokens';
 import {
   AdminStatus,
   AliasStatus,
+  InboundEmailLog,
   AppNotificationCreateRequest,
   AppNotificationFilters,
   ApplicationActivationResponse,
@@ -181,6 +182,11 @@ export class PushitApiService {
   /** Owner-only probe of the application's inbound email alias (Exchange). */
   getAliasStatus(appId: number): Observable<AliasStatus> {
     return this.http.get<AliasStatus>(this.url(`/apps/${appId}/alias-status/`));
+  }
+
+  /** Owner-only journal of the last inbound e-mails (newest first, max 50). */
+  getInboundEmailLogs(appId: number): Observable<InboundEmailLog[]> {
+    return this.http.get<InboundEmailLog[]>(this.url(`/apps/${appId}/inbound-email-logs/`));
   }
 
   updateApp(appId: number, payload: ApplicationUpdateRequest): Observable<ApplicationRead> {
