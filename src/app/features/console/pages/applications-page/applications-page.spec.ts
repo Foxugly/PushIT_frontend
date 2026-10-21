@@ -3,21 +3,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
 
 import { makeApplication } from '../../../../../testing/console-fixtures';
 import { ApplicationRead } from '../../../../core/models/api.models';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
-import { PushitApiService } from '../../../../core/services/pushit-api.service';
-import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationsPage } from './applications-page';
 
 describe('ApplicationsPage', () => {
   let fixture: ComponentFixture<ApplicationsPage>;
   let component: ApplicationsPage;
-  let api: jasmine.SpyObj<PushitApiService>;
-  let confirm: jasmine.SpyObj<AppConfirmService>;
   let router: Router;
   let shell: {
     apps: ReturnType<typeof signal<ApplicationRead[]>>;
@@ -31,11 +26,6 @@ describe('ApplicationsPage', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['deleteApp']);
-    api.deleteApp.and.returnValue(of(void 0));
-    confirm = jasmine.createSpyObj<AppConfirmService>('AppConfirmService', ['ask']);
-    confirm.ask.and.resolveTo(true);
-
     shell = {
       apps: signal<ApplicationRead[]>([
         makeApplication(),
@@ -77,6 +67,7 @@ describe('ApplicationsPage', () => {
             revoke: 'Revoquer',
             delete: 'Supprimer',
             qrCode: 'QR code',
+            open: 'Ouvrir',
           },
           qr: {
             title: 'QR code',
@@ -120,10 +111,8 @@ describe('ApplicationsPage', () => {
         provideRouter([]),
         provideNoopAnimations(),
         provideHttpClient(),
-        { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },
-        { provide: AppConfirmService, useValue: confirm },
       ],
     }).compileComponents();
 
@@ -140,24 +129,10 @@ describe('ApplicationsPage', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications/new']);
   });
 
-  it('navigates to the edit page for a row', () => {
-    component.openEdit(makeApplication({ id: 102 }));
-
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 102, 'edit']);
-  });
-
   it('navigates to the detail page', () => {
     component.openDetails(makeApplication({ id: 102 }));
 
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 102]);
-  });
-
-  it('deletes a confirmed application and refreshes the shell', async () => {
-    await component.deleteApp(makeApplication({ id: 102, name: 'Backoffice' }));
-
-    expect(api.deleteApp).toHaveBeenCalledWith(102);
-    expect(shell.loadShell).toHaveBeenCalled();
-    expect(component.banner()).toBe('Application Backoffice supprimee.');
   });
 
   it('toggles an application state via the shell and surfaces a banner', () => {
@@ -168,7 +143,49 @@ describe('ApplicationsPage', () => {
     component.toggleState(makeApplication({ is_active: true }));
 
     expect(shell.toggleAppState).toHaveBeenCalled();
+    // Deactivating an active app says so (the banner used to be inverted).
+    expect(component.banner()).toBe('Application desactivee.');
+
+    component.toggleState(makeApplication({ is_active: false }));
     expect(component.banner()).toBe('Application activee.');
+  });
+
+  it('offers exactly three row actions: enrolment QR, activate/deactivate, open', () => {
+    const rows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[data-testid="app-row"]'));
+    expect(rows.length).toBe(2);
+
+    const labels = Array.from(rows[0].querySelectorAll('.console-icon-actions button')).map((button) =>
+      button.getAttribute('aria-label'),
+    );
+    expect(labels).toEqual(['QR code', 'Desactiver', 'Ouvrir']);
+    // The inactive app offers "Activer" instead.
+    const inactiveLabels = Array.from(rows[1].querySelectorAll('.console-icon-actions button')).map((button) =>
+      button.getAttribute('aria-label'),
+    );
+    expect(inactiveLabels).toEqual(['QR code', 'Activer', 'Ouvrir']);
+  });
+
+  it('opens the application when its row is clicked', () => {
+    const row: HTMLElement = fixture.nativeElement.querySelector('[data-testid="app-row"]');
+    row.querySelector<HTMLElement>('td:nth-child(2)')!.click();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 101]);
+  });
+
+  it('row actions do not also trigger the row navigation', () => {
+    const row: HTMLElement = fixture.nativeElement.querySelector('[data-testid="app-row"]');
+    const qrButton = row.querySelector<HTMLElement>('button[aria-label="QR code"]')!;
+
+    qrButton.click();
+
+    expect(component.qrApp()?.id).toBe(101);
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('keeps the application name as a keyboard-focusable link', () => {
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector('[data-testid="app-row"] a.console-table__link');
+
+    expect(link.getAttribute('href')).toBe('/dashboard/applications/101');
   });
 
   it('refreshes applications with the selected app id', () => {

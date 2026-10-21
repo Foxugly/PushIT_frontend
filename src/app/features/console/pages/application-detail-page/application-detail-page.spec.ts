@@ -2,8 +2,11 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
-import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter, Router } from '@angular/router';
+import { BehaviorSubject, of } from 'rxjs';
+import { vi } from 'vitest';
+
+import frCatalog from '../../../../../../public/i18n/fr.json';
 
 import {
   makeApplication,
@@ -14,8 +17,31 @@ import { ConsoleCopyService } from '../../../../core/services/console-copy.servi
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
-import { ApplicationDetailPage } from './application-detail-page';
+import { ApplicationDetailPage, normalizeAppDetailTab } from './application-detail-page';
 import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
+
+/** Overlay the spec's short copy on the real FR catalog, so keys the spec does
+ * not care about (tab labels, settings, danger zone...) still resolve. */
+function deepMerge<T>(base: T, overlay: unknown): T {
+  if (typeof overlay !== 'object' || overlay === null || Array.isArray(overlay)) {
+    return overlay as T;
+  }
+  const out: Record<string, unknown> = { ...(base as Record<string, unknown>) };
+  for (const [key, value] of Object.entries(overlay)) {
+    out[key] = deepMerge(out[key], value);
+  }
+  return out as T;
+}
+
+describe('normalizeAppDetailTab', () => {
+  it('keeps known tabs and falls back to overview', () => {
+    expect(normalizeAppDetailTab('sending')).toBe('sending');
+    expect(normalizeAppDetailTab('quiet-periods')).toBe('quiet-periods');
+    expect(normalizeAppDetailTab('nope')).toBe('overview');
+    expect(normalizeAppDetailTab(null)).toBe('overview');
+    expect(normalizeAppDetailTab(undefined)).toBe('overview');
+  });
+});
 
 describe('ApplicationDetailPage', () => {
   let fixture: ComponentFixture<ApplicationDetailPage>;
@@ -24,6 +50,9 @@ describe('ApplicationDetailPage', () => {
   let shell: {
     apps: ReturnType<typeof signal<ReturnType<typeof makeApplication>[]>>;
     loadShell: jasmine.Spy<(preferredAppId?: number) => void>;
+    toggleAppState: ReturnType<typeof vi.fn>;
+    regenerateToken: ReturnType<typeof vi.fn>;
+    revokeToken: ReturnType<typeof vi.fn>;
     lastGeneratedToken: ReturnType<
       typeof signal<{ appId: number; token: string; prefix: string } | null>
     >;
@@ -32,6 +61,7 @@ describe('ApplicationDetailPage', () => {
     snapshot: {
       paramMap: ReturnType<typeof convertToParamMap>;
     };
+    queryParamMap: BehaviorSubject<ParamMap>;
   };
   let router: Router;
 
@@ -51,6 +81,7 @@ describe('ApplicationDetailPage', () => {
       'getEnrolmentQrCode',
       'rotateEnrolmentCode',
       'listSendTokens',
+      'deleteApp',
     ]);
     api.evictDeviceFromApp.and.returnValue(of(void 0));
     api.getEnrolmentQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
@@ -80,6 +111,9 @@ describe('ApplicationDetailPage', () => {
     shell = {
       apps: signal([makeApplication(), makeApplication({ id: 102, name: 'Backoffice' })]),
       loadShell: jasmine.createSpy('loadShell'),
+      toggleAppState: vi.fn(),
+      regenerateToken: vi.fn(),
+      revokeToken: vi.fn(),
       lastGeneratedToken: signal<{ appId: number; token: string; prefix: string } | null>(null),
     };
 
@@ -87,10 +121,11 @@ describe('ApplicationDetailPage', () => {
       snapshot: {
         paramMap: convertToParamMap({ appId: '101' }),
       },
+      queryParamMap: new BehaviorSubject<ParamMap>(convertToParamMap({})),
     };
 
     const consoleCopy = {
-      current: signal({
+      current: signal(deepMerge(frCatalog.console, {
         applications: {
           qr: {
             title: 'QR code du token',
@@ -259,7 +294,7 @@ describe('ApplicationDetailPage', () => {
             recurring: 'recurring',
           },
         },
-      }),
+      })),
     };
 
     await TestBed.configureTestingModule({
@@ -331,12 +366,195 @@ describe('ApplicationDetailPage', () => {
     expect(fixture.nativeElement.querySelector('app-token-reveal')).toBeNull();
   });
 
-  it('navigates to the dedicated edit page from the edit action', () => {
+  it('switches to the settings tab from the header edit action', () => {
     fixture.detectChanges();
 
     component.openEdit();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 101, 'edit']);
+    expect(component.activeTab()).toBe('settings');
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: routeStub,
+      queryParams: { tab: 'settings' },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  });
+
+  describe('tabs and the tab query param', () => {
+    it('defaults to the overview', () => {
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('overview');
+      expect(fixture.nativeElement.querySelectorAll('p-tab[data-testid^="app-tab-"]').length).toBe(6);
+    });
+
+    it('opens the tab named in the query param', () => {
+      routeStub.queryParamMap.next(convertToParamMap({ tab: 'quiet-periods' }));
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('quiet-periods');
+    });
+
+    it('falls back to the overview for an unknown tab', () => {
+      routeStub.queryParamMap.next(convertToParamMap({ tab: 'bogus' }));
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('overview');
+    });
+
+    it('follows later query param changes (links, back/forward)', () => {
+      fixture.detectChanges();
+
+      routeStub.queryParamMap.next(convertToParamMap({ tab: 'notifications' }));
+
+      expect(component.activeTab()).toBe('notifications');
+    });
+
+    it('writes the selected tab to the URL, and drops it for the overview', () => {
+      fixture.detectChanges();
+
+      component.selectTab('recipients');
+      expect(component.activeTab()).toBe('recipients');
+      expect(router.navigate).toHaveBeenLastCalledWith(
+        [],
+        expect.objectContaining({ queryParams: { tab: 'recipients' }, replaceUrl: true }),
+      );
+
+      component.selectTab('overview');
+      expect(router.navigate).toHaveBeenLastCalledWith([], expect.objectContaining({ queryParams: { tab: null } }));
+    });
+
+    it('does not navigate when the tab is already active', () => {
+      fixture.detectChanges();
+
+      component.selectTab('overview');
+
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+
+    it('opens the Envoi tab when a token was just minted for this app and no tab is given', () => {
+      shell.lastGeneratedToken.set({ appId: 101, token: 'apt_freshsecret123', prefix: 'apt_fresh' });
+
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('sending');
+    });
+
+    it('an explicit tab wins over the token auto-open', () => {
+      shell.lastGeneratedToken.set({ appId: 101, token: 'apt_freshsecret123', prefix: 'apt_fresh' });
+      routeStub.queryParamMap.next(convertToParamMap({ tab: 'settings' }));
+
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('settings');
+    });
+
+    it('stays on the overview when the minted token belongs to another app', () => {
+      shell.lastGeneratedToken.set({ appId: 999, token: 'apt_other', prefix: 'apt_o' });
+
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('overview');
+    });
+  });
+
+  it('opens the notification create flow pre-selected on this app', () => {
+    fixture.detectChanges();
+
+    component.newNotification();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/notifications'], {
+      queryParams: { app: 101, create: 1 },
+    });
+  });
+
+  describe('settings tab', () => {
+    it('prefills the form and saves name/description inline', () => {
+      fixture.detectChanges();
+      expect(component.settingsForm.getRawValue()).toEqual({
+        name: 'PushIT Mobile',
+        description: 'Application mobile',
+      });
+
+      component.settingsForm.patchValue({ name: 'PushIT Mobile V2' });
+      component.settingsForm.markAsDirty();
+      component.saveSettings();
+
+      expect(api.updateApp).toHaveBeenCalledWith(101, {
+        name: 'PushIT Mobile V2',
+        description: 'Application mobile',
+      });
+      expect(component.application()?.name).toBe('PushIT Mobile V2');
+      expect(component.settingsForm.dirty).toBe(false);
+      expect(shell.loadShell).toHaveBeenCalledWith(101);
+    });
+
+    it('does not save an invalid form', () => {
+      fixture.detectChanges();
+      component.settingsForm.patchValue({ name: '' });
+
+      component.saveSettings();
+
+      expect(api.updateApp).not.toHaveBeenCalled();
+    });
+
+    it('toggles the activation through the shell', () => {
+      shell.toggleAppState.mockImplementation((_app: unknown, onDone?: () => void) => onDone?.());
+      fixture.detectChanges();
+
+      component.toggleState();
+
+      expect(shell.toggleAppState).toHaveBeenCalled();
+      expect(component.application()?.is_active).toBe(false);
+    });
+
+    it('uploads and removes the logo', () => {
+      api.uploadAppLogo.and.returnValue(of(makeApplication({ logo: 'https://cdn/logo.png' })));
+      api.deleteAppLogo.and.returnValue(of(void 0));
+      fixture.detectChanges();
+
+      component.onLogoCropped(new File(['x'], 'logo.png', { type: 'image/png' }));
+      expect(component.application()?.logo).toBe('https://cdn/logo.png');
+
+      component.removeLogo();
+      expect(api.deleteAppLogo).toHaveBeenCalledWith(101);
+      expect(component.application()?.logo).toBeNull();
+    });
+
+    it('deletes the application after confirmation and returns to the list', async () => {
+      api.deleteApp.and.returnValue(of(void 0));
+      fixture.detectChanges();
+
+      await component.deleteApplication();
+
+      expect(api.deleteApp).toHaveBeenCalledWith(101);
+      expect(shell.loadShell).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications']);
+    });
+
+    it('keeps the application when the deletion is declined', async () => {
+      fixture.detectChanges();
+      vi.spyOn(TestBed.inject(AppConfirmService), 'ask').mockResolvedValue(false);
+
+      await component.deleteApplication();
+
+      expect(api.deleteApp).not.toHaveBeenCalled();
+    });
+  });
+
+  it('regenerates and revokes the legacy token from the Envoi tab', async () => {
+    shell.regenerateToken.mockImplementation((_app: unknown, onDone?: () => void) => onDone?.());
+    shell.revokeToken.mockImplementation((_app: unknown, onDone?: () => void) => onDone?.());
+    fixture.detectChanges();
+
+    await component.regenerateLegacyToken();
+    expect(shell.regenerateToken).toHaveBeenCalled();
+    expect(component.bannerTone()).toBe('success');
+
+    await component.revokeLegacyToken();
+    expect(shell.revokeToken).toHaveBeenCalled();
+    // Each action reloads the application (initial load + 2).
+    expect(api.getApp).toHaveBeenCalledTimes(3);
   });
 
   it('copies the inbound email address and shows a success banner', async () => {

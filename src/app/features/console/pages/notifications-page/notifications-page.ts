@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin, startWith } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -68,6 +68,7 @@ export class NotificationsPage implements OnInit {
   private readonly confirm = inject(AppConfirmService);
   private readonly messages = inject(MessageService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().notifications);
 
@@ -220,6 +221,27 @@ export class NotificationsPage implements OnInit {
 
   ngOnInit(): void {
     this.refreshNotifications();
+    this.openCreateFromQuery();
+  }
+
+  /**
+   * `?create=1&app=<id>` (the application detail page's "Nouvelle notification")
+   * opens the create modal pre-selected on that app. The params are then dropped
+   * from the URL (replaceUrl) so a reload does not reopen the modal.
+   */
+  private openCreateFromQuery(): void {
+    const params = this.route.snapshot.queryParamMap;
+    if (params.get('create') !== '1') {
+      return;
+    }
+    const appId = Number(params.get('app'));
+    this.openCreateModal(Number.isInteger(appId) && appId > 0 ? appId : null);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { create: null, app: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   /**
@@ -286,15 +308,21 @@ export class NotificationsPage implements OnInit {
       });
   }
 
-  openCreateModal(): void {
+  /** `preselectedAppId` wins over the shell selection (deep link from an app). */
+  openCreateModal(preselectedAppId: number | null = null): void {
     this.error.set(null);
+    const appId = preselectedAppId ?? this.shell.selectedAppId();
     this.notificationForm.reset({
-      application_id: this.shell.selectedAppId() ? String(this.shell.selectedAppId()) : '',
+      application_id: appId ? String(appId) : '',
       device_ids: [],
       title: '',
       message: '',
       scheduled_for: null,
     });
+    if (preselectedAppId !== null) {
+      // An explicit choice: keep the shell-selection sync from overwriting it.
+      this.notificationForm.controls.application_id.markAsDirty();
+    }
     this.syncSelectedDevices();
     this.modalMode.set('create');
   }
@@ -504,8 +532,10 @@ export class NotificationsPage implements OnInit {
     return notification.id;
   }
 
+  // String values, like the forms' application_id controls: with numeric values
+  // p-select never matched the pre-selected app and showed the placeholder.
   readonly appOptions = computed(() =>
-    this.shell.apps().map((app) => ({ label: app.name, value: app.id })),
+    this.shell.apps().map((app) => ({ label: app.name, value: String(app.id) })),
   );
 
   readonly statusOptionsSelect = computed(() =>

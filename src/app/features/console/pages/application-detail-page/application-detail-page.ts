@@ -1,8 +1,10 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
@@ -22,7 +24,7 @@ import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { formatDateTimeFrBe, formatTimeLabel, weekdayShortLabel } from '../../../../core/utils/date-format.utils';
-import { coerceApiError } from '../../../../core/utils/api-error.utils';
+import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
 import { interpolate } from '../../../../core/utils/string.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
@@ -36,6 +38,28 @@ import { CodeExamples } from '../../components/code-examples/code-examples';
 import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel';
 import { SendTokensPanel } from '../../components/send-tokens-panel/send-tokens-panel';
 import { SettingsService } from '../../../../core/services/settings.service';
+import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
+import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
+
+/**
+ * The detail page's tabs, in display order. The active one lives in the `?tab=`
+ * query param (absent = overview) so a tab can be linked to, survives a reload,
+ * and the create flow / the old `/edit` route can land on a given tab.
+ */
+export const APP_DETAIL_TABS = [
+  'overview',
+  'recipients',
+  'sending',
+  'notifications',
+  'quiet-periods',
+  'settings',
+] as const;
+export type AppDetailTab = (typeof APP_DETAIL_TABS)[number];
+
+/** Unknown / missing values fall back to the overview. */
+export function normalizeAppDetailTab(value: unknown): AppDetailTab {
+  return APP_DETAIL_TABS.includes(value as AppDetailTab) ? (value as AppDetailTab) : 'overview';
+}
 
 @Component({
   selector: 'app-application-detail-page',
@@ -43,7 +67,11 @@ import { SettingsService } from '../../../../core/services/settings.service';
     CommonModule,
     RouterLink,
     DatePipe,
+    ReactiveFormsModule,
     AppAlert, ApiErrorMessagePipe,
+    ApplicationFormFields,
+    AvatarCropper,
+    TabsModule,
     PageHeader,
     ConsoleFactsTable,
     AppTokenReveal,
@@ -66,6 +94,7 @@ export class ApplicationDetailPage implements OnInit {
   private readonly confirm = inject(AppConfirmService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly settings = inject(SettingsService);
+  private readonly fb = inject(FormBuilder);
   readonly shell = inject(ConsoleShellService);
   readonly apiBaseUrl = computed(() => this.settings.apiBaseUrl());
   readonly copy = computed(() => this.consoleCopy.current().applicationDetail);
@@ -93,6 +122,39 @@ export class ApplicationDetailPage implements OnInit {
   readonly evicting = signal<number | null>(null);
   readonly aliasChecking = signal(false);
   readonly aliasStatus = signal<AliasStatus | null>(null);
+
+  readonly tabs = APP_DETAIL_TABS;
+  readonly activeTab = signal<AppDetailTab>('overview');
+  /** Settings tab: name/description save, logo, activation, deletion. */
+  readonly settingsForm = this.fb.nonNullable.group({
+    name: ['', [Validators.required, Validators.maxLength(120)]],
+    description: [''],
+  });
+  readonly saving = signal(false);
+  readonly logoPending = signal(false);
+  /** Activate/deactivate, legacy token regenerate/revoke and delete share one lock. */
+  readonly actionPending = signal(false);
+
+  readonly tabLabels = computed<Record<AppDetailTab, string>>(() => {
+    const tabs = this.copy().tabs;
+    return {
+      overview: tabs.overview,
+      recipients: tabs.recipients,
+      sending: tabs.sending,
+      notifications: tabs.notifications,
+      'quiet-periods': tabs.quietPeriods,
+      settings: tabs.settings,
+    };
+  });
+
+  /** Most recent `sent_at` among the notifications already loaded, if any. */
+  readonly lastSentAt = computed(() => {
+    const sent = this.notifications()
+      .map((notification) => notification.sent_at)
+      .filter((value): value is string => !!value)
+      .sort();
+    return sent.length ? sent[sent.length - 1] : null;
+  });
 
   // Maps an alias-status payload to a tag tone + message. provisioned is the
   // authoritative signal; null means the check could not run (Exchange off or
@@ -185,9 +247,39 @@ export class ApplicationDetailPage implements OnInit {
       this.banner.set(this.copy().errors.logo);
     }
     const cachedApplication = this.shell.apps().find((app) => app.id === appId) ?? null;
-    this.application.set(cachedApplication);
+    this.setApplication(cachedApplication);
     this.loadApplication(appId);
     this.loadRelated(appId);
+
+    // Follow `?tab=` (initial load, links, back/forward). Without a tab param, a
+    // token just minted for this app (create / regenerate) opens the Envoi tab,
+    // where the one-time reveal lives.
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const raw = params.get('tab');
+      if (raw === null && this.shell.lastGeneratedToken()?.appId === appId) {
+        this.activeTab.set('sending');
+        return;
+      }
+      this.activeTab.set(normalizeAppDetailTab(raw));
+    });
+  }
+
+  /**
+   * Switch tab and mirror it in the URL. replaceUrl: tabs are views of one page,
+   * so Back leaves the page instead of stepping through every tab visited.
+   */
+  selectTab(value: unknown): void {
+    const tab = normalizeAppDetailTab(value);
+    if (tab === this.activeTab()) {
+      return;
+    }
+    this.activeTab.set(tab);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab === 'overview' ? null : tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   retryRelated(): void {
@@ -290,12 +382,210 @@ export class ApplicationDetailPage implements OnInit {
     return this.futureNotifications().some((item) => item.id === notification.id);
   }
 
+  /** Header pencil: editing now lives in the Paramètres tab. */
   openEdit(): void {
+    this.selectTab('settings');
+  }
+
+  /** Opens the notifications page's create modal, pre-selected on this app. */
+  newNotification(): void {
     const app = this.application();
     if (!app) {
       return;
     }
-    void this.router.navigate(['/dashboard/applications', app.id, 'edit']);
+    void this.router.navigate(['/dashboard/notifications'], {
+      queryParams: { app: app.id, create: 1 },
+    });
+  }
+
+  saveSettings(): void {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+    if (this.settingsForm.invalid) {
+      this.settingsForm.markAllAsTouched();
+      return;
+    }
+
+    this.saving.set(true);
+    this.editError.set(null);
+    this.api
+      .updateApp(app.id, this.settingsForm.getRawValue())
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: (updated) => {
+          this.settingsForm.markAsPristine();
+          this.setApplication(updated);
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().settings.saved);
+          this.shell.loadShell(updated.id);
+        },
+        error: (err) => this.editError.set(coerceApiError(err)),
+      });
+  }
+
+  settingsFieldErrors(fieldName: string): string[] {
+    return errorFieldMessages(this.editError(), fieldName);
+  }
+
+  onLogoCropped(file: File): void {
+    const app = this.application();
+    if (!app || !file) {
+      return;
+    }
+
+    this.logoPending.set(true);
+    this.api
+      .uploadAppLogo(app.id, file)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
+      .subscribe({
+        next: (updated) => {
+          this.application.update((current) => (current ? { ...current, logo: updated.logo } : current));
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().logo.updated);
+          this.shell.loadShell(app.id);
+        },
+        error: () => {
+          this.bannerTone.set('danger');
+          this.banner.set(this.copy().errors.logo);
+        },
+      });
+  }
+
+  removeLogo(): void {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+
+    this.logoPending.set(true);
+    this.api
+      .deleteAppLogo(app.id)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
+      .subscribe({
+        next: () => {
+          this.application.update((current) => (current ? { ...current, logo: null } : current));
+          this.bannerTone.set('success');
+          this.banner.set(this.copy().logo.removed);
+          this.shell.loadShell(app.id);
+        },
+        error: () => {
+          this.bannerTone.set('danger');
+          this.banner.set(this.copy().errors.logo);
+        },
+      });
+  }
+
+  toggleState(): void {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+
+    this.actionPending.set(true);
+    this.shell.toggleAppState(
+      app,
+      () => {
+        this.actionPending.set(false);
+        this.application.update((current) => (current ? { ...current, is_active: !app.is_active } : current));
+        this.bannerTone.set('success');
+        this.banner.set(
+          app.is_active ? this.applicationsCopy().alerts.deactivated : this.applicationsCopy().alerts.activated,
+        );
+      },
+      () => {
+        this.actionPending.set(false);
+        this.bannerTone.set('danger');
+        this.banner.set(this.applicationsCopy().errors.toggle);
+      },
+    );
+  }
+
+  /** Legacy application token: mint a new one (revealed once in this tab). */
+  async regenerateLegacyToken(): Promise<void> {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+    const confirmed = await this.confirm.ask({
+      message: interpolate(this.applicationsCopy().confirmRegenerate, { name: app.name }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    this.actionPending.set(true);
+    this.shell.regenerateToken(
+      app,
+      () => {
+        this.actionPending.set(false);
+        this.bannerTone.set('success');
+        this.banner.set(this.applicationsCopy().alerts.regenerated);
+        this.loadApplication(app.id);
+      },
+      () => {
+        this.actionPending.set(false);
+        this.bannerTone.set('danger');
+        this.banner.set(this.applicationsCopy().errors.regenerate);
+      },
+    );
+  }
+
+  async revokeLegacyToken(): Promise<void> {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+    const confirmed = await this.confirm.ask({
+      message: interpolate(this.applicationsCopy().confirmRevoke, { name: app.name }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    this.actionPending.set(true);
+    this.shell.revokeToken(
+      app,
+      () => {
+        this.actionPending.set(false);
+        this.bannerTone.set('success');
+        this.banner.set(this.applicationsCopy().alerts.revoked);
+        this.loadApplication(app.id);
+      },
+      () => {
+        this.actionPending.set(false);
+        this.bannerTone.set('danger');
+        this.banner.set(this.applicationsCopy().errors.revoke);
+      },
+    );
+  }
+
+  /** Danger zone: delete after confirmation, then back to the list. */
+  async deleteApplication(): Promise<void> {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+    const confirmed = await this.confirm.ask({
+      message: interpolate(this.applicationsCopy().confirmDelete, { name: app.name }),
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    this.actionPending.set(true);
+    this.editError.set(null);
+    this.api
+      .deleteApp(app.id)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.actionPending.set(false)))
+      .subscribe({
+        next: () => {
+          this.shell.loadShell();
+          void this.router.navigate(['/dashboard/applications']);
+        },
+        error: (err) => this.editError.set(coerceApiError(err)),
+      });
   }
 
   async regenerateInboundEmail(): Promise<void> {
@@ -382,7 +672,7 @@ export class ApplicationDetailPage implements OnInit {
       .getApp(appId)
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (application) => this.application.set(application),
+        next: (application) => this.setApplication(application),
         error: (error) => this.error.set(coerceApiError(error)),
       });
   }
@@ -417,6 +707,14 @@ export class ApplicationDetailPage implements OnInit {
           this.relatedError.set(coerceApiError(error));
         },
       });
+  }
+
+  /** Set the application and re-seed the settings form, unless the user is mid-edit. */
+  private setApplication(app: ApplicationRead | null): void {
+    this.application.set(app);
+    if (app && !this.settingsForm.dirty) {
+      this.settingsForm.reset({ name: app.name, description: app.description });
+    }
   }
 
   private formatDateTime(value: string | null): string {

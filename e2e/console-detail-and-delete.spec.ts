@@ -80,16 +80,35 @@ test.beforeEach(async ({ page }) => {
 test('application detail view renders linked devices and notifications', async ({ page }) => {
   await page.goto('/dashboard/applications/10');
 
+  // Aperçu: status facts + counters.
   await expect(page.getByRole('heading', { name: 'PushIT Mobile' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Statut' })).toBeVisible();
+  await expect(page.getByTestId('counter-devices')).toContainText('2');
+  await expect(page.getByTestId('counter-notifications')).toContainText('1');
+
+  await page.getByRole('tab', { name: 'Destinataires' }).click();
   await expect(page.getByRole('heading', { name: 'Devices' })).toBeVisible();
   await expect(page.getByText('iPhone Marie')).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Notifications' }).click();
   await expect(page.getByRole('heading', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByText('Promo flash')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Statut' })).toBeVisible();
+});
+
+test('"Nouvelle notification" opens the create modal pre-selected on the app', async ({ page }) => {
+  await page.goto('/dashboard/applications/10?tab=notifications');
+
+  await page.getByRole('button', { name: 'Nouvelle notification' }).click();
+
+  // The one-shot create/app params are consumed and dropped from the URL.
+  await expect(page).toHaveURL(/\/dashboard\/notifications$/);
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('PushIT Mobile')).toBeVisible();
 });
 
 test('the enrolment block shows the code and warns that rotating evicts nobody', async ({ page }) => {
-  await page.goto('/dashboard/applications/10');
+  await page.goto('/dashboard/applications/10?tab=recipients');
 
   const panel = page.getByTestId('enrolment-panel');
   await expect(panel.getByTestId('enrolment-code')).toHaveText('apk_Ab12Cd34Ef56');
@@ -103,7 +122,7 @@ test('the enrolment block shows the code and warns that rotating evicts nobody',
 });
 
 test('a send token is shown once at creation, then only behind the password', async ({ page }) => {
-  await page.goto('/dashboard/applications/10');
+  await page.goto('/dashboard/applications/10?tab=sending');
 
   const panel = page.getByTestId('send-tokens-panel');
   await panel.getByPlaceholder('prod, script de nuit, ...').fill('prod');
@@ -123,7 +142,7 @@ test('a send token is shown once at creation, then only behind the password', as
 });
 
 test('the owner evicts a subscriber from the application', async ({ page }) => {
-  await page.goto('/dashboard/applications/10');
+  await page.goto('/dashboard/applications/10?tab=recipients');
 
   const deviceRow = page.locator('tr', { hasText: 'iPhone Marie' });
   await expect(deviceRow).toBeVisible();
@@ -147,19 +166,41 @@ test('notification detail view renders targeted devices', async ({ page }) => {
   await expect(page.getByText('Pixel QA')).toBeVisible();
 });
 
-test('application deletion uses the shared confirmation dialog', async ({ page }) => {
+test('the applications list offers three row actions and opens the app on row click', async ({ page }) => {
   await page.goto('/dashboard/applications');
 
-  const appRow = page.locator('tr', { hasText: 'PushIT Mobile' });
+  const appRow = page.getByTestId('app-row').filter({ hasText: 'PushIT Mobile' });
   await expect(appRow).toBeVisible();
-  await appRow.locator('button').last().click();
+  await expect(appRow.locator('.console-icon-actions button')).toHaveCount(3);
+  await expect(appRow.getByRole('button', { name: 'QR code' })).toBeVisible();
+  await expect(appRow.getByRole('button', { name: 'Désactiver' })).toBeVisible();
+  await expect(appRow.getByRole('button', { name: "Ouvrir l'application" })).toBeVisible();
+
+  // The QR action opens the enrolment dialog without navigating.
+  await appRow.getByRole('button', { name: 'QR code' }).click();
+  await expect(page.getByRole('dialog', { name: "QR code d'enrôlement" })).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard\/applications$/);
+  await page.keyboard.press('Escape');
+
+  // Clicking the row (outside the name link and the actions) opens the app.
+  await appRow.locator('td').nth(1).click();
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
+});
+
+test('application deletion lives in the Paramètres danger zone', async ({ page }) => {
+  await page.goto('/dashboard/applications/10?tab=settings');
+
+  const danger = page.getByTestId('danger-zone');
+  await expect(danger.getByRole('heading', { name: 'Zone de danger' })).toBeVisible();
+  await danger.getByRole('button', { name: "Supprimer l'application" }).click();
 
   await expect(page.getByRole('dialog', { name: 'Confirmation' })).toBeVisible();
   await expect(page.getByText('Supprimer l\'application "PushIT Mobile" ?')).toBeVisible();
   await page.getByRole('button', { name: 'Confirmer' }).click();
 
-  await expect(page.getByText('Application PushIT Mobile supprimée.')).toBeVisible();
-  await expect(page.locator('tr', { hasText: 'PushIT Mobile Application mobile' })).toHaveCount(0);
+  // Back on the list, without the deleted application.
+  await expect(page).toHaveURL(/\/dashboard\/applications$/);
+  await expect(page.getByTestId('app-row')).toHaveCount(0);
 });
 
 test("devices list offers edit/delete only on the user's own devices", async ({ page }) => {

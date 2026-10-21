@@ -43,258 +43,436 @@
           (onClick)="retryRelated()"
         />
       }
-      <div class="console-detail-grid">
-        @if (stillSendsWithLegacyToken()) {
-          <article class="console-detail-panel console-detail-panel--wide">
-            <app-alert [message]="copy().legacyWarning" tone="danger" />
-          </article>
-        }
 
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header">
-            <h3>{{ copy().enrolmentTitle }}</h3>
-          </div>
-          <app-enrolment-panel [app]="app" (rotated)="onEnrolmentCodeRotated($event)" />
-        </article>
-
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header">
-            <h3>{{ copy().sendTokensTitle }}</h3>
-          </div>
-          <app-send-tokens-panel [app]="app" />
-        </article>
-
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header">
-            <h3>{{ copy().examplesTitle }}</h3>
-          </div>
-          <app-code-examples [apiBaseUrl]="apiBaseUrl()" />
-        </article>
-
-        @if (revealToken(); as token) {
-          <article class="console-detail-panel console-detail-panel--wide application-detail-token">
-            <div class="application-detail-section__header">
-              <h3>{{ applicationsCopy().qr.title }}</h3>
-            </div>
-            <p class="console-table__subtext">{{ applicationsCopy().alerts.created }}</p>
-            <app-token-reveal [app]="app" [token]="token" />
-          </article>
-        }
-
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header application-detail-email__header">
-            <div>
-              <h3>{{ copy().inboundEmailTitle }}</h3>
-              <p class="console-table__subtext">{{ copy().inboundEmailHelp.intro }}</p>
-            </div>
-            <div class="application-detail-email__actions">
-              <p-button
-                icon="pi pi-copy"
-                [label]="copy().inboundEmailCopy"
-                size="small"
-                (onClick)="copyInboundEmail(app.inbound_email_address)"
-              />
-              <p-button
-                icon="pi pi-refresh"
-                severity="warn"
-                size="small"
-                [outlined]="true"
-                [label]="emailRegenerating() ? copy().regenerateEmail.pending : copy().regenerateEmail.button"
-                [loading]="emailRegenerating()"
-                (onClick)="regenerateInboundEmail()"
-              />
-            </div>
-          </div>
-          <div class="application-detail-email__address">
-            <span class="application-detail-email__label">{{ copy().inboundEmailLabel }}</span>
-            <code>{{ app.inbound_email_address }}</code>
-          </div>
-          <ul class="application-detail-email__help">
-            <li>{{ copy().inboundEmailHelp.subject }}</li>
-            <li>{{ copy().inboundEmailHelp.body }}</li>
-            <li>{{ copy().inboundEmailHelp.schedule }}</li>
-            <li>{{ copy().inboundEmailHelp.sender }}</li>
-          </ul>
-
-          <div class="application-detail-email__alias">
-            <div class="application-detail-section__header">
-              <h4>{{ copy().aliasStatus.title }}</h4>
-              <p-button
-                icon="pi pi-verified"
-                size="small"
-                severity="secondary"
-                [outlined]="true"
-                [label]="aliasChecking() ? copy().aliasStatus.pending : copy().aliasStatus.button"
-                [loading]="aliasChecking()"
-                (onClick)="verifyAlias()"
-              />
-            </div>
-            @if (aliasStatusView(); as alias) {
-              <div class="application-detail-email__alias-result">
-                <p-tag [value]="alias.label" [severity]="alias.severity" />
-                @if (alias.hint) {
-                  <p class="console-table__subtext">{{ alias.hint }}</p>
-                }
-              </div>
-            }
-          </div>
-        </article>
-
-        <article class="console-detail-panel console-detail-panel--wide">
-          <h3>{{ copy().descriptionTitle }}</h3>
-          <p>{{ app.description || copy().descriptionEmpty }}</p>
-        </article>
-
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header">
-            <h3>{{ copy().devicesTitle }}</h3>
-            <p-tag [value]="devices().length + ' devices'" severity="info" />
-          </div>
-          @if (devices().length) {
-            <p-table [value]="devices()" styleClass="p-datatable-sm application-detail-table">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>{{ copy().table.name }}</th>
-                  <th>{{ copy().table.platform }}</th>
-                  <th>{{ copy().table.pushStatus }}</th>
-                  <th>{{ copy().table.lastActivity }}</th>
-                  <th class="console-table__actions">{{ copy().table.actions }}</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-device>
-                <tr>
-                  <td class="console-table__name">
-                    <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
-                      <strong>{{ device.device_name }}</strong>
-                    </a>
-                  </td>
-                  <td>{{ device.platform }}</td>
-                  <td>
-                    <p-tag [value]="device.push_token_status" [severity]="deviceSeverity(device.push_token_status)" />
-                  </td>
-                  <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.never }}</td>
-                  <td class="console-table__actions">
-                    <div class="console-icon-actions">
-                      <p-button
-                        icon="pi pi-eye"
-                        [text]="true"
-                        [rounded]="true"
-                        [ariaLabel]="copy().actions.view"
-                        [pTooltip]="copy().actions.view"
-                        tooltipPosition="top"
-                        [routerLink]="['/dashboard/devices', device.id]"
-                      />
-                      <p-button
-                        icon="pi pi-user-minus"
-                        severity="danger"
-                        [text]="true"
-                        [rounded]="true"
-                        [loading]="evicting() === device.id"
-                        [ariaLabel]="copy().evict.button"
-                        [pTooltip]="copy().evict.button"
-                        tooltipPosition="top"
-                        (onClick)="evictDevice(device)"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-            <p class="console-table__subtext">{{ copy().evict.hint }}</p>
-          } @else {
-            <p class="console-muted">{{ copy().devicesEmpty }}</p>
+      <p-tabs [value]="activeTab()" (valueChange)="selectTab($event)" [scrollable]="true" class="application-detail-tabs">
+        <p-tablist>
+          @for (tab of tabs; track tab) {
+            <p-tab [value]="tab" [attr.data-testid]="'app-tab-' + tab">{{ tabLabels()[tab] }}</p-tab>
           }
-        </article>
+        </p-tablist>
 
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header">
-            <h3>{{ copy().notificationsTitle }}</h3>
-            <p-tag [value]="(notifications().length + futureNotifications().length) + ' notifications'" severity="contrast" />
-          </div>
-          @if (notifications().length || futureNotifications().length) {
-            <p-table
-              [value]="futureNotifications().concat(notifications())"
-              styleClass="p-datatable-sm application-detail-table"
-            >
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>{{ copy().table.title }}</th>
-                  <th>{{ copy().table.type }}</th>
-                  <th>{{ copy().table.status }}</th>
-                  <th>{{ copy().table.effective }}</th>
-                  <th class="console-table__actions">{{ copy().table.actions }}</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-notification>
-                <tr>
-                  <td class="console-table__name">
-                    <a class="console-table__link" [routerLink]="['/dashboard/notifications', notification.id]">
-                      <strong>{{ notification.title }}</strong>
-                    </a>
-                  </td>
-                  <td>{{ isFutureNotification(notification) ? copy().notificationTypes.future : copy().notificationTypes.history }}</td>
-                  <td>
-                    <p-tag [value]="notification.status" [severity]="notificationSeverity(notification.status)" />
-                  </td>
-                  <td>{{ notification.effective_scheduled_for ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.immediate }}</td>
-                  <td class="console-table__actions">
-                    <div class="console-icon-actions">
-                      <p-button
-                        icon="pi pi-eye"
-                        [text]="true"
-                        [rounded]="true"
-                        [ariaLabel]="copy().actions.view"
-                        [pTooltip]="copy().actions.view"
-                        tooltipPosition="top"
-                        [routerLink]="['/dashboard/notifications', notification.id]"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          } @else {
-            <p class="console-muted">{{ copy().notificationsEmpty }}</p>
-          }
-        </article>
+        <p-tabpanels>
+          <!-- Aperçu -->
+          <p-tabpanel value="overview">
+            <div class="console-detail-grid">
+              @if (stillSendsWithLegacyToken()) {
+                <article class="console-detail-panel console-detail-panel--wide">
+                  <app-alert [message]="copy().legacyWarning" tone="danger" />
+                </article>
+              }
 
-        <article class="console-detail-panel console-detail-panel--wide">
-          <div class="application-detail-section__header">
-            <h3>{{ copy().quietPeriodsTitle }}</h3>
-            <p-tag [value]="quietPeriods().length + ' périodes'" severity="warn" />
-          </div>
-          @if (quietPeriods().length) {
-            <div class="application-detail-list">
-              @for (quietPeriod of quietPeriods(); track quietPeriod.id) {
-                <div class="application-detail-list__item">
-                  <div>
-                    <strong>{{ quietPeriod.name }}</strong>
-                    <p class="console-table__subtext">{{ quietPeriodScheduleLabel(quietPeriod) }}</p>
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-counters">
+                  <div class="application-detail-counter" data-testid="counter-devices">
+                    <span class="application-detail-counter__label">{{ copy().counters.devices }}</span>
+                    <strong>{{ devices().length }}</strong>
                   </div>
-                  <div class="application-detail-list__meta">
-                    <p-tag
-                      [value]="quietPeriod.period_type === 'ONCE' ? copy().statusLabels.once : copy().statusLabels.recurring"
-                      [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
-                    />
-                    <p-tag [value]="quietPeriod.is_active ? 'active' : 'inactive'" [severity]="quietPeriod.is_active ? 'success' : 'secondary'" />
+                  <div class="application-detail-counter" data-testid="counter-notifications">
+                    <span class="application-detail-counter__label">{{ copy().counters.notifications }}</span>
+                    <strong>{{ notifications().length + futureNotifications().length }}</strong>
+                  </div>
+                  <div class="application-detail-counter" data-testid="counter-last-send">
+                    <span class="application-detail-counter__label">{{ copy().counters.lastSend }}</span>
+                    <strong>{{ lastSentAt() ? (lastSentAt() | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.never }}</strong>
                   </div>
                 </div>
-              }
-            </div>
-          } @else {
-            <p class="console-muted">{{ copy().quietPeriodsEmpty }}</p>
-          }
-        </article>
+              </article>
 
-        <article class="console-detail-panel console-detail-panel--wide">
-          <h3>{{ copy().statusTitle }}</h3>
-          <app-console-facts-table [items]="applicationFactsComputed()" styleClass="p-datatable-sm application-detail-table" />
-        </article>
-      </div>
+              <article class="console-detail-panel console-detail-panel--wide">
+                <h3>{{ copy().descriptionTitle }}</h3>
+                <p>{{ app.description || copy().descriptionEmpty }}</p>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <h3>{{ copy().statusTitle }}</h3>
+                <app-console-facts-table [items]="applicationFactsComputed()" styleClass="p-datatable-sm application-detail-table" />
+              </article>
+            </div>
+          </p-tabpanel>
+
+          <!-- Destinataires -->
+          <p-tabpanel value="recipients">
+            <div class="console-detail-grid">
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().enrolmentTitle }}</h3>
+                </div>
+                <app-enrolment-panel [app]="app" (rotated)="onEnrolmentCodeRotated($event)" />
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().devicesTitle }}</h3>
+                  <p-tag [value]="devices().length + ' devices'" severity="info" />
+                </div>
+                @if (devices().length) {
+                  <p-table [value]="devices()" styleClass="p-datatable-sm application-detail-table">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>{{ copy().table.name }}</th>
+                        <th>{{ copy().table.platform }}</th>
+                        <th>{{ copy().table.pushStatus }}</th>
+                        <th>{{ copy().table.lastActivity }}</th>
+                        <th class="console-table__actions">{{ copy().table.actions }}</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-device>
+                      <tr>
+                        <td class="console-table__name">
+                          <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
+                            <strong>{{ device.device_name }}</strong>
+                          </a>
+                        </td>
+                        <td>{{ device.platform }}</td>
+                        <td>
+                          <p-tag [value]="device.push_token_status" [severity]="deviceSeverity(device.push_token_status)" />
+                        </td>
+                        <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.never }}</td>
+                        <td class="console-table__actions">
+                          <div class="console-icon-actions">
+                            <p-button
+                              icon="pi pi-eye"
+                              [text]="true"
+                              [rounded]="true"
+                              [ariaLabel]="copy().actions.view"
+                              [pTooltip]="copy().actions.view"
+                              tooltipPosition="top"
+                              [routerLink]="['/dashboard/devices', device.id]"
+                            />
+                            <p-button
+                              icon="pi pi-user-minus"
+                              severity="danger"
+                              [text]="true"
+                              [rounded]="true"
+                              [loading]="evicting() === device.id"
+                              [ariaLabel]="copy().evict.button"
+                              [pTooltip]="copy().evict.button"
+                              tooltipPosition="top"
+                              (onClick)="evictDevice(device)"
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  <p class="console-table__subtext">{{ copy().evict.hint }}</p>
+                } @else {
+                  <p class="console-muted">{{ copy().devicesEmpty }}</p>
+                }
+              </article>
+            </div>
+          </p-tabpanel>
+
+          <!-- Envoi -->
+          <p-tabpanel value="sending">
+            <div class="console-detail-grid">
+              @if (revealToken(); as token) {
+                <article class="console-detail-panel console-detail-panel--wide application-detail-token">
+                  <div class="application-detail-section__header">
+                    <h3>{{ applicationsCopy().qr.title }}</h3>
+                  </div>
+                  <p class="console-table__subtext">{{ applicationsCopy().alerts.created }}</p>
+                  <app-token-reveal [app]="app" [token]="token" />
+                </article>
+              }
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().sendTokensTitle }}</h3>
+                </div>
+                <app-send-tokens-panel [app]="app" />
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide" data-testid="legacy-token-block">
+                <div class="application-detail-section__header application-detail-email__header">
+                  <div>
+                    <h3>{{ copy().legacyToken.title }}</h3>
+                    <p class="console-table__subtext">{{ copy().legacyToken.hint }}</p>
+                  </div>
+                  <div class="application-detail-email__actions">
+                    <p-button
+                      icon="pi pi-refresh"
+                      severity="warn"
+                      size="small"
+                      [outlined]="true"
+                      [label]="applicationsCopy().actions.regenerate"
+                      [disabled]="actionPending()"
+                      (onClick)="regenerateLegacyToken()"
+                    />
+                    <p-button
+                      icon="pi pi-ban"
+                      severity="danger"
+                      size="small"
+                      [outlined]="true"
+                      [label]="applicationsCopy().actions.revoke"
+                      [disabled]="actionPending()"
+                      (onClick)="revokeLegacyToken()"
+                    />
+                  </div>
+                </div>
+                <div class="application-detail-email__address">
+                  <span class="application-detail-email__label">{{ copy().facts.tokenPrefix }}</span>
+                  <code>{{ app.app_token_prefix }}</code>
+                </div>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header application-detail-email__header">
+                  <div>
+                    <h3>{{ copy().inboundEmailTitle }}</h3>
+                    <p class="console-table__subtext">{{ copy().inboundEmailHelp.intro }}</p>
+                  </div>
+                  <div class="application-detail-email__actions">
+                    <p-button
+                      icon="pi pi-copy"
+                      [label]="copy().inboundEmailCopy"
+                      size="small"
+                      (onClick)="copyInboundEmail(app.inbound_email_address)"
+                    />
+                    <p-button
+                      icon="pi pi-refresh"
+                      severity="warn"
+                      size="small"
+                      [outlined]="true"
+                      [label]="emailRegenerating() ? copy().regenerateEmail.pending : copy().regenerateEmail.button"
+                      [loading]="emailRegenerating()"
+                      (onClick)="regenerateInboundEmail()"
+                    />
+                  </div>
+                </div>
+                <div class="application-detail-email__address">
+                  <span class="application-detail-email__label">{{ copy().inboundEmailLabel }}</span>
+                  <code>{{ app.inbound_email_address }}</code>
+                </div>
+                <ul class="application-detail-email__help">
+                  <li>{{ copy().inboundEmailHelp.subject }}</li>
+                  <li>{{ copy().inboundEmailHelp.body }}</li>
+                  <li>{{ copy().inboundEmailHelp.schedule }}</li>
+                  <li>{{ copy().inboundEmailHelp.sender }}</li>
+                </ul>
+
+                <div class="application-detail-email__alias">
+                  <div class="application-detail-section__header">
+                    <h4>{{ copy().aliasStatus.title }}</h4>
+                    <p-button
+                      icon="pi pi-verified"
+                      size="small"
+                      severity="secondary"
+                      [outlined]="true"
+                      [label]="aliasChecking() ? copy().aliasStatus.pending : copy().aliasStatus.button"
+                      [loading]="aliasChecking()"
+                      (onClick)="verifyAlias()"
+                    />
+                  </div>
+                  @if (aliasStatusView(); as alias) {
+                    <div class="application-detail-email__alias-result">
+                      <p-tag [value]="alias.label" [severity]="alias.severity" />
+                      @if (alias.hint) {
+                        <p class="console-table__subtext">{{ alias.hint }}</p>
+                      }
+                    </div>
+                  }
+                </div>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().examplesTitle }}</h3>
+                </div>
+                <app-code-examples [apiBaseUrl]="apiBaseUrl()" />
+              </article>
+            </div>
+          </p-tabpanel>
+
+          <!-- Notifications -->
+          <p-tabpanel value="notifications">
+            <div class="console-detail-grid">
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().notificationsTitle }}</h3>
+                  <div class="application-detail-email__actions">
+                    <p-tag [value]="(notifications().length + futureNotifications().length) + ' notifications'" severity="contrast" />
+                    <p-button
+                      icon="pi pi-plus"
+                      severity="success"
+                      size="small"
+                      [label]="copy().newNotification"
+                      (onClick)="newNotification()"
+                    />
+                  </div>
+                </div>
+                @if (notifications().length || futureNotifications().length) {
+                  <p-table
+                    [value]="futureNotifications().concat(notifications())"
+                    styleClass="p-datatable-sm application-detail-table"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>{{ copy().table.title }}</th>
+                        <th>{{ copy().table.type }}</th>
+                        <th>{{ copy().table.status }}</th>
+                        <th>{{ copy().table.effective }}</th>
+                        <th class="console-table__actions">{{ copy().table.actions }}</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-notification>
+                      <tr>
+                        <td class="console-table__name">
+                          <a class="console-table__link" [routerLink]="['/dashboard/notifications', notification.id]">
+                            <strong>{{ notification.title }}</strong>
+                          </a>
+                        </td>
+                        <td>{{ isFutureNotification(notification) ? copy().notificationTypes.future : copy().notificationTypes.history }}</td>
+                        <td>
+                          <p-tag [value]="notification.status" [severity]="notificationSeverity(notification.status)" />
+                        </td>
+                        <td>{{ notification.effective_scheduled_for ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.immediate }}</td>
+                        <td class="console-table__actions">
+                          <div class="console-icon-actions">
+                            <p-button
+                              icon="pi pi-eye"
+                              [text]="true"
+                              [rounded]="true"
+                              [ariaLabel]="copy().actions.view"
+                              [pTooltip]="copy().actions.view"
+                              tooltipPosition="top"
+                              [routerLink]="['/dashboard/notifications', notification.id]"
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                } @else {
+                  <p class="console-muted">{{ copy().notificationsEmpty }}</p>
+                }
+              </article>
+            </div>
+          </p-tabpanel>
+
+          <!-- Périodes blanches -->
+          <p-tabpanel value="quiet-periods">
+            <div class="console-detail-grid">
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().quietPeriodsTitle }}</h3>
+                  <p-tag [value]="quietPeriods().length + ' périodes'" severity="warn" />
+                </div>
+                @if (quietPeriods().length) {
+                  <div class="application-detail-list">
+                    @for (quietPeriod of quietPeriods(); track quietPeriod.id) {
+                      <div class="application-detail-list__item">
+                        <div>
+                          <strong>{{ quietPeriod.name }}</strong>
+                          <p class="console-table__subtext">{{ quietPeriodScheduleLabel(quietPeriod) }}</p>
+                        </div>
+                        <div class="application-detail-list__meta">
+                          <p-tag
+                            [value]="quietPeriod.period_type === 'ONCE' ? copy().statusLabels.once : copy().statusLabels.recurring"
+                            [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
+                          />
+                          <p-tag [value]="quietPeriod.is_active ? 'active' : 'inactive'" [severity]="quietPeriod.is_active ? 'success' : 'secondary'" />
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="console-muted">{{ copy().quietPeriodsEmpty }}</p>
+                }
+              </article>
+            </div>
+          </p-tabpanel>
+
+          <!-- Paramètres -->
+          <p-tabpanel value="settings">
+            <div class="console-detail-grid">
+              <article class="console-detail-panel console-detail-panel--wide">
+                <h3>{{ copy().settings.detailsTitle }}</h3>
+                <form class="console-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()" data-testid="app-settings-form">
+                  <app-application-form-fields
+                    [form]="settingsForm"
+                    [nameMessages]="settingsFieldErrors('name')"
+                    [descriptionMessages]="settingsFieldErrors('description')"
+                  />
+
+                  @if (editError()?.detail) {
+                    <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
+                  }
+
+                  <div class="application-detail-settings__actions">
+                    <p-button
+                      type="submit"
+                      icon="pi pi-check"
+                      [label]="saving() ? copy().dialog.saving : copy().dialog.save"
+                      [loading]="saving()"
+                    />
+                  </div>
+                </form>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="app-logo-field">
+                  <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+                  <div class="app-logo-field__row">
+                    @if (app.logo) {
+                      <img class="app-logo-preview" [src]="app.logo" alt="" />
+                    } @else {
+                      <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+                    }
+                    @if (app.logo) {
+                      <p-button
+                        [label]="copy().logo.remove"
+                        [text]="true"
+                        severity="danger"
+                        [disabled]="logoPending()"
+                        (onClick)="removeLogo()"
+                      />
+                    }
+                  </div>
+                  <app-avatar-cropper
+                    [labels]="copy().logo"
+                    [pending]="logoPending()"
+                    (cropped)="onLogoCropped($event)"
+                  />
+                </div>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <div>
+                    <h3>{{ copy().settings.stateTitle }}</h3>
+                    <p class="console-table__subtext">{{ copy().settings.stateHint }}</p>
+                  </div>
+                  <p-button
+                    [icon]="app.is_active ? 'pi pi-pause' : 'pi pi-play'"
+                    [severity]="app.is_active ? 'secondary' : 'success'"
+                    [outlined]="true"
+                    [label]="app.is_active ? applicationsCopy().actions.deactivate : applicationsCopy().actions.activate"
+                    [disabled]="actionPending()"
+                    (onClick)="toggleState()"
+                  />
+                </div>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide application-detail-danger" data-testid="danger-zone">
+                <div class="application-detail-section__header">
+                  <div>
+                    <h3>{{ copy().danger.title }}</h3>
+                    <p class="console-table__subtext">{{ copy().danger.hint }}</p>
+                  </div>
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [label]="copy().danger.delete"
+                    [disabled]="actionPending()"
+                    (onClick)="deleteApplication()"
+                  />
+                </div>
+              </article>
+            </div>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
     }
   </section>
-
-  @if (editError()?.detail) {
-    <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
-  }
 </section>

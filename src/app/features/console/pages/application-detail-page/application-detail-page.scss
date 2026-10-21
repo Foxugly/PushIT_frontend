@@ -151,3 +151,48 @@
     justify-content: flex-start;
   }
 }
+
+.application-detail-tabs {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.application-detail-counters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+
+.application-detail-counter {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(16, 185, 129, 0.12);
+  border-radius: 14px;
+  background: rgba(246, 249, 255, 0.95);
+}
+
+.application-detail-counter__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.application-detail-counter strong {
+  font-size: 1.35rem;
+}
+
+.application-detail-settings__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.application-detail-danger {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.application-detail-danger h3 {
+  color: var(--danger-text);
+}

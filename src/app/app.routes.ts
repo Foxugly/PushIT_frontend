@@ -1,6 +1,16 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { RedirectFunction, Router, Routes } from '@angular/router';
 
 import { adminGuard, authGuard, guestGuard, superuserGuard } from './core/guards/auth.guard';
+
+/**
+ * `applications/:appId/edit` predates the tabbed detail page: editing now lives
+ * in its Paramètres tab, so old links land there.
+ */
+export const applicationEditRedirect: RedirectFunction = ({ params }) =>
+  inject(Router).createUrlTree(['/dashboard/applications', params['appId']], {
+    queryParams: { tab: 'settings' },
+  });
 
 export const routes: Routes = [
   {
@@ -130,11 +140,7 @@ export const routes: Routes = [
       },
       {
         path: 'applications/:appId/edit',
-        data: { titleKey: 'console.sections.0.label' },
-        loadComponent: () =>
-          import('./features/console/pages/application-form-page/application-form-page').then(
-            (m) => m.ApplicationFormPage,
-          ),
+        redirectTo: applicationEditRedirect,
       },
       {
         path: 'applications/:appId',
