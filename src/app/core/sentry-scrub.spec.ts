@@ -9,6 +9,15 @@ describe('scrubUrl', () => {
     ['/auth/magic-link/s3cr3t#frag', `/auth/magic-link/${FILTERED}#frag`],
     ['/auth?uid=MQ&token=abc&code=42&lang=fr', `/auth?uid=${FILTERED}&token=${FILTERED}&code=${FILTERED}&lang=fr`],
     ['/dashboard/applications', '/dashboard/applications'],
+    // Router error text: no leading slash.
+    ["URL Segment: 'reset-password/MQ/abc-123/x'", `URL Segment: 'reset-password/${FILTERED}'`],
+    ['confirm-email/MQ/tok', `confirm-email/${FILTERED}`],
+    // API endpoints carry the token in the body: their names stay readable.
+    ['https://pushit-api.foxugly.com/api/v1/auth/magic-link/verify/', 'https://pushit-api.foxugly.com/api/v1/auth/magic-link/verify/'],
+    ['/api/v1/auth/magic-link/request/?x=1', '/api/v1/auth/magic-link/request/?x=1'],
+    ['/auth/reset-password/', '/auth/reset-password/'],
+    // ...but a token that merely starts like one is still masked.
+    ['/auth/magic-link/verifyABC', `/auth/magic-link/${FILTERED}`],
   ])('%s', (input, expected) => {
     expect(scrubUrl(input)).toBe(expected);
   });
@@ -47,6 +56,33 @@ describe('scrubEvent', () => {
     expect(serialized).not.toContain('MQ/tok');
     expect(out.transaction).toBe(`/reset-password/${FILTERED}`);
     expect(out.request?.query_string).toBe(`token=${FILTERED}&lang=fr`);
+  });
+
+  it('scrubs error texts: message, logentry, exception values and the url tag', () => {
+    const event = {
+      message: 'Navigation to /auth/magic-link/zzz failed',
+      logentry: { message: 'GET /reset-password/MQ/abc-123?token=t0k' },
+      exception: {
+        values: [
+          { type: 'Error', value: "NG04002: Cannot match any routes. URL Segment: 'confirm-email/MQ/tok-1/x'" },
+          { type: 'HttpErrorResponse', value: 'Http failure response for https://x/y?code=99: 400 Bad Request' },
+          { type: 'Error' },
+        ],
+      },
+      tags: { url: 'https://pushit.foxugly.com/auth/magic-link/zzz' },
+      request: { headers: { referer: 'https://pushit.foxugly.com/reset-password/MQ/abc-123' } },
+    } as unknown as Event;
+
+    const out = scrubEvent(event);
+    const serialized = JSON.stringify(out);
+
+    for (const secret of ['zzz', 'abc-123', 't0k', 'tok-1', 'code=99']) {
+      expect(serialized).not.toContain(secret);
+    }
+    expect(out.exception?.values?.[1].value).toBe(
+      `Http failure response for https://x/y?code=${FILTERED} 400 Bad Request`,
+    );
+    expect(out.exception?.values?.[2]).toEqual({ type: 'Error' });
   });
 
   it('keeps an event without URLs intact', () => {

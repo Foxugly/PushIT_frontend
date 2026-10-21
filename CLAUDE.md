@@ -144,7 +144,7 @@ repli hors CI). Le build prod émet des source maps **hidden** ; `deploy.yml` le
 envoie à Sentry (org `foxugly-srl`, projet `pushit-frontend`, `de.sentry.io`) **si**
 le secret `SENTRY_AUTH_TOKEN` existe, puis les **supprime** du bundle (le vhost
 renvoie aussi 404 sur `*.map`). Les URLs portant un jeton (reset / confirm-email /
-magic-link, params `uid`/`token`/`code`) sont masquées avant envoi
+magic-link, params `uid`/`token`/`code`) sont masquées avant envoi — URL de la requête, transaction, spans, breadcrumbs **et texte des erreurs** (message, exceptions : erreurs du routeur, HttpErrorResponse)
 (`src/app/core/sentry-scrub.ts`).
 
 ### Appliquer un changement de config
