@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
-import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { makeApplication } from '../../../../../testing/console-fixtures';
@@ -28,7 +28,6 @@ const applicationsCopy = {
 };
 
 function configure(
-  paramMap: Record<string, string>,
   apiSpy: jasmine.SpyObj<PushitApiService>,
   shellStub: {
     apps: ReturnType<typeof signal<ApplicationRead[]>>;
@@ -48,7 +47,6 @@ function configure(
       { provide: PushitApiService, useValue: apiSpy },
       { provide: ConsoleShellService, useValue: shellStub },
       { provide: ConsoleCopyService, useValue: { current: signal({ applications: applicationsCopy }) } },
-      { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(paramMap) } } },
     ],
   }).compileComponents();
 }
@@ -65,9 +63,7 @@ describe('ApplicationFormPage', () => {
   };
 
   beforeEach(() => {
-    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['getApp', 'updateApp', 'uploadAppLogo', 'deleteAppLogo']);
-    api.getApp.and.returnValue(of(makeApplication()));
-    api.updateApp.and.returnValue(of(makeApplication({ name: 'PushIT Mobile V2' })));
+    api = jasmine.createSpyObj<PushitApiService>('PushitApiService', ['uploadAppLogo', 'deleteAppLogo']);
     shell = {
       apps: signal<ApplicationRead[]>([makeApplication()]),
       lastGeneratedToken: signal<{ appId: number; token: string; prefix: string } | null>(null),
@@ -89,16 +85,12 @@ describe('ApplicationFormPage', () => {
     let router: Router;
 
     beforeEach(async () => {
-      await configure({}, api, shell);
+      await configure(api, shell);
       fixture = TestBed.createComponent(ApplicationFormPage);
       component = fixture.componentInstance;
       router = TestBed.inject(Router);
       spyOn(router, 'navigate').and.resolveTo(true);
       fixture.detectChanges();
-    });
-
-    it('starts in create mode', () => {
-      expect(component.isEdit()).toBeFalse();
     });
 
     it('does not submit when the form is invalid', () => {
@@ -108,7 +100,7 @@ describe('ApplicationFormPage', () => {
       expect(component.form.controls.name.touched).toBeTrue();
     });
 
-    it('delegates creation to the shell and navigates to the detail page where the token is revealed', () => {
+    it('delegates creation to the shell and lands on the Envoi tab where the token is revealed', () => {
       component.form.setValue({ name: 'Nouvelle app', description: 'Desc' });
 
       component.save();
@@ -119,7 +111,7 @@ describe('ApplicationFormPage', () => {
         jasmine.any(Function),
       );
       // Navigate to the new app's detail page...
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999]);
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'sending' } });
       // ...and the one-time token is REACHABLE there: the shell holds it for the
       // created app id, which is exactly what the detail page's revealToken()
       // surfaces (regression guard: create must not strand the token).
@@ -167,7 +159,7 @@ describe('ApplicationFormPage', () => {
 
       expect(api.uploadAppLogo).toHaveBeenCalledWith(999, file);
       expect(shell.loadShell).toHaveBeenCalledWith(999);
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999]);
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'sending' } });
       expect(component.pending()).toBeFalse();
     });
 
@@ -179,6 +171,7 @@ describe('ApplicationFormPage', () => {
       component.save();
 
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], {
+        queryParams: { tab: 'sending' },
         state: { logoUploadFailed: true },
       });
       expect(shell.lastGeneratedToken()?.appId).toBe(999);
@@ -190,61 +183,7 @@ describe('ApplicationFormPage', () => {
       component.save();
 
       expect(api.uploadAppLogo).not.toHaveBeenCalled();
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999]);
-    });
-  });
-
-  describe('edit mode', () => {
-    let fixture: ComponentFixture<ApplicationFormPage>;
-    let component: ApplicationFormPage;
-    let router: Router;
-
-    beforeEach(async () => {
-      await configure({ appId: '101' }, api, shell);
-      fixture = TestBed.createComponent(ApplicationFormPage);
-      component = fixture.componentInstance;
-      router = TestBed.inject(Router);
-      spyOn(router, 'navigate').and.resolveTo(true);
-      fixture.detectChanges();
-    });
-
-    it('prefills the form from the loaded application', () => {
-      expect(component.isEdit()).toBeTrue();
-      expect(api.getApp).toHaveBeenCalledWith(101);
-      expect(component.form.controls.name.value).toBe('PushIT Mobile');
-      expect(component.form.controls.description.value).toBe('Application mobile');
-    });
-
-    it('updates the application then navigates to the detail page', () => {
-      component.form.patchValue({ name: 'PushIT Mobile V2' });
-
-      component.save();
-
-      expect(api.updateApp).toHaveBeenCalledWith(101, {
-        name: 'PushIT Mobile V2',
-        description: 'Application mobile',
-      });
-      expect(shell.loadShell).toHaveBeenCalledWith(101);
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 101]);
-    });
-
-    it('uploads a cropped logo for the edited application', () => {
-      api.uploadAppLogo.and.returnValue(of(makeApplication({ logo: 'https://cdn/logo.png' })));
-      const file = new File(['x'], 'logo.png', { type: 'image/png' });
-
-      component.onLogoCropped(file);
-
-      expect(api.uploadAppLogo).toHaveBeenCalledWith(101, file);
-      expect(component.application()?.logo).toBe('https://cdn/logo.png');
-    });
-
-    it('removes the logo for the edited application', () => {
-      api.deleteAppLogo.and.returnValue(of(void 0));
-
-      component.removeLogo();
-
-      expect(api.deleteAppLogo).toHaveBeenCalledWith(101);
-      expect(component.application()?.logo).toBeNull();
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'sending' } });
     });
   });
 });

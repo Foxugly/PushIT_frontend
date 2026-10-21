@@ -37,13 +37,19 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-app>
-          <tr>
+          <!-- The whole row opens the app; the name stays a real link so keyboard
+               and middle-click users keep a focusable target. -->
+          <tr class="app-row" data-testid="app-row" (click)="openDetails(app)">
             <td class="console-table__name">
               <div class="app-name-cell">
                 @if (app.logo) {
                   <img class="app-logo-thumb" [src]="app.logo" alt="" />
                 }
-                <a class="console-table__link" [routerLink]="['/dashboard/applications', app.id]">
+                <a
+                  class="console-table__link"
+                  [routerLink]="['/dashboard/applications', app.id]"
+                  (click)="$event.stopPropagation()"
+                >
                   <strong>{{ app.name }}</strong>
                 </a>
               </div>
@@ -54,17 +60,8 @@
               <p-tag [value]="appStatusLabel(app)" [severity]="appSeverity(app)" />
             </td>
             <td>{{ app.created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
-            <td class="console-table__actions">
+            <td class="console-table__actions" (click)="$event.stopPropagation()">
               <div class="console-icon-actions">
-                <p-button
-                  icon="pi pi-eye"
-                  [text]="true"
-                  [rounded]="true"
-                  [ariaLabel]="copy().actions.view"
-                  [pTooltip]="copy().actions.view"
-                  tooltipPosition="top"
-                  (onClick)="openDetails(app)"
-                />
                 <p-button
                   icon="pi pi-qrcode"
                   [text]="true"
@@ -73,15 +70,6 @@
                   [pTooltip]="copy().actions.qrCode"
                   tooltipPosition="top"
                   (onClick)="openQr(app)"
-                />
-                <p-button
-                  icon="pi pi-pencil"
-                  [text]="true"
-                  [rounded]="true"
-                  [ariaLabel]="copy().actions.edit"
-                  [pTooltip]="copy().actions.edit"
-                  tooltipPosition="top"
-                  (onClick)="openEdit(app)"
                 />
                 <p-button
                   [icon]="app.is_active ? 'pi pi-pause' : 'pi pi-play'"
@@ -94,35 +82,13 @@
                   (onClick)="toggleState(app)"
                 />
                 <p-button
-                  icon="pi pi-refresh"
+                  icon="pi pi-arrow-right"
                   [text]="true"
                   [rounded]="true"
-                  [disabled]="pending()"
-                  [ariaLabel]="copy().actions.regenerate"
-                  [pTooltip]="copy().actions.regenerate"
+                  [ariaLabel]="copy().actions.open"
+                  [pTooltip]="copy().actions.open"
                   tooltipPosition="top"
-                  (onClick)="regenerateToken(app)"
-                />
-                <p-button
-                  icon="pi pi-ban"
-                  [text]="true"
-                  [rounded]="true"
-                  [disabled]="pending()"
-                  [ariaLabel]="copy().actions.revoke"
-                  [pTooltip]="copy().actions.revoke"
-                  tooltipPosition="top"
-                  (onClick)="revokeToken(app)"
-                />
-                <p-button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  [text]="true"
-                  [rounded]="true"
-                  [disabled]="pending()"
-                  [ariaLabel]="copy().actions.delete"
-                  [pTooltip]="copy().actions.delete"
-                  tooltipPosition="top"
-                  (onClick)="deleteApp(app)"
+                  (onClick)="openDetails(app)"
                 />
               </div>
             </td>

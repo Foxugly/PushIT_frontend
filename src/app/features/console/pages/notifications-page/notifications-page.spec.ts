@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
@@ -226,6 +226,38 @@ describe('NotificationsPage', () => {
     expect(component.notificationsTotal()).toBe(1);
     expect(component.futureNotifications().length).toBe(1);
     expect(shell.setNotificationsCount).toHaveBeenCalledWith(2);
+  });
+
+  it('does not open the create modal without ?create=1', () => {
+    fixture.detectChanges();
+
+    expect(component.modalMode()).toBeNull();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('opens the create modal pre-selected on ?app= when ?create=1 (deep link from an app)', () => {
+    const route = TestBed.inject(ActivatedRoute);
+    route.snapshot = {
+      queryParamMap: convertToParamMap({ create: '1', app: '102' }),
+    } as unknown as ActivatedRouteSnapshot;
+
+    fixture.detectChanges();
+    fixture.detectChanges();
+
+    expect(component.modalMode()).toBe('create');
+    // The explicit app wins over the shell selection (101), even after the
+    // selection sync has run.
+    expect(component.notificationForm.controls.application_id.value).toBe('102');
+    expect(component.availableDeviceOptions().map((option) => option.value)).toEqual([202]);
+    // ...and the select can actually display it (option values match the control).
+    expect(component.appOptions().map((option) => option.value)).toContain('102');
+    // The one-shot params are dropped so a reload does not reopen the modal.
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: route,
+      queryParams: { create: null, app: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   });
 
   it('does not expose any target device until an application is selected', () => {

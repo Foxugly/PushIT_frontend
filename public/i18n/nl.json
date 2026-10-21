@@ -414,14 +414,12 @@
         "actions": "Acties"
       },
       "actions": {
-        "view": "Details bekijken",
-        "edit": "Bewerken",
         "activate": "Activeren",
         "deactivate": "Deactiveren",
         "regenerate": "Token vernieuwen",
         "revoke": "Token intrekken",
-        "delete": "Verwijderen",
-        "qrCode": "QR-code"
+        "qrCode": "QR-code",
+        "open": "Applicatie openen"
       },
       "qr": {
         "title": "Inschrijvings-QR-code",
@@ -454,17 +452,13 @@
         "createTitle": "Applicatie aanmaken",
         "editTitle": "Applicatie bewerken",
         "create": "Applicatie aanmaken",
-        "creating": "Bezig met aanmaken...",
-        "save": "Opslaan",
-        "saving": "Bezig met opslaan..."
+        "creating": "Bezig met aanmaken..."
       },
       "page": {
         "eyebrow": "Applicatie",
         "createTitle": "Nieuwe applicatie",
-        "editTitle": "Applicatie bewerken",
         "back": "Terug naar applicaties",
-        "cancel": "Annuleren",
-        "loading": "Applicatie laden..."
+        "cancel": "Annuleren"
       },
       "alerts": {
         "created": "Applicatie aangemaakt. Kopieer of download het verzendtoken nu: het wordt maar één keer getoond.",
@@ -472,15 +466,13 @@
         "activated": "Applicatie succesvol geactiveerd.",
         "deactivated": "Applicatie succesvol gedeactiveerd.",
         "regenerated": "Nieuw token gegenereerd. Open de QR-code om het te bekijken, kopiëren of downloaden.",
-        "revoked": "Het token van deze applicatie werd ingetrokken.",
-        "deleted": "Applicatie {name} verwijderd."
+        "revoked": "Het token van deze applicatie werd ingetrokken."
       },
       "errors": {
         "create": "Kan de applicatie niet aanmaken.",
         "toggle": "Kan de status van de applicatie niet bijwerken.",
         "regenerate": "Kan het token niet vernieuwen.",
-        "revoke": "Kan het token niet intrekken.",
-        "invalidId": "Ongeldige applicatie-id."
+        "revoke": "Kan het token niet intrekken."
       },
       "confirmDelete": "Applicatie \"{name}\" verwijderen?",
       "confirmRegenerate": "Token van \"{name}\" vernieuwen? Alle toestellen die het huidige token gebruiken, ontvangen geen notificaties meer totdat ze met het nieuwe token zijn gekoppeld.",
@@ -905,6 +897,35 @@
       "errors": {
         "invalidId": "Ongeldige applicatie-id.",
         "logo": "Kan het logo niet bijwerken."
+      },
+      "tabs": {
+        "overview": "Overzicht",
+        "recipients": "Ontvangers",
+        "sending": "Verzenden",
+        "notifications": "Notificaties",
+        "quietPeriods": "Stille periodes",
+        "settings": "Instellingen"
+      },
+      "counters": {
+        "devices": "Gekoppelde devices",
+        "notifications": "Notificaties",
+        "lastSend": "Laatste verzending"
+      },
+      "newNotification": "Nieuwe notificatie",
+      "legacyToken": {
+        "title": "Oud applicatietoken",
+        "hint": "Het oude token (prefix hierboven) geeft geen verzendrecht meer: gebruik verzendtokens. Genereer het hier opnieuw of trek het in indien nodig."
+      },
+      "settings": {
+        "detailsTitle": "Gegevens",
+        "saved": "Applicatie bijgewerkt.",
+        "stateTitle": "Status van de applicatie",
+        "stateHint": "Een inactieve applicatie verstuurt geen notificaties meer."
+      },
+      "danger": {
+        "title": "Gevarenzone",
+        "hint": "Verwijderen is definitief: de applicatie, haar tokens en haar geschiedenis verdwijnen.",
+        "delete": "Applicatie verwijderen"
       }
     },
     "deviceDetail": {

@@ -414,14 +414,12 @@
         "actions": "Azioni"
       },
       "actions": {
-        "view": "Vedi il dettaglio",
-        "edit": "Modifica",
         "activate": "Attiva",
         "deactivate": "Disattiva",
         "regenerate": "Rigenera il token",
         "revoke": "Revoca il token",
-        "delete": "Elimina",
-        "qrCode": "QR code"
+        "qrCode": "QR code",
+        "open": "Apri l'applicazione"
       },
       "qr": {
         "title": "QR code di iscrizione",
@@ -454,17 +452,13 @@
         "createTitle": "Crea un'applicazione",
         "editTitle": "Modifica un'applicazione",
         "create": "Crea l'applicazione",
-        "creating": "Creazione in corso...",
-        "save": "Salva",
-        "saving": "Salvataggio in corso..."
+        "creating": "Creazione in corso..."
       },
       "page": {
         "eyebrow": "Applicazione",
         "createTitle": "Nuova applicazione",
-        "editTitle": "Modifica l'applicazione",
         "back": "Torna alle applicazioni",
-        "cancel": "Annulla",
-        "loading": "Caricamento dell'applicazione..."
+        "cancel": "Annulla"
       },
       "alerts": {
         "created": "Applicazione creata. Copia o scarica ora il token di invio: viene mostrato una sola volta.",
@@ -472,15 +466,13 @@
         "activated": "Applicazione attivata con successo.",
         "deactivated": "Applicazione disattivata con successo.",
         "regenerated": "Nuovo token generato. Apri il QR code per vederlo, copiarlo o scaricarlo.",
-        "revoked": "Il token di questa applicazione è stato revocato.",
-        "deleted": "Applicazione {name} eliminata."
+        "revoked": "Il token di questa applicazione è stato revocato."
       },
       "errors": {
         "create": "Impossibile creare l'applicazione.",
         "toggle": "Impossibile aggiornare lo stato dell'applicazione.",
         "regenerate": "Impossibile rigenerare il token.",
-        "revoke": "Impossibile revocare il token.",
-        "invalidId": "Identificativo applicazione non valido."
+        "revoke": "Impossibile revocare il token."
       },
       "confirmDelete": "Eliminare l'applicazione \"{name}\"?",
       "confirmRegenerate": "Rigenerare il token di \"{name}\"? Tutti i dispositivi che utilizzano il token attuale smetteranno di ricevere notifiche finché non verranno ricollegati al nuovo token.",
@@ -905,6 +897,35 @@
       "errors": {
         "invalidId": "Identificativo applicazione non valido.",
         "logo": "Impossibile aggiornare il logo."
+      },
+      "tabs": {
+        "overview": "Panoramica",
+        "recipients": "Destinatari",
+        "sending": "Invio",
+        "notifications": "Notifiche",
+        "quietPeriods": "Periodi di silenzio",
+        "settings": "Impostazioni"
+      },
+      "counters": {
+        "devices": "Device collegati",
+        "notifications": "Notifiche",
+        "lastSend": "Ultimo invio"
+      },
+      "newNotification": "Nuova notifica",
+      "legacyToken": {
+        "title": "Token applicativo legacy",
+        "hint": "Il vecchio token (prefisso sopra) non autorizza più l'invio: usate i token di invio. Rigeneratelo o revocatelo qui se necessario."
+      },
+      "settings": {
+        "detailsTitle": "Informazioni",
+        "saved": "Applicazione aggiornata.",
+        "stateTitle": "Stato dell'applicazione",
+        "stateHint": "Un'applicazione inattiva non invia più notifiche."
+      },
+      "danger": {
+        "title": "Zona pericolosa",
+        "hint": "L'eliminazione è definitiva: l'applicazione, i suoi token e la sua cronologia vengono rimossi.",
+        "delete": "Elimina l'applicazione"
       }
     },
     "deviceDetail": {

@@ -2,6 +2,15 @@
   display: block;
 }
 
+// Whole row opens the application (the name link stays the keyboard target).
+.app-row {
+  cursor: pointer;
+}
+
+.app-row:hover > td {
+  background: rgba(16, 185, 129, 0.04);
+}
+
 .app-name-cell {
   display: flex;
   align-items: center;

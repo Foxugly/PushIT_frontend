@@ -414,14 +414,12 @@
         "actions": "Actions"
       },
       "actions": {
-        "view": "View details",
-        "edit": "Edit",
         "activate": "Activate",
         "deactivate": "Deactivate",
         "regenerate": "Regenerate token",
         "revoke": "Revoke token",
-        "delete": "Delete",
-        "qrCode": "QR code"
+        "qrCode": "QR code",
+        "open": "Open the application"
       },
       "qr": {
         "title": "Enrolment QR code",
@@ -454,17 +452,13 @@
         "createTitle": "Create application",
         "editTitle": "Edit application",
         "create": "Create application",
-        "creating": "Creating...",
-        "save": "Save",
-        "saving": "Saving..."
+        "creating": "Creating..."
       },
       "page": {
         "eyebrow": "Application",
         "createTitle": "New application",
-        "editTitle": "Edit application",
         "back": "Back to applications",
-        "cancel": "Cancel",
-        "loading": "Loading application..."
+        "cancel": "Cancel"
       },
       "alerts": {
         "created": "Application created. Copy or download the send token now: it is shown only once.",
@@ -472,15 +466,13 @@
         "activated": "Application activated successfully.",
         "deactivated": "Application deactivated successfully.",
         "regenerated": "New token generated. Open the QR code to view, copy or download it.",
-        "revoked": "This application token was revoked.",
-        "deleted": "Application {name} deleted."
+        "revoked": "This application token was revoked."
       },
       "errors": {
         "create": "Unable to create the application.",
         "toggle": "Unable to update the application state.",
         "regenerate": "Unable to regenerate the token.",
-        "revoke": "Unable to revoke the token.",
-        "invalidId": "Invalid application id."
+        "revoke": "Unable to revoke the token."
       },
       "confirmDelete": "Delete application \"{name}\"?",
       "confirmRegenerate": "Regenerate the token for \"{name}\"? All devices using the current token will stop receiving notifications until they are re-linked with the new token.",
@@ -905,6 +897,35 @@
       "errors": {
         "invalidId": "Invalid application id.",
         "logo": "Unable to update the logo."
+      },
+      "tabs": {
+        "overview": "Overview",
+        "recipients": "Recipients",
+        "sending": "Sending",
+        "notifications": "Notifications",
+        "quietPeriods": "Quiet periods",
+        "settings": "Settings"
+      },
+      "counters": {
+        "devices": "Linked devices",
+        "notifications": "Notifications",
+        "lastSend": "Last send"
+      },
+      "newNotification": "New notification",
+      "legacyToken": {
+        "title": "Legacy application token",
+        "hint": "The old token (prefix above) no longer authorises sending: use send tokens instead. Regenerate or revoke it here if needed."
+      },
+      "settings": {
+        "detailsTitle": "Details",
+        "saved": "Application updated.",
+        "stateTitle": "Application state",
+        "stateHint": "An inactive application no longer sends notifications."
+      },
+      "danger": {
+        "title": "Danger zone",
+        "hint": "Deletion is permanent: the application, its tokens and its history are removed.",
+        "delete": "Delete the application"
       }
     },
     "deviceDetail": {

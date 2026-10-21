@@ -1,11 +1,11 @@
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { finalize } from 'rxjs';
 
-import { ApiErrorResponse, ApplicationRead } from '../../../../core/models/api.models';
+import { ApiErrorResponse } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
@@ -18,6 +18,11 @@ import { PageHeader } from '../../../../shared/page-header/page-header';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
 import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
 
+/**
+ * Creation of an application (`/dashboard/applications/new`). Editing an
+ * existing one lives in the detail page's Paramètres tab (`?tab=settings`);
+ * the old `/edit` route redirects there.
+ */
 @Component({
   selector: 'app-application-form-page',
   imports: [
@@ -34,11 +39,10 @@ import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper'
   templateUrl: './application-form-page.html',
   styleUrl: './application-form-page.scss',
 })
-export class ApplicationFormPage implements OnInit {
+export class ApplicationFormPage {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
@@ -50,63 +54,16 @@ export class ApplicationFormPage implements OnInit {
     description: [''],
   });
 
-  /** null in create mode, the app id in edit mode. */
-  readonly appId = signal<number | null>(null);
-  readonly isEdit = computed(() => this.appId() !== null);
   readonly pending = signal(false);
-  readonly loading = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
 
-  // Edit mode: the application currently being edited (drives logo preview).
-  readonly application = signal<ApplicationRead | null>(null);
-  readonly logoPending = signal(false);
-
-  // Create mode: the cropped logo waits here until the app exists (the upload
-  // endpoint needs its id), then goes up right after creation.
+  // The cropped logo waits here until the app exists (the upload endpoint needs
+  // its id), then goes up right after creation.
   readonly pendingLogo = signal<File | null>(null);
-  readonly pendingLogoPreview = signal<string | null>(null);
-  readonly logoPreview = computed(() => this.pendingLogoPreview() ?? this.application()?.logo ?? null);
+  readonly logoPreview = signal<string | null>(null);
 
   constructor() {
     this.destroyRef.onDestroy(() => this.setPendingLogo(null));
-  }
-
-  ngOnInit(): void {
-    const rawId = this.route.snapshot.paramMap.get('appId');
-    if (rawId === null) {
-      // Create mode.
-      this.form.reset({ name: '', description: '' });
-      return;
-    }
-
-    const appId = Number(rawId);
-    if (!Number.isFinite(appId) || appId <= 0) {
-      this.error.set({ code: 'invalid_application_id', detail: this.copy().errors.invalidId });
-      return;
-    }
-
-    this.appId.set(appId);
-    const cached = this.shell.apps().find((app) => app.id === appId) ?? null;
-    if (cached) {
-      this.application.set(cached);
-      this.form.reset({ name: cached.name, description: cached.description });
-    }
-    this.loadApplication(appId);
-  }
-
-  private loadApplication(appId: number): void {
-    this.loading.set(true);
-    this.error.set(null);
-    this.api
-      .getApp(appId)
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (app) => {
-          this.application.set(app);
-          this.form.reset({ name: app.name, description: app.description });
-        },
-        error: (err) => this.error.set(coerceApiError(err)),
-      });
   }
 
   save(): void {
@@ -115,29 +72,23 @@ export class ApplicationFormPage implements OnInit {
       return;
     }
 
-    if (this.isEdit()) {
-      this.updateApp();
-    } else {
-      this.createApp();
-    }
-  }
-
-  private createApp(): void {
     this.pending.set(true);
     this.error.set(null);
 
     this.shell.createApp(
       this.form.getRawValue(),
       (app) => {
-        // Navigate to the detail page, which reveals the freshly-created one-time
-        // token (QR + raw token) via <app-token-reveal>: the shell stored it via
-        // rememberGeneratedToken, and the detail page's revealToken() surfaces it
-        // while it is still held. Without that reveal the token would be lost --
-        // so a failed logo upload still lands there, with a warning banner.
+        // Land on the detail page's Envoi tab, which reveals the freshly-created
+        // one-time token (QR + raw token) via <app-token-reveal>: the shell stored
+        // it via rememberGeneratedToken, and the detail page's revealToken()
+        // surfaces it while it is still held. Without that reveal the token would
+        // be lost -- so a failed logo upload still lands there, with a warning banner.
+        const target = ['/dashboard/applications', app.id];
+        const queryParams = { tab: 'sending' };
         const logo = this.pendingLogo();
         if (!logo) {
           this.pending.set(false);
-          void this.router.navigate(['/dashboard/applications', app.id]);
+          void this.router.navigate(target, { queryParams });
           return;
         }
         this.api
@@ -146,10 +97,11 @@ export class ApplicationFormPage implements OnInit {
           .subscribe({
             next: () => {
               this.shell.loadShell(app.id);
-              void this.router.navigate(['/dashboard/applications', app.id]);
+              void this.router.navigate(target, { queryParams });
             },
             error: () =>
-              void this.router.navigate(['/dashboard/applications', app.id], {
+              void this.router.navigate(target, {
+                queryParams,
                 state: { logoUploadFailed: true },
               }),
           });
@@ -176,82 +128,23 @@ export class ApplicationFormPage implements OnInit {
 
   readonly billingRefused = computed(() => this.isBillingRefusal(this.error()));
 
-  private updateApp(): void {
-    const appId = this.appId();
-    if (appId === null) {
-      return;
-    }
-
-    this.pending.set(true);
-    this.error.set(null);
-
-    this.api
-      .updateApp(appId, this.form.getRawValue())
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.pending.set(false)))
-      .subscribe({
-        next: (app) => {
-          this.shell.loadShell(app.id);
-          void this.router.navigate(['/dashboard/applications', app.id]);
-        },
-        error: (err) => this.error.set(coerceApiError(err)),
-      });
-  }
-
   onLogoCropped(file: File): void {
-    if (!file) {
-      return;
-    }
-    const appId = this.appId();
-    if (appId === null) {
+    if (file) {
       this.setPendingLogo(file);
-      return;
     }
-
-    this.logoPending.set(true);
-    this.error.set(null);
-    this.api
-      .uploadAppLogo(appId, file)
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
-      .subscribe({
-        next: (app) => {
-          this.application.set(app);
-          this.shell.loadShell(app.id);
-        },
-        error: (err) => this.error.set(coerceApiError(err)),
-      });
   }
 
   removeLogo(): void {
-    const appId = this.appId();
-    if (appId === null) {
-      this.setPendingLogo(null);
-      return;
-    }
-
-    this.logoPending.set(true);
-    this.error.set(null);
-    this.api
-      .deleteAppLogo(appId)
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.logoPending.set(false)))
-      .subscribe({
-        next: () => {
-          const app = this.application();
-          if (app) {
-            this.application.set({ ...app, logo: null });
-          }
-          this.shell.loadShell(appId);
-        },
-        error: (err) => this.error.set(coerceApiError(err)),
-      });
+    this.setPendingLogo(null);
   }
 
   private setPendingLogo(file: File | null): void {
-    const previous = this.pendingLogoPreview();
+    const previous = this.logoPreview();
     if (previous) {
       URL.revokeObjectURL(previous);
     }
     this.pendingLogo.set(file);
-    this.pendingLogoPreview.set(file ? URL.createObjectURL(file) : null);
+    this.logoPreview.set(file ? URL.createObjectURL(file) : null);
   }
 
   cancel(): void {

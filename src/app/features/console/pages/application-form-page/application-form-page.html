@@ -1,68 +1,62 @@
 <section class="console-page">
-  <app-page-header [title]="isEdit() ? copy().page.editTitle : copy().page.createTitle">
+  <app-page-header [title]="copy().page.createTitle">
     <a slot="left" class="console-back-link" [routerLink]="['/dashboard/applications']">
       <i class="pi pi-arrow-left"></i><span>{{ copy().page.back }}</span>
     </a>
   </app-page-header>
 
   <section class="console-card">
+    <form class="console-form" [formGroup]="form" (ngSubmit)="save()">
+      <app-application-form-fields
+        [form]="form"
+        [nameMessages]="fieldErrors('name')"
+        [descriptionMessages]="fieldErrors('description')"
+      />
 
-    @if (loading() && !application()) {
-      <p class="console-empty">{{ copy().page.loading }}</p>
-    } @else {
-      <form class="console-form" [formGroup]="form" (ngSubmit)="save()">
-        <app-application-form-fields
-          [form]="form"
-          [nameMessages]="fieldErrors('name')"
-          [descriptionMessages]="fieldErrors('description')"
-        />
-
-        <div class="app-logo-field">
-          <span class="app-logo-field__label">{{ copy().logo.label }}</span>
-          <div class="app-logo-field__row">
-            @if (logoPreview(); as logo) {
-              <img class="app-logo-preview" [src]="logo" alt="" />
-            } @else {
-              <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
-            }
-            @if (logoPreview()) {
-              <p-button
-                [label]="copy().logo.remove"
-                [text]="true"
-                severity="danger"
-                [disabled]="logoPending()"
-                (onClick)="removeLogo()"
-              />
-            }
-          </div>
-          <app-avatar-cropper
-            [labels]="copy().logo"
-            [pending]="logoPending()"
-            (cropped)="onLogoCropped($event)"
-          />
+      <div class="app-logo-field">
+        <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+        <div class="app-logo-field__row">
+          @if (logoPreview(); as logo) {
+            <img class="app-logo-preview" [src]="logo" alt="" />
+          } @else {
+            <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+          }
+          @if (logoPreview()) {
+            <p-button
+              [label]="copy().logo.remove"
+              [text]="true"
+              severity="danger"
+              (onClick)="removeLogo()"
+            />
+          }
         </div>
+        <app-avatar-cropper
+          [labels]="copy().logo"
+          (cropped)="onLogoCropped($event)"
+        />
+      </div>
 
-        @if (error()?.detail) {
-          <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
-        }
+      @if (error()?.detail) {
+        <app-alert [message]="error()! | apiError" tone="danger" (dismissed)="error.set(null)" />
+      }
 
-        @if (billingRefused()) {
-          <p-button
-            [label]="billingCopy().goToBilling"
-            icon="pi pi-credit-card"
-            [outlined]="true"
-            routerLink="/dashboard/billing"
-          />
-        }
+      @if (billingRefused()) {
+        <p-button
+          [label]="billingCopy().goToBilling"
+          icon="pi pi-credit-card"
+          [outlined]="true"
+          routerLink="/dashboard/billing"
+        />
+      }
 
-        <app-console-dialog-actions [cancelLabel]="copy().page.cancel" (cancelled)="cancel()">
-          <p-button
-            type="submit"
-            [label]="pending() ? (isEdit() ? copy().dialog.saving : copy().dialog.creating) : (isEdit() ? copy().dialog.save : copy().dialog.create)"
-            [loading]="pending()"
-          />
-        </app-console-dialog-actions>
-      </form>
-    }
+      <app-console-dialog-actions [cancelLabel]="copy().page.cancel" (cancelled)="cancel()">
+        <p-button
+          type="submit"
+          [label]="pending() ? copy().dialog.creating : copy().dialog.create"
+          [loading]="pending()"
+        />
+      </app-console-dialog-actions>
+    </form>
   </section>
 </section>
+

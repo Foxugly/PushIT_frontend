@@ -41,7 +41,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('creating an application navigates to its detail page and reveals the one-time token', async ({
+test('creating an application lands on its Envoi tab and reveals the one-time token', async ({
   page,
 }) => {
   // Reach the create page via the list's "Ajouter" action (role/test-id, not copy
@@ -54,9 +54,11 @@ test('creating an application navigates to its detail page and reveals the one-t
   await page.getByRole('textbox').first().fill('Nouvelle App E2E');
   await page.getByRole('button', { name: /créer/i }).click();
 
-  // Navigates to the freshly-created app's detail page (id 11 from the mock)...
-  await expect(page).toHaveURL(/\/dashboard\/applications\/11$/);
+  // Navigates to the freshly-created app's detail page (id 11 from the mock),
+  // on the Envoi tab where the one-time reveal lives...
+  await expect(page).toHaveURL(/\/dashboard\/applications\/11\?tab=sending$/);
   await expect(page.getByRole('heading', { name: 'Nouvelle App E2E' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Envoi' })).toHaveAttribute('aria-selected', 'true');
 
   // ...and the one-time token-reveal surface shows the raw send token, with no
   // QR: the only scannable QR is the enrolment code (apk_), never apt_.
@@ -66,17 +68,34 @@ test('creating an application navigates to its detail page and reveals the one-t
   await expect(reveal.locator('img')).toHaveCount(0);
 });
 
-test('editing an application saves and returns to its detail page', async ({ page }) => {
+test('the old edit URL opens the Paramètres tab, which saves inline', async ({ page }) => {
   await page.goto('/dashboard/applications/10/edit');
 
-  const nameInput = page.getByRole('textbox').first();
+  // Redirected to the detail page's settings tab.
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=settings$/);
+  await expect(page.getByRole('tab', { name: 'Paramètres' })).toHaveAttribute('aria-selected', 'true');
+
+  const form = page.getByTestId('app-settings-form');
+  const nameInput = form.getByRole('textbox').first();
   await expect(nameInput).toHaveValue('PushIT Mobile');
   await nameInput.fill('PushIT Mobile V2');
-  await page.getByRole('button', { name: /enregistrer/i }).click();
+  await form.getByRole('button', { name: /enregistrer/i }).click();
 
-  // Back on the detail page, with the updated name reflected.
-  await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
+  // Still on the settings tab, with the updated name reflected in the header.
+  await expect(page.getByText('Application mise à jour.')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'PushIT Mobile V2' })).toBeVisible();
+  await expect(page).toHaveURL(/\?tab=settings$/);
+});
+
+test('switching tabs mirrors the tab in the URL', async ({ page }) => {
+  await page.goto('/dashboard/applications/10');
+  await expect(page.getByRole('tab', { name: 'Aperçu' })).toHaveAttribute('aria-selected', 'true');
+
+  await page.getByRole('tab', { name: 'Périodes blanches' }).click();
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=quiet-periods$/);
+
+  await page.getByRole('tab', { name: 'Aperçu' }).click();
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
 });
 
 // Regression guard for the logo cropper: after picking an image AND zooming,
@@ -87,8 +106,10 @@ test('editing an application saves and returns to its detail page', async ({ pag
 test('the logo cropper uploads after the image is zoomed', async ({ page }) => {
   await page.goto('/dashboard/applications/10/edit');
 
-  // The logo field only renders in edit mode; pick the fixture image (PrimeNG's
-  // advanced fileupload renders two file inputs — the first is the real one).
+  // The logo field of an existing app lives in the Paramètres tab (the edit URL
+  // redirects there); pick the fixture image (PrimeNG's advanced fileupload
+  // renders two file inputs — the first is the real one).
+  await expect(page).toHaveURL(/\?tab=settings$/);
   await page.locator('input[type="file"]').first().setInputFiles('e2e/fixtures/logo.png');
 
   // The cropper appears and signals readiness by enabling Apply.
