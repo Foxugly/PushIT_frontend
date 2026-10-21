@@ -764,6 +764,30 @@
       "revokeConfirm": "Het token „{name}” intrekken? Alles wat ermee verzendt, stopt onmiddellijk met werken.",
       "revokedBanner": "Token ingetrokken."
     },
+    "inboundSenderPolicy": {
+      "title": "Wie mag per e-mail verzenden",
+      "intro": "Kies welke adressen een melding mogen aanmaken door naar het ontvangstadres te schrijven.",
+      "modeLabel": "Toegelaten afzenders",
+      "modeOwner": "Alleen de eigenaar",
+      "modeOwnerHint": "Uw adres, plus de toegestane afzenders hieronder.",
+      "modeAnyone": "Iedereen",
+      "modeAnyoneHint": "Elk adres, behalve geblokkeerde afzenders.",
+      "authNote": "Elke toegelaten afzender moet de authenticatiecontrole van zijn domein doorstaan (SPF/DKIM/DMARC).",
+      "allowlistLabel": "Toegestane afzenders",
+      "blocklistLabel": "Geblokkeerde afzenders",
+      "listHint": "Eén item per regel: een adres (alice@voorbeeld.be) of een volledig domein (@voorbeeld.be).",
+      "blocklistHint": "Blokkeren geldt nooit voor uw eigen adres.",
+      "listPlaceholder": "alice@voorbeeld.be\n@voorbeeld.be",
+      "rejectionTitle": "Als een e-mail wordt geweigerd",
+      "notifyEmail": "Mij verwittigen per e-mail",
+      "notifyPush": "Mij verwittigen via pushmelding",
+      "replyToSender": "De afzender antwoorden",
+      "replyWarning": "Afgeraden: de afzender kan vervalst zijn, het antwoord gaat dan naar een onschuldige (backscatter).",
+      "invalidEntries": "Ongeldige items: {entries}",
+      "save": "Opslaan",
+      "saving": "Opslaan…",
+      "saved": "Regels voor inkomende e-mail opgeslagen."
+    },
     "codeExamples": {
       "intro": "Een melding verzenden vanuit uw code, met een verzendtoken.",
       "envNotice": "De voorbeelden lezen het token uit de omgevingsvariabele PUSHIT_TOKEN — plak het nooit hard in een repository. De applicatie-id is daarentegen geen geheim.",
@@ -790,7 +814,7 @@
         "subject": "Het onderwerp van de e-mail wordt de titel van de notificatie.",
         "body": "De tekstinhoud van de e-mail wordt het bericht.",
         "schedule": "Planning is mogelijk met [SEND_AT:ISO_DATETIME] in het onderwerp.",
-        "sender": "De afzender moet het e-mailadres van de eigenaar van de applicatie zijn."
+        "sender": "Standaard mag alleen het adres van de eigenaar verzenden; zie « Wie mag per e-mail verzenden » hieronder."
       },
       "devicesTitle": "Gekoppelde devices",
       "enrolmentTitle": "Inschrijving",

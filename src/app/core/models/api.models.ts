@@ -95,7 +95,7 @@ export interface TokenRefreshResponse {
   refresh?: string;
 }
 
-export interface ApplicationRead {
+export interface ApplicationRead extends InboundSenderPolicy {
   id: number;
   name: string;
   description: string;
@@ -121,6 +121,31 @@ export interface ApplicationRead {
   revoked_at: string | null;
   last_used_at: string | null;
   created_at: string;
+}
+
+/**
+ * Who may create notifications by e-mail to the application's inbound address.
+ * `owner`: the owner's own address plus `inbound_sender_allowlist`;
+ * `anyone`: every sender. The blocklist applies in both modes but never blocks
+ * the owner. Every accepted sender must still pass DMARC server-side.
+ */
+export type InboundSenderMode = 'owner' | 'anyone';
+
+/**
+ * The inbound sender policy (PATCH apps/<id>/). List entries are an exact
+ * address (`alice@example.com`) or a whole domain (`@example.com`); the
+ * server lowercases, dedupes and caps them at 200.
+ */
+export interface InboundSenderPolicy {
+  inbound_sender_mode: InboundSenderMode;
+  inbound_sender_allowlist: string[];
+  inbound_sender_blocklist: string[];
+  /** On a refused mail: e-mail the owner (default on). */
+  inbound_rejection_notify_email: boolean;
+  /** On a refused mail: push to the owner's own devices (default off). */
+  inbound_rejection_notify_push: boolean;
+  /** On a refused mail: reply to the sender (default off — backscatter risk). */
+  inbound_rejection_reply_to_sender: boolean;
 }
 
 /**
@@ -158,7 +183,7 @@ export interface ApplicationCreateRequest {
   description: string;
 }
 
-export interface ApplicationUpdateRequest {
+export interface ApplicationUpdateRequest extends Partial<InboundSenderPolicy> {
   name?: string;
   description?: string;
 }
@@ -170,7 +195,7 @@ export interface ApplicationUpdateRequest {
  * `webhook_url` and the one-time raw `app_token`.
  */
 export interface ApplicationCreateResponse
-  extends Omit<ApplicationRead, 'enrolment_code_rotated_at' | 'legacy_send_last_used_at'> {
+  extends Omit<ApplicationRead, 'enrolment_code_rotated_at' | 'legacy_send_last_used_at' | keyof InboundSenderPolicy> {
   webhook_url: string;
   app_token: string;
 }

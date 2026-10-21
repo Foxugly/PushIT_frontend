@@ -342,6 +342,10 @@
                     </div>
                   }
                 </div>
+
+                <div class="application-detail-email__alias">
+                  <app-inbound-sender-policy-panel [app]="app" (saved)="onSenderPolicySaved($event)" />
+                </div>
               </article>
 
               <article class="console-detail-panel console-detail-panel--wide">

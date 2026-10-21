@@ -764,6 +764,30 @@
       "revokeConfirm": "Revoke the token “{name}”? Anything sending with it stops working immediately.",
       "revokedBanner": "Token revoked."
     },
+    "inboundSenderPolicy": {
+      "title": "Who can send by e-mail",
+      "intro": "Choose which addresses may create a notification by writing to the inbound address.",
+      "modeLabel": "Accepted senders",
+      "modeOwner": "Owner only",
+      "modeOwnerHint": "Your address, plus the allowed senders below.",
+      "modeAnyone": "Anyone",
+      "modeAnyoneHint": "Any address, except blocked senders.",
+      "authNote": "Every accepted sender must pass their domain's authentication check (SPF/DKIM/DMARC).",
+      "allowlistLabel": "Allowed senders",
+      "blocklistLabel": "Blocked senders",
+      "listHint": "One entry per line: an address (alice@example.com) or a whole domain (@example.com).",
+      "blocklistHint": "Blocking never applies to your own address.",
+      "listPlaceholder": "alice@example.com\n@example.com",
+      "rejectionTitle": "When a mail is refused",
+      "notifyEmail": "Notify me by e-mail",
+      "notifyPush": "Notify me by push notification",
+      "replyToSender": "Reply to the sender",
+      "replyWarning": "Not recommended: the sender may be forged, and the reply would then hit an innocent party (backscatter).",
+      "invalidEntries": "Invalid entries: {entries}",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Inbound e-mail rules saved."
+    },
     "codeExamples": {
       "intro": "Send a notification from your code, using a send token.",
       "envNotice": "The examples read the token from the PUSHIT_TOKEN environment variable — never paste it into a repository. The application id, on the other hand, is not a secret.",
@@ -790,7 +814,7 @@
         "subject": "The email subject becomes the notification title.",
         "body": "The plain text email content becomes the message.",
         "schedule": "Scheduling is possible with [SEND_AT:ISO_DATETIME] in the subject.",
-        "sender": "The sender must be the application owner email address."
+        "sender": "By default only the owner's address may send; see « Who can send by e-mail » below."
       },
       "devicesTitle": "Linked devices",
       "enrolmentTitle": "Enrolment",

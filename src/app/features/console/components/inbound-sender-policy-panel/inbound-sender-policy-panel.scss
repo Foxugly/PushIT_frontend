@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+.sender-policy {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.sender-policy h4 {
+  margin: 0 0 0.25rem;
+}
+
+.sender-policy__group {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.sender-policy__group legend {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+.sender-policy__choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.sender-policy__choice label {
+  display: grid;
+  gap: 0.15rem;
+  cursor: pointer;
+}
+
+.sender-policy__field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sender-policy__field label {
+  font-weight: 600;
+}
+
+.sender-policy__field textarea {
+  width: 100%;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.sender-policy__hint {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.sender-policy__warning {
+  color: var(--warn-text);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.sender-policy__error {
+  color: var(--danger-text);
+}
+
+.sender-policy__actions {
+  display: flex;
+  justify-content: flex-end;
+}

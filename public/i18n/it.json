@@ -764,6 +764,30 @@
       "revokeConfirm": "Revocare il token «{name}»? Tutto ciò che invia con esso smette subito di funzionare.",
       "revokedBanner": "Token revocato."
     },
+    "inboundSenderPolicy": {
+      "title": "Chi può inviare via e-mail",
+      "intro": "Scegli quali indirizzi possono creare una notifica scrivendo all'indirizzo di ricezione.",
+      "modeLabel": "Mittenti accettati",
+      "modeOwner": "Solo il proprietario",
+      "modeOwnerHint": "Il tuo indirizzo, più i mittenti autorizzati qui sotto.",
+      "modeAnyone": "Tutti",
+      "modeAnyoneHint": "Qualsiasi indirizzo, tranne i mittenti bloccati.",
+      "authNote": "Ogni mittente accettato deve superare il controllo di autenticazione del proprio dominio (SPF/DKIM/DMARC).",
+      "allowlistLabel": "Mittenti autorizzati",
+      "blocklistLabel": "Mittenti bloccati",
+      "listHint": "Una voce per riga: un indirizzo (alice@esempio.it) o un intero dominio (@esempio.it).",
+      "blocklistHint": "Il blocco non si applica mai al tuo indirizzo.",
+      "listPlaceholder": "alice@esempio.it\n@esempio.it",
+      "rejectionTitle": "Se una e-mail viene rifiutata",
+      "notifyEmail": "Avvisami via e-mail",
+      "notifyPush": "Avvisami con una notifica push",
+      "replyToSender": "Rispondi al mittente",
+      "replyWarning": "Sconsigliato: il mittente può essere falsificato e la risposta finirebbe a un innocente (backscatter).",
+      "invalidEntries": "Voci non valide: {entries}",
+      "save": "Salva",
+      "saving": "Salvataggio…",
+      "saved": "Regole di ricezione via e-mail salvate."
+    },
     "codeExamples": {
       "intro": "Inviare una notifica dal tuo codice, con un token di invio.",
       "envNotice": "Gli esempi leggono il token dalla variabile d'ambiente PUSHIT_TOKEN — non incollarlo mai in chiaro in un repository. L'identificativo dell'applicazione, invece, non è un segreto.",
@@ -790,7 +814,7 @@
         "subject": "L'oggetto dell'email diventa il titolo della notifica.",
         "body": "Il contenuto testuale dell'email diventa il messaggio.",
         "schedule": "Pianificazione possibile con [SEND_AT:ISO_DATETIME] nell'oggetto.",
-        "sender": "Il mittente deve essere l'email del proprietario dell'applicazione."
+        "sender": "Per impostazione predefinita può inviare solo l'indirizzo del proprietario; vedi « Chi può inviare via e-mail » qui sotto."
       },
       "devicesTitle": "Device collegati",
       "enrolmentTitle": "Iscrizione",
