@@ -351,6 +351,10 @@
                 <div class="application-detail-email__alias">
                   <app-inbound-sender-policy-panel [app]="app" (saved)="onSenderPolicySaved($event)" />
                 </div>
+
+                <div class="application-detail-email__alias">
+                  <app-inbound-email-log-panel [appId]="app.id" [active]="activeTab() === 'sending'" />
+                </div>
               </article>
 
               <article class="console-detail-panel console-detail-panel--wide">

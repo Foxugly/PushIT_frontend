@@ -79,6 +79,7 @@ describe('ApplicationDetailPage', () => {
       'deleteAppLogo',
       'regenerateAppEmail',
       'getAliasStatus',
+      'getInboundEmailLogs',
       'evictDeviceFromApp',
       'getEnrolmentQrCode',
       'rotateEnrolmentCode',
@@ -88,6 +89,7 @@ describe('ApplicationDetailPage', () => {
     api.evictDeviceFromApp.and.returnValue(of(void 0));
     api.getEnrolmentQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
     api.listSendTokens.and.returnValue(of([]));
+    api.getInboundEmailLogs.and.returnValue(of([]));
     api.getApp.and.returnValue(of(makeApplication()));
     api.listDevices.and.returnValue(
       of([
@@ -690,6 +692,22 @@ describe('ApplicationDetailPage', () => {
 
     expect(component.application()?.inbound_sender_mode).toBe('anyone');
     expect(component.application()?.inbound_sender_blocklist).toEqual(['@spam.io']);
+  });
+
+  it('loads the inbound e-mail journal only once the Envoi tab is shown', () => {
+    fixture.detectChanges();
+    expect(api.getInboundEmailLogs).not.toHaveBeenCalled();
+
+    routeStub.queryParamMap.next(convertToParamMap({ tab: 'sending' }));
+    fixture.detectChanges();
+    expect(api.getInboundEmailLogs).toHaveBeenCalledOnceWith(101);
+
+    // Leaving and coming back does not reload it (« Actualiser » does).
+    routeStub.queryParamMap.next(convertToParamMap({ tab: 'overview' }));
+    fixture.detectChanges();
+    routeStub.queryParamMap.next(convertToParamMap({ tab: 'sending' }));
+    fixture.detectChanges();
+    expect(api.getInboundEmailLogs).toHaveBeenCalledTimes(1);
   });
 
   describe('unsaved changes', () => {

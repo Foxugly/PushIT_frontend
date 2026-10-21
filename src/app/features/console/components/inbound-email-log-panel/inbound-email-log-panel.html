@@ -1,0 +1,60 @@
+<div class="inbound-log" data-testid="inbound-email-log">
+  <div class="inbound-log__header">
+    <div>
+      <h4>{{ copy().title }}</h4>
+      <p class="inbound-log__hint">{{ copy().intro }}</p>
+    </div>
+    <p-button
+      icon="pi pi-refresh"
+      size="small"
+      severity="secondary"
+      [outlined]="true"
+      [label]="copy().refresh"
+      [loading]="loading()"
+      (onClick)="load()"
+    />
+  </div>
+
+  @if (error(); as err) {
+    <app-alert [message]="err | apiError" tone="danger" (dismissed)="error.set(null)" />
+  }
+
+  @if (loading() && !loaded()) {
+    <p class="console-muted" data-testid="inbound-log-loading">{{ copy().loading }}</p>
+  } @else if (logs().length) {
+    <p-table [value]="logs()" styleClass="p-datatable-sm" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ copy().columns.date }}</th>
+          <th>{{ copy().columns.sender }}</th>
+          <th>{{ copy().columns.subject }}</th>
+          <th>{{ copy().columns.status }}</th>
+          <th>{{ copy().columns.reason }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-log>
+        <tr [attr.data-testid]="'inbound-log-row-' + log.id">
+          <td class="inbound-log__nowrap">{{ formatDateTime(log.processed_at) }}</td>
+          <td class="inbound-log__sender">{{ log.sender }}</td>
+          <td>{{ log.subject || copy().noSubject }}</td>
+          <td>
+            @if (log.status === 'created' && log.notification_id) {
+              <a
+                class="console-table__link"
+                [routerLink]="['/dashboard/notifications', log.notification_id]"
+                [attr.title]="copy().viewNotification"
+              >
+                <p-tag [value]="statusLabel(log.status)" [severity]="statusSeverity(log.status)" />
+              </a>
+            } @else {
+              <p-tag [value]="statusLabel(log.status)" [severity]="statusSeverity(log.status)" />
+            }
+          </td>
+          <td class="inbound-log__reason">{{ reason(log) || '—' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else if (loaded()) {
+    <p class="console-muted" data-testid="inbound-log-empty">{{ copy().empty }}</p>
+  }
+</div>

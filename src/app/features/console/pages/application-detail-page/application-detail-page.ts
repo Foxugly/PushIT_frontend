@@ -38,6 +38,7 @@ import { CodeExamples } from '../../components/code-examples/code-examples';
 import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel';
 import { SendTokensPanel } from '../../components/send-tokens-panel/send-tokens-panel';
 import { InboundSenderPolicyPanel } from '../../components/inbound-sender-policy-panel/inbound-sender-policy-panel';
+import { InboundEmailLogPanel } from '../../components/inbound-email-log-panel/inbound-email-log-panel';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
 import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
@@ -80,6 +81,7 @@ export function normalizeAppDetailTab(value: unknown): AppDetailTab {
     EnrolmentPanel,
     SendTokensPanel,
     InboundSenderPolicyPanel,
+    InboundEmailLogPanel,
     ButtonModule,
     TagModule,
     TableModule,

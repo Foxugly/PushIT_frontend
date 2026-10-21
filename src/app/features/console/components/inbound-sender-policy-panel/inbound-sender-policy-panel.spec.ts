@@ -29,6 +29,17 @@ describe('parseSenderList / isValidSenderEntry', () => {
     expect(isValidSenderEntry('@nodot')).toBe(false);
     expect(isValidSenderEntry('a@b@c.com')).toBe(false);
   });
+
+  it('accepts @*.domain (domain + subdomains), with * only as the whole first label', () => {
+    expect(isValidSenderEntry('@*.example.com')).toBe(true);
+    expect(isValidSenderEntry('@*.mail.example.co.uk')).toBe(true);
+    expect(isValidSenderEntry('@*.com')).toBe(false);
+    expect(isValidSenderEntry('@*example.com')).toBe(false);
+    expect(isValidSenderEntry('@mail.*.example.com')).toBe(false);
+    expect(isValidSenderEntry('@**.example.com')).toBe(false);
+    expect(isValidSenderEntry('*@example.com')).toBe(false);
+    expect(isValidSenderEntry('alice@*.example.com')).toBe(false);
+  });
 });
 
 describe('InboundSenderPolicyPanel', () => {
@@ -80,6 +91,19 @@ describe('InboundSenderPolicyPanel', () => {
     expect(text()).toContain('Qui peut envoyer par e-mail');
     expect(text()).toContain('Expéditeurs autorisés');
     expect(text()).toContain('backscatter');
+  });
+
+  it('explains the accepted list formats on a focusable info icon by each list', () => {
+    render();
+    const el = fixture.nativeElement as HTMLElement;
+    for (const id of ['sender-allowlist-help', 'sender-blocklist-help']) {
+      const icon = el.querySelector(`[data-testid="${id}"]`)!;
+      expect(icon.getAttribute('tabindex')).toBe('0');
+      const label = icon.getAttribute('aria-label') ?? '';
+      expect(label).toContain('@*.exemple.com : le domaine et tous ses sous-domaines');
+      expect(label).toContain('@exemple.com : tout le domaine exemple.com (sans les sous-domaines)');
+    }
+    expect(text()).toContain('@*.exemple.com');
   });
 
   it('hides the allowlist in « anyone » mode', () => {

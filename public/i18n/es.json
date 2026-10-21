@@ -782,9 +782,9 @@
       "authNote": "Cada remitente aceptado debe superar la verificación de autenticación de su dominio (SPF/DKIM/DMARC).",
       "allowlistLabel": "Remitentes autorizados",
       "blocklistLabel": "Remitentes bloqueados",
-      "listHint": "Una entrada por línea: una dirección (alice@ejemplo.com) o un dominio entero (@ejemplo.com).",
+      "listHint": "Una entrada por línea: una dirección (alice@ejemplo.com), un dominio (@ejemplo.com) o un dominio y sus subdominios (@*.ejemplo.com).",
       "blocklistHint": "El bloqueo nunca se aplica a su propia dirección.",
-      "listPlaceholder": "alice@ejemplo.com\n@ejemplo.com",
+      "listPlaceholder": "alice@ejemplo.com\n@ejemplo.com\n@*.ejemplo.com",
       "rejectionTitle": "Si se rechaza un correo",
       "notifyEmail": "Avisarme por correo",
       "notifyPush": "Avisarme por notificación push",
@@ -793,7 +793,37 @@
       "invalidEntries": "Entradas no válidas: {entries}",
       "save": "Guardar",
       "saving": "Guardando…",
-      "saved": "Reglas de recepción por correo guardadas."
+      "saved": "Reglas de recepción por correo guardadas.",
+      "formatsLabel": "Formatos aceptados",
+      "formatsHelp": "alice@ejemplo.com: una dirección concreta · @ejemplo.com: todo el dominio ejemplo.com (sin los subdominios) · @*.ejemplo.com: el dominio y todos sus subdominios (mail.ejemplo.com…)"
+    },
+    "inboundEmailLog": {
+      "title": "Correos recibidos",
+      "intro": "Los 50 últimos correos recibidos en la dirección de esta aplicación, del más reciente al más antiguo.",
+      "refresh": "Actualizar",
+      "loading": "Cargando los correos recibidos…",
+      "empty": "Todavía no se ha recibido ningún correo",
+      "noSubject": "(sin asunto)",
+      "columns": {
+        "date": "Fecha",
+        "sender": "Remitente",
+        "subject": "Asunto",
+        "status": "Estado",
+        "reason": "Motivo"
+      },
+      "statuses": {
+        "created": "Notificación creada",
+        "existing": "Duplicado ignorado",
+        "rejected": "Rechazado",
+        "conflict": "Conflicto",
+        "error": "Error"
+      },
+      "reasons": {
+        "sender_not_allowed": "Remitente no autorizado",
+        "sender_blocked": "Remitente bloqueado",
+        "dmarc_failed": "Fallo del control antisuplantación (DMARC)"
+      },
+      "viewNotification": "Ver la notificación"
     },
     "codeExamples": {
       "intro": "Enviar una notificación desde tu código, con un token de envío.",
