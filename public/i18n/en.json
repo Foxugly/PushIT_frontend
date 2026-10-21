@@ -874,6 +874,7 @@
       "notificationsEmpty": "No notifications linked to this application.",
       "quietPeriodsTitle": "Quiet periods",
       "quietPeriodsEmpty": "No quiet periods linked to this application.",
+      "quietPeriodsHint": "During a quiet period, this application's notifications are held back and sent when the period ends.",
       "statusTitle": "Status",
       "table": {
         "name": "Name",
@@ -960,7 +961,8 @@
       "tabs": {
         "overview": "Overview",
         "recipients": "Recipients",
-        "sending": "Sending",
+        "email": "Email",
+        "api": "API / developers",
         "notifications": "Notifications",
         "quietPeriods": "Quiet periods"
       },
@@ -970,6 +972,25 @@
         "lastSend": "Last send"
       },
       "newNotification": "New notification",
+      "newQuietPeriod": "Add a quiet period",
+      "nextSteps": {
+        "title": "Next steps",
+        "enrolTitle": "Subscribe a device",
+        "enrolHint": "Scan the enrolment QR code with the phone that should receive the notifications.",
+        "enrolAction": "Show the QR code",
+        "testHeading": "Send a test notification",
+        "testHint": "A test message is sent right away to every subscribed device.",
+        "testAction": "Send a test notification",
+        "testNoDevice": "No subscribed device can receive it yet: subscribe a device with the QR code first.",
+        "testInactive": "The application is deactivated: activate it to send a notification.",
+        "testLoading": "Loading subscribed devices…",
+        "testTitle": "Test notification",
+        "testMessage": "This is a test from “{name}”: your notifications reach this device.",
+        "testSentSummary": "Test sent",
+        "testSent": "Test notification sent to {count} device(s).",
+        "emailTitle": "Send by email",
+        "emailHint": "An email sent to this address becomes a notification."
+      },
       "legacyToken": {
         "title": "Legacy application token",
         "hint": "The old token (prefix above) no longer authorises sending: use send tokens instead. Regenerate or revoke it here if needed."

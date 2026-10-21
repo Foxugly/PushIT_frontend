@@ -874,6 +874,7 @@
       "notificationsEmpty": "Aucune notification liée à cette application.",
       "quietPeriodsTitle": "Périodes blanches",
       "quietPeriodsEmpty": "Aucune période blanche liée à cette application.",
+      "quietPeriodsHint": "Pendant une période blanche, les notifications de cette application sont retenues puis envoyées à la fin de la période.",
       "statusTitle": "Statut",
       "table": {
         "name": "Nom",
@@ -960,7 +961,8 @@
       "tabs": {
         "overview": "Aperçu",
         "recipients": "Destinataires",
-        "sending": "Envoi",
+        "email": "E-mail",
+        "api": "API / développeurs",
         "notifications": "Notifications",
         "quietPeriods": "Périodes blanches"
       },
@@ -970,6 +972,25 @@
         "lastSend": "Dernier envoi"
       },
       "newNotification": "Nouvelle notification",
+      "newQuietPeriod": "Ajouter une période blanche",
+      "nextSteps": {
+        "title": "Prochaines étapes",
+        "enrolTitle": "Abonner un appareil",
+        "enrolHint": "Scannez le QR code d'enrôlement avec le téléphone qui doit recevoir les notifications.",
+        "enrolAction": "Afficher le QR code",
+        "testHeading": "Envoyer une notification de test",
+        "testHint": "Un message de test part immédiatement vers tous les appareils abonnés.",
+        "testAction": "Envoyer une notification de test",
+        "testNoDevice": "Aucun appareil abonné ne peut la recevoir : abonnez d'abord un appareil avec le QR code.",
+        "testInactive": "L'application est désactivée : réactivez-la pour envoyer une notification.",
+        "testLoading": "Chargement des appareils abonnés…",
+        "testTitle": "Notification de test",
+        "testMessage": "Ceci est un test de « {name} » : vos notifications arrivent bien sur cet appareil.",
+        "testSentSummary": "Test envoyé",
+        "testSent": "Notification de test envoyée à {count} appareil(s).",
+        "emailTitle": "Envoyer par e-mail",
+        "emailHint": "Un e-mail envoyé à cette adresse devient une notification."
+      },
       "legacyToken": {
         "title": "Jeton applicatif historique",
         "hint": "L'ancien jeton (préfixe ci-dessus) n'autorise plus l'émission : préférez les jetons d'émission. Régénérez-le ou révoquez-le ici si besoin."

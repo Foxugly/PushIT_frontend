@@ -874,6 +874,7 @@
       "notificationsEmpty": "Nessuna notifica collegata a questa applicazione.",
       "quietPeriodsTitle": "Periodi di silenzio",
       "quietPeriodsEmpty": "Nessun periodo di silenzio collegato a questa applicazione.",
+      "quietPeriodsHint": "Durante un periodo di silenzio, le notifiche di questa applicazione vengono trattenute e inviate alla fine del periodo.",
       "statusTitle": "Stato",
       "table": {
         "name": "Nome",
@@ -960,7 +961,8 @@
       "tabs": {
         "overview": "Panoramica",
         "recipients": "Destinatari",
-        "sending": "Invio",
+        "email": "E-mail",
+        "api": "API / sviluppatori",
         "notifications": "Notifiche",
         "quietPeriods": "Periodi di silenzio"
       },
@@ -970,6 +972,25 @@
         "lastSend": "Ultimo invio"
       },
       "newNotification": "Nuova notifica",
+      "newQuietPeriod": "Aggiungi un periodo di silenzio",
+      "nextSteps": {
+        "title": "Prossimi passi",
+        "enrolTitle": "Iscrivere un dispositivo",
+        "enrolHint": "Scansiona il codice QR di iscrizione con il telefono che deve ricevere le notifiche.",
+        "enrolAction": "Mostra il codice QR",
+        "testHeading": "Invia una notifica di prova",
+        "testHint": "Un messaggio di prova viene inviato subito a tutti i dispositivi iscritti.",
+        "testAction": "Invia una notifica di prova",
+        "testNoDevice": "Nessun dispositivo iscritto può riceverla: iscrivi prima un dispositivo con il codice QR.",
+        "testInactive": "L'applicazione è disattivata: riattivala per inviare una notifica.",
+        "testLoading": "Caricamento dei dispositivi iscritti…",
+        "testTitle": "Notifica di prova",
+        "testMessage": "Questa è una prova di «{name}»: le tue notifiche arrivano su questo dispositivo.",
+        "testSentSummary": "Prova inviata",
+        "testSent": "Notifica di prova inviata a {count} dispositivo/i.",
+        "emailTitle": "Invia per e-mail",
+        "emailHint": "Un'e-mail inviata a questo indirizzo diventa una notifica."
+      },
       "legacyToken": {
         "title": "Token applicativo legacy",
         "hint": "Il vecchio token (prefisso sopra) non autorizza più l'invio: usate i token di invio. Rigeneratelo o revocatelo qui se necessario."

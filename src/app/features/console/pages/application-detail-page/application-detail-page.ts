@@ -9,6 +9,7 @@ import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { finalize, forkJoin } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 import {
   ApiErrorResponse,
@@ -31,8 +32,6 @@ import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pi
 import { AppAlertTone } from '../../../../shared/app-alert/app-alert';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { PageHeader } from '../../../../shared/page-header/page-header';
-import { ConsoleFactItem } from '../../components/console-facts-table/console-fact-item';
-import { ConsoleFactsTable } from '../../components/console-facts-table/console-facts-table';
 import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
 import { CodeExamples } from '../../components/code-examples/code-examples';
 import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel';
@@ -52,15 +51,31 @@ import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard
 export const APP_DETAIL_TABS = [
   'overview',
   'recipients',
-  'sending',
+  'email',
+  'api',
   'notifications',
   'quiet-periods',
 ] as const;
 export type AppDetailTab = (typeof APP_DETAIL_TABS)[number];
 
+/**
+ * Former tab values still reachable through old links / bookmarks. The single
+ * « Envoi » tab (`sending`) was split into « E-mail » and « API / développeurs »;
+ * its links open the E-mail tab, the part a non-developer is looking for.
+ */
+const LEGACY_APP_DETAIL_TABS: Readonly<Record<string, AppDetailTab>> = {
+  sending: 'email',
+};
+
 /** Unknown / missing values fall back to the overview. */
 export function normalizeAppDetailTab(value: unknown): AppDetailTab {
-  return APP_DETAIL_TABS.includes(value as AppDetailTab) ? (value as AppDetailTab) : 'overview';
+  if (APP_DETAIL_TABS.includes(value as AppDetailTab)) {
+    return value as AppDetailTab;
+  }
+  if (typeof value === 'string' && Object.hasOwn(LEGACY_APP_DETAIL_TABS, value)) {
+    return LEGACY_APP_DETAIL_TABS[value];
+  }
+  return 'overview';
 }
 
 @Component({
@@ -75,7 +90,6 @@ export function normalizeAppDetailTab(value: unknown): AppDetailTab {
     AvatarCropper,
     TabsModule,
     PageHeader,
-    ConsoleFactsTable,
     AppTokenReveal,
     CodeExamples,
     EnrolmentPanel,
@@ -101,6 +115,7 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
   private readonly confirm = inject(AppConfirmService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly settings = inject(SettingsService);
+  private readonly messages = inject(MessageService);
   private readonly fb = inject(FormBuilder);
   readonly shell = inject(ConsoleShellService);
   readonly apiBaseUrl = computed(() => this.settings.apiBaseUrl());
@@ -110,7 +125,7 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
   readonly applicationsCopy = computed(() => this.consoleCopy.current().applications);
   readonly unsavedCopy = computed(() => this.consoleCopy.current().unsavedChanges);
 
-  /** The Envoi tab's sender-policy form keeps its own unsaved state. */
+  /** The E-mail tab's sender-policy form keeps its own unsaved state. */
   private readonly senderPolicyPanel = viewChild(InboundSenderPolicyPanel);
   /** Set once the application is deleted: nothing left to save, leave without asking. */
   private deleted = false;
@@ -135,6 +150,9 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
   readonly evicting = signal<number | null>(null);
   readonly aliasChecking = signal(false);
   readonly aliasStatus = signal<AliasStatus | null>(null);
+  /** « Envoyer une notification de test » in flight / its last refusal. */
+  readonly testSending = signal(false);
+  readonly testError = signal<ApiErrorResponse | null>(null);
 
   readonly tabs = APP_DETAIL_TABS;
   readonly activeTab = signal<AppDetailTab>('overview');
@@ -153,7 +171,8 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
     return {
       overview: tabs.overview,
       recipients: tabs.recipients,
-      sending: tabs.sending,
+      email: tabs.email,
+      api: tabs.api,
       notifications: tabs.notifications,
       'quiet-periods': tabs.quietPeriods,
     };
@@ -214,32 +233,32 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
     () => this.application()?.legacy_send_last_used_at != null,
   );
 
-  readonly applicationFactsComputed = computed(() => {
-    const app = this.application();
-    if (!app) {
-      return [];
-    }
+  /**
+   * Subscribed devices a notification can actually reach: linked to this app
+   * (`devices()` is already filtered) with a live push token — the same rule as
+   * the create-notification form.
+   */
+  readonly reachableDevices = computed(() =>
+    this.devices().filter((device) => device.push_token_status === 'active'),
+  );
 
-    return [
-      { label: this.copy().facts.id, value: String(app.id) },
-      { label: this.copy().facts.name, value: app.name },
-      { label: this.copy().facts.tokenPrefix, value: app.app_token_prefix, severity: 'info' as const },
-      {
-        label: this.copy().facts.status,
-        value: app.is_active ? this.copy().statusLabels.active : this.copy().statusLabels.inactive,
-        severity: this.appSeverity(app),
-      },
-      {
-        label: this.copy().facts.lastUsed,
-        value: app.last_used_at ? this.formatDateTime(app.last_used_at) : this.copy().statusLabels.never,
-      },
-      {
-        label: this.copy().facts.revokedToken,
-        value: app.revoked_at ? this.formatDateTime(app.revoked_at) : this.copy().statusLabels.no,
-        severity: app.revoked_at ? 'warn' as const : 'success' as const,
-      },
-      { label: this.copy().facts.createdAt, value: this.formatDateTime(app.created_at) },
-    ] as ConsoleFactItem[];
+  /**
+   * Why « Envoyer une notification de test » is disabled, or null when it can
+   * be sent. The server refuses a send on a deactivated application.
+   */
+  readonly testBlockedReason = computed<string | null>(() => {
+    const app = this.application();
+    const copy = this.copy().nextSteps;
+    if (app && !app.is_active) {
+      return copy.testInactive;
+    }
+    if (this.relatedLoading() && !this.devices().length) {
+      return copy.testLoading;
+    }
+    if (!this.reachableDevices().length) {
+      return copy.testNoDevice;
+    }
+    return null;
   });
 
   ngOnInit(): void {
@@ -264,12 +283,12 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
     this.loadRelated(appId);
 
     // Follow `?tab=` (initial load, links, back/forward). Without a tab param, a
-    // token just minted for this app (create / regenerate) opens the Envoi tab,
+    // token just minted for this app (create / regenerate) opens the API tab,
     // where the one-time reveal lives.
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const raw = params.get('tab');
       if (raw === null && this.shell.lastGeneratedToken()?.appId === appId) {
-        this.activeTab.set('sending');
+        this.activeTab.set('api');
         return;
       }
       this.activeTab.set(normalizeAppDetailTab(raw));
@@ -371,10 +390,6 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
     return `${days} | ${this.formatTime(quietPeriod.start_time)} -> ${this.formatTime(quietPeriod.end_time)}`;
   }
 
-  applicationFacts(): ConsoleFactItem[] {
-    return this.applicationFactsComputed();
-  }
-
   async copyInboundEmail(address: string): Promise<void> {
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
@@ -423,6 +438,53 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
     void this.router.navigate(['/dashboard/notifications'], {
       queryParams: { app: app.id, create: 1 },
     });
+  }
+
+  /** Opens the quiet-periods page's create modal, pre-selected on this app. */
+  newQuietPeriod(): void {
+    const app = this.application();
+    if (!app) {
+      return;
+    }
+    void this.router.navigate(['/dashboard/quiet-periods'], {
+      queryParams: { app: app.id, create: 1 },
+    });
+  }
+
+  /**
+   * One click: a fixed, translated message sent right away to every reachable
+   * subscribed device (POST notifications/send/). Success is a toast; a refusal
+   * (billing, inactive app, queue down) stays on the card as an alert.
+   */
+  sendTestNotification(): void {
+    const app = this.application();
+    if (!app || this.testBlockedReason() || this.testSending()) {
+      return;
+    }
+    const deviceIds = this.reachableDevices().map((device) => device.id);
+    const copy = this.copy().nextSteps;
+
+    this.testSending.set(true);
+    this.testError.set(null);
+    this.api
+      .sendNotificationNow({
+        application_id: app.id,
+        device_ids: deviceIds,
+        title: copy.testTitle,
+        message: interpolate(copy.testMessage, { name: app.name }),
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.testSending.set(false)))
+      .subscribe({
+        next: () => {
+          this.messages.add({
+            severity: 'success',
+            summary: copy.testSentSummary,
+            detail: interpolate(copy.testSent, { count: deviceIds.length }),
+          });
+          this.loadRelated(app.id);
+        },
+        error: (err) => this.testError.set(coerceApiError(err)),
+      });
   }
 
   saveSettings(): void {

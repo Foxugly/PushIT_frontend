@@ -80,9 +80,10 @@ test.beforeEach(async ({ page }) => {
 test('application detail view renders linked devices and notifications', async ({ page }) => {
   await page.goto('/dashboard/applications/10');
 
-  // Aperçu: status facts + counters.
+  // Aperçu: next steps + counters (the former « Statut » facts table is gone).
   await expect(page.getByRole('heading', { name: 'PushIT Mobile' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Statut' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Prochaines étapes' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Statut' })).toHaveCount(0);
   await expect(page.getByTestId('counter-devices')).toContainText('2');
   await expect(page.getByTestId('counter-notifications')).toContainText('1');
 
@@ -122,7 +123,7 @@ test('the enrolment block shows the code and warns that rotating evicts nobody',
 });
 
 test('a send token is shown once at creation, then only behind the password', async ({ page }) => {
-  await page.goto('/dashboard/applications/10?tab=sending');
+  await page.goto('/dashboard/applications/10?tab=api');
 
   const panel = page.getByTestId('send-tokens-panel');
   await panel.getByPlaceholder('prod, script de nuit, ...').fill('prod');

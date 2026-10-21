@@ -111,7 +111,7 @@ describe('ApplicationFormPage', () => {
         jasmine.any(Function),
       );
       // Navigate to the new app's detail page...
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'sending' } });
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'api' } });
       // ...and the one-time token is REACHABLE there: the shell holds it for the
       // created app id, which is exactly what the detail page's revealToken()
       // surfaces (regression guard: create must not strand the token).
@@ -159,7 +159,7 @@ describe('ApplicationFormPage', () => {
 
       expect(api.uploadAppLogo).toHaveBeenCalledWith(999, file);
       expect(shell.loadShell).toHaveBeenCalledWith(999);
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'sending' } });
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'api' } });
       expect(component.pending()).toBeFalse();
     });
 
@@ -171,7 +171,7 @@ describe('ApplicationFormPage', () => {
       component.save();
 
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], {
-        queryParams: { tab: 'sending' },
+        queryParams: { tab: 'api' },
         state: { logoUploadFailed: true },
       });
       expect(shell.lastGeneratedToken()?.appId).toBe(999);
@@ -183,7 +183,7 @@ describe('ApplicationFormPage', () => {
       component.save();
 
       expect(api.uploadAppLogo).not.toHaveBeenCalled();
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'sending' } });
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard/applications', 999], { queryParams: { tab: 'api' } });
     });
   });
 });

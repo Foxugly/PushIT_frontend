@@ -431,6 +431,26 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
       const appId = Number(appQuietPeriodsMatch[1]);
       return fulfillJson(route, 200, state.appQuietPeriods?.[appId] ?? []);
     }
+    if (appQuietPeriodsMatch && method === 'POST') {
+      const appId = Number(appQuietPeriodsMatch[1]);
+      const payload = (request.postDataJSON() ?? {}) as Record<string, unknown>;
+      const created = {
+        id: Date.now(),
+        application: appId,
+        recurrence_days: [],
+        start_at: null,
+        end_at: null,
+        start_time: null,
+        end_time: null,
+        created_at: new Date().toISOString(),
+        ...payload,
+      };
+      state.appQuietPeriods = {
+        ...state.appQuietPeriods,
+        [appId]: [...(state.appQuietPeriods?.[appId] ?? []), created],
+      };
+      return fulfillJson(route, 201, created);
+    }
 
     if (path.endsWith('/devices/') && method === 'GET') {
       return fulfillJson(route, 200, paginatedOrBare(url, state.devices));
@@ -466,6 +486,7 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     if ((path.endsWith('/notifications/') || path.endsWith('/notifications/send/')) && method === 'POST') {
       const payload = (request.postDataJSON() ?? {}) as {
         application_id?: number;
+        device_ids?: number[];
         title?: string;
         message?: string;
         scheduled_for?: string | null;
@@ -475,7 +496,7 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
         id: Date.now(),
         application_id: payload.application_id ?? 0,
         application_name: app?.name ?? '',
-        device_ids: [],
+        device_ids: payload.device_ids ?? [],
         title: payload.title ?? '',
         message: payload.message ?? '',
         status: payload.scheduled_for ? 'scheduled' : 'sent',

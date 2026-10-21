@@ -1,7 +1,8 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { combineLatest, finalize, forkJoin, Observable, of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, filter, finalize, forkJoin, Observable, of, take } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -63,8 +64,12 @@ export class QuietPeriodsPage implements OnInit {
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   private readonly confirm = inject(AppConfirmService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().quietPeriods);
+  private readonly apps$ = toObservable(this.shell.apps);
 
   readonly scopeOptions = computed(() => [
     { label: this.copy().scopeLabels.application, value: 'application' as QuietPeriodScope },
@@ -175,6 +180,41 @@ export class QuietPeriodsPage implements OnInit {
 
   ngOnInit(): void {
     this.loadDevices();
+    this.openCreateFromQuery();
+  }
+
+  /**
+   * `?create=1&app=<id>` (the application detail page's « Ajouter une période
+   * blanche ») opens the create modal pre-selected on that app, once the shell
+   * has loaded it. The params are then dropped (replaceUrl) so a reload does not
+   * reopen the modal.
+   */
+  private openCreateFromQuery(): void {
+    const params = this.route.snapshot.queryParamMap;
+    if (params.get('create') !== '1') {
+      return;
+    }
+    const appId = Number(params.get('app'));
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { create: null, app: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+    if (!Number.isInteger(appId) || appId <= 0) {
+      return;
+    }
+    this.apps$
+      .pipe(
+        filter((apps) => apps.some((app) => app.id === appId)),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.openCreateModal();
+        this.modalScope.set('application');
+        this.modalApplicationId.set(appId);
+      });
   }
 
   loadDevices(): void {

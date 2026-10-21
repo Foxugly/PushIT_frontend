@@ -6,7 +6,6 @@
     <div slot="right" class="ph-actions">
       @if (application(); as app) {
         <p-tag [value]="app.is_active ? copy().statusLabels.active : copy().statusLabels.inactive" [severity]="appSeverity(app)" />
-        <p-tag [value]="copy().facts.tokenPrefix + ' ' + app.app_token_prefix" severity="info" />
       }
     </div>
   </app-page-header>
@@ -42,7 +41,7 @@
         </p-tablist>
 
         <p-tabpanels>
-          <!-- Aperçu : chiffres, informations modifiables, logo, état, faits, zone de danger -->
+          <!-- Aperçu : prochaines étapes, chiffres, informations modifiables, logo, état, zone de danger -->
           <p-tabpanel value="overview">
             <div class="console-detail-grid">
               @if (stillSendsWithLegacyToken()) {
@@ -50,6 +49,66 @@
                   <app-alert [message]="copy().legacyWarning" tone="danger" />
                 </article>
               }
+
+              <article class="console-detail-panel console-detail-panel--wide" data-testid="next-steps">
+                <h3>{{ copy().nextSteps.title }}</h3>
+                <ol class="application-next-steps">
+                  <li class="application-next-steps__item" [class.application-next-steps__item--done]="devices().length > 0" data-testid="next-step-enrol">
+                    <i [class]="devices().length > 0 ? 'pi pi-check-circle' : 'pi pi-qrcode'" aria-hidden="true"></i>
+                    <div class="application-next-steps__body">
+                      <strong>{{ copy().nextSteps.enrolTitle }}</strong>
+                      <p class="console-table__subtext">{{ copy().nextSteps.enrolHint }}</p>
+                    </div>
+                    <p-button
+                      icon="pi pi-qrcode"
+                      size="small"
+                      severity="secondary"
+                      [outlined]="true"
+                      [label]="copy().nextSteps.enrolAction"
+                      (onClick)="selectTab('recipients')"
+                    />
+                  </li>
+
+                  <li class="application-next-steps__item" data-testid="next-step-test">
+                    <i class="pi pi-send" aria-hidden="true"></i>
+                    <div class="application-next-steps__body">
+                      <strong>{{ copy().nextSteps.testHeading }}</strong>
+                      <p class="console-table__subtext" data-testid="test-notification-hint">
+                        {{ testBlockedReason() ?? copy().nextSteps.testHint }}
+                      </p>
+                      @if (testError(); as testErr) {
+                        <app-alert [message]="testErr | apiError" tone="danger" (dismissed)="testError.set(null)" />
+                      }
+                    </div>
+                    <p-button
+                      icon="pi pi-send"
+                      size="small"
+                      [label]="copy().nextSteps.testAction"
+                      [loading]="testSending()"
+                      [disabled]="!!testBlockedReason() || testSending()"
+                      data-testid="send-test-notification"
+                      (onClick)="sendTestNotification()"
+                    />
+                  </li>
+
+                  <li class="application-next-steps__item" data-testid="next-step-email">
+                    <i class="pi pi-envelope" aria-hidden="true"></i>
+                    <div class="application-next-steps__body">
+                      <strong>{{ copy().nextSteps.emailTitle }}</strong>
+                      <p class="console-table__subtext">{{ copy().nextSteps.emailHint }}</p>
+                      <code class="application-next-steps__address">{{ app.inbound_email_address }}</code>
+                    </div>
+                    <p-button
+                      icon="pi pi-copy"
+                      size="small"
+                      severity="secondary"
+                      [outlined]="true"
+                      [label]="copy().inboundEmailCopy"
+                      (onClick)="copyInboundEmail(app.inbound_email_address)"
+                    />
+                  </li>
+                </ol>
+              </article>
 
               <article class="console-detail-panel console-detail-panel--wide">
                 <div class="application-detail-counters">
@@ -139,11 +198,6 @@
                     (onClick)="toggleState()"
                   />
                 </div>
-              </article>
-
-              <article class="console-detail-panel console-detail-panel--wide">
-                <h3>{{ copy().statusTitle }}</h3>
-                <app-console-facts-table [items]="applicationFactsComputed()" styleClass="p-datatable-sm application-detail-table" />
               </article>
 
               <article class="console-detail-panel console-detail-panel--wide application-detail-danger" data-testid="danger-zone">
@@ -237,59 +291,9 @@
             </div>
           </p-tabpanel>
 
-          <!-- Envoi -->
-          <p-tabpanel value="sending">
+          <!-- E-mail : adresse d'ingestion, « Mails reçus », qui peut envoyer -->
+          <p-tabpanel value="email">
             <div class="console-detail-grid">
-              @if (revealToken(); as token) {
-                <article class="console-detail-panel console-detail-panel--wide application-detail-token">
-                  <div class="application-detail-section__header">
-                    <h3>{{ applicationsCopy().qr.title }}</h3>
-                  </div>
-                  <p class="console-table__subtext">{{ applicationsCopy().alerts.created }}</p>
-                  <app-token-reveal [app]="app" [token]="token" />
-                </article>
-              }
-
-              <article class="console-detail-panel console-detail-panel--wide">
-                <div class="application-detail-section__header">
-                  <h3>{{ copy().sendTokensTitle }}</h3>
-                </div>
-                <app-send-tokens-panel [app]="app" />
-              </article>
-
-              <article class="console-detail-panel console-detail-panel--wide" data-testid="legacy-token-block">
-                <div class="application-detail-section__header application-detail-email__header">
-                  <div>
-                    <h3>{{ copy().legacyToken.title }}</h3>
-                    <p class="console-table__subtext">{{ copy().legacyToken.hint }}</p>
-                  </div>
-                  <div class="application-detail-email__actions">
-                    <p-button
-                      icon="pi pi-refresh"
-                      severity="warn"
-                      size="small"
-                      [outlined]="true"
-                      [label]="applicationsCopy().actions.regenerate"
-                      [disabled]="actionPending()"
-                      (onClick)="regenerateLegacyToken()"
-                    />
-                    <p-button
-                      icon="pi pi-ban"
-                      severity="danger"
-                      size="small"
-                      [outlined]="true"
-                      [label]="applicationsCopy().actions.revoke"
-                      [disabled]="actionPending()"
-                      (onClick)="revokeLegacyToken()"
-                    />
-                  </div>
-                </div>
-                <div class="application-detail-email__address">
-                  <span class="application-detail-email__label">{{ copy().facts.tokenPrefix }}</span>
-                  <code>{{ app.app_token_prefix }}</code>
-                </div>
-              </article>
-
               <article class="console-detail-panel console-detail-panel--wide">
                 <div class="application-detail-section__header application-detail-email__header">
                   <div>
@@ -347,13 +351,68 @@
                     </div>
                   }
                 </div>
+              </article>
 
-                <div class="application-detail-email__alias">
-                  <app-inbound-sender-policy-panel [app]="app" (saved)="onSenderPolicySaved($event)" />
+              <article class="console-detail-panel console-detail-panel--wide">
+                <app-inbound-email-log-panel [appId]="app.id" [active]="activeTab() === 'email'" />
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <app-inbound-sender-policy-panel [app]="app" (saved)="onSenderPolicySaved($event)" />
+              </article>
+            </div>
+          </p-tabpanel>
+
+          <!-- API / développeurs : jetons d'émission, jeton historique, exemples -->
+          <p-tabpanel value="api">
+            <div class="console-detail-grid">
+              @if (revealToken(); as token) {
+                <article class="console-detail-panel console-detail-panel--wide application-detail-token">
+                  <div class="application-detail-section__header">
+                    <h3>{{ applicationsCopy().qr.title }}</h3>
+                  </div>
+                  <p class="console-table__subtext">{{ applicationsCopy().alerts.created }}</p>
+                  <app-token-reveal [app]="app" [token]="token" />
+                </article>
+              }
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <h3>{{ copy().sendTokensTitle }}</h3>
                 </div>
+                <app-send-tokens-panel [app]="app" />
+              </article>
 
-                <div class="application-detail-email__alias">
-                  <app-inbound-email-log-panel [appId]="app.id" [active]="activeTab() === 'sending'" />
+              <article class="console-detail-panel console-detail-panel--wide" data-testid="legacy-token-block">
+                <div class="application-detail-section__header application-detail-email__header">
+                  <div>
+                    <h3>{{ copy().legacyToken.title }}</h3>
+                    <p class="console-table__subtext">{{ copy().legacyToken.hint }}</p>
+                  </div>
+                  <div class="application-detail-email__actions">
+                    <p-button
+                      icon="pi pi-refresh"
+                      severity="warn"
+                      size="small"
+                      [outlined]="true"
+                      [label]="applicationsCopy().actions.regenerate"
+                      [disabled]="actionPending()"
+                      (onClick)="regenerateLegacyToken()"
+                    />
+                    <p-button
+                      icon="pi pi-ban"
+                      severity="danger"
+                      size="small"
+                      [outlined]="true"
+                      [label]="applicationsCopy().actions.revoke"
+                      [disabled]="actionPending()"
+                      (onClick)="revokeLegacyToken()"
+                    />
+                  </div>
+                </div>
+                <div class="application-detail-email__address">
+                  <span class="application-detail-email__label">{{ copy().facts.tokenPrefix }}</span>
+                  <code>{{ app.app_token_prefix }}</code>
                 </div>
               </article>
 
@@ -438,8 +497,19 @@
               <article class="console-detail-panel console-detail-panel--wide">
                 <div class="application-detail-section__header">
                   <h3>{{ copy().quietPeriodsTitle }}</h3>
-                  <p-tag [value]="quietPeriods().length + ' périodes'" severity="warn" />
+                  <div class="application-detail-email__actions">
+                    <p-tag [value]="quietPeriods().length + ' périodes'" severity="warn" />
+                    <p-button
+                      icon="pi pi-plus"
+                      severity="success"
+                      size="small"
+                      [label]="copy().newQuietPeriod"
+                      data-testid="add-quiet-period"
+                      (onClick)="newQuietPeriod()"
+                    />
+                  </div>
                 </div>
+                <p class="console-table__subtext">{{ copy().quietPeriodsHint }}</p>
                 @if (quietPeriods().length) {
                   <div class="application-detail-list">
                     @for (quietPeriod of quietPeriods(); track quietPeriod.id) {

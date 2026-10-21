@@ -4,7 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import {
   makeApplication,
@@ -249,6 +249,8 @@ describe('NotificationsPage', () => {
     // selection sync has run.
     expect(component.notificationForm.controls.application_id.value).toBe('102');
     expect(component.availableDeviceOptions().map((option) => option.value)).toEqual([202]);
+    // Every reachable subscribed device of that app is pre-selected.
+    expect(component.notificationForm.controls.device_ids.value).toEqual([202]);
     // ...and the select can actually display it (option values match the control).
     expect(component.appOptions().map((option) => option.value)).toContain('102');
     // The one-shot params are dropped so a reload does not reopen the modal.
@@ -275,6 +277,59 @@ describe('NotificationsPage', () => {
         value: 201,
       },
     ]);
+  });
+
+  describe('target devices pre-selection', () => {
+    it('pre-selects every active device subscribed to the app when the modal opens', () => {
+      fixture.detectChanges();
+
+      component.openCreateModal(101);
+
+      // 203 is linked to 101 but its push token is invalid: not reachable.
+      expect(component.notificationForm.controls.device_ids.value).toEqual([201]);
+      expect(component.notificationForm.controls.device_ids.valid).toBe(true);
+    });
+
+    it('follows an application change while the selection is untouched', () => {
+      fixture.detectChanges();
+      component.openCreateModal(101);
+
+      component.notificationForm.controls.application_id.setValue('102');
+
+      expect(component.notificationForm.controls.device_ids.value).toEqual([202]);
+    });
+
+    it('only prunes a selection the user edited', () => {
+      api.listDevices.and.returnValue(
+        of<DeviceRead[]>([
+          makeDevice({ id: 201, application_ids: [101, 102], push_token_status: 'active' }),
+          makeDevice({ id: 204, application_ids: [101], push_token_status: 'active' }),
+          makeDevice({ id: 202, application_ids: [102], push_token_status: 'active' }),
+        ]),
+      );
+      fixture.detectChanges();
+      component.openCreateModal(101);
+      expect(component.notificationForm.controls.device_ids.value).toEqual([201, 204]);
+      component.notificationForm.controls.device_ids.setValue([201, 204]);
+      component.notificationForm.controls.device_ids.markAsDirty();
+
+      component.notificationForm.controls.application_id.setValue('102');
+
+      expect(component.notificationForm.controls.device_ids.value).toEqual([201]);
+    });
+
+    it('pre-selects the devices that arrive after the modal opened', () => {
+      const devices$ = new Subject<DeviceRead[]>();
+      api.listDevices.and.returnValue(devices$);
+      fixture.detectChanges();
+      component.openCreateModal(101);
+      expect(component.notificationForm.controls.device_ids.value).toEqual([]);
+
+      devices$.next([makeDevice({ id: 201, application_ids: [101], push_token_status: 'active' })]);
+      devices$.complete();
+
+      expect(component.notificationForm.controls.device_ids.value).toEqual([201]);
+    });
   });
 
   it('keeps only devices linked to the selected application', () => {
