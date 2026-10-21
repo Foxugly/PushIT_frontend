@@ -493,6 +493,8 @@
       "countLabel": "devices",
       "refresh": "Refresh",
       "add": "Add",
+      "downloadAndroid": "Android app",
+      "downloadAndroidError": "The Android app could not be downloaded.",
       "empty": "No linked devices for this account.",
       "loading": "Loading devices...",
       "none": "none",

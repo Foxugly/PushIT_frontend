@@ -241,6 +241,11 @@ export class PushitApiService {
     return this.http.get(this.url(`/apps/${appId}/qrcode/`), { responseType: 'blob' });
   }
 
+  /** The PushIT Android APK, served to signed-in users only. 404 when none is published. */
+  downloadAndroidApp(): Observable<Blob> {
+    return this.http.get(this.url('/devices/android-app/'), { responseType: 'blob' });
+  }
+
   /**
    * Draw a new enrolment code. Closes the door to newcomers; **evicts nobody** —
    * already-linked devices stay linked (see evictDeviceFromApp).

@@ -493,6 +493,8 @@
       "countLabel": "devices",
       "refresh": "Vernieuwen",
       "add": "Toevoegen",
+      "downloadAndroid": "Android-app",
+      "downloadAndroidError": "De Android-app kon niet worden gedownload.",
       "empty": "Geen gekoppelde devices voor dit account.",
       "loading": "Devices laden...",
       "none": "geen",
