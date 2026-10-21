@@ -64,12 +64,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         .page-header {
           grid-template-columns: 1fr;
         }
-        .page-header__center {
-          justify-self: start;
-        }
-        .page-header__center h1 {
-          text-align: left;
-        }
         .page-header__side--right {
           justify-content: flex-start;
         }

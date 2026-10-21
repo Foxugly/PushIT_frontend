@@ -15,13 +15,15 @@
     }
   }
 
-  <app-page-header [title]="copy().title">
-    <div slot="right" class="ph-actions">
-      <div class="console-resource-header__badges">
-        <p-tag [value]="copy().history + ' ' + notificationsTotal()" severity="info" />
-        <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
-        <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
-      </div>
+  <app-page-header [title]="copy().title" />
+
+  <div class="ph-toolbar">
+    <div class="console-resource-header__badges ph-toolbar__left">
+      <p-tag [value]="copy().history + ' ' + notificationsTotal()" severity="info" />
+      <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
+      <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
+    </div>
+    <div class="ph-toolbar__right">
       <p-button
         [label]="copy().refresh"
         icon="pi pi-refresh"
@@ -30,7 +32,7 @@
       />
       <p-button [label]="copy().add" icon="pi pi-plus" severity="success" (onClick)="openCreateModal()" />
     </div>
-  </app-page-header>
+  </div>
 
   <section class="console-card">
 
