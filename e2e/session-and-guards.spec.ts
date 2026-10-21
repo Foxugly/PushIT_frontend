@@ -266,3 +266,83 @@ test('a superuser can open /dashboard/accounts', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Comptes' })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard\/accounts$/);
 });
+
+test('an anonymous deep link into the console lands on /auth without calling the API', async ({ page }) => {
+  const apiCalls: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/api/v1/')) apiCalls.push(request.url());
+  });
+
+  await page.goto('/dashboard/applications/10?tab=sending');
+
+  await expect(page).toHaveURL(/\/auth$/);
+  // No session hint → no silent restore, and the guard runs before any page loads data.
+  expect(apiCalls).toEqual([]);
+});
+
+for (const guestPath of ['/auth', '/register', '/forgot-password', '/reset-password/MQ/abc-123']) {
+  test(`a signed-in user opening ${guestPath} is sent to the dashboard`, async ({ page }) => {
+    await seedAuthenticatedSession(page, baseUser);
+    await mockConsoleApi(page, state(baseUser));
+
+    await page.goto(guestPath);
+
+    await expect(page).toHaveURL(/\/dashboard$/);
+  });
+}
+
+test('parallel calls rejected with 401 share a single refresh, then all retry', async ({ page }) => {
+  await seedAuthenticatedSession(page, baseUser);
+  await mockConsoleApi(page, state(baseUser));
+  // Every console call presenting the restored (soon-expired) token answers 401;
+  // /auth/* is left alone so the silent restore and the refresh go through.
+  await page.route('**/api/v1/**', async (route) => {
+    const request = route.request();
+    const isAuth = new URL(request.url()).pathname.includes('/api/v1/auth/');
+    if (!isAuth && request.headers()['authorization'] === 'Bearer access-token') {
+      return route.fulfill({ status: 401, contentType: 'application/json', body: '{}' });
+    }
+    return route.fallback();
+  });
+  let refreshCount = 0;
+  await page.route('**/api/v1/auth/refresh/', async (route) => {
+    refreshCount += 1;
+    const access = refreshCount === 1 ? 'access-token' : 'fresh-access';
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ access }) });
+  });
+  const retried: string[] = [];
+  page.on('request', (request) => {
+    if (request.headers()['authorization'] === 'Bearer fresh-access') retried.push(request.url());
+  });
+
+  await page.goto('/dashboard');
+
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect.poll(() => retried.length).toBeGreaterThan(1);
+  // 1 = boot restore, 1 = the shared refresh after the burst of 401s.
+  expect(refreshCount).toBe(2);
+});
+
+test('a refresh failing with a 5xx keeps the session instead of logging out', async ({ page }) => {
+  await seedAuthenticatedSession(page, baseUser);
+  await mockConsoleApi(page, state(baseUser));
+  await expireAccessToken(page);
+  let refreshCount = 0;
+  await page.route('**/api/v1/auth/refresh/', async (route) => {
+    refreshCount += 1;
+    if (refreshCount === 1) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ access: 'access-token' }),
+      });
+    }
+    return route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
+  });
+
+  await page.goto('/dashboard/applications');
+
+  await expect.poll(() => refreshCount).toBe(2);
+  await expect(page).toHaveURL(/\/dashboard\/applications$/);
+  expect(await page.evaluate(() => localStorage.getItem('pushit.session'))).not.toBeNull();
+});

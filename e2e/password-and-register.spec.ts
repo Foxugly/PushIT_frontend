@@ -16,7 +16,19 @@ async function mockGuestApi(page: Page): Promise<Request[]> {
     const method = request.method();
 
     if (path.endsWith('/auth/register/') && method === 'POST') {
-      const body = request.postDataJSON() as { email: string };
+      const body = request.postDataJSON() as { email: string; password: string };
+      if (body.password === 'password123') {
+        // Shape of the backend's validation_error (Django password validators).
+        return route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            code: 'validation_error',
+            detail: 'Invalid input.',
+            errors: { password: ['Ce mot de passe est trop courant.'] },
+          }),
+        });
+      }
       return route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -27,12 +39,20 @@ async function mockGuestApi(page: Page): Promise<Request[]> {
       return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
     }
     if (path.endsWith('/auth/reset-password/') && method === 'POST') {
-      const body = request.postDataJSON() as { token: string };
+      const body = request.postDataJSON() as { token: string; password: string };
       if (body.token === 'expired-token') {
+        // Same code as PushIT_server's ResetPasswordConfirmApiView.
         return route.fulfill({
           status: 400,
           contentType: 'application/json',
-          body: JSON.stringify({ code: 'invalid_token', detail: 'Lien invalide ou expiré.' }),
+          body: JSON.stringify({ code: 'reset_link_invalid', detail: 'Lien invalide ou expiré.' }),
+        });
+      }
+      if (body.password === 'password123') {
+        return route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'password_invalid', detail: 'Ce mot de passe est trop courant.' }),
         });
       }
       return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
@@ -90,6 +110,41 @@ test('register refuses a short password without calling the API', async ({ page 
   expect(postTo(calls, '/auth/register/')).toBeUndefined();
 });
 
+test('register shows required / format errors without calling the API', async ({ page }) => {
+  const calls = await mockGuestApi(page);
+  await page.goto('/register');
+
+  await page.getByRole('button', { name: 'Créer mon compte' }).click();
+  await expect(page.getByText("L'email est requis.")).toBeVisible();
+  await expect(page.getByText('Le mot de passe est requis.')).toBeVisible();
+
+  const email = page.locator('#register-email');
+  await email.fill('not-an-email');
+  await expect(email).toHaveValue('not-an-email');
+  await page.locator('#register-password').fill('s3cret-pass');
+  await page.getByRole('button', { name: 'Créer mon compte' }).click();
+
+  await expect(page.getByText('Saisissez une adresse email valide.')).toBeVisible();
+  await expect(page).toHaveURL(/\/register$/);
+  expect(postTo(calls, '/auth/register/')).toBeUndefined();
+});
+
+test('register lists the backend password validator messages and stays on the form', async ({ page }) => {
+  const calls = await mockGuestApi(page);
+  await page.goto('/register');
+
+  const email = page.locator('#register-email');
+  await email.fill('new.user@example.com');
+  await expect(email).toHaveValue('new.user@example.com');
+  await page.locator('#register-password').fill('password123');
+  await page.getByRole('button', { name: 'Créer mon compte' }).click();
+
+  await expect(page.getByText('Ce mot de passe est trop courant.')).toBeVisible();
+  await expect(page.getByText('Veuillez corriger les champs en erreur.')).toBeVisible();
+  await expect(page).toHaveURL(/\/register$/);
+  expect(postTo(calls, '/auth/register/')).toBeDefined();
+});
+
 test('a visitor can request a password reset link', async ({ page }) => {
   const calls = await mockGuestApi(page);
   await page.goto('/forgot-password');
@@ -136,6 +191,31 @@ test('the reset-password page blocks mismatched passwords', async ({ page }) => 
 
   await expect(page.getByText('Les mots de passe ne correspondent pas.')).toBeVisible();
   expect(postTo(calls, '/auth/reset-password/')).toBeUndefined();
+});
+
+test('forgot-password refuses a malformed address without calling the API', async ({ page }) => {
+  const calls = await mockGuestApi(page);
+  await page.goto('/forgot-password');
+
+  const email = page.locator('#forgot-email');
+  await email.fill('not-an-email');
+  await expect(email).toHaveValue('not-an-email');
+  await page.getByRole('button', { name: 'Envoyer le lien' }).click();
+
+  await expect(page.getByText(/Si un compte existe avec cet email/)).toHaveCount(0);
+  expect(postTo(calls, '/auth/forgot-password/')).toBeUndefined();
+});
+
+test('the reset-password page shows the backend password validator message', async ({ page }) => {
+  await mockGuestApi(page);
+  await page.goto('/reset-password/MQ/abc-123');
+
+  await page.locator('#reset-password').fill('password123');
+  await page.locator('#reset-confirm-password').fill('password123');
+  await page.getByRole('button', { name: 'Réinitialiser le mot de passe' }).click();
+
+  await expect(page.getByText('Ce mot de passe est trop courant.')).toBeVisible();
+  await expect(page.getByText('Votre mot de passe a été réinitialisé.', { exact: false })).toHaveCount(0);
 });
 
 test('the reset-password page surfaces an expired link', async ({ page }) => {
