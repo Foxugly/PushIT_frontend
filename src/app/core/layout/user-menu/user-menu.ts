@@ -11,9 +11,9 @@ import { SessionService } from '../../services/session.service';
 
 /**
  * Polymorphic user slot (fleet standard §6) — dernier des actions du topmenu.
- * Déconnecté → lien « Se connecter ». Connecté → dropdown (Paramètres / Changer
- * le mot de passe / Déconnexion). La bascule auth est gérée ICI (le topmenu n'a
- * pas de `@if(auth)` pour cette zone).
+ * Déconnecté → lien « Se connecter ». Connecté → dropdown (Mon compte / Changer
+ * le mot de passe → bloc « Sécurité » de Mon compte / Déconnexion). La bascule
+ * auth est gérée ICI (le topmenu n'a pas de `@if(auth)` pour cette zone).
  */
 @Component({
   selector: 'app-user-menu',
@@ -29,7 +29,7 @@ export class UserMenu {
   readonly session = inject(SessionService);
 
   readonly settingsLink = input('/dashboard/settings');
-  readonly changePasswordLink = input('/dashboard/change-password');
+  readonly changePasswordLink = input('/dashboard/settings');
   readonly settingsSummary = input('');
 
   readonly labels = computed(() => this.appCopy.current().header);
@@ -50,7 +50,12 @@ export class UserMenu {
       });
     }
     items.push(
-      { label: this.labels().changePassword, icon: 'pi pi-key', routerLink: this.changePasswordLink() },
+      {
+        label: this.labels().changePassword,
+        icon: 'pi pi-key',
+        routerLink: this.changePasswordLink(),
+        fragment: 'security',
+      },
       { separator: true },
       { label: this.labels().logout, icon: 'pi pi-sign-out', command: () => this.requestLogout() },
     );

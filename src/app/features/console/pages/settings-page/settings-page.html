@@ -1,56 +1,58 @@
-<section class="console-page">
+<section class="console-page account-page">
   <app-page-header [title]="copy().title" />
-  <p class="console-muted console-page__lead">{{ copy().description }}</p>
 
-  @if (banner()) {
-    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
+  @if (banner(); as alert) {
+    <app-alert [message]="bannerMessage()" [tone]="alert.tone" (dismissed)="banner.set(null)" />
   }
 
-  <div class="console-grid console-grid--2">
-    <form class="console-card console-form" [formGroup]="form" (ngSubmit)="save()">
-      <div class="console-card__header">
-        <div>
-          <p class="console-shell__eyebrow">{{ copy().backendEyebrow }}</p>
-          <h3>{{ copy().backendTitle }}</h3>
-        </div>
+  <section class="console-card" data-testid="account-panel">
+    <div class="console-card__header">
+      <h3>{{ copy().accountTitle }}</h3>
+    </div>
+
+    <dl class="account-page__facts">
+      <div class="account-page__fact">
+        <dt>{{ copy().email }}</dt>
+        <dd data-testid="account-email">{{ shell.user()?.email || copy().fallbackEmail }}</dd>
       </div>
 
-      <label>
-        <span>{{ copy().apiUrl }}</span>
-        <input pInputText type="text" formControlName="apiBaseUrl" placeholder="/api/v1" />
-      </label>
+      @if (shell.user()?.userkey; as userkey) {
+        <div class="account-page__fact">
+          <dt>{{ copy().userkey }}</dt>
+          <dd class="account-page__userkey">
+            <code data-testid="account-userkey">{{ userkey }}</code>
+            <p-button
+              type="button"
+              icon="pi pi-copy"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              [ariaLabel]="copy().copyUserkey"
+              [pTooltip]="copy().copyUserkey"
+              (onClick)="copyUserkey()"
+            />
+          </dd>
+        </div>
+      }
+    </dl>
 
-      <label>
+    <div class="console-form account-page__language">
+      <label for="account-language">
         <span>{{ copy().language }}</span>
         <p-select
-          formControlName="language"
+          inputId="account-language"
+          appendTo="body"
+          [formControl]="language"
           [options]="languagePreference.options"
           optionLabel="label"
           optionValue="value"
+          (onChange)="saveLanguage($event.value)"
         />
       </label>
+    </div>
+  </section>
 
-      <div class="console-actions">
-        <p-button type="submit" [label]="copy().submit" />
-      </div>
-    </form>
-
-    <section class="console-card">
-      <div class="console-card__header">
-        <div>
-          <p class="console-shell__eyebrow">{{ copy().sessionEyebrow }}</p>
-          <h3>{{ copy().sessionTitle }}</h3>
-        </div>
-      </div>
-
-      <div class="console-list-item__content">
-        <strong>{{ shell.user()?.email || copy().fallbackEmail }}</strong>
-        <p class="console-muted">{{ shell.user()?.userkey }}</p>
-        <p class="console-note">{{ copy().activePrefix }}: {{ settings.apiBaseUrl() }}</p>
-        <p class="console-note">{{ copy().activeLanguage }}: {{ shell.user()?.language || form.getRawValue().language }}</p>
-      </div>
-    </section>
-  </div>
+  <app-change-password-panel />
 
   <app-delete-account-panel />
 </section>

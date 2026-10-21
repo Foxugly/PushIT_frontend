@@ -18,7 +18,6 @@ import { AppCopyService } from '../../../../core/services/app-copy.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
-import { PageHeader } from '../../../../shared/page-header/page-header';
 
 export const PASSWORD_MIN_LENGTH = 8;
 
@@ -29,7 +28,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   return pwd === confirm ? null : { password_mismatch: true };
 }
 
-/** Backend codes this page translates itself; anything else goes through the
+/** Backend codes this panel translates itself; anything else goes through the
  * generic `apiError` pipe (network, 5xx, ...). */
 type KnownErrorKey =
   | 'currentPasswordInvalid'
@@ -48,20 +47,26 @@ const KNOWN_ERRORS: Record<string, KnownErrorKey> = {
   http_429: 'throttled',
 };
 
+/**
+ * « Sécurité » block of the « Mon compte » page — `POST auth/password/change/`.
+ *
+ * The backend blacklists every refresh token of the user, re-sets the HttpOnly
+ * cookie and returns a fresh access token, adopted via `SessionService.adoptTokens`
+ * so this session stays signed in while the others are closed.
+ */
 @Component({
-  selector: 'app-change-password-page',
+  selector: 'app-change-password-panel',
   imports: [
     ReactiveFormsModule,
     ButtonModule,
     MessageModule,
     PasswordModule,
-    PageHeader,
     ApiErrorMessagePipe,
   ],
-  templateUrl: './change-password-page.html',
-  styleUrl: './change-password-page.scss',
+  templateUrl: './change-password-panel.html',
+  styleUrl: './change-password-panel.scss',
 })
-export class ChangePasswordPage {
+export class ChangePasswordPanel {
   private readonly destroyRef = inject(DestroyRef);
   private readonly appCopy = inject(AppCopyService);
   private readonly fb = inject(FormBuilder);
@@ -69,11 +74,12 @@ export class ChangePasswordPage {
   private readonly session = inject(SessionService);
 
   readonly copy = computed(() => this.appCopy.current().console.changePassword);
+  readonly title = computed(() => this.appCopy.current().console.settings.securityTitle);
   readonly pending = signal(false);
   readonly succeeded = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
 
-  /** Translation key for a backend code this page knows, else null. */
+  /** Translation key for a backend code this panel knows, else null. */
   readonly knownErrorKey = computed<KnownErrorKey | null>(() => {
     const code = this.error()?.code;
     return code ? (KNOWN_ERRORS[code] ?? null) : null;

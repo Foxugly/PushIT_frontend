@@ -2,7 +2,7 @@ import { expect, Page, Request, test } from '@playwright/test';
 
 import { mockConsoleApi, seedAuthenticatedSession } from './support/console-helpers';
 
-// Console change-password page (POST auth/password/change/). The backend
+// « Sécurité » block of « Mon compte » (POST auth/password/change/). The backend
 // blacklists every refresh token of the user and returns a fresh pair, which
 // the SPA must store so this session stays signed in.
 
@@ -57,8 +57,9 @@ test('changing the password keeps the session (fresh access, cookie re-set serve
     },
   }));
 
-  await page.goto('/dashboard/change-password');
-  await expect(page.getByRole('heading', { level: 1, name: 'Changer de mot de passe' })).toBeVisible();
+  await page.goto('/dashboard/settings');
+  await expect(page.getByRole('heading', { level: 1, name: 'Mon compte' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 3, name: 'Sécurité' })).toBeVisible();
   await expect(page.locator('#change-password-current')).toHaveAttribute('autocomplete', 'current-password');
   await expect(page.locator('#change-password-new')).toHaveAttribute('autocomplete', 'new-password');
 
@@ -76,7 +77,7 @@ test('changing the password keeps the session (fresh access, cookie re-set serve
   // No token ever lands in storage.
   const stored = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }));
   expect(stored).not.toContain('access-after-change');
-  await expect(page).toHaveURL(/\/dashboard\/change-password$/);
+  await expect(page).toHaveURL(/\/dashboard\/settings$/);
   await expect(page.locator('#change-password-current')).toHaveValue('');
 });
 
@@ -86,7 +87,7 @@ test('a wrong current password shows a translated error and keeps the tokens', a
     body: { code: 'current_password_invalid', detail: 'Current password is incorrect.' },
   }));
 
-  await page.goto('/dashboard/change-password');
+  await page.goto('/dashboard/settings');
   await fillForm(page, 'mauvais', 'NouveauSecret456?');
   await page.getByRole('button', { name: 'Changer de mot de passe' }).click();
 
@@ -104,7 +105,7 @@ test('validator messages are listed for a rejected password', async ({ page }) =
     },
   }));
 
-  await page.goto('/dashboard/change-password');
+  await page.goto('/dashboard/settings');
   await fillForm(page, 'AncienSecret123!', 'password123');
   await page.getByRole('button', { name: 'Changer de mot de passe' }).click();
 
@@ -116,7 +117,7 @@ test('validator messages are listed for a rejected password', async ({ page }) =
 test('client-side checks block a mismatching confirmation without calling the API', async ({ page }) => {
   const calls = await mockPasswordChange(page, () => ({ status: 500, body: {} }));
 
-  await page.goto('/dashboard/change-password');
+  await page.goto('/dashboard/settings');
   await fillForm(page, 'AncienSecret123!', 'NouveauSecret456?', 'Different789!');
   await page.getByRole('button', { name: 'Changer de mot de passe' }).click();
 
@@ -125,11 +126,27 @@ test('client-side checks block a mismatching confirmation without calling the AP
 });
 
 test('the show/hide toggle reveals the typed password', async ({ page }) => {
-  await page.goto('/dashboard/change-password');
+  await page.goto('/dashboard/settings');
   const input = page.locator('#change-password-new');
   await input.fill('NouveauSecret456?');
   await expect(input).toHaveAttribute('type', 'password');
 
   await page.locator('p-password').nth(1).locator('.p-password-toggle-mask-icon').click();
   await expect(input).toHaveAttribute('type', 'text');
+});
+
+test('the old change-password URL lands on the security block of « Mon compte »', async ({ page }) => {
+  await page.goto('/dashboard/change-password');
+
+  await expect(page).toHaveURL(/\/dashboard\/settings#security$/);
+  await expect(page.getByTestId('change-password-panel')).toBeInViewport();
+});
+
+test('the user menu entry opens the security block', async ({ page }) => {
+  await page.goto('/dashboard');
+  await page.getByRole('button', { name: user.email }).first().click();
+  await page.getByRole('menuitem', { name: 'Changer de mot de passe' }).click();
+
+  await expect(page).toHaveURL(/\/dashboard\/settings#security$/);
+  await expect(page.locator('#change-password-current')).toBeVisible();
 });

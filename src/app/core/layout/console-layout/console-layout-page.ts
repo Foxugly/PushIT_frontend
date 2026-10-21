@@ -53,7 +53,6 @@ export class ConsoleLayoutPage implements OnInit {
   }
 
   private syncSidebarVisibility(url: string): void {
-    this.hideSidebar =
-      url.includes('/dashboard/settings') || url.includes('/dashboard/change-password');
+    this.hideSidebar = url.includes('/dashboard/settings');
   }
 }

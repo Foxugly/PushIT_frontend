@@ -80,4 +80,10 @@ describe('UserMenu', () => {
     component.requestLogout();
     expect(session.clear).toHaveBeenCalledWith(true);
   });
+
+  it('points « Changer de mot de passe » at the security block of the account page', () => {
+    const item = component.userMenuItems().find((entry) => entry.label === 'Changer de mot de passe');
+    expect(item?.routerLink).toBe('/dashboard/settings');
+    expect(item?.fragment).toBe('security');
+  });
 });

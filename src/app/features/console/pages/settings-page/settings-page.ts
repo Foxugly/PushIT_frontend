@@ -1,64 +1,86 @@
-import { PageHeader } from '../../../../shared/page-header/page-header';
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 
+import { UserLanguage } from '../../../../core/models/api.models';
 import { AppCopyService } from '../../../../core/services/app-copy.service';
-import { LanguagePreferenceService } from '../../../../core/services/language-preference.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
-import { SettingsService } from '../../../../core/services/settings.service';
-import { AppAlert } from '../../../../shared/app-alert/app-alert';
+import { LanguagePreferenceService } from '../../../../core/services/language-preference.service';
+import { AppAlert, AppAlertTone } from '../../../../shared/app-alert/app-alert';
+import { PageHeader } from '../../../../shared/page-header/page-header';
+import { ChangePasswordPanel } from '../../components/change-password-panel/change-password-panel';
 import { DeleteAccountPanel } from '../../components/delete-account-panel/delete-account-panel';
 
+type BannerKey = 'languageSaved' | 'userkeyCopied' | 'copyFailed';
+
+/**
+ * « Mon compte » — one column of cards: the account (e-mail, userkey, language
+ * saved on change), security (change password) and the danger zone (delete).
+ * The API base URL comes from the runtime config and has no UI here.
+ */
 @Component({
   selector: 'app-settings-page',
   imports: [
     PageHeader,
     ReactiveFormsModule,
     AppAlert,
+    ChangePasswordPanel,
     DeleteAccountPanel,
     ButtonModule,
-    InputTextModule,
-    SelectModule
-],
+    SelectModule,
+    TooltipModule,
+  ],
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.scss',
 })
 export class SettingsPage {
-  private readonly fb = inject(FormBuilder);
   private readonly appCopy = inject(AppCopyService);
   readonly shell = inject(ConsoleShellService);
-  readonly settings = inject(SettingsService);
   readonly languagePreference = inject(LanguagePreferenceService);
 
-  readonly banner = signal<string | null>(null);
   readonly copy = computed(() => this.appCopy.current().console.settings);
-  readonly form = this.fb.nonNullable.group({
-    apiBaseUrl: [this.settings.apiBaseUrl(), [Validators.required]],
-    language: [this.languagePreference.currentBackendLanguage(), [Validators.required]],
+  /** Copy key rather than text: a language change re-translates the alert it raised. */
+  readonly banner = signal<{ key: BannerKey; tone: AppAlertTone } | null>(null);
+  readonly bannerMessage = computed(() => {
+    const banner = this.banner();
+    return banner ? this.copy()[banner.key] : '';
+  });
+  readonly language = new FormControl<UserLanguage>(this.languagePreference.currentBackendLanguage(), {
+    nonNullable: true,
   });
 
   constructor() {
+    // Follow a language changed elsewhere (top-bar switcher, backend profile).
     effect(() => {
       const language = this.languagePreference.currentBackendLanguage();
-      if (!this.form.controls.language.dirty) {
-        this.form.patchValue({ language }, { emitEvent: false });
+      if (this.language.value !== language) {
+        this.language.setValue(language, { emitEvent: false });
       }
     });
   }
 
-  save(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  saveLanguage(language: UserLanguage): void {
+    this.languagePreference.updateLanguage(this.languagePreference.toFrontendLanguage(language));
+    // No shell reload: with no app yet, the console layout swaps the router
+    // outlet for its loading card, which would recreate this page and drop the alert.
+    this.banner.set({ key: 'languageSaved', tone: 'success' });
+  }
+
+  async copyUserkey(): Promise<void> {
+    const userkey = this.shell.user()?.userkey;
+    if (!userkey) {
       return;
     }
-
-    const { apiBaseUrl, language } = this.form.getRawValue();
-    this.settings.updateApiBaseUrl(apiBaseUrl);
-    this.languagePreference.updateLanguage(this.languagePreference.toFrontendLanguage(language));
-    this.banner.set(this.copy().saved);
-    this.shell.loadShell(this.shell.selectedAppId() ?? undefined);
+    try {
+      if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API unavailable');
+      }
+      await navigator.clipboard.writeText(userkey);
+      this.banner.set({ key: 'userkeyCopied', tone: 'success' });
+    } catch {
+      this.banner.set({ key: 'copyFailed', tone: 'danger' });
+    }
   }
 }
