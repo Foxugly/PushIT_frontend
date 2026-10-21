@@ -8,7 +8,7 @@
 }
 
 .app-row:hover > td {
-  background: rgba(16, 185, 129, 0.04);
+  background: var(--accent-tint);
 }
 
 .app-name-cell {
@@ -22,7 +22,7 @@
   height: 1.75rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(16, 185, 129, 0.16);
+  border: 1px solid var(--line-accent);
 }
 
 .app-logo-field {
@@ -49,7 +49,7 @@
   height: 3rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(16, 185, 129, 0.16);
+  border: 1px solid var(--line-accent);
 }
 
 .app-logo-preview--empty {
@@ -59,7 +59,7 @@
   font-size: 0.7rem;
   text-align: center;
   color: var(--muted);
-  background: rgba(16, 185, 129, 0.06);
+  background: var(--accent-tint);
 }
 
 // The QR/token reveal styles live in <app-token-reveal>. Only the dialog's

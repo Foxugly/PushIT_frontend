@@ -23,9 +23,9 @@
 .code-examples__code {
   margin: 0;
   padding: 0.85rem;
-  border: 1px solid var(--border, rgba(16, 185, 129, 0.16));
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: var(--surface-muted, rgba(246, 249, 255, 0.95));
+  background: var(--surface-muted);
   /* Wide snippets scroll inside their own box — the page must never scroll
      horizontally. */
   overflow-x: auto;
