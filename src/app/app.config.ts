@@ -42,6 +42,20 @@ const AuraEmerald = definePreset(Aura, {
       400: '{emerald.400}', 500: '{emerald.500}', 600: '{emerald.600}', 700: '{emerald.700}',
       800: '{emerald.800}', 900: '{emerald.900}', 950: '{emerald.950}',
     },
+    // Aura's dark scheme defaults to a *zinc* (neutral grey) surface scale, which
+    // clashed with the app's slate tokens (_tokens.scss): tables, tabs, dialogs and
+    // secondary buttons rendered grey-black on blue-slate cards. Light already uses
+    // slate; align dark on it too. Dark cards/panels = surface.900 (#0f172a), the
+    // same value as --surface / --card-bg in dark mode.
+    colorScheme: {
+      dark: {
+        surface: {
+          0: '#ffffff', 50: '{slate.50}', 100: '{slate.100}', 200: '{slate.200}', 300: '{slate.300}',
+          400: '{slate.400}', 500: '{slate.500}', 600: '{slate.600}', 700: '{slate.700}',
+          800: '{slate.800}', 900: '{slate.900}', 950: '{slate.950}',
+        },
+      },
+    },
   },
 });
 

@@ -28,11 +28,11 @@
 }
 
 .admin-status__detail {
-  color: var(--muted, #6b7280);
+  color: var(--muted);
 }
 
 .admin-status__error {
-  color: var(--p-red-500, #ef4444);
+  color: var(--danger);
 }
 
 .admin-status__metrics {
@@ -42,8 +42,8 @@
 }
 
 .admin-status__stat--alert {
-  border-color: rgba(239, 68, 68, 0.5);
-  background: rgba(254, 226, 226, 0.7);
+  border-color: var(--danger-line);
+  background: var(--danger-wash);
 }
 
 .admin-status__stat--alert strong {

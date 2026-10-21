@@ -17,15 +17,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  // Soft slate page with a faint emerald/sky tint (fleet look — no more blue wash).
-  --page-bg:
-    radial-gradient(circle at top, rgba(16, 185, 129, 0.06), transparent 40%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-  // --- Tokens spécifiques à l'app (les tokens flotte viennent de styles/_tokens.scss) ---
-  --card-bg: #ffffff;
-  --card-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
-  --success-text: #047857;
-  --danger-text: #9e3650;
+  // Couleurs (page, cartes, teintes, dark mode) : toutes dans styles/_tokens.scss.
   --control-radius: 8px;
   --field-radius: 8px;
   --field-padding-y: 0.5rem;
@@ -40,7 +32,7 @@ body {
 
 body {
   margin: 0;
-  background: #f8fafc;
+  background: var(--page-bg-solid);
   color: var(--ink);
 }
 
@@ -161,7 +153,7 @@ a {
 
 .public-badge {
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast);
 }
 
 .public-badge--success {
@@ -178,7 +170,7 @@ a {
   border: 1px solid transparent;
   border-radius: 1rem;
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast);
   text-decoration: none;
   font-weight: 700;
   cursor: pointer;
@@ -186,7 +178,7 @@ a {
 
 .public-button--secondary {
   border-color: var(--border);
-  background: #fff;
+  background: var(--surface);
   color: var(--ink);
 }
 
@@ -201,7 +193,7 @@ a {
 }
 
 .public-form label span {
-  color: #3d5870;
+  color: var(--label-ink);
   font-size: 0.92rem;
 }
 
@@ -210,7 +202,7 @@ a {
   padding: 0.95rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--control-radius);
-  background: #fff;
+  background: var(--field-bg);
   color: var(--ink);
 }
 
@@ -239,7 +231,7 @@ a {
 .public-field-error,
 .public-api-error {
   margin: 0;
-  color: #b35347;
+  color: var(--field-error);
   font-size: 0.86rem;
 }
 
@@ -356,10 +348,10 @@ a {
 
 .console-card__picker select {
   width: 100%;
-  border: 1px solid rgba(16, 185, 129, 0.16);
+  border: 1px solid var(--line-accent);
   border-radius: var(--field-radius);
   padding: var(--field-padding-y) var(--field-padding-x);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--field-bg);
   color: var(--ink);
 }
 
@@ -421,10 +413,10 @@ a {
 .console-filter-grid textarea,
 .console-filter-grid select {
   width: 100%;
-  border: 1px solid rgba(16, 185, 129, 0.16);
+  border: 1px solid var(--line-accent);
   border-radius: var(--field-radius);
   padding: var(--field-padding-y) var(--field-padding-x);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--field-bg);
   color: var(--ink);
   font-size: 0.95rem;
   line-height: 1.35;
@@ -493,7 +485,7 @@ a {
 
 .console-button {
   background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  color: #fff;
+  color: var(--accent-contrast);
   box-shadow: 0 16px 30px rgba(16, 185, 129, 0.22);
 }
 
@@ -511,7 +503,7 @@ a {
 }
 
 .console-button--secondary {
-  background: rgba(209, 250, 229, 0.78);
+  background: var(--accent-wash);
   color: var(--accent-strong);
 }
 
@@ -539,20 +531,20 @@ a {
 }
 
 .console-note {
-  background: rgba(209, 250, 229, 0.58);
+  background: var(--accent-wash-faint);
   color: var(--muted);
 }
 
 .console-flash {
-  background: rgba(233, 247, 239, 0.88);
+  background: var(--success-wash);
   color: var(--success-text);
 }
 
 .console-flash--danger,
 .console-error,
 .console-field-error {
-  background: rgba(255, 237, 239, 0.92);
-  color: #9e3650;
+  background: var(--danger-wash);
+  color: var(--danger-text);
 }
 
 .console-list {
@@ -567,8 +559,8 @@ a {
   align-items: flex-start;
   padding: 1rem 1.1rem;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(16, 185, 129, 0.1);
+  background: var(--surface-glass);
+  border: 1px solid var(--line-accent-soft);
 }
 
 .console-list-item__content {
@@ -587,20 +579,20 @@ a {
   min-width: 5.5rem;
   padding: 0.4rem 0.8rem;
   border-radius: 999px;
-  background: rgba(209, 250, 229, 0.9);
+  background: var(--accent-wash);
   color: var(--accent-strong);
   font-size: 0.82rem;
   font-weight: 700;
 }
 
 .console-pill--muted {
-  background: rgba(228, 235, 243, 0.9);
+  background: var(--neutral-wash);
   color: var(--muted);
 }
 
 .console-pill--warning {
-  background: rgba(255, 240, 221, 0.95);
-  color: #ad6a17;
+  background: var(--warn-wash);
+  color: var(--warn-text);
 }
 
 .console-stats {
@@ -612,8 +604,8 @@ a {
 .console-stat {
   padding: 1rem;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(16, 185, 129, 0.08);
+  background: var(--surface-glass);
+  border: 1px solid var(--line-accent-soft);
 }
 
 .console-stat strong {
@@ -635,7 +627,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: rgba(24, 50, 74, 0.26);
+  background: var(--overlay);
   backdrop-filter: blur(8px);
 }
 
@@ -648,8 +640,8 @@ a {
 .console-table-wrap {
   overflow: auto;
   border-radius: 24px;
-  border: 1px solid rgba(16, 185, 129, 0.08);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line-accent-soft);
+  background: var(--surface-glass);
 }
 
 .console-table {
@@ -663,7 +655,7 @@ a {
   padding: 0.95rem 1rem;
   text-align: left;
   vertical-align: top;
-  border-bottom: 1px solid rgba(16, 185, 129, 0.08);
+  border-bottom: 1px solid var(--line-accent-soft);
 }
 
 .console-table th {
@@ -671,7 +663,7 @@ a {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted);
-  background: rgba(209, 250, 229, 0.5);
+  background: var(--accent-wash-faint);
   text-align: center;
 }
 
@@ -684,7 +676,7 @@ a {
 }
 
 .console-table tbody tr.console-row-selected {
-  background: rgba(209, 250, 229, 0.55);
+  background: var(--accent-wash-faint);
 }
 
 .console-table__checkbox {
@@ -733,9 +725,9 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(16, 185, 129, 0.18);
+  border: 1px solid var(--line-accent);
   border-radius: 999px;
-  background: #ffffff;
+  background: var(--surface);
   color: var(--accent-strong);
   cursor: pointer;
   transition:
@@ -772,8 +764,8 @@ a {
 .console-metric {
   padding: 1rem;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(16, 185, 129, 0.08);
+  background: var(--surface-glass);
+  border: 1px solid var(--line-accent-soft);
 }
 
 .console-metric strong {
@@ -817,9 +809,9 @@ a {
   display: grid;
   gap: 0.9rem;
   padding: 1.1rem 1.2rem;
-  border: 1px solid rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--line-accent-soft);
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface-glass);
 }
 
 .console-detail-panel--wide {
