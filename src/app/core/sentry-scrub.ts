@@ -6,13 +6,18 @@
  * partirait chez Sentry dans `request.url`, le nom de transaction (pageload /
  * navigation = pathname), les spans et les breadcrumbs de navigation. On masque
  * tout ce qui suit ces préfixes, ainsi que les paramètres de requête
- * `uid` / `token` / `code` où qu'ils apparaissent.
+ * `uid` / `token` / `code` où qu'ils apparaissent — y compris dans le texte des
+ * erreurs (message du routeur « URL Segment: 'reset-password/…' », message
+ * d'une HttpErrorResponse) et sans `/` initial. Les endpoints d'API
+ * `magic-link/request|verify/` (jeton dans le corps, pas dans l'URL) restent
+ * lisibles.
  */
 import type { Breadcrumb, Event } from '@sentry/angular';
 
 export const FILTERED = '[Filtered]';
 
-const SENSITIVE_PATH = /(\/(?:reset-password|confirm-email|magic-link)\/)[^?#\s"']+/gi;
+const SENSITIVE_PATH =
+  /(\b(?:reset-password|confirm-email|magic-link)\/)(?!(?:request|verify)\/(?:[?#\s"']|$))[^?#\s"']+/gi;
 const SENSITIVE_QUERY = /([?&](?:uid|token|code)=)[^&#\s"']*/gi;
 
 /** Masque les segments/paramètres sensibles d'une chaîne contenant une URL. */
@@ -54,9 +59,27 @@ export function scrubEvent<T extends Event>(event: T): T {
     if (typeof event.request.query_string === 'string') {
       event.request.query_string = scrubUrl(`?${event.request.query_string}`).slice(1);
     }
-    if (event.request.headers?.['Referer']) {
-      event.request.headers['Referer'] = scrubUrl(event.request.headers['Referer']);
+    const headers = event.request.headers;
+    for (const name of ['Referer', 'referer']) {
+      if (headers?.[name]) {
+        headers[name] = scrubUrl(headers[name]);
+      }
     }
+  }
+  // Texte des erreurs : message capturé, logentry, valeur des exceptions.
+  if (event.message) {
+    event.message = scrubUrl(event.message);
+  }
+  if (event.logentry?.message) {
+    event.logentry.message = scrubUrl(event.logentry.message);
+  }
+  for (const exception of event.exception?.values ?? []) {
+    if (exception.value) {
+      exception.value = scrubUrl(exception.value);
+    }
+  }
+  if (typeof event.tags?.['url'] === 'string') {
+    event.tags['url'] = scrubUrl(event.tags['url']);
   }
   if (event.transaction) {
     event.transaction = scrubUrl(event.transaction);
