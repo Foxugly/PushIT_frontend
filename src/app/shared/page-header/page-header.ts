@@ -62,7 +62,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       }
       @media (max-width: 640px) {
         .page-header {
-          grid-template-columns: 1fr;
+          grid-template-columns: minmax(0, 1fr);
         }
         .page-header__side--right {
           justify-content: flex-start;

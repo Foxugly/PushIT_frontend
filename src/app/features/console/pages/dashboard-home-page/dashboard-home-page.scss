@@ -57,10 +57,10 @@
 
 @media (max-width: 640px) {
   .dashboard-home__metrics {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dashboard-home__shortcuts {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

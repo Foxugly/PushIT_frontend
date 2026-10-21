@@ -244,6 +244,8 @@ a {
 
 .console-page {
   display: grid;
+  // minmax(0, …): a wide table must not stretch the page past a phone screen.
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
 }
 
@@ -807,6 +809,8 @@ a {
 
 .console-detail-panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: 0.9rem;
   padding: 1.1rem 1.2rem;
   border: 1px solid var(--line-accent-soft);
@@ -859,7 +863,7 @@ a {
   .console-filter-grid--2,
   .console-page__hero,
   .console-detail-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     display: grid;
   }
 
@@ -948,4 +952,22 @@ a {
 }
 .register-panel .panel-heading > div {
   width: 100%;
+}
+
+// Phone: console buttons keep a >= 44px tap target (icon-only row actions
+// included). Scoped to the console body so public pages are unchanged.
+@media (max-width: 768px) {
+  .console-shell__main .p-button {
+    min-height: 2.75rem;
+  }
+
+  .console-shell__main .p-button.p-button-icon-only {
+    min-width: 2.75rem;
+  }
+
+  // Nested cards/panels each eat their padding: give the content more room.
+  .console-shell__main .console-card {
+    padding: 1rem;
+    border-radius: 20px;
+  }
 }

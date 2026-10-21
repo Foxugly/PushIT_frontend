@@ -5,15 +5,15 @@
     [mode]="'authenticated'"
     [sticky]="true"
     [maxWidth]="'var(--content-max)'"
-  />
+  >
+    <app-console-navigation topbarDrawer variant="drawer" />
+  </app-topmenu>
 
   <main id="main-content" tabindex="-1" class="app-layout__main">
-    <div class="console-shell__body" [class.console-shell__body--no-sidebar]="hideSidebar">
-      @if (!hideSidebar) {
-        <aside class="console-shell__sidebar">
-          <app-console-navigation />
-        </aside>
-      }
+    <div class="console-shell__body">
+      <aside class="console-shell__sidebar">
+        <app-console-navigation />
+      </aside>
 
       <div class="console-shell__main">
         @if (shell.error()) {

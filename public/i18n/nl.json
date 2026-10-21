@@ -240,6 +240,10 @@
         "accounts": {
           "label": "Accounts",
           "description": "Een gebruiker gratis toegang geven."
+        },
+        "account": {
+          "label": "Mijn account",
+          "description": "Profiel, taal, wachtwoord en account verwijderen."
         }
       },
       "sections": [

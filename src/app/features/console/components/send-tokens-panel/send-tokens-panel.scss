@@ -4,6 +4,7 @@
 
 .send-tokens {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); // tables scroll inside, not the page
   gap: 0.9rem;
 }
 
