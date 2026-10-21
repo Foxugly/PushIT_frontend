@@ -3,6 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 
 import { SessionService } from '../services/session.service';
 import { documentNavigation, isTurnstileLoaded } from '../../shared/turnstile/turnstile';
+import { DEFAULT_RETURN_URL, safeReturnUrl } from '../utils/return-url';
 
 export const authGuard: CanActivateFn = (_route, state) => {
   const session = inject(SessionService);
@@ -12,7 +13,12 @@ export const authGuard: CanActivateFn = (_route, state) => {
   // initializer). An expired access token is fine: the interceptor refreshes it
   // through the cookie, and clears the session if the cookie is rejected.
   if (!session.isAuthenticated()) {
-    return router.createUrlTree(['/auth']);
+    // Remember the deep link so the login lands back on it (path + query +
+    // fragment). The login page re-sanitises it before navigating.
+    const returnUrl = safeReturnUrl(state.url);
+    return returnUrl === DEFAULT_RETURN_URL
+      ? router.createUrlTree(['/auth'])
+      : router.createUrlTree(['/auth'], { queryParams: { returnUrl } });
   }
   // Signed in from a document that loaded Cloudflare Turnstile (register,
   // forgot-password or the magic-link form, then an in-app hop to the login):

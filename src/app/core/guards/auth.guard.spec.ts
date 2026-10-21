@@ -91,10 +91,30 @@ describe('auth guards', () => {
   });
 
   it('authGuard redirects guests to /auth', () => {
-    const result = TestBed.runInInjectionContext(() => authGuard(route, state));
+    const result = TestBed.runInInjectionContext(() =>
+      authGuard(route, { url: '/dashboard' } as RouterStateSnapshot),
+    );
 
     expect(router.createUrlTree).toHaveBeenCalledWith(['/auth']);
     expect(result).toEqual(jasmine.objectContaining({ commands: ['/auth'] }));
+  });
+
+  it('authGuard passes a deep link to /auth as returnUrl (path + query + fragment)', () => {
+    const url = '/dashboard/applications/10?tab=sending#top';
+
+    TestBed.runInInjectionContext(() => authGuard(route, { url } as RouterStateSnapshot));
+
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/auth'], {
+      queryParams: { returnUrl: url },
+    });
+  });
+
+  it('authGuard drops an unsafe URL instead of forwarding it', () => {
+    TestBed.runInInjectionContext(() =>
+      authGuard(route, { url: '//evil.example/x' } as RouterStateSnapshot),
+    );
+
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/auth']);
   });
 
   it('guestGuard redirects authenticated users to /dashboard', () => {

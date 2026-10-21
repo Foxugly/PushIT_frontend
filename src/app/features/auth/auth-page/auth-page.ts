@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -27,6 +27,7 @@ import { coerceApiError, errorFieldMessages } from '../../../core/utils/api-erro
 import { AppAlert } from '../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../core/pipes/api-error-message.pipe';
 import { TurnstileController } from '../../../shared/turnstile/turnstile';
+import { rememberReturnUrl, safeReturnUrl } from '../../../core/utils/return-url';
 
 @Component({
   selector: 'app-auth-page',
@@ -47,12 +48,16 @@ export class AuthPage implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
   private readonly session = inject(SessionService);
   private readonly appCopy = inject(AppCopyService);
   private readonly languagePreference = inject(LanguagePreferenceService);
 
   protected readonly turnstile = new TurnstileController();
+
+  /** Set by `authGuard` on a deep link; null when the visitor came here directly. */
+  private readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
 
   readonly loginPending = signal(false);
   readonly loginError = signal<ApiErrorResponse | null>(null);
@@ -113,7 +118,9 @@ export class AuthPage implements OnDestroy {
         next: (response) => {
           this.session.startSession(response);
           this.languagePreference.applyBackendLanguage(response.user.language);
-          void this.router.navigate(['/dashboard']);
+          rememberReturnUrl(null);
+          // A Turnstile-tainted document is reloaded by authGuard to this URL.
+          void this.router.navigateByUrl(safeReturnUrl(this.returnUrl));
         },
         error: (error) => {
           const apiError = coerceApiError(error);
@@ -165,7 +172,11 @@ export class AuthPage implements OnDestroy {
       .requestMagicLink(this.magicForm.getRawValue().email, turnstileToken || undefined)
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.magicPending.set(false)))
       .subscribe({
-        next: () => this.magicSent.set(true),
+        next: () => {
+          // The link comes back by e-mail (often another tab): keep the deep link.
+          rememberReturnUrl(this.returnUrl);
+          this.magicSent.set(true);
+        },
         error: (error) => {
           const apiError = coerceApiError(error);
           if (this.turnstile.enabled && apiError.code === 'captcha_failed') {

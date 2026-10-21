@@ -137,7 +137,7 @@ test('a rejected refresh cookie ends the session and sends the user to /auth', a
 
   await page.goto('/dashboard/applications');
 
-  await expect(page).toHaveURL(/\/auth$/);
+  await expect(page).toHaveURL(/\/auth\?returnUrl=%2Fdashboard%2Fapplications$/);
 });
 
 test('a legacy refresh token in localStorage is migrated once to the cookie, then deleted', async ({ page }) => {
@@ -221,7 +221,7 @@ test('the old change-password URL redirects to « Mon compte » when signed in',
 
 test('the change-password page requires a session', async ({ page }) => {
   await page.goto('/dashboard/change-password');
-  await expect(page).toHaveURL(/\/auth$/);
+  await expect(page).toHaveURL(/\/auth\?returnUrl=%2Fdashboard%2Fsettings%23security$/);
 });
 
 test('a non-staff user is bounced from /dashboard/admin to the dashboard', async ({ page }) => {
@@ -275,7 +275,7 @@ test('an anonymous deep link into the console lands on /auth without calling the
 
   await page.goto('/dashboard/applications/10?tab=sending');
 
-  await expect(page).toHaveURL(/\/auth$/);
+  await expect(page).toHaveURL(/\/auth\?returnUrl=%2Fdashboard%2Fapplications%2F10%3Ftab%3Dsending$/);
   // No session hint → no silent restore, and the guard runs before any page loads data.
   expect(apiCalls).toEqual([]);
 });

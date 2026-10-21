@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import { mockConsoleApi, mockLogin } from './support/console-helpers';
 
 const user = {
@@ -40,9 +40,7 @@ test.beforeEach(async ({ page }) => {
   await mockLogin(page, user);
 });
 
-test('a visitor can log in and lands on the dashboard', async ({ page }) => {
-  await page.goto('/auth');
-
+async function signIn(page: Page): Promise<void> {
   await page.locator('input[type="email"]').fill(user.email);
   await page.locator('input[type="password"]').fill('s3cret-pass');
 
@@ -50,6 +48,34 @@ test('a visitor can log in and lands on the dashboard', async ({ page }) => {
   const submit = page.getByRole('button', { name: /Se connecter|Sign in|Log in/ });
   await expect(submit).toBeEnabled();
   await submit.click();
+}
+
+test('a visitor can log in and lands on the dashboard', async ({ page }) => {
+  await page.goto('/auth');
+
+  await signIn(page);
 
   await expect(page).toHaveURL(/\/dashboard$/);
 });
+
+test('an anonymous deep link survives the login (path + query + fragment)', async ({ page }) => {
+  await page.goto('/dashboard/applications/10?tab=sending#top');
+
+  await expect(page).toHaveURL(
+    /\/auth\?returnUrl=%2Fdashboard%2Fapplications%2F10%3Ftab%3Dsending%23top$/,
+  );
+
+  await signIn(page);
+
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=sending#top$/);
+});
+
+for (const returnUrl of ['//evil.example/x', 'https://evil.example/', '/\\evil.example', '/auth']) {
+  test(`a malicious returnUrl (${returnUrl}) lands on the dashboard`, async ({ page }) => {
+    await page.goto(`/auth?returnUrl=${encodeURIComponent(returnUrl)}`);
+
+    await signIn(page);
+
+    await expect(page).toHaveURL(/^http:\/\/[^/]+\/dashboard$/);
+  });
+}

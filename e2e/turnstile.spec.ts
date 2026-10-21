@@ -193,3 +193,30 @@ test('signing in after a Turnstile form enters the console through a fresh docum
   await expect(page.getByRole('button', { name: user.email }).first()).toBeVisible();
   expect(loads).toHaveLength(1);
 });
+
+test('a deep link survives the full-page entry after a Turnstile form', async ({ page }) => {
+  const loads = await enableTurnstile(page);
+  await mockConsoleApi(page, consoleState());
+  await mockLogin(page, user);
+
+  await page.goto('/dashboard/settings#security');
+  await expect(page).toHaveURL(/\/auth\?returnUrl=/);
+
+  // The magic-link form loads Turnstile into this document, then back to the password form.
+  await page.getByRole('button', { name: 'Recevoir un lien de connexion' }).click();
+  await expect(page.locator('input[name="cf-turnstile-response"]')).toHaveCount(1);
+  await page.getByRole('link', { name: 'Retour à la connexion' }).click();
+  await expect(page.locator('input[type="password"]')).toBeVisible();
+
+  const email = page.locator('input[type="email"]');
+  await email.fill(user.email);
+  await expect(email).toHaveValue(user.email);
+  await page.locator('input[type="password"]').fill('s3cret-pass');
+  const submit = page.getByRole('button', { name: /Se connecter/ });
+  await expect(submit).toBeEnabled();
+  await submit.click();
+
+  await expect(page).toHaveURL(/\/dashboard\/settings#security$/);
+  await expect.poll(() => page.evaluate(() => 'turnstile' in window)).toBe(false);
+  expect(loads).toHaveLength(1);
+});
