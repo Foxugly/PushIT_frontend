@@ -19,14 +19,12 @@
       "toggleTheme": "Thema wisselen"
     },
     "home": {
-      "badge": "PushIT voor productteams",
       "title": "Beheer je pushmeldingen eenvoudig.",
       "description": "Centraliseer pushcampagnes in een moderne ruimte die rustiger leest en eenvoudiger in gebruik is.",
-      "primary": "Bekijk de features",
-      "secondary": "Inloggen",
-      "register": {
-        "title": "Account aanmaken"
-      }
+      "login": "Inloggen",
+      "register": "Account aanmaken",
+      "contact": "Contact opnemen",
+      "dashboard": "Dashboard"
     },
     "features": {
       "badge": "Features",

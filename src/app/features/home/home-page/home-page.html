@@ -1,19 +1,19 @@
 <main class="public-content home-content">
-  <section class="hero-grid">
-    <section class="public-card hero-card">
-      <span class="public-badge public-badge--soft">{{ copy().badge }}</span>
-      <h1>{{ copy().title }}</h1>
-      <p>{{ copy().description }}</p>
+  <section class="public-card hero-card">
+    <h1>{{ copy().title }}</h1>
+    <p>{{ copy().description }}</p>
 
-      <div class="hero-actions">
-        <a class="public-button" routerLink="/features">{{ copy().primary }}</a>
-        <a class="public-button public-button--secondary" routerLink="/auth">{{ copy().secondary }}</a>
-      </div>
-    </section>
-
-    <app-register-panel
-      [title]="copy().register.title"
-      [showLoginLink]="false"
-    />
+    <div class="hero__actions">
+      @if (isAuthenticated()) {
+        <p-button routerLink="/dashboard" icon="pi pi-th-large" [label]="copy().dashboard" />
+      } @else {
+        <p-button routerLink="/auth" icon="pi pi-sign-in" [label]="copy().login" />
+        <p-button routerLink="/register" icon="pi pi-user-plus" [label]="copy().register" severity="secondary" />
+      }
+      <button class="hero__contact" type="button" (click)="contactClick()">
+        <i class="pi pi-envelope" aria-hidden="true"></i>
+        <span>{{ copy().contact }}</span>
+      </button>
+    </div>
   </section>
 </main>

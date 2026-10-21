@@ -19,14 +19,12 @@
       "toggleTheme": "Toggle theme"
     },
     "home": {
-      "badge": "PushIT for product teams",
       "title": "Manage your push notifications easily.",
       "description": "Centralize push campaigns in a modern workspace designed to feel lighter and easier to operate.",
-      "primary": "See features",
-      "secondary": "Sign in",
-      "register": {
-        "title": "Create an account"
-      }
+      "login": "Sign in",
+      "register": "Create an account",
+      "contact": "Contact me",
+      "dashboard": "Dashboard"
     },
     "features": {
       "badge": "Features",
