@@ -1,9 +1,11 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { vi } from 'vitest';
 
 import { adminGuard, authGuard, guestGuard } from './auth.guard';
 import { SessionService } from '../services/session.service';
+import { documentNavigation, TURNSTILE_SCRIPT_SRC } from '../../shared/turnstile/turnstile';
 
 describe('auth guards', () => {
   let router: jasmine.SpyObj<Router>;
@@ -50,6 +52,42 @@ describe('auth guards', () => {
 
     expect(session.clear).not.toHaveBeenCalled();
     expect(result).toBeTrue();
+  });
+
+  describe('after Cloudflare Turnstile was loaded in this document', () => {
+    let script: HTMLScriptElement;
+
+    beforeEach(() => {
+      script = document.createElement('script');
+      script.setAttribute('src', TURNSTILE_SCRIPT_SRC);
+      document.head.appendChild(script);
+    });
+
+    afterEach(() => {
+      script.remove();
+      vi.restoreAllMocks();
+    });
+
+    it('authGuard enters the console through a full page load', () => {
+      const assign = vi.spyOn(documentNavigation, 'assign').mockImplementation(() => undefined);
+      session.isAuthenticated.set(true);
+
+      const result = TestBed.runInInjectionContext(() =>
+        authGuard(route, { url: '/dashboard/applications?tab=x' } as RouterStateSnapshot),
+      );
+
+      expect(result).toBe(false);
+      expect(assign).toHaveBeenCalledWith('/dashboard/applications?tab=x');
+    });
+
+    it('authGuard still sends guests to /auth without reloading', () => {
+      const assign = vi.spyOn(documentNavigation, 'assign').mockImplementation(() => undefined);
+
+      const result = TestBed.runInInjectionContext(() => authGuard(route, state));
+
+      expect(assign).not.toHaveBeenCalled();
+      expect(result).toEqual(jasmine.objectContaining({ commands: ['/auth'] }));
+    });
   });
 
   it('authGuard redirects guests to /auth', () => {
