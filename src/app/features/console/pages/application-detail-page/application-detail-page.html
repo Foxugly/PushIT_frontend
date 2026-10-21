@@ -5,16 +5,6 @@
     </a>
     <div slot="right" class="ph-actions">
       @if (application(); as app) {
-        <p-button
-          icon="pi pi-pencil"
-          severity="info"
-          [text]="true"
-          [rounded]="true"
-          [ariaLabel]="copy().editTooltip"
-          [pTooltip]="copy().editTooltip"
-          tooltipPosition="top"
-          (onClick)="openEdit()"
-        />
         <p-tag [value]="app.is_active ? copy().statusLabels.active : copy().statusLabels.inactive" [severity]="appSeverity(app)" />
         <p-tag [value]="copy().facts.tokenPrefix + ' ' + app.app_token_prefix" severity="info" />
       }
@@ -52,7 +42,7 @@
         </p-tablist>
 
         <p-tabpanels>
-          <!-- Aperçu -->
+          <!-- Aperçu : chiffres, informations modifiables, logo, état, faits, zone de danger -->
           <p-tabpanel value="overview">
             <div class="console-detail-grid">
               @if (stillSendsWithLegacyToken()) {
@@ -79,13 +69,92 @@
               </article>
 
               <article class="console-detail-panel console-detail-panel--wide">
-                <h3>{{ copy().descriptionTitle }}</h3>
-                <p>{{ app.description || copy().descriptionEmpty }}</p>
+                <h3>{{ copy().settings.detailsTitle }}</h3>
+                <form class="console-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()" data-testid="app-settings-form">
+                  <app-application-form-fields
+                    [form]="settingsForm"
+                    [nameMessages]="settingsFieldErrors('name')"
+                    [descriptionMessages]="settingsFieldErrors('description')"
+                  />
+
+                  @if (editError()?.detail) {
+                    <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
+                  }
+
+                  <div class="application-detail-settings__actions">
+                    <p-button
+                      type="submit"
+                      icon="pi pi-check"
+                      [label]="saving() ? copy().dialog.saving : copy().dialog.save"
+                      [loading]="saving()"
+                    />
+                  </div>
+                </form>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="app-logo-field">
+                  <span class="app-logo-field__label">{{ copy().logo.label }}</span>
+                  <div class="app-logo-field__row">
+                    @if (app.logo) {
+                      <img class="app-logo-preview" [src]="app.logo" alt="" />
+                    } @else {
+                      <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
+                    }
+                    @if (app.logo) {
+                      <p-button
+                        [label]="copy().logo.remove"
+                        [text]="true"
+                        severity="danger"
+                        [disabled]="logoPending()"
+                        (onClick)="removeLogo()"
+                      />
+                    }
+                  </div>
+                  <app-avatar-cropper
+                    [labels]="copy().logo"
+                    [pending]="logoPending()"
+                    (cropped)="onLogoCropped($event)"
+                  />
+                </div>
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide">
+                <div class="application-detail-section__header">
+                  <div>
+                    <h3>{{ copy().settings.stateTitle }}</h3>
+                    <p class="console-table__subtext">{{ copy().settings.stateHint }}</p>
+                  </div>
+                  <p-button
+                    [icon]="app.is_active ? 'pi pi-pause' : 'pi pi-play'"
+                    [severity]="app.is_active ? 'secondary' : 'success'"
+                    [outlined]="true"
+                    [label]="app.is_active ? applicationsCopy().actions.deactivate : applicationsCopy().actions.activate"
+                    [disabled]="actionPending()"
+                    (onClick)="toggleState()"
+                  />
+                </div>
               </article>
 
               <article class="console-detail-panel console-detail-panel--wide">
                 <h3>{{ copy().statusTitle }}</h3>
                 <app-console-facts-table [items]="applicationFactsComputed()" styleClass="p-datatable-sm application-detail-table" />
+              </article>
+
+              <article class="console-detail-panel console-detail-panel--wide application-detail-danger" data-testid="danger-zone">
+                <div class="application-detail-section__header">
+                  <div>
+                    <h3>{{ copy().danger.title }}</h3>
+                    <p class="console-table__subtext">{{ copy().danger.hint }}</p>
+                  </div>
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [label]="copy().danger.delete"
+                    [disabled]="actionPending()"
+                    (onClick)="deleteApplication()"
+                  />
+                </div>
               </article>
             </div>
           </p-tabpanel>
@@ -379,95 +448,6 @@
                 } @else {
                   <p class="console-muted">{{ copy().quietPeriodsEmpty }}</p>
                 }
-              </article>
-            </div>
-          </p-tabpanel>
-
-          <!-- Paramètres -->
-          <p-tabpanel value="settings">
-            <div class="console-detail-grid">
-              <article class="console-detail-panel console-detail-panel--wide">
-                <h3>{{ copy().settings.detailsTitle }}</h3>
-                <form class="console-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()" data-testid="app-settings-form">
-                  <app-application-form-fields
-                    [form]="settingsForm"
-                    [nameMessages]="settingsFieldErrors('name')"
-                    [descriptionMessages]="settingsFieldErrors('description')"
-                  />
-
-                  @if (editError()?.detail) {
-                    <app-alert [message]="editError()! | apiError" tone="danger" (dismissed)="editError.set(null)" />
-                  }
-
-                  <div class="application-detail-settings__actions">
-                    <p-button
-                      type="submit"
-                      icon="pi pi-check"
-                      [label]="saving() ? copy().dialog.saving : copy().dialog.save"
-                      [loading]="saving()"
-                    />
-                  </div>
-                </form>
-              </article>
-
-              <article class="console-detail-panel console-detail-panel--wide">
-                <div class="app-logo-field">
-                  <span class="app-logo-field__label">{{ copy().logo.label }}</span>
-                  <div class="app-logo-field__row">
-                    @if (app.logo) {
-                      <img class="app-logo-preview" [src]="app.logo" alt="" />
-                    } @else {
-                      <span class="app-logo-preview app-logo-preview--empty">{{ copy().logo.none }}</span>
-                    }
-                    @if (app.logo) {
-                      <p-button
-                        [label]="copy().logo.remove"
-                        [text]="true"
-                        severity="danger"
-                        [disabled]="logoPending()"
-                        (onClick)="removeLogo()"
-                      />
-                    }
-                  </div>
-                  <app-avatar-cropper
-                    [labels]="copy().logo"
-                    [pending]="logoPending()"
-                    (cropped)="onLogoCropped($event)"
-                  />
-                </div>
-              </article>
-
-              <article class="console-detail-panel console-detail-panel--wide">
-                <div class="application-detail-section__header">
-                  <div>
-                    <h3>{{ copy().settings.stateTitle }}</h3>
-                    <p class="console-table__subtext">{{ copy().settings.stateHint }}</p>
-                  </div>
-                  <p-button
-                    [icon]="app.is_active ? 'pi pi-pause' : 'pi pi-play'"
-                    [severity]="app.is_active ? 'secondary' : 'success'"
-                    [outlined]="true"
-                    [label]="app.is_active ? applicationsCopy().actions.deactivate : applicationsCopy().actions.activate"
-                    [disabled]="actionPending()"
-                    (onClick)="toggleState()"
-                  />
-                </div>
-              </article>
-
-              <article class="console-detail-panel console-detail-panel--wide application-detail-danger" data-testid="danger-zone">
-                <div class="application-detail-section__header">
-                  <div>
-                    <h3>{{ copy().danger.title }}</h3>
-                    <p class="console-table__subtext">{{ copy().danger.hint }}</p>
-                  </div>
-                  <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [label]="copy().danger.delete"
-                    [disabled]="actionPending()"
-                    (onClick)="deleteApplication()"
-                  />
-                </div>
               </article>
             </div>
           </p-tabpanel>

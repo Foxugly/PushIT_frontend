@@ -52,7 +52,6 @@ export const APP_DETAIL_TABS = [
   'sending',
   'notifications',
   'quiet-periods',
-  'settings',
 ] as const;
 export type AppDetailTab = (typeof APP_DETAIL_TABS)[number];
 
@@ -143,7 +142,6 @@ export class ApplicationDetailPage implements OnInit {
       sending: tabs.sending,
       notifications: tabs.notifications,
       'quiet-periods': tabs.quietPeriods,
-      settings: tabs.settings,
     };
   });
 
@@ -380,11 +378,6 @@ export class ApplicationDetailPage implements OnInit {
 
   isFutureNotification(notification: NotificationRead): boolean {
     return this.futureNotifications().some((item) => item.id === notification.id);
-  }
-
-  /** Header pencil: editing now lives in the Paramètres tab. */
-  openEdit(): void {
-    this.selectTab('settings');
   }
 
   /** Opens the notifications page's create modal, pre-selected on this app. */
