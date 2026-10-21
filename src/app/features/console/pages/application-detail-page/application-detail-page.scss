@@ -210,3 +210,57 @@
 .application-detail-danger h3 {
   color: var(--danger-text);
 }
+
+// Aperçu › « Prochaines étapes » : enrol a phone, send a test, copy the e-mail address.
+.application-next-steps {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.application-next-steps__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line-accent-soft);
+  background: var(--surface-muted);
+
+  > .pi {
+    font-size: 1.25rem;
+    color: var(--muted);
+  }
+}
+
+.application-next-steps__item--done > .pi {
+  color: var(--p-green-500, #22c55e);
+}
+
+.application-next-steps__body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.application-next-steps__address {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .application-next-steps__item {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    > p-button {
+      grid-column: 1 / -1;
+    }
+  }
+}

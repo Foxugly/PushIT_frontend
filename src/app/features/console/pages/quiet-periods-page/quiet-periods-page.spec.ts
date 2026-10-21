@@ -1,6 +1,8 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter, Router } from '@angular/router';
+import { vi } from 'vitest';
 import { of } from 'rxjs';
 
 import { ApplicationQuietPeriod, DeviceQuietPeriod } from '../../../../core/models/api.models';
@@ -19,6 +21,8 @@ describe('QuietPeriodsPage', () => {
     refreshNavigationCounts: jasmine.Spy<() => void>;
     invalidateQuietPeriodsCount: jasmine.Spy<() => void>;
   };
+  let routeStub: { snapshot: { queryParamMap: ParamMap } };
+  let router: Router;
 
   beforeEach(async () => {
     api = jasmine.createSpyObj<PushitApiService>('PushitApiService', [
@@ -79,9 +83,13 @@ describe('QuietPeriodsPage', () => {
       }),
     };
 
+    routeStub = { snapshot: { queryParamMap: convertToParamMap({}) } };
+
     await TestBed.configureTestingModule({
       imports: [QuietPeriodsPage],
       providers: [
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: routeStub },
         provideNoopAnimations(),
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },
@@ -89,9 +97,49 @@ describe('QuietPeriodsPage', () => {
       ],
     }).compileComponents();
 
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(QuietPeriodsPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  describe('?create=1&app=<id> (from the application detail page)', () => {
+    function createWithQuery(params: Record<string, string>): ComponentFixture<QuietPeriodsPage> {
+      routeStub.snapshot.queryParamMap = convertToParamMap(params);
+      const pageFixture = TestBed.createComponent(QuietPeriodsPage);
+      pageFixture.detectChanges();
+      return pageFixture;
+    }
+
+    it('opens the create modal on that app once the shell has loaded it, then drops the params', () => {
+      const pageFixture = createWithQuery({ create: '1', app: '11' });
+      const page = pageFixture.componentInstance;
+      expect(page.isModalOpen()).toBe(false);
+      expect(router.navigate).toHaveBeenCalledWith(
+        [],
+        expect.objectContaining({ queryParams: { create: null, app: null }, replaceUrl: true }),
+      );
+
+      shell.apps.set([
+        { id: 10, name: 'PushIT Mobile' },
+        { id: 11, name: 'Backoffice' },
+      ]);
+      pageFixture.detectChanges();
+
+      expect(page.isModalOpen()).toBe(true);
+      expect(page.modalScope()).toBe('application');
+      expect(page.modalApplicationId()).toBe(11);
+      expect(page.modalTargetLabel()).toContain('Backoffice');
+    });
+
+    it('ignores the page without the create flag', () => {
+      shell.apps.set([{ id: 11, name: 'Backoffice' }]);
+      const page = createWithQuery({ app: '11' }).componentInstance;
+
+      expect(page.isModalOpen()).toBe(false);
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
   });
 
   it('shows an error when creating a quiet period without any available target', () => {

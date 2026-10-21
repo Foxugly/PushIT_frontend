@@ -41,7 +41,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('creating an application lands on its Envoi tab and reveals the one-time token', async ({
+test('creating an application lands on its API tab and reveals the one-time token', async ({
   page,
 }) => {
   // Reach the create page via the list's "Ajouter" action (role/test-id, not copy
@@ -55,10 +55,10 @@ test('creating an application lands on its Envoi tab and reveals the one-time to
   await page.getByRole('button', { name: /créer/i }).click();
 
   // Navigates to the freshly-created app's detail page (id 11 from the mock),
-  // on the Envoi tab where the one-time reveal lives...
-  await expect(page).toHaveURL(/\/dashboard\/applications\/11\?tab=sending$/);
+  // on the API tab where the one-time reveal lives...
+  await expect(page).toHaveURL(/\/dashboard\/applications\/11\?tab=api$/);
   await expect(page.getByRole('heading', { name: 'Nouvelle App E2E' })).toBeVisible();
-  await expect(page.getByRole('tab', { name: 'Envoi' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('tab', { name: 'API / développeurs' })).toHaveAttribute('aria-selected', 'true');
 
   // ...and the one-time token-reveal surface shows the raw send token, with no
   // QR: the only scannable QR is the enrolment code (apk_), never apt_.

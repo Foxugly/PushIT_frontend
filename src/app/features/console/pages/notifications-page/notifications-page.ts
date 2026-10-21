@@ -204,7 +204,13 @@ export class NotificationsPage implements OnInit {
     this.notificationForm.controls.application_id.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((applicationId) => {
-        this.syncSelectedDevices();
+        // Untouched selection: follow the app (all its devices); a selection
+        // the user edited is only pruned of devices the new app cannot reach.
+        if (this.notificationForm.controls.device_ids.dirty) {
+          this.syncSelectedDevices();
+        } else {
+          this.preselectAllDevices();
+        }
 
         const deviceIdsControl = this.notificationForm.controls.device_ids;
         if (applicationId) {
@@ -270,6 +276,10 @@ export class NotificationsPage implements OnInit {
       .subscribe({
         next: ({ devices, futureNotifications, stats }) => {
           this.devices.set(devices);
+          // The create modal may have opened before the devices arrived.
+          if (this.modalMode() === 'create' && !this.notificationForm.controls.device_ids.dirty) {
+            this.preselectAllDevices();
+          }
           this.futureNotifications.set(futureNotifications);
           this.stats.set(stats);
         },
@@ -323,7 +333,7 @@ export class NotificationsPage implements OnInit {
       // An explicit choice: keep the shell-selection sync from overwriting it.
       this.notificationForm.controls.application_id.markAsDirty();
     }
-    this.syncSelectedDevices();
+    this.preselectAllDevices();
     this.modalMode.set('create');
   }
 
@@ -682,6 +692,17 @@ export class NotificationsPage implements OnInit {
       (device) =>
         device.push_token_status === 'active' &&
         device.application_ids.includes(applicationId),
+    );
+  }
+
+  /**
+   * Target every reachable device of the selected app: sending to all the
+   * app's subscribers is the common case, the field stays editable.
+   */
+  private preselectAllDevices(): void {
+    this.notificationForm.patchValue(
+      { device_ids: this.availableDevices().map((device) => device.id) },
+      { emitEvent: false },
     );
   }
 

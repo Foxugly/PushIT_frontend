@@ -40,7 +40,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('the owner sets who may send by e-mail and how refusals are reported', async ({ page }) => {
-  await page.goto('/dashboard/applications/10?tab=sending');
+  await page.goto('/dashboard/applications/10?tab=email');
 
   const panel = page.getByTestId('inbound-sender-policy');
   await expect(panel.getByRole('heading', { name: 'Qui peut envoyer par e-mail' })).toBeVisible();
@@ -71,7 +71,7 @@ test('the owner sets who may send by e-mail and how refusals are reported', asyn
 });
 
 test('« Tout le monde » hides the allowlist and invalid entries block the save', async ({ page }) => {
-  await page.goto('/dashboard/applications/10?tab=sending');
+  await page.goto('/dashboard/applications/10?tab=email');
   const panel = page.getByTestId('inbound-sender-policy');
 
   await panel.getByLabel(/Tout le monde/).click();
@@ -88,7 +88,7 @@ test('« Tout le monde » hides the allowlist and invalid entries block the save
 });
 
 test('unsaved policy edits survive an overview save and a tab switch, and leaving asks first', async ({ page }) => {
-  await page.goto('/dashboard/applications/10?tab=sending');
+  await page.goto('/dashboard/applications/10?tab=email');
   const panel = page.getByTestId('inbound-sender-policy');
   const blocklist = panel.getByRole('textbox', { name: 'Expéditeurs bloqués' });
   await blocklist.fill('spam@corp.io');
@@ -104,7 +104,7 @@ test('unsaved policy edits survive an overview save and a tab switch, and leavin
   await expect(page.getByText('Application mise à jour.')).toBeVisible();
   await expect(form.getByTestId('app-settings-unsaved')).toHaveCount(0);
 
-  await page.getByRole('tab', { name: 'Envoi' }).click();
+  await page.getByRole('tab', { name: 'E-mail' }).click();
   await expect(blocklist).toHaveValue('spam@corp.io');
   expect(state.apps[0].inbound_sender_blocklist ?? []).toEqual([]);
 
@@ -113,7 +113,7 @@ test('unsaved policy edits survive an overview save and a tab switch, and leavin
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('Vous avez des modifications non enregistrées. Quitter sans enregistrer ?');
   await dialog.getByRole('button', { name: 'Rester' }).click();
-  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=sending$/);
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=email$/);
   await expect(blocklist).toHaveValue('spam@corp.io');
 
   await page.getByRole('link', { name: 'Retour aux applications' }).click();
@@ -122,7 +122,7 @@ test('unsaved policy edits survive an overview save and a tab switch, and leavin
 });
 
 test('@*.domain entries are accepted and the formats are explained on the info icon', async ({ page }) => {
-  await page.goto('/dashboard/applications/10?tab=sending');
+  await page.goto('/dashboard/applications/10?tab=email');
   const panel = page.getByTestId('inbound-sender-policy');
 
   const help = panel.getByTestId('sender-allowlist-help');
@@ -140,7 +140,7 @@ test('@*.domain entries are accepted and the formats are explained on the info i
   expect(state.apps[0].inbound_sender_allowlist).toEqual(['@*.partner.io']);
 });
 
-test('« Mails reçus » lists what each inbound mail became, loaded with the Envoi tab', async ({ page }) => {
+test('« Mails reçus » lists what each inbound mail became, loaded with the E-mail tab', async ({ page }) => {
   let calls = 0;
   page.on('request', (request) => {
     if (request.url().includes('/inbound-email-logs/')) {
@@ -174,7 +174,7 @@ test('« Mails reçus » lists what each inbound mail became, loaded with the En
   await expect(page.getByRole('tab', { name: 'Aperçu' })).toHaveAttribute('aria-selected', 'true');
   expect(calls).toBe(0);
 
-  await page.getByRole('tab', { name: 'Envoi' }).click();
+  await page.getByRole('tab', { name: 'E-mail' }).click();
   const journal = page.getByTestId('inbound-email-log');
   await expect(journal.getByRole('heading', { name: 'Mails reçus' })).toBeVisible();
 

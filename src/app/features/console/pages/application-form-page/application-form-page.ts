@@ -78,13 +78,13 @@ export class ApplicationFormPage {
     this.shell.createApp(
       this.form.getRawValue(),
       (app) => {
-        // Land on the detail page's Envoi tab, which reveals the freshly-created
+        // Land on the detail page's API tab, which reveals the freshly-created
         // one-time token (QR + raw token) via <app-token-reveal>: the shell stored
         // it via rememberGeneratedToken, and the detail page's revealToken()
         // surfaces it while it is still held. Without that reveal the token would
         // be lost -- so a failed logo upload still lands there, with a warning banner.
         const target = ['/dashboard/applications', app.id];
-        const queryParams = { tab: 'sending' };
+        const queryParams = { tab: 'api' };
         const logo = this.pendingLogo();
         if (!logo) {
           this.pending.set(false);

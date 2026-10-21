@@ -874,6 +874,7 @@
       "notificationsEmpty": "Geen notificaties gekoppeld aan deze applicatie.",
       "quietPeriodsTitle": "Stille periodes",
       "quietPeriodsEmpty": "Geen stille periodes gekoppeld aan deze applicatie.",
+      "quietPeriodsHint": "Tijdens een stille periode worden de notificaties van deze applicatie tegengehouden en aan het einde van de periode verzonden.",
       "statusTitle": "Status",
       "table": {
         "name": "Naam",
@@ -960,7 +961,8 @@
       "tabs": {
         "overview": "Overzicht",
         "recipients": "Ontvangers",
-        "sending": "Verzenden",
+        "email": "E-mail",
+        "api": "API / ontwikkelaars",
         "notifications": "Notificaties",
         "quietPeriods": "Stille periodes"
       },
@@ -970,6 +972,25 @@
         "lastSend": "Laatste verzending"
       },
       "newNotification": "Nieuwe notificatie",
+      "newQuietPeriod": "Stille periode toevoegen",
+      "nextSteps": {
+        "title": "Volgende stappen",
+        "enrolTitle": "Een toestel abonneren",
+        "enrolHint": "Scan de inschrijvings-QR-code met de telefoon die de notificaties moet ontvangen.",
+        "enrolAction": "QR-code tonen",
+        "testHeading": "Een testnotificatie verzenden",
+        "testHint": "Een testbericht wordt meteen naar alle geabonneerde toestellen verzonden.",
+        "testAction": "Testnotificatie verzenden",
+        "testNoDevice": "Nog geen geabonneerd toestel kan ze ontvangen: abonneer eerst een toestel met de QR-code.",
+        "testInactive": "De applicatie is gedeactiveerd: activeer ze om een notificatie te verzenden.",
+        "testLoading": "Geabonneerde toestellen laden…",
+        "testTitle": "Testnotificatie",
+        "testMessage": "Dit is een test van „{name}”: uw notificaties komen aan op dit toestel.",
+        "testSentSummary": "Test verzonden",
+        "testSent": "Testnotificatie verzonden naar {count} toestel(len).",
+        "emailTitle": "Per e-mail verzenden",
+        "emailHint": "Een e-mail naar dit adres wordt een notificatie."
+      },
       "legacyToken": {
         "title": "Oud applicatietoken",
         "hint": "Het oude token (prefix hierboven) geeft geen verzendrecht meer: gebruik verzendtokens. Genereer het hier opnieuw of trek het in indien nodig."

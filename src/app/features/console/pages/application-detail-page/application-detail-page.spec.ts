@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter, Router } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { vi } from 'vitest';
 
 import frCatalog from '../../../../../../public/i18n/fr.json';
@@ -37,11 +38,18 @@ function deepMerge<T>(base: T, overlay: unknown): T {
 
 describe('normalizeAppDetailTab', () => {
   it('keeps known tabs and falls back to overview', () => {
-    expect(normalizeAppDetailTab('sending')).toBe('sending');
+    expect(normalizeAppDetailTab('email')).toBe('email');
+    expect(normalizeAppDetailTab('api')).toBe('api');
     expect(normalizeAppDetailTab('quiet-periods')).toBe('quiet-periods');
     expect(normalizeAppDetailTab('nope')).toBe('overview');
     expect(normalizeAppDetailTab(null)).toBe('overview');
     expect(normalizeAppDetailTab(undefined)).toBe('overview');
+  });
+
+  it('maps the former « Envoi » tab to the E-mail tab (old links keep working)', () => {
+    expect(normalizeAppDetailTab('sending')).toBe('email');
+    // Only own keys: an inherited property name is not a legacy tab.
+    expect(normalizeAppDetailTab('toString')).toBe('overview');
   });
 });
 
@@ -66,6 +74,7 @@ describe('ApplicationDetailPage', () => {
     queryParamMap: BehaviorSubject<ParamMap>;
   };
   let router: Router;
+  let messages: { add: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     api = jasmine.createSpyObj<PushitApiService>('PushitApiService', [
@@ -85,6 +94,7 @@ describe('ApplicationDetailPage', () => {
       'rotateEnrolmentCode',
       'listSendTokens',
       'deleteApp',
+      'sendNotificationNow',
     ]);
     api.evictDeviceFromApp.and.returnValue(of(void 0));
     api.getEnrolmentQrCode.and.returnValue(of(new Blob(['qr'], { type: 'image/png' })));
@@ -127,6 +137,8 @@ describe('ApplicationDetailPage', () => {
       },
       queryParamMap: new BehaviorSubject<ParamMap>(convertToParamMap({})),
     };
+
+    messages = { add: vi.fn() };
 
     const consoleCopy = {
       current: signal(deepMerge(frCatalog.console, {
@@ -312,6 +324,7 @@ describe('ApplicationDetailPage', () => {
         { provide: ConsoleShellService, useValue: shell },
         { provide: ConsoleCopyService, useValue: consoleCopy },
         { provide: AppConfirmService, useValue: { ask: () => Promise.resolve(true) } },
+        { provide: MessageService, useValue: messages },
       ],
     }).compileComponents();
 
@@ -375,7 +388,7 @@ describe('ApplicationDetailPage', () => {
       fixture.detectChanges();
 
       expect(component.activeTab()).toBe('overview');
-      expect(fixture.nativeElement.querySelectorAll('p-tab[data-testid^="app-tab-"]').length).toBe(5);
+      expect(fixture.nativeElement.querySelectorAll('p-tab[data-testid^="app-tab-"]').length).toBe(6);
     });
 
     it('opens the tab named in the query param', () => {
@@ -422,12 +435,19 @@ describe('ApplicationDetailPage', () => {
       expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    it('opens the Envoi tab when a token was just minted for this app and no tab is given', () => {
+    it('opens the API tab when a token was just minted for this app and no tab is given', () => {
       shell.lastGeneratedToken.set({ appId: 101, token: 'apt_freshsecret123', prefix: 'apt_fresh' });
 
       fixture.detectChanges();
 
-      expect(component.activeTab()).toBe('sending');
+      expect(component.activeTab()).toBe('api');
+    });
+
+    it('opens the E-mail tab for an old ?tab=sending link', () => {
+      routeStub.queryParamMap.next(convertToParamMap({ tab: 'sending' }));
+      fixture.detectChanges();
+
+      expect(component.activeTab()).toBe('email');
     });
 
     it('an explicit tab wins over the token auto-open', () => {
@@ -455,6 +475,121 @@ describe('ApplicationDetailPage', () => {
 
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard/notifications'], {
       queryParams: { app: 101, create: 1 },
+    });
+  });
+
+  it('opens the quiet-period create flow pre-selected on this app', () => {
+    fixture.detectChanges();
+
+    component.newQuietPeriod();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/quiet-periods'], {
+      queryParams: { app: 101, create: 1 },
+    });
+  });
+
+  it('offers « Ajouter une période blanche » in the Périodes blanches tab', () => {
+    fixture.detectChanges();
+    const button = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="add-quiet-period"]');
+
+    expect(button?.textContent).toContain('Ajouter une période blanche');
+  });
+
+  describe('overview « Prochaines étapes »', () => {
+    it('replaces the facts table and the token tag with next steps', () => {
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+
+      expect(el.querySelector('app-console-facts-table')).toBeNull();
+      expect(el.querySelector('app-page-header')?.textContent).not.toContain('apt_12345678');
+      const steps = el.querySelector('[data-testid="next-steps"]');
+      expect(steps?.textContent).toContain('Prochaines étapes');
+      expect(steps?.querySelector('[data-testid="next-step-email"]')?.textContent).toContain(
+        makeApplication().inbound_email_address,
+      );
+    });
+
+    it('the enrol step opens the Destinataires tab (enrolment QR)', () => {
+      fixture.detectChanges();
+      const button = (fixture.nativeElement as HTMLElement).querySelector(
+        '[data-testid="next-step-enrol"] button',
+      ) as HTMLButtonElement;
+
+      button.click();
+
+      expect(component.activeTab()).toBe('recipients');
+    });
+
+    it('sends a test notification to every reachable subscribed device in one call', () => {
+      api.listDevices.and.returnValue(
+        of([
+          makeDevice({ id: 201, application_ids: [101] }),
+          makeDevice({ id: 203, application_ids: [101, 102] }),
+          makeDevice({ id: 204, application_ids: [101], push_token_status: 'invalid' }),
+          makeDevice({ id: 202, application_ids: [102] }),
+        ]),
+      );
+      api.sendNotificationNow.and.returnValue(of(makeNotification({ id: 900, application_id: 101 })));
+      fixture.detectChanges();
+      expect(component.testBlockedReason()).toBeNull();
+
+      component.sendTestNotification();
+
+      expect(api.sendNotificationNow).toHaveBeenCalledOnceWith({
+        application_id: 101,
+        device_ids: [201, 203],
+        title: 'Notification de test',
+        message: expect.stringContaining('PushIT Mobile'),
+      });
+      expect(messages.add).toHaveBeenCalledWith(
+        expect.objectContaining({
+          severity: 'success',
+          detail: 'Notification de test envoyée à 2 appareil(s).',
+        }),
+      );
+      // The counters / notification list are refreshed.
+      expect(api.listNotifications).toHaveBeenCalledTimes(2);
+      expect(component.testSending()).toBe(false);
+    });
+
+    it('is disabled, with the reason, while no subscribed device can receive it', () => {
+      api.listDevices.and.returnValue(
+        of([makeDevice({ id: 204, application_ids: [101], push_token_status: 'invalid' })]),
+      );
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+
+      expect(component.testBlockedReason()).toContain('Aucun appareil abonné');
+      expect(el.querySelector('[data-testid="test-notification-hint"]')?.textContent).toContain(
+        'Aucun appareil abonné',
+      );
+      expect(
+        (el.querySelector('[data-testid="send-test-notification"] button') as HTMLButtonElement).disabled,
+      ).toBe(true);
+
+      component.sendTestNotification();
+      expect(api.sendNotificationNow).not.toHaveBeenCalled();
+    });
+
+    it('is disabled on a deactivated application', () => {
+      api.getApp.and.returnValue(of(makeApplication({ is_active: false })));
+      fixture.detectChanges();
+
+      expect(component.testBlockedReason()).toContain('désactivée');
+    });
+
+    it('keeps a refusal on the card and shows no success toast', () => {
+      api.sendNotificationNow.and.returnValue(
+        throwError(() => ({ error: { code: 'subscription_required', detail: 'Abonnement requis.' }, status: 402 })),
+      );
+      fixture.detectChanges();
+
+      component.sendTestNotification();
+      fixture.detectChanges();
+
+      expect(component.testError()).not.toBeNull();
+      expect(messages.add).not.toHaveBeenCalled();
+      expect(component.testSending()).toBe(false);
     });
   });
 
@@ -532,7 +667,7 @@ describe('ApplicationDetailPage', () => {
     });
   });
 
-  it('regenerates and revokes the legacy token from the Envoi tab', async () => {
+  it('regenerates and revokes the legacy token from the API tab', async () => {
     shell.regenerateToken.mockImplementation((_app: unknown, onDone?: () => void) => onDone?.());
     shell.revokeToken.mockImplementation((_app: unknown, onDone?: () => void) => onDone?.());
     fixture.detectChanges();
@@ -682,7 +817,7 @@ describe('ApplicationDetailPage', () => {
     expect(component.aliasStatusView()?.hint).toBe('timeout');
   });
 
-  it('hosts the inbound sender policy in the Envoi tab and adopts its save', () => {
+  it('hosts the inbound sender policy in the E-mail tab and adopts its save', () => {
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('[data-testid="inbound-sender-policy"]')).not.toBeNull();
@@ -694,18 +829,22 @@ describe('ApplicationDetailPage', () => {
     expect(component.application()?.inbound_sender_blocklist).toEqual(['@spam.io']);
   });
 
-  it('loads the inbound e-mail journal only once the Envoi tab is shown', () => {
+  it('loads the inbound e-mail journal only once the E-mail tab is shown', () => {
     fixture.detectChanges();
     expect(api.getInboundEmailLogs).not.toHaveBeenCalled();
 
-    routeStub.queryParamMap.next(convertToParamMap({ tab: 'sending' }));
+    routeStub.queryParamMap.next(convertToParamMap({ tab: 'api' }));
+    fixture.detectChanges();
+    expect(api.getInboundEmailLogs).not.toHaveBeenCalled();
+
+    routeStub.queryParamMap.next(convertToParamMap({ tab: 'email' }));
     fixture.detectChanges();
     expect(api.getInboundEmailLogs).toHaveBeenCalledOnceWith(101);
 
     // Leaving and coming back does not reload it (« Actualiser » does).
     routeStub.queryParamMap.next(convertToParamMap({ tab: 'overview' }));
     fixture.detectChanges();
-    routeStub.queryParamMap.next(convertToParamMap({ tab: 'sending' }));
+    routeStub.queryParamMap.next(convertToParamMap({ tab: 'email' }));
     fixture.detectChanges();
     expect(api.getInboundEmailLogs).toHaveBeenCalledTimes(1);
   });

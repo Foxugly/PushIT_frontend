@@ -874,6 +874,7 @@
       "notificationsEmpty": "No hay ninguna notificación vinculada a esta aplicación.",
       "quietPeriodsTitle": "Periodos de silencio",
       "quietPeriodsEmpty": "No hay ningún periodo de silencio vinculado a esta aplicación.",
+      "quietPeriodsHint": "Durante un periodo de silencio, las notificaciones de esta aplicación se retienen y se envían al final del periodo.",
       "statusTitle": "Estado",
       "table": {
         "name": "Nombre",
@@ -960,7 +961,8 @@
       "tabs": {
         "overview": "Resumen",
         "recipients": "Destinatarios",
-        "sending": "Envío",
+        "email": "Correo electrónico",
+        "api": "API / desarrolladores",
         "notifications": "Notificaciones",
         "quietPeriods": "Periodos de silencio"
       },
@@ -970,6 +972,25 @@
         "lastSend": "Último envío"
       },
       "newNotification": "Nueva notificación",
+      "newQuietPeriod": "Añadir un periodo de silencio",
+      "nextSteps": {
+        "title": "Próximos pasos",
+        "enrolTitle": "Suscribir un dispositivo",
+        "enrolHint": "Escanee el código QR de inscripción con el teléfono que debe recibir las notificaciones.",
+        "enrolAction": "Mostrar el código QR",
+        "testHeading": "Enviar una notificación de prueba",
+        "testHint": "Se envía de inmediato un mensaje de prueba a todos los dispositivos suscritos.",
+        "testAction": "Enviar una notificación de prueba",
+        "testNoDevice": "Ningún dispositivo suscrito puede recibirla: suscriba primero un dispositivo con el código QR.",
+        "testInactive": "La aplicación está desactivada: actívela para enviar una notificación.",
+        "testLoading": "Cargando los dispositivos suscritos…",
+        "testTitle": "Notificación de prueba",
+        "testMessage": "Esta es una prueba de «{name}»: sus notificaciones llegan a este dispositivo.",
+        "testSentSummary": "Prueba enviada",
+        "testSent": "Notificación de prueba enviada a {count} dispositivo(s).",
+        "emailTitle": "Enviar por correo electrónico",
+        "emailHint": "Un correo enviado a esta dirección se convierte en una notificación."
+      },
       "legacyToken": {
         "title": "Token de aplicación heredado",
         "hint": "El token antiguo (prefijo arriba) ya no autoriza el envío: use los tokens de envío. Regenérelo o revóquelo aquí si es necesario."
