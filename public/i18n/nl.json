@@ -287,7 +287,45 @@
           "devices": "Devices",
           "notifications": "Notificaties",
           "quietPeriods": "Stille periodes"
-        }
+        },
+        "metricsLabel": "Tellers van de console",
+        "quickActions": {
+          "newApplication": "Nieuwe applicatie",
+          "newNotification": "Nieuwe notificatie"
+        },
+        "gettingStarted": {
+          "title": "Aan de slag",
+          "description": "Drie stappen om uw eerste notificatie te versturen.",
+          "progress": "{done} van {total} voltooid",
+          "done": "Voltooid",
+          "steps": {
+            "app": {
+              "title": "Een applicatie aanmaken",
+              "description": "Een applicatie groepeert uw apparaten en uw verzendingen.",
+              "cta": "Een applicatie aanmaken"
+            },
+            "device": {
+              "title": "Een apparaat toevoegen",
+              "description": "Scan de QR-code van de applicatie met de mobiele PushIT-app.",
+              "cta": "QR-code tonen"
+            },
+            "notification": {
+              "title": "Een notificatie versturen",
+              "description": "Verstuur een eerste bericht om te controleren of alles werkt.",
+              "cta": "Een notificatie versturen"
+            }
+          }
+        },
+        "recent": {
+          "title": "Laatste notificaties",
+          "viewAll": "Alles bekijken"
+        },
+        "failures": {
+          "title": "Recente mislukkingen",
+          "empty": "Geen mislukkingen: alles is verstuurd.",
+          "viewAll": "Mislukkingen bekijken"
+        },
+        "feedError": "Kan de notificaties niet laden."
       },
       "settings": {
         "title": "Mijn account",
@@ -474,7 +512,12 @@
       },
       "confirmDelete": "Applicatie \"{name}\" verwijderen?",
       "confirmRegenerate": "Token van \"{name}\" vernieuwen? Alle toestellen die het huidige token gebruiken, ontvangen geen notificaties meer totdat ze met het nieuwe token zijn gekoppeld.",
-      "confirmRevoke": "Token van \"{name}\" intrekken? Alle toestellen die het huidige token gebruiken, ontvangen onmiddellijk geen notificaties meer."
+      "confirmRevoke": "Token van \"{name}\" intrekken? Alle toestellen die het huidige token gebruiken, ontvangen onmiddellijk geen notificaties meer.",
+      "emptyState": {
+        "title": "Nog geen applicaties",
+        "message": "Maak een applicatie aan om een inschrijvings-QR-code te krijgen en notificaties te versturen.",
+        "cta": "Mijn eerste applicatie aanmaken"
+      }
     },
     "devices": {
       "title": "Inventaris en koppeling van devices",
@@ -533,7 +576,14 @@
       },
       "confirmDelete": "Device \"{name}\" verwijderen?",
       "readOnly": "Alleen-lezen",
-      "readOnlyHint": "Device van een abonnee: alleen de eigenaar kan het wijzigen."
+      "readOnlyHint": "Device van een abonnee: alleen de eigenaar kan het wijzigen.",
+      "emptyState": {
+        "title": "Nog geen apparaten",
+        "message": "Een apparaat voegt u toe door de QR-code van een applicatie te scannen met de mobiele PushIT-app.",
+        "cta": "QR-code tonen",
+        "noAppMessage": "Maak eerst een applicatie aan: met haar QR-code voegt u uw apparaten toe.",
+        "noAppCta": "Een applicatie aanmaken"
+      }
     },
     "notifications": {
       "title": "Gebruikersnotificaties",
@@ -556,7 +606,9 @@
         "allDevices": "Alle",
         "allStatuses": "Alle",
         "apply": "Toepassen",
-        "reset": "Resetten"
+        "reset": "Resetten",
+        "statusChips": "Filteren op status",
+        "allStatusesChip": "Alle"
       },
       "table": {
         "name": "Naam",
@@ -627,6 +679,18 @@
       "validation": {
         "title": "Ontbrekende velden",
         "detail": "Vul alle verplichte velden in (applicatie, toestellen, titel en bericht)."
+      },
+      "emptyState": {
+        "title": "Geen notificaties verstuurd",
+        "message": "Uw verstuurde en geplande notificaties verschijnen hier.",
+        "cta": "Een notificatie versturen",
+        "noAppMessage": "Maak eerst een applicatie aan en voeg daarna een apparaat toe om er notificaties naar te sturen.",
+        "noAppCta": "Een applicatie aanmaken"
+      },
+      "emptyFiltered": {
+        "title": "Geen notificaties voor deze filters",
+        "message": "Wijzig of wis de filters om meer notificaties te zien.",
+        "cta": "Filters wissen"
       }
     },
     "quietPeriods": {
@@ -716,7 +780,13 @@
         "differentEndTime": "De eindtijd moet verschillen van de begintijd."
       },
       "readOnly": "Alleen-lezen",
-      "readOnlyHint": "Stil venster van het device van een abonnee: alleen de eigenaar kan het wijzigen."
+      "readOnlyHint": "Stil venster van het device van een abonnee: alleen de eigenaar kan het wijzigen.",
+      "emptyState": {
+        "title": "Geen stille periodes",
+        "message": "Een stille periode houdt notificaties tegen tijdens een tijdvak (’s nachts, in het weekend…).",
+        "cta": "Een stille periode toevoegen",
+        "noAppCta": "Een applicatie aanmaken"
+      }
     },
     "enrolment": {
       "intro": "Deze code is bedoeld om rond te gaan: uw ontvangers scannen hem om uw meldingen te ontvangen. Hij geeft geen recht om te verzenden.",

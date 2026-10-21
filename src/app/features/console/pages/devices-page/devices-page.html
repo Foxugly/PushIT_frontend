@@ -26,63 +26,88 @@
 
   <section class="console-card">
 
-    <p-table
-      [value]="devices()"
-      [lazy]="true"
-      [lazyLoadOnInit]="false"
-      (onLazyLoad)="loadDevices($event)"
-      [paginator]="true"
-      [rows]="deviceRows"
-      [first]="deviceFirst()"
-      [totalRecords]="devicesTotal()"
-      [loading]="tableLoading()"
-      [rowsPerPageOptions]="[25, 50, 100]"
-      styleClass="p-datatable-sm"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>{{ copy().table.name }}</th>
-          <th>{{ copy().table.platform }}</th>
-          <th>{{ copy().table.token }}</th>
-          <th>{{ copy().table.applications }}</th>
-          <th>{{ copy().table.lastActivity }}</th>
-          <th class="console-table__actions">{{ copy().table.actions }}</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-device>
-        <tr [class.console-row-selected]="selectedDeviceId() === device.id">
-          <td class="console-table__name">
-            <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
-              <strong>{{ device.device_name }}</strong>
-            </a>
-          </td>
-          <td>{{ device.platform }}</td>
-          <td><p-tag [value]="device.push_token_status" [severity]="statusSeverity(device.push_token_status)" /></td>
-          <td>{{ deviceApplicationNames(device) }}</td>
-          <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().never }}</td>
-          <td class="console-table__actions">
-            <div class="console-icon-actions">
-              <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.view"
-        [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
-              @if (device.is_mine) {
-                <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
-          [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
-                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
-          [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
-              } @else {
-                <i class="pi pi-lock console-read-only" role="img" [attr.aria-label]="copy().readOnly + ' — ' + copy().readOnlyHint"
-          [pTooltip]="copy().readOnlyHint" tooltipPosition="top" data-testid="device-read-only"></i>
-              }
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="6" class="console-empty">{{ copy().empty }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+    @if (devicesLoaded() && devicesTotal() === 0) {
+      @if (firstAppId(); as appId) {
+        <app-empty-state icon="pi pi-mobile" [title]="copy().emptyState.title" [message]="copy().emptyState.message">
+          <a
+            pButton
+            [routerLink]="['/dashboard/applications', appId]"
+            [queryParams]="{ tab: 'recipients' }"
+            [label]="copy().emptyState.cta"
+            icon="pi pi-qrcode"
+            severity="success"
+          ></a>
+        </app-empty-state>
+      } @else {
+        <app-empty-state icon="pi pi-mobile" [title]="copy().emptyState.title" [message]="copy().emptyState.noAppMessage">
+          <a
+            pButton
+            routerLink="/dashboard/applications/new"
+            [label]="copy().emptyState.noAppCta"
+            icon="pi pi-plus"
+            severity="success"
+          ></a>
+        </app-empty-state>
+      }
+    } @else {
+      <p-table
+        [value]="devices()"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        (onLazyLoad)="loadDevices($event)"
+        [paginator]="true"
+        [rows]="deviceRows"
+        [first]="deviceFirst()"
+        [totalRecords]="devicesTotal()"
+        [loading]="tableLoading()"
+        [rowsPerPageOptions]="[25, 50, 100]"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ copy().table.name }}</th>
+            <th>{{ copy().table.platform }}</th>
+            <th>{{ copy().table.token }}</th>
+            <th>{{ copy().table.applications }}</th>
+            <th>{{ copy().table.lastActivity }}</th>
+            <th class="console-table__actions">{{ copy().table.actions }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-device>
+          <tr [class.console-row-selected]="selectedDeviceId() === device.id">
+            <td class="console-table__name">
+              <a class="console-table__link" [routerLink]="['/dashboard/devices', device.id]">
+                <strong>{{ device.device_name }}</strong>
+              </a>
+            </td>
+            <td>{{ device.platform }}</td>
+            <td><p-tag [value]="device.push_token_status" [severity]="statusSeverity(device.push_token_status)" /></td>
+            <td>{{ deviceApplicationNames(device) }}</td>
+            <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().never }}</td>
+            <td class="console-table__actions">
+              <div class="console-icon-actions">
+                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.view"
+          [pTooltip]="copy().actions.view" tooltipPosition="top" (onClick)="openDetails(device)" />
+                @if (device.is_mine) {
+                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.edit"
+            [pTooltip]="copy().actions.edit" tooltipPosition="top" (onClick)="openEditModal(device)" />
+                  <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [ariaLabel]="copy().actions.delete"
+            [pTooltip]="copy().actions.delete" tooltipPosition="top" [disabled]="saving()" (onClick)="selectDevice(device); deleteDevice()" />
+                } @else {
+                  <i class="pi pi-lock console-read-only" role="img" [attr.aria-label]="copy().readOnly + ' — ' + copy().readOnlyHint"
+            [pTooltip]="copy().readOnlyHint" tooltipPosition="top" data-testid="device-read-only"></i>
+                }
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="console-empty">{{ copy().empty }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
   </section>
 
   <p-dialog

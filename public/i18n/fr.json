@@ -287,7 +287,45 @@
           "devices": "Devices",
           "notifications": "Notifications",
           "quietPeriods": "Périodes blanches"
-        }
+        },
+        "metricsLabel": "Compteurs de la console",
+        "quickActions": {
+          "newApplication": "Nouvelle application",
+          "newNotification": "Nouvelle notification"
+        },
+        "gettingStarted": {
+          "title": "Pour commencer",
+          "description": "Trois étapes pour envoyer votre première notification.",
+          "progress": "{done} sur {total} terminées",
+          "done": "Terminé",
+          "steps": {
+            "app": {
+              "title": "Créer une application",
+              "description": "Une application regroupe vos appareils et vos envois.",
+              "cta": "Créer une application"
+            },
+            "device": {
+              "title": "Ajouter un appareil",
+              "description": "Scannez le QR code de l'application avec l'app mobile PushIT.",
+              "cta": "Afficher le QR code"
+            },
+            "notification": {
+              "title": "Envoyer une notification",
+              "description": "Envoyez un premier message pour vérifier que tout fonctionne.",
+              "cta": "Envoyer une notification"
+            }
+          }
+        },
+        "recent": {
+          "title": "Dernières notifications",
+          "viewAll": "Tout voir"
+        },
+        "failures": {
+          "title": "Échecs récents",
+          "empty": "Aucun échec : tout est bien parti.",
+          "viewAll": "Voir les échecs"
+        },
+        "feedError": "Impossible de charger les notifications."
       },
       "settings": {
         "title": "Mon compte",
@@ -474,7 +512,12 @@
       },
       "confirmDelete": "Supprimer l'application \"{name}\" ?",
       "confirmRegenerate": "Régénérer le token de \"{name}\" ? Tous les appareils utilisant le token actuel cesseront de recevoir des notifications jusqu'à ce qu'ils soient reliés au nouveau token.",
-      "confirmRevoke": "Révoquer le token de \"{name}\" ? Tous les appareils utilisant le token actuel cesseront immédiatement de recevoir des notifications."
+      "confirmRevoke": "Révoquer le token de \"{name}\" ? Tous les appareils utilisant le token actuel cesseront immédiatement de recevoir des notifications.",
+      "emptyState": {
+        "title": "Aucune application pour l'instant",
+        "message": "Créez une application pour obtenir un QR code d'enrôlement et commencer à envoyer des notifications.",
+        "cta": "Créer ma première application"
+      }
     },
     "devices": {
       "title": "Inventaire et liaison des devices",
@@ -533,7 +576,14 @@
       },
       "confirmDelete": "Supprimer le device \"{name}\" ?",
       "readOnly": "Lecture seule",
-      "readOnlyHint": "Device d'un abonné : seul son propriétaire peut le modifier."
+      "readOnlyHint": "Device d'un abonné : seul son propriétaire peut le modifier.",
+      "emptyState": {
+        "title": "Aucun appareil pour l'instant",
+        "message": "Un appareil s'ajoute en scannant le QR code d'une application avec l'app mobile PushIT.",
+        "cta": "Afficher le QR code",
+        "noAppMessage": "Créez d'abord une application : son QR code permettra d'ajouter vos appareils.",
+        "noAppCta": "Créer une application"
+      }
     },
     "notifications": {
       "title": "Notifications utilisateur",
@@ -556,7 +606,9 @@
         "allDevices": "Tous",
         "allStatuses": "Tous",
         "apply": "Appliquer",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "statusChips": "Filtrer par statut",
+        "allStatusesChip": "Toutes"
       },
       "table": {
         "name": "Nom",
@@ -627,6 +679,18 @@
       "validation": {
         "title": "Champs manquants",
         "detail": "Veuillez remplir tous les champs obligatoires (application, appareils, titre et message)."
+      },
+      "emptyState": {
+        "title": "Aucune notification envoyée",
+        "message": "Vos notifications envoyées et planifiées apparaîtront ici.",
+        "cta": "Envoyer une notification",
+        "noAppMessage": "Créez d'abord une application, puis ajoutez un appareil pour lui envoyer des notifications.",
+        "noAppCta": "Créer une application"
+      },
+      "emptyFiltered": {
+        "title": "Aucune notification pour ces filtres",
+        "message": "Modifiez ou réinitialisez les filtres pour voir plus de notifications.",
+        "cta": "Réinitialiser les filtres"
       }
     },
     "quietPeriods": {
@@ -716,7 +780,13 @@
         "differentEndTime": "L'heure de fin doit être différente de l'heure de début."
       },
       "readOnly": "Lecture seule",
-      "readOnlyHint": "Fenêtre de silence du device d'un abonné : seul son propriétaire peut la modifier."
+      "readOnlyHint": "Fenêtre de silence du device d'un abonné : seul son propriétaire peut la modifier.",
+      "emptyState": {
+        "title": "Aucune période blanche",
+        "message": "Une période blanche suspend l'envoi des notifications pendant une plage horaire (la nuit, le week-end…).",
+        "cta": "Ajouter une période blanche",
+        "noAppCta": "Créer une application"
+      }
     },
     "enrolment": {
       "intro": "Ce code est fait pour circuler : c'est lui que vos destinataires scannent pour recevoir vos notifications. Il n'autorise aucun envoi.",

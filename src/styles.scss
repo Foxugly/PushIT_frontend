@@ -58,6 +58,13 @@ a {
   color: inherit;
 }
 
+// Links styled as buttons (<a pButton>) keep the button look: never an underline.
+a.p-button,
+a.p-button:hover,
+a.p-button:focus {
+  text-decoration: none;
+}
+
 // Skip-to-content (a11y) : caché, révélé au focus clavier (standard flotte).
 .skip-link {
   position: absolute;

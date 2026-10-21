@@ -1,10 +1,18 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap, provideRouter, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  convertToParamMap,
+  ParamMap,
+  provideRouter,
+  Router,
+} from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
-import { of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { vi } from 'vitest';
 
 import {
   makeApplication,
@@ -131,6 +139,20 @@ describe('NotificationsPage', () => {
             to: 'Jusqu a',
             apply: 'Appliquer',
             reset: 'Reinitialiser',
+            statusChips: 'Filtrer par statut',
+            allStatusesChip: 'Toutes',
+          },
+          emptyState: {
+            title: 'Aucune notification envoyee',
+            message: 'Vos notifications apparaitront ici.',
+            cta: 'Envoyer une notification',
+            noAppMessage: 'Creez d abord une application.',
+            noAppCta: 'Creer une application',
+          },
+          emptyFiltered: {
+            title: 'Aucune notification pour ces filtres',
+            message: 'Modifiez les filtres.',
+            cta: 'Reinitialiser les filtres',
           },
           table: {
             name: 'Titre',
@@ -492,5 +514,198 @@ describe('NotificationsPage', () => {
       1,
       25,
     );
+  });
+
+  describe('filters', () => {
+    let queryParams$: BehaviorSubject<ParamMap>;
+
+    /** Drive the route's query params (the page reads its filters from them). */
+    function useQueryParams(params: Record<string, string>): void {
+      queryParams$ = new BehaviorSubject(convertToParamMap(params));
+      Object.defineProperty(TestBed.inject(ActivatedRoute), 'queryParamMap', { value: queryParams$ });
+    }
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('restores the filters from the query params and loads with them', () => {
+      useQueryParams({ status: 'failed', application: '102', from: '2026-03-27T10:00:00.000Z', device: 'x' });
+
+      fixture.detectChanges();
+
+      expect(component.filtersForm.getRawValue()).toEqual({
+        application_id: '102',
+        device_id: '',
+        status: 'failed',
+        effective_scheduled_from: new Date('2026-03-27T10:00:00.000Z'),
+        effective_scheduled_to: null,
+      });
+      expect(component.hasActiveFilters()).toBe(true);
+      expect(api.listNotificationsPage).toHaveBeenCalledWith(
+        expect.objectContaining({ application_id: 102, status: 'failed', device_id: null }),
+        1,
+        25,
+      );
+      expect(api.listNotificationStats).toHaveBeenCalledWith({ application_id: 102 });
+      // Reading the URL does not rewrite it.
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+
+    it('ignores an unknown status in the URL', () => {
+      useQueryParams({ status: 'bogus' });
+
+      fixture.detectChanges();
+
+      expect(component.filtersForm.controls.status.value).toBe('');
+      expect(component.hasActiveFilters()).toBe(false);
+    });
+
+    it('follows a later query change (link to the same page) and reloads', () => {
+      useQueryParams({});
+      fixture.detectChanges();
+      api.listNotificationsPage.calls.reset();
+
+      queryParams$.next(convertToParamMap({ status: 'failed' }));
+
+      expect(component.appliedFilters().status).toBe('failed');
+      expect(api.listNotificationsPage).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'failed' }),
+        1,
+        25,
+      );
+    });
+
+    it('toggles a status filter from its chip, at once, and writes it to the URL', () => {
+      useQueryParams({});
+      fixture.detectChanges();
+
+      component.toggleStatusFilter('scheduled');
+
+      expect(component.appliedFilters().status).toBe('scheduled');
+      expect(api.listNotificationsPage).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'scheduled' }),
+        1,
+        25,
+      );
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        relativeTo: TestBed.inject(ActivatedRoute),
+        queryParams: { application: null, device: null, status: 'scheduled', from: null, to: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+
+      // Clicking the active chip clears it.
+      component.toggleStatusFilter('scheduled');
+      expect(component.appliedFilters().status).toBe('');
+    });
+
+    it('renders one clickable chip per status that has notifications', () => {
+      useQueryParams({});
+      fixture.detectChanges();
+
+      const chips = Array.from(
+        fixture.nativeElement.querySelectorAll('.notifications-chip') as NodeListOf<HTMLButtonElement>,
+      );
+      expect(chips.map((chip) => chip.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
+        'Toutes 2',
+        'draft 1',
+        'scheduled 1',
+      ]);
+      expect(chips[0].getAttribute('aria-pressed')).toBe('true');
+
+      chips[1].click();
+      fixture.detectChanges();
+
+      expect(component.appliedFilters().status).toBe('draft');
+      expect(chips[1].getAttribute('aria-pressed')).toBe('true');
+    });
+
+    it('applies select / date filters live, debounced', async () => {
+      vi.useFakeTimers();
+      useQueryParams({});
+      fixture.detectChanges();
+      api.listNotificationsPage.calls.reset();
+
+      component.filtersForm.controls.application_id.setValue('101');
+      component.filtersForm.controls.device_id.setValue('201');
+      expect(api.listNotificationsPage).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(300);
+
+      expect(api.listNotificationsPage).toHaveBeenCalledOnceWith(
+        expect.objectContaining({ application_id: 101, device_id: 201 }),
+        1,
+        25,
+      );
+    });
+
+    it('filters the future list client-side (its endpoint only filters on dates)', () => {
+      api.listFutureNotifications.and.returnValue(
+        of([
+          makeNotification({ id: 401, application_id: 101, status: 'scheduled', device_ids: [201] }),
+          makeNotification({ id: 402, application_id: 102, status: 'scheduled', device_ids: [202] }),
+        ]),
+      );
+      useQueryParams({ application: '102' });
+      fixture.detectChanges();
+
+      expect(component.visibleFutureNotifications().map((item) => item.id)).toEqual([402]);
+
+      queryParams$.next(convertToParamMap({ status: 'failed' }));
+      expect(component.visibleFutureNotifications()).toEqual([]);
+    });
+  });
+
+  describe('empty states', () => {
+    function emptyLists(): void {
+      api.listNotificationsPage.and.returnValue(of({ count: 0, next: null, previous: null, results: [] }));
+      api.listFutureNotifications.and.returnValue(of([]));
+      api.listNotificationStats.and.returnValue(of([]));
+    }
+
+    it('offers to send a first notification when there is nothing yet', () => {
+      emptyLists();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(component.isEmpty()).toBe(true);
+      expect(element.textContent).toContain('Aucune notification envoyee');
+      expect(element.querySelector('.notifications-filters')).toBeNull();
+      expect(element.querySelector('.notifications-chip')).toBeNull();
+
+      const cta = Array.from(element.querySelectorAll('app-empty-state button')).find((button) =>
+        button.textContent?.includes('Envoyer une notification'),
+      ) as HTMLButtonElement;
+      cta.click();
+      expect(component.modalMode()).toBe('create');
+    });
+
+    it('sends a new account to create an application first', () => {
+      emptyLists();
+      shell.apps.set([]);
+      fixture.detectChanges();
+
+      const text = (fixture.nativeElement as HTMLElement).textContent;
+      expect(text).toContain('Creez d abord une application.');
+      expect(text).toContain('Creer une application');
+    });
+
+    it('offers to reset the filters when they match nothing', () => {
+      emptyLists();
+      api.listNotificationStats.and.returnValue(of([makeNotificationStat('sent', 3)]));
+      Object.defineProperty(TestBed.inject(ActivatedRoute), 'queryParamMap', {
+        value: new BehaviorSubject(convertToParamMap({ status: 'failed' })),
+      });
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Aucune notification pour ces filtres');
+      // The filters stay reachable.
+      expect(element.querySelector('.notifications-filters')).not.toBeNull();
+
+      component.clearFilters();
+      expect(component.hasActiveFilters()).toBe(false);
+    });
   });
 });

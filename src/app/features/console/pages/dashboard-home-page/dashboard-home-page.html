@@ -6,32 +6,150 @@
         <h2>{{ copy().title }}</h2>
         <p class="console-muted">{{ copy().description }}</p>
       </div>
-      <div class="console-card__toolbar">
-        <a routerLink="/dashboard/applications" pButton [label]="copy().cta" icon="pi pi-arrow-right" severity="secondary"></a>
+      <div class="console-card__toolbar dashboard-home__quick-actions" data-testid="dashboard-quick-actions">
+        <a
+          routerLink="/dashboard/applications/new"
+          pButton
+          [label]="copy().quickActions.newApplication"
+          icon="pi pi-plus"
+          severity="secondary"
+        ></a>
+        <a
+          routerLink="/dashboard/notifications"
+          [queryParams]="{ create: '1' }"
+          pButton
+          [label]="copy().quickActions.newNotification"
+          icon="pi pi-send"
+          severity="success"
+        ></a>
       </div>
     </div>
 
-    <div class="dashboard-home__metrics">
-      <article class="console-stat">
-        <span class="console-muted">{{ copy().metrics.apps }}</span>
-        <strong>{{ shell.apps().length }}</strong>
-      </article>
-      <article class="console-stat">
-        <span class="console-muted">{{ copy().metrics.activeApps }}</span>
-        <strong>{{ activeAppsCount() }}</strong>
-      </article>
-      <article class="console-stat">
-        <span class="console-muted">{{ copy().metrics.devices }}</span>
-        <strong>{{ shell.devicesCount() }}</strong>
-      </article>
-      <article class="console-stat">
-        <span class="console-muted">{{ copy().metrics.notifications }}</span>
-        <strong>{{ shell.notificationsCount() }}</strong>
-      </article>
-      <article class="console-stat">
-        <span class="console-muted">{{ copy().metrics.quietPeriods }}</span>
-        <strong>{{ shell.quietPeriodsCount() }}</strong>
-      </article>
-    </div>
+    <nav class="dashboard-home__metrics" [attr.aria-label]="copy().metricsLabel">
+      @for (metric of metrics(); track metric.key) {
+        <a
+          class="console-stat dashboard-home__metric"
+          [routerLink]="metric.link"
+          [attr.data-testid]="'metric-' + metric.key"
+        >
+          <span class="console-muted">{{ copy().metrics[metric.key] }}</span>
+          <strong>{{ metric.value }}</strong>
+          <i class="pi pi-arrow-right dashboard-home__metric-arrow" aria-hidden="true"></i>
+        </a>
+      }
+    </nav>
   </section>
+
+  @if (showGettingStarted()) {
+    <section class="console-card dashboard-home__start" data-testid="getting-started">
+      <div class="dashboard-home__block-header">
+        <div>
+          <h3>{{ copy().gettingStarted.title }}</h3>
+          <p class="console-muted">{{ copy().gettingStarted.description }}</p>
+        </div>
+        <span class="console-pill">{{ progressLabel() }}</span>
+      </div>
+
+      <ol class="dashboard-home__steps">
+        @for (step of steps(); track step.key; let index = $index) {
+          <li
+            class="dashboard-home__step"
+            [class.dashboard-home__step--done]="step.done"
+            [attr.data-testid]="'step-' + step.key"
+            [attr.data-done]="step.done"
+          >
+            <span class="dashboard-home__step-mark" aria-hidden="true">
+              @if (step.done) {
+                <i class="pi pi-check"></i>
+              } @else {
+                {{ index + 1 }}
+              }
+            </span>
+            <div class="dashboard-home__step-body">
+              <strong>{{ copy().gettingStarted.steps[step.key].title }}</strong>
+              <p class="console-muted">{{ copy().gettingStarted.steps[step.key].description }}</p>
+            </div>
+            @if (step.done) {
+              <span class="dashboard-home__step-status">{{ copy().gettingStarted.done }}</span>
+            } @else {
+              <a
+                pButton
+                [routerLink]="step.link"
+                [queryParams]="step.queryParams"
+                [label]="copy().gettingStarted.steps[step.key].cta"
+                [severity]="nextStepKey() === step.key ? 'success' : 'secondary'"
+                [outlined]="nextStepKey() !== step.key"
+                size="small"
+              ></a>
+            }
+          </li>
+        }
+      </ol>
+    </section>
+  }
+
+  <!-- A brand-new account has nothing to list yet: the checklist above is enough. -->
+  @if (showFeeds()) {
+    <div class="dashboard-home__feeds">
+      <section class="console-card" data-testid="dashboard-recent">
+        <div class="dashboard-home__block-header">
+          <h3>{{ copy().recent.title }}</h3>
+          @if (recentTotal() > 0) {
+            <a class="dashboard-home__view-all" routerLink="/dashboard/notifications">{{ copy().recent.viewAll }}</a>
+          }
+        </div>
+        @if (feedError()) {
+          <p class="console-empty">{{ copy().feedError }}</p>
+        } @else {
+          <ul class="dashboard-home__feed">
+            @for (notification of recent(); track notification.id) {
+              <li [class.dashboard-home__feed-item--failed]="isFailure(notification)">
+                <a class="dashboard-home__feed-link" [routerLink]="['/dashboard/notifications', notification.id]">
+                  <span class="dashboard-home__feed-main">
+                    <strong>{{ notification.title }}</strong>
+                    <span class="console-muted">
+                      {{ notification.application_name }} · {{ notificationDate(notification) | date: 'dd/MM/yyyy HH:mm' }}
+                    </span>
+                  </span>
+                  <p-tag [value]="statusLabel(notification.status)" [severity]="statusSeverity(notification.status)" />
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="console-card" data-testid="dashboard-failures">
+        <div class="dashboard-home__block-header">
+          <h3>{{ copy().failures.title }}</h3>
+          @if (failuresTotal() > 0) {
+            <a class="dashboard-home__view-all" routerLink="/dashboard/notifications" [queryParams]="{ status: 'failed' }">
+              {{ copy().failures.viewAll }} ({{ failuresTotal() }})
+            </a>
+          }
+        </div>
+        @if (feedError()) {
+          <p class="console-empty">{{ copy().feedError }}</p>
+        } @else if (failures().length) {
+          <ul class="dashboard-home__feed">
+            @for (notification of failures(); track notification.id) {
+              <li class="dashboard-home__feed-item--failed">
+                <a class="dashboard-home__feed-link" [routerLink]="['/dashboard/notifications', notification.id]">
+                  <span class="dashboard-home__feed-main">
+                    <strong>{{ notification.title }}</strong>
+                    <span class="console-muted">
+                      {{ notification.application_name }} · {{ notificationDate(notification) | date: 'dd/MM/yyyy HH:mm' }}
+                    </span>
+                  </span>
+                  <p-tag [value]="statusLabel(notification.status)" severity="danger" />
+                </a>
+              </li>
+            }
+          </ul>
+        } @else {
+          <app-empty-state icon="pi pi-check-circle" [title]="copy().failures.empty" />
+        }
+      </section>
+    </div>
+  }
 </section>

@@ -18,11 +18,6 @@
   <app-page-header [title]="copy().title" />
 
   <div class="ph-toolbar">
-    <div class="console-resource-header__badges ph-toolbar__left">
-      <p-tag [value]="copy().history + ' ' + notificationsTotal()" severity="info" />
-      <p-tag [value]="copy().future + ' ' + futureNotifications().length" severity="warn" />
-      <p-tag [value]="copy().shifted + ' ' + shiftedCount()" severity="contrast" />
-    </div>
     <div class="ph-toolbar__right">
       <p-button
         [label]="copy().refresh"
@@ -35,106 +30,149 @@
   </div>
 
   <section class="console-card">
-
-    <div class="notifications-status-badges">
-      @for (status of statusOptions; track status) {
-        <p-tag
-          [value]="copy().statusLabels[status] + ' ' + statusCount(status)"
-          [severity]="statusBadgeSeverity(status)"
-        />
-      }
-    </div>
-
-    <form
-      class="console-filter-grid notifications-filters"
-      [formGroup]="filtersForm"
-      (ngSubmit)="applyFilters()"
-    >
-      <label>
-        <span>{{ copy().filters.application }}</span>
-        <p-select
-          formControlName="application_id"
-          [options]="appOptions()"
-          optionLabel="label"
-          optionValue="value"
-          [placeholder]="copy().filters.allApps"
-          size="small"
-          styleClass="notifications-filters__select notifications-filters__select--app"
-        />
-      </label>
-
-      <label>
-        <span>{{ copy().filters.device }}</span>
-        <p-select
-          formControlName="device_id"
-          [options]="deviceFilterOptions()"
-          optionLabel="label"
-          optionValue="value"
-          [placeholder]="copy().filters.allDevices"
-          [showClear]="true"
-          size="small"
-          styleClass="notifications-filters__select notifications-filters__select--app"
-        />
-      </label>
-
-      <label>
-        <span>{{ copy().filters.status }}</span>
-        <p-select
-          formControlName="status"
-          [options]="statusOptionsSelect()"
-          optionLabel="label"
-          optionValue="value"
-          [placeholder]="copy().filters.allStatuses"
-          size="small"
-          styleClass="notifications-filters__select notifications-filters__select--status"
-        />
-      </label>
-
-      <label>
-        <span>{{ copy().filters.from }}</span>
-        <p-datepicker
-          formControlName="effective_scheduled_from"
-          [showTime]="true"
-          [showIcon]="true"
-          iconDisplay="input"
-          hourFormat="24"
-          size="small"
-          appendTo="body"
-          [inputStyle]="{ width: '11rem' }"
-          [panelStyle]="compactDatepickerPanelStyle"
-          styleClass="notifications-filters__date"
-        ></p-datepicker>
-      </label>
-
-      <label>
-        <span>{{ copy().filters.to }}</span>
-        <p-datepicker
-          formControlName="effective_scheduled_to"
-          [showTime]="true"
-          [showIcon]="true"
-          iconDisplay="input"
-          hourFormat="24"
-          size="small"
-          appendTo="body"
-          [inputStyle]="{ width: '11rem' }"
-          [panelStyle]="compactDatepickerPanelStyle"
-          styleClass="notifications-filters__date"
-        ></p-datepicker>
-      </label>
-
-      <div class="console-filter-actions notifications-filters__actions">
-        <p-button type="submit" [label]="copy().filters.apply" size="small" />
-        <p-button
+    @if (statsTotal() > 0 || appliedFilters().status) {
+      <div class="notifications-status-chips" role="group" [attr.aria-label]="copy().filters.statusChips">
+        <button
           type="button"
-          [label]="copy().filters.reset"
-          severity="secondary"
-          size="small"
-          (onClick)="clearFilters()"
-        />
+          class="notifications-chip"
+          [class.notifications-chip--active]="!appliedFilters().status"
+          [attr.aria-pressed]="!appliedFilters().status"
+          data-testid="status-chip-all"
+          (click)="toggleStatusFilter('')"
+        >
+          {{ copy().filters.allStatusesChip }}
+          <span class="notifications-chip__count">{{ statsTotal() }}</span>
+        </button>
+        @for (chip of statusChips(); track chip.status) {
+          <button
+            type="button"
+            class="notifications-chip"
+            [attr.data-tone]="statusBadgeSeverity(chip.status)"
+            [class.notifications-chip--active]="appliedFilters().status === chip.status"
+            [attr.aria-pressed]="appliedFilters().status === chip.status"
+            [attr.data-testid]="'status-chip-' + chip.status"
+            (click)="toggleStatusFilter(chip.status)"
+          >
+            {{ chip.label }}
+            <span class="notifications-chip__count">{{ chip.count }}</span>
+          </button>
+        }
       </div>
-    </form>
+    }
 
-    @if (loading()) {
+    @if (!isEmpty() || hasActiveFilters()) {
+      <form class="notifications-filters" [formGroup]="filtersForm" (ngSubmit)="applyFilters()">
+        <label class="notifications-filters__field">
+          <span>{{ copy().filters.application }}</span>
+          <p-select
+            formControlName="application_id"
+            [options]="appOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="copy().filters.allApps"
+            [showClear]="true"
+            size="small"
+            styleClass="notifications-filters__select"
+          />
+        </label>
+
+        <label class="notifications-filters__field">
+          <span>{{ copy().filters.device }}</span>
+          <p-select
+            formControlName="device_id"
+            [options]="deviceFilterOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="copy().filters.allDevices"
+            [showClear]="true"
+            size="small"
+            styleClass="notifications-filters__select"
+          />
+        </label>
+
+        <label class="notifications-filters__field notifications-filters__field--date">
+          <span>{{ copy().filters.from }}</span>
+          <p-datepicker
+            formControlName="effective_scheduled_from"
+            [showTime]="true"
+            [showIcon]="true"
+            [showClear]="true"
+            iconDisplay="input"
+            hourFormat="24"
+            size="small"
+            appendTo="body"
+            [panelStyle]="compactDatepickerPanelStyle"
+            styleClass="notifications-filters__date"
+          ></p-datepicker>
+        </label>
+
+        <label class="notifications-filters__field notifications-filters__field--date">
+          <span>{{ copy().filters.to }}</span>
+          <p-datepicker
+            formControlName="effective_scheduled_to"
+            [showTime]="true"
+            [showIcon]="true"
+            [showClear]="true"
+            iconDisplay="input"
+            hourFormat="24"
+            size="small"
+            appendTo="body"
+            [panelStyle]="compactDatepickerPanelStyle"
+            styleClass="notifications-filters__date"
+          ></p-datepicker>
+        </label>
+
+        @if (hasActiveFilters()) {
+          <div class="notifications-filters__actions">
+            <p-button
+              type="button"
+              [label]="copy().filters.reset"
+              icon="pi pi-filter-slash"
+              severity="secondary"
+              [text]="true"
+              size="small"
+              (onClick)="clearFilters()"
+            />
+          </div>
+        }
+      </form>
+    }
+
+    @if (isEmpty()) {
+      @if (hasActiveFilters()) {
+        <app-empty-state
+          icon="pi pi-filter"
+          [title]="copy().emptyFiltered.title"
+          [message]="copy().emptyFiltered.message"
+        >
+          <p-button
+            [label]="copy().emptyFiltered.cta"
+            icon="pi pi-filter-slash"
+            severity="secondary"
+            (onClick)="clearFilters()"
+          />
+        </app-empty-state>
+      } @else if (shell.apps().length) {
+        <app-empty-state icon="pi pi-send" [title]="copy().emptyState.title" [message]="copy().emptyState.message">
+          <p-button
+            [label]="copy().emptyState.cta"
+            icon="pi pi-send"
+            severity="success"
+            (onClick)="openCreateModal()"
+          />
+        </app-empty-state>
+      } @else {
+        <app-empty-state icon="pi pi-send" [title]="copy().emptyState.title" [message]="copy().emptyState.noAppMessage">
+          <a
+            pButton
+            routerLink="/dashboard/applications/new"
+            [label]="copy().emptyState.noAppCta"
+            icon="pi pi-plus"
+            severity="success"
+          ></a>
+        </app-empty-state>
+      }
+    } @else if (loading()) {
       <p class="console-empty">{{ copy().loading }}</p>
     } @else {
       <!-- Shared row template, reused by the future + history tables. -->
@@ -221,9 +259,11 @@
         </tr>
       </ng-template>
 
-      @if (futureNotifications().length) {
-        <h3 class="notifications-section__title">{{ copy().future }}</h3>
-        <p-table [value]="futureNotifications()" styleClass="p-datatable-sm">
+      @if (visibleFutureNotifications().length) {
+        <h3 class="notifications-section__title">
+          {{ copy().future }} <span class="console-muted">({{ visibleFutureNotifications().length }})</span>
+        </h3>
+        <p-table [value]="visibleFutureNotifications()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
               <th>{{ copy().table.name }}</th>
@@ -243,7 +283,9 @@
         </p-table>
       }
 
-      <h3 class="notifications-section__title">{{ copy().history }}</h3>
+      <h3 class="notifications-section__title">
+        {{ copy().history }} <span class="console-muted">({{ notificationsTotal() }})</span>
+      </h3>
       <p-table
         [value]="notifications()"
         [lazy]="true"

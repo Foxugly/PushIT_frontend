@@ -1,13 +1,17 @@
+.dashboard-home {
+  display: grid;
+  gap: 1rem;
+}
+
 .dashboard-home__hero {
   align-items: center;
 }
 
-// The "Applications" CTA is an <a pButton> — keep it button-styled, never the
-// browser's default underlined link (incl. on hover/focus).
-.dashboard-home__hero a,
-.dashboard-home__hero a:hover,
-.dashboard-home__hero a:focus {
-  text-decoration: none;
+.dashboard-home__quick-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: 0.5rem;
 }
 
 .dashboard-home__metrics {
@@ -16,51 +20,208 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.dashboard-home__shortcuts {
-  display: grid;
-  gap: 0.85rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+// Each counter opens its list: a card-sized link with a hover/focus affordance.
+.dashboard-home__metric {
+  position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
-.dashboard-home__shortcut {
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 0.9rem;
-  align-items: start;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--line-accent-soft);
-  border-radius: 22px;
-  background: var(--surface-glass);
+.dashboard-home__metric:hover,
+.dashboard-home__metric:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.dashboard-home__metric:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.dashboard-home__metric-arrow {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.dashboard-home__metric:hover .dashboard-home__metric-arrow,
+.dashboard-home__metric:focus-visible .dashboard-home__metric-arrow {
+  opacity: 1;
+}
+
+.dashboard-home__block-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-home__block-header h3 {
+  font-size: 1.05rem;
+}
+
+.dashboard-home__view-all {
+  color: var(--accent-strong);
+  font-weight: 600;
+  font-size: 0.9rem;
   text-decoration: none;
 }
 
-.dashboard-home__shortcut i {
+.dashboard-home__view-all:hover,
+.dashboard-home__view-all:focus-visible {
+  text-decoration: underline;
+}
+
+// « Pour commencer » checklist.
+.dashboard-home__steps {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard-home__step {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line-accent-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-glass);
+}
+
+.dashboard-home__step-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 999px;
+  background: var(--neutral-wash);
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.dashboard-home__step--done .dashboard-home__step-mark {
   background: var(--accent-wash);
   color: var(--accent-strong);
 }
 
-.dashboard-home__shortcut strong {
-  display: block;
+.dashboard-home__step--done .dashboard-home__step-body strong {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.dashboard-home__step-body {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.dashboard-home__step-status {
+  color: var(--success-text);
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+// « Dernières notifications » / « Échecs récents ».
+.dashboard-home__feeds {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-home__feed {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard-home__feed-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: inherit;
+  text-decoration: none;
+}
+
+.dashboard-home__feed-link:hover,
+.dashboard-home__feed-link:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.dashboard-home__feed-item--failed .dashboard-home__feed-link {
+  border-color: var(--danger-line);
+  background: var(--danger-wash);
+}
+
+.dashboard-home__feed-main {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.dashboard-home__feed-main strong,
+.dashboard-home__feed-main span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-home__feed-main span {
+  font-size: 0.85rem;
 }
 
 @media (max-width: 1024px) {
   .dashboard-home__metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .dashboard-home__feeds {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
-  .dashboard-home__metrics {
-    grid-template-columns: minmax(0, 1fr);
+  .dashboard-home__hero {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .dashboard-home__shortcuts {
-    grid-template-columns: minmax(0, 1fr);
+  .dashboard-home__quick-actions {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-home__metrics .console-stat strong {
+    font-size: 1.4rem;
+  }
+
+  .dashboard-home__step {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+  }
+
+  .dashboard-home__step > a,
+  .dashboard-home__step-status {
+    grid-column: 2;
+    justify-self: start;
   }
 }

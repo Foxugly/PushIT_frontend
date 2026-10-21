@@ -1,9 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize, forkJoin, startWith } from 'rxjs';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
+import { debounceTime, finalize, forkJoin, startWith } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -35,6 +35,77 @@ import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pi
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { EmojiPickerPopover } from '../../../../shared/emoji-picker-popover/emoji-picker-popover';
 import { ConsoleDialogActions } from '../../components/console-dialog-actions/console-dialog-actions';
+import { EmptyState } from '../../../../shared/empty-state/empty-state';
+
+/** The list filters, as held by `filtersForm` (ids are strings, like the select options). */
+export interface NotificationListFilters {
+  application_id: string;
+  device_id: string;
+  status: NotificationStatus | '';
+  effective_scheduled_from: Date | null;
+  effective_scheduled_to: Date | null;
+}
+
+const NO_FILTERS: NotificationListFilters = {
+  application_id: '',
+  device_id: '',
+  status: '',
+  effective_scheduled_from: null,
+  effective_scheduled_to: null,
+};
+
+/** Debounce of the live filters (selects / date pickers); status chips apply at once. */
+export const FILTER_DEBOUNCE_MS = 300;
+
+const STATUSES: readonly NotificationStatus[] = [
+  'draft',
+  'scheduled',
+  'queued',
+  'processing',
+  'sent',
+  'partial',
+  'failed',
+  'no_target',
+];
+
+/**
+ * Query params carrying the filters (`?application=&device=&status=&from=&to=`),
+ * so a filtered list can be linked to (the dashboard's « Échecs récents ») and
+ * survives a reload. `app`/`create` stay reserved for the create deep link.
+ */
+export function filtersToQueryParams(filters: NotificationListFilters): Record<string, string | null> {
+  return {
+    application: filters.application_id || null,
+    device: filters.device_id || null,
+    status: filters.status || null,
+    from: filters.effective_scheduled_from?.toISOString() ?? null,
+    to: filters.effective_scheduled_to?.toISOString() ?? null,
+  };
+}
+
+/** Inverse of filtersToQueryParams; anything malformed is ignored, not trusted. */
+export function filtersFromQueryParams(params: ParamMap): NotificationListFilters {
+  const id = (value: string | null) => (value && /^\d+$/.test(value) ? value : '');
+  const date = (value: string | null) => {
+    if (!value) {
+      return null;
+    }
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
+  const status = params.get('status');
+  return {
+    application_id: id(params.get('application')),
+    device_id: id(params.get('device')),
+    status: STATUSES.includes(status as NotificationStatus) ? (status as NotificationStatus) : '',
+    effective_scheduled_from: date(params.get('from')),
+    effective_scheduled_to: date(params.get('to')),
+  };
+}
+
+function filtersKey(filters: NotificationListFilters): string {
+  return JSON.stringify(filtersToQueryParams(filters));
+}
 
 @Component({
   selector: 'app-notifications-page',
@@ -46,6 +117,7 @@ import { ConsoleDialogActions } from '../../components/console-dialog-actions/co
     AppAlert, ApiErrorMessagePipe,
     ConsoleDialogActions,
     EmojiPickerPopover,
+    EmptyState,
     ButtonModule,
     PageHeader,
     DatePickerModule,
@@ -69,19 +141,11 @@ export class NotificationsPage implements OnInit {
   private readonly messages = inject(MessageService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().notifications);
 
-  readonly statusOptions: NotificationStatus[] = [
-    'draft',
-    'scheduled',
-    'queued',
-    'processing',
-    'sent',
-    'partial',
-    'failed',
-    'no_target',
-  ];
+  readonly statusOptions: readonly NotificationStatus[] = STATUSES;
 
   // notifications() holds the CURRENT history page (server-paginated); future
   // notifications are bounded so they stay fully loaded.
@@ -93,6 +157,8 @@ export class NotificationsPage implements OnInit {
   readonly selectedNotificationId = signal<number | null>(null);
   readonly loading = signal(false);
   readonly historyLoading = signal(false);
+  /** False until the first history page answered: no empty state before that. */
+  readonly historyLoaded = signal(false);
   readonly notifRows = 25;
   readonly notifFirst = signal(0);
   readonly pending = signal(false);
@@ -115,14 +181,57 @@ export class NotificationsPage implements OnInit {
   readonly filtersForm = this.fb.nonNullable.group({
     application_id: [''],
     device_id: [''],
-    status: [''],
+    status: ['' as NotificationStatus | ''],
     effective_scheduled_from: [null as Date | null],
     effective_scheduled_to: [null as Date | null],
   });
 
+  /** The filters the lists currently reflect (the form may be ahead while debouncing). */
+  readonly appliedFilters = signal<NotificationListFilters>(NO_FILTERS);
+  readonly hasActiveFilters = computed(() => filtersKey(this.appliedFilters()) !== filtersKey(NO_FILTERS));
+
+  // String values, like application_id: the id comes back from the URL as text.
   readonly deviceFilterOptions = computed(() =>
-    this.devices().map((device) => ({ label: `${device.device_name} (${device.platform})`, value: device.id })),
+    this.devices().map((device) => ({
+      label: `${device.device_name} (${device.platform})`,
+      value: String(device.id),
+    })),
   );
+
+  /**
+   * The future list is bounded and its endpoint only filters on dates, so the
+   * application / device / status filters are applied here.
+   */
+  readonly visibleFutureNotifications = computed(() => {
+    const filters = this.appliedFilters();
+    return this.futureNotifications().filter(
+      (notification) =>
+        (!filters.application_id || notification.application_id === Number(filters.application_id)) &&
+        (!filters.device_id || notification.device_ids.includes(Number(filters.device_id))) &&
+        (!filters.status || notification.status === filters.status),
+    );
+  });
+
+  /** Nothing to show at all (once loaded): the page renders an empty state instead of tables. */
+  readonly isEmpty = computed(
+    () =>
+      this.historyLoaded() &&
+      !this.historyLoading() &&
+      !this.loading() &&
+      this.notificationsTotal() === 0 &&
+      this.visibleFutureNotifications().length === 0,
+  );
+
+  /** One chip per status that has notifications (plus the active one), each a filter toggle. */
+  readonly statusChips = computed(() => {
+    const active = this.appliedFilters().status;
+    const labels = this.copy().statusLabels;
+    return this.statusOptions
+      .map((status) => ({ status, label: labels[status], count: this.statusCount(status) }))
+      .filter((chip) => chip.count > 0 || chip.status === active);
+  });
+
+  readonly statsTotal = computed(() => this.stats().reduce((total, item) => total + item.count, 0));
 
   // Mirror the create-form's selected application as a signal so device options
   // can be a memoized computed (matching deviceFilterOptions / appOptions) rather
@@ -226,8 +335,32 @@ export class NotificationsPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.refreshNotifications();
+    // The URL holds the filters: the first emission (synchronous) sets them and
+    // loads the lists. The component is also reused when a link changes only the
+    // query (e.g. the dashboard's « Échecs récents » while this page is open), so
+    // later emissions are followed too. Our own URL writes carry the applied
+    // filters: they compare equal and are no-ops.
+    let initial = true;
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const next = filtersFromQueryParams(params);
+      if (!initial && filtersKey(next) === filtersKey(this.appliedFilters())) {
+        return;
+      }
+      initial = false;
+      this.filtersForm.setValue(next, { emitEvent: false });
+      this.appliedFilters.set(next);
+      this.refreshNotifications();
+    });
     this.openCreateFromQuery();
+
+    // Live filters: selects and date pickers apply on their own, debounced.
+    this.filtersForm.valueChanges
+      .pipe(debounceTime(FILTER_DEBOUNCE_MS), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (filtersKey(this.currentFormFilters()) !== filtersKey(this.appliedFilters())) {
+          this.applyFilters();
+        }
+      });
   }
 
   /**
@@ -311,6 +444,7 @@ export class NotificationsPage implements OnInit {
         next: (response) => {
           this.notifications.set(response.results);
           this.notificationsTotal.set(response.count);
+          this.historyLoaded.set(true);
         },
         error: (error) => {
           this.error.set(coerceApiError(error));
@@ -507,27 +641,33 @@ export class NotificationsPage implements OnInit {
       });
   }
 
+  /** Apply the form's filters now: lists reload and the URL follows (replaceUrl). */
   applyFilters(): void {
-    this.refreshNotifications();
-  }
-
-  clearFilters(): void {
-    this.filtersForm.reset({
-      application_id: '',
-      device_id: '',
-      status: '',
-      effective_scheduled_from: null,
-      effective_scheduled_to: null,
+    const filters = this.currentFormFilters();
+    this.appliedFilters.set(filters);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: filtersToQueryParams(filters),
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
     this.refreshNotifications();
   }
 
-  statusCount(status: NotificationStatus): number {
-    return this.stats().find((item) => item.status === status)?.count ?? 0;
+  /** A status chip toggles its status filter (clicking the active one clears it). */
+  toggleStatusFilter(status: NotificationStatus | ''): void {
+    const next = this.appliedFilters().status === status ? '' : status;
+    this.filtersForm.controls.status.setValue(next, { emitEvent: false });
+    this.applyFilters();
   }
 
-  shiftedCount(): number {
-    return this.notifications().filter((notification) => this.isShifted(notification)).length;
+  clearFilters(): void {
+    this.filtersForm.reset(NO_FILTERS, { emitEvent: false });
+    this.applyFilters();
+  }
+
+  statusCount(status: NotificationStatus): number {
+    return this.stats().find((item) => item.status === status)?.count ?? 0;
   }
 
   isShifted(notification: NotificationRead): boolean {
@@ -546,10 +686,6 @@ export class NotificationsPage implements OnInit {
   // p-select never matched the pre-selected app and showed the placeholder.
   readonly appOptions = computed(() =>
     this.shell.apps().map((app) => ({ label: app.name, value: String(app.id) })),
-  );
-
-  readonly statusOptionsSelect = computed(() =>
-    this.statusOptions.map((status) => ({ label: this.copy().statusLabels[status], value: status })),
   );
 
   notificationSeverity(
@@ -634,8 +770,12 @@ export class NotificationsPage implements OnInit {
     return errorFieldMessages(this.error(), fieldName);
   }
 
+  private currentFormFilters(): NotificationListFilters {
+    return this.filtersForm.getRawValue();
+  }
+
   private buildNotificationFilters() {
-    const rawValue = this.filtersForm.getRawValue();
+    const rawValue = this.appliedFilters();
 
     return {
       application_id: rawValue.application_id ? Number(rawValue.application_id) : null,
@@ -649,14 +789,14 @@ export class NotificationsPage implements OnInit {
   }
 
   private buildStatsFilters() {
-    const rawValue = this.filtersForm.getRawValue();
+    const rawValue = this.appliedFilters();
     return {
       application_id: rawValue.application_id ? Number(rawValue.application_id) : null,
     };
   }
 
   private buildFutureNotificationFilters() {
-    const rawValue = this.filtersForm.getRawValue();
+    const rawValue = this.appliedFilters();
 
     return {
       effective_scheduled_from: this.toIsoOrNull(rawValue.effective_scheduled_from),
