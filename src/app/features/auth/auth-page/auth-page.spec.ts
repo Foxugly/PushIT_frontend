@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 
 import { LoginResponse } from '../../../core/models/api.models';
@@ -84,8 +85,22 @@ describe('AuthPage', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.resolveTo(true);
+    spyOn(router, 'navigateByUrl').and.resolveTo(true);
     fixture.detectChanges();
   });
+
+  afterEach(() => localStorage.clear());
+
+  /** Recreates the page as if reached through `/auth?returnUrl=<url>`. */
+  function withReturnUrl(url: string): AuthPage {
+    const snapshot = TestBed.inject(ActivatedRoute).snapshot;
+    vi.spyOn(snapshot, 'queryParamMap', 'get').mockReturnValue(
+      convertToParamMap({ returnUrl: url }),
+    );
+    const page = TestBed.createComponent(AuthPage);
+    page.detectChanges();
+    return page.componentInstance;
+  }
 
   it('shows a single title above the login form (no eyebrow, no intro text)', () => {
     const el: HTMLElement = fixture.nativeElement;
@@ -131,7 +146,38 @@ describe('AuthPage', () => {
     });
     expect(session.startSession).toHaveBeenCalledWith(loginResponse);
     expect(languagePreference.applyBackendLanguage).toHaveBeenCalledWith('FR');
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
+  });
+
+  it('returns to the deep link after a password login', () => {
+    api.login.and.returnValue(of(loginResponse));
+    const page = withReturnUrl('/dashboard/devices?x=1#y');
+    page.loginForm.setValue({ email: 'renaud@example.com', password: 'secret', rememberMe: false });
+
+    page.submitLogin();
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard/devices?x=1#y');
+  });
+
+  it('ignores a malicious returnUrl and lands on the dashboard', () => {
+    api.login.and.returnValue(of(loginResponse));
+    const page = withReturnUrl('https://evil.example/');
+    page.loginForm.setValue({ email: 'renaud@example.com', password: 'secret', rememberMe: false });
+
+    page.submitLogin();
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
+  });
+
+  it('keeps the deep link for the magic-link round trip', () => {
+    api.requestMagicLink.and.returnValue(of(undefined));
+    const page = withReturnUrl('/dashboard/notifications');
+    page.enterMagicMode();
+    page.magicForm.setValue({ email: 'renaud@example.com' });
+
+    page.submitMagic();
+
+    expect(localStorage.getItem('pushit.returnUrl')).toBe('/dashboard/notifications');
   });
 
   it('stores the API error on login failure', () => {

@@ -62,12 +62,25 @@ describe('MagicLinkPage', () => {
 
     fixture = TestBed.createComponent(MagicLinkPage);
     const router = TestBed.inject(Router);
-    const navigate = spyOn(router, 'navigate').and.resolveTo(true);
+    const navigate = spyOn(router, 'navigateByUrl').and.resolveTo(true);
     fixture.detectChanges();
 
     expect(api.verifyMagicLink).toHaveBeenCalledWith('good-token');
     expect(session.startSession).toHaveBeenCalledWith(loginResponse);
-    expect(navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(navigate).toHaveBeenCalledWith('/dashboard');
+  });
+
+  it('lands on the deep link remembered when the link was requested', () => {
+    localStorage.setItem('pushit.returnUrl', '/dashboard/devices/4');
+    const { api } = setup('good-token');
+    api.verifyMagicLink.and.returnValue(of(loginResponse));
+
+    fixture = TestBed.createComponent(MagicLinkPage);
+    const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+    fixture.detectChanges();
+
+    expect(navigate).toHaveBeenCalledWith('/dashboard/devices/4');
+    expect(localStorage.getItem('pushit.returnUrl')).toBeNull();
   });
 
   it('shows the failed state on an invalid/expired token', () => {

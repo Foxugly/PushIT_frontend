@@ -8,6 +8,7 @@ import { LanguagePreferenceService } from '../../../core/services/language-prefe
 import { PushitApiService } from '../../../core/services/pushit-api.service';
 import { SessionService } from '../../../core/services/session.service';
 import { AppAlert } from '../../../shared/app-alert/app-alert';
+import { takeRememberedReturnUrl } from '../../../core/utils/return-url';
 
 /**
  * Magic-link verify/exchange landing page. Matches the deep link the backend
@@ -55,7 +56,8 @@ export class MagicLinkPage implements OnInit {
         // the login card doesn't survive the emailed round-trip.
         this.session.startSession(response);
         this.languagePreference.applyBackendLanguage(response.user.language);
-        void this.router.navigate(['/dashboard']);
+        // Back to the deep link that sent the visitor to the login (if any).
+        void this.router.navigateByUrl(takeRememberedReturnUrl());
       },
       error: () => {
         this.verifying.set(false);
