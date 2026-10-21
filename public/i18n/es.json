@@ -240,6 +240,10 @@
         "accounts": {
           "label": "Cuentas",
           "description": "Ofrecer el acceso a un usuario."
+        },
+        "account": {
+          "label": "Mi cuenta",
+          "description": "Perfil, idioma, contraseña y eliminación de la cuenta."
         }
       },
       "sections": [

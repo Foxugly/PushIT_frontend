@@ -1,7 +1,5 @@
-import { Component, DestroyRef, computed, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 
@@ -29,30 +27,14 @@ import { Topmenu } from '../../../core/layout/topmenu/topmenu';
   styleUrl: './console-layout-page.scss',
 })
 export class ConsoleLayoutPage implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
   readonly settings = inject(SettingsService);
   private readonly appCopy = inject(AppCopyService);
   private readonly consoleCopy = inject(ConsoleCopyService);
   readonly skipLabel = computed(() => this.appCopy.current().header.skipToContent);
   readonly shellCopy = computed(() => this.consoleCopy.current().shell);
-  hideSidebar = false;
 
   ngOnInit(): void {
     this.shell.ensureLoaded();
-    this.syncSidebarVisibility(this.router.url);
-    this.router.events
-      .pipe(
-        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((event) => {
-        this.syncSidebarVisibility(event.urlAfterRedirects);
-      });
-  }
-
-  private syncSidebarVisibility(url: string): void {
-    this.hideSidebar = url.includes('/dashboard/settings');
   }
 }

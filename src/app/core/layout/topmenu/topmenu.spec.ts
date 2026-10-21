@@ -1,7 +1,7 @@
-import { signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 
 import { UserMe } from '../../models/api.models';
@@ -10,6 +10,9 @@ import { LanguagePreferenceService } from '../../services/language-preference.se
 import { PushitApiService } from '../../services/pushit-api.service';
 import { SessionService } from '../../services/session.service';
 import { Topmenu } from './topmenu';
+
+@Component({ template: '' })
+class EmptyPage {}
 
 describe('Topmenu', () => {
   let fixture: ComponentFixture<Topmenu>;
@@ -50,7 +53,7 @@ describe('Topmenu', () => {
     await TestBed.configureTestingModule({
       imports: [Topmenu],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'next', component: EmptyPage }]),
         provideNoopAnimations(),
         { provide: SessionService, useValue: session },
         { provide: PushitApiService, useValue: api },
@@ -71,5 +74,13 @@ describe('Topmenu', () => {
     session.isAuthenticated.set(true);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent as string).toContain('Dashboard');
+  });
+
+  it('closes the mobile drawer after a navigation (projected links included)', async () => {
+    fixture.detectChanges();
+    fixture.componentInstance.toggleMobile();
+    expect(fixture.componentInstance.mobileOpen()).toBe(true);
+    await TestBed.inject(Router).navigateByUrl('/next');
+    expect(fixture.componentInstance.mobileOpen()).toBe(false);
   });
 });

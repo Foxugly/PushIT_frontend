@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { AppCopyService } from '../../services/app-copy.service';
@@ -12,6 +14,10 @@ import { UserMenu } from '../user-menu/user-menu';
  * Topbar de la flotte (STANDARD-frontend-layout.md) : marque · nav · actions.
  * Ordre des actions = thème → langue → user (`app-user-menu` polymorphe). Se
  * replie en hamburger + drawer sous le breakpoint `lg` (1024px). BEM `topbar__*`.
+ *
+ * Slot `[topbarDrawer]` : liens propres à une section (le menu de la console),
+ * affichés uniquement dans le drawer, au-dessus de la nav du site. Le drawer se
+ * referme à chaque navigation, y compris depuis ces liens projetés.
  */
 @Component({
   selector: 'app-topmenu',
@@ -31,6 +37,15 @@ export class Topmenu {
 
   readonly labels = computed(() => this.appCopy.current().header);
   readonly mobileOpen = signal(false);
+
+  constructor() {
+    inject(Router)
+      .events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.closeMobile());
+  }
 
   toggleMobile(): void {
     this.mobileOpen.update((v) => !v);

@@ -67,6 +67,12 @@
   cursor: pointer;
 }
 
+// Projected drawer-only links (console menu): never shown on desktop, where
+// the console keeps its sidebar.
+.topbar__drawer-extra {
+  display: none;
+}
+
 .topbar__nav,
 .topbar__actions {
   display: flex;
@@ -145,6 +151,9 @@
 @media (max-width: 1024px) {
   .topbar__toggle {
     display: inline-flex;
+    // Tap target >= 44px.
+    width: 2.75rem;
+    height: 2.75rem;
   }
   .topbar__inner {
     flex-wrap: wrap;
@@ -160,6 +169,14 @@
     display: flex;
     align-items: stretch;
     gap: 0.35rem;
+  }
+  .topbar__inner.open .topbar__drawer-extra:not(:empty) {
+    display: block;
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .topbar__inner.open .topbar__link {
+    min-height: 2.75rem;
   }
   .topbar__inner.open .topbar__nav {
     flex-direction: column;

@@ -1,45 +1,39 @@
-<section class="console-card console-shell__sticky">
-  <div class="console-shell__sidebar-header">
-    <div>
-      <p class="console-shell__eyebrow">{{ copy().eyebrow }}</p>
-      <h2>{{ copy().title }}</h2>
-    </div>
-  </div>
-
-  <nav class="console-shell__nav" [attr.aria-label]="headerCopy().consoleNavigation">
+@if (variant() === 'drawer') {
+  <nav class="console-drawer-nav" [attr.aria-label]="headerCopy().consoleNavigation" data-testid="console-drawer-nav">
+    <p class="console-drawer-nav__title">{{ copy().title }}</p>
     @for (item of navigationItems(); track item.link) {
-      <app-console-menu-item
-        [link]="item.link"
-        [label]="item.label"
-        [description]="item.description"
-        [icon]="item.icon"
-        [count]="item.count"
-      />
-    }
-
-    <app-console-menu-item
-      link="/dashboard/billing"
-      [label]="billingCopy().label"
-      [description]="billingCopy().description"
-      icon="pi pi-credit-card"
-    />
-
-    @if (session.isSuperuser()) {
-      <app-console-menu-item
-        link="/dashboard/accounts"
-        [label]="accountsCopy().label"
-        [description]="accountsCopy().description"
-        icon="pi pi-users"
-      />
-    }
-
-    @if (session.isAdmin()) {
-      <app-console-menu-item
-        link="/dashboard/admin"
-        [label]="adminCopy().label"
-        [description]="adminCopy().description"
-        icon="pi pi-shield"
-      />
+      <a
+        class="console-drawer-nav__link"
+        [routerLink]="item.link"
+        routerLinkActive="console-drawer-nav__link--active"
+      >
+        <i [class]="item.icon" aria-hidden="true"></i>
+        <span class="console-drawer-nav__label">{{ item.label }}</span>
+        @if (item.count !== undefined) {
+          <span class="console-drawer-nav__badge">{{ item.count }}</span>
+        }
+      </a>
     }
   </nav>
-</section>
+} @else {
+  <section class="console-card console-shell__sticky">
+    <div class="console-shell__sidebar-header">
+      <div>
+        <p class="console-shell__eyebrow">{{ copy().eyebrow }}</p>
+        <h2>{{ copy().title }}</h2>
+      </div>
+    </div>
+
+    <nav class="console-shell__nav" [attr.aria-label]="headerCopy().consoleNavigation">
+      @for (item of navigationItems(); track item.link) {
+        <app-console-menu-item
+          [link]="item.link"
+          [label]="item.label"
+          [description]="item.description"
+          [icon]="item.icon"
+          [count]="item.count"
+        />
+      }
+    </nav>
+  </section>
+}

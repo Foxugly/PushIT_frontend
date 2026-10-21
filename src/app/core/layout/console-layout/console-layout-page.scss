@@ -42,10 +42,6 @@
   align-items: start;
 }
 
-.console-shell__body--no-sidebar {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .console-shell__main {
   min-width: 0;
 }
@@ -54,9 +50,17 @@
   min-width: 0;
 }
 
+// Below the topbar breakpoint the console menu lives in the hamburger drawer
+// (Topmenu `[topbarDrawer]` slot), so the sidebar is dropped. `minmax(0, 1fr)`
+// (not `1fr`, whose minimum is the content's min-content width) keeps wide
+// tables from stretching the page past the viewport.
 @media (max-width: 1024px) {
   .console-shell__body {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .console-shell__sidebar {
+    display: none;
   }
 }
 

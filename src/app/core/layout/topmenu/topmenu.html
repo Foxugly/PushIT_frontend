@@ -15,6 +15,12 @@
       <i class="pi" [class.pi-bars]="!mobileOpen()" [class.pi-times]="mobileOpen()"></i>
     </button>
 
+    <!-- Section-specific links (e.g. the console menu), shown only inside the
+         mobile drawer, above the site navigation. Hidden on desktop. -->
+    <div class="topbar__drawer-extra">
+      <ng-content select="[topbarDrawer]" />
+    </div>
+
     <nav class="topbar__nav" [attr.aria-label]="labels().mainNavigation">
       <a class="topbar__link" routerLink="/" routerLinkActive="topbar__link--active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
         <i class="pi pi-home" aria-hidden="true"></i>{{ labels().home }}

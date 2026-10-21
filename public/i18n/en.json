@@ -240,6 +240,10 @@
         "accounts": {
           "label": "Accounts",
           "description": "Grant a user free access."
+        },
+        "account": {
+          "label": "My account",
+          "description": "Profile, language, password and account deletion."
         }
       },
       "sections": [
