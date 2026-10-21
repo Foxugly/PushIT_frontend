@@ -20,7 +20,7 @@ import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pi
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { EmptyState } from '../../../../shared/empty-state/empty-state';
 import { PageHeader } from '../../../../shared/page-header/page-header';
-import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reveal';
+import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel';
 
 @Component({
   selector: 'app-applications-page',
@@ -30,7 +30,7 @@ import { AppTokenReveal } from '../../components/app-token-reveal/app-token-reve
     DatePipe,
     AppAlert,
     ApiErrorMessagePipe,
-    AppTokenReveal,
+    EnrolmentPanel,
     ButtonModule,
     DialogModule,
     SkeletonModule,
@@ -61,13 +61,6 @@ export class ApplicationsPage {
   // available right after create/regenerate (it's stored hashed), so the dialog
   // falls back to a regenerate affordance when we don't hold it.
   readonly qrApp = signal<ApplicationRead | null>(null);
-  readonly qrError = signal<string | null>(null);
-  /** Raw token for the dialog's app, iff it was just (re)generated this session. */
-  readonly qrToken = computed(() => {
-    const app = this.qrApp();
-    const last = this.shell.lastGeneratedToken();
-    return app && last && last.appId === app.id ? last.token : null;
-  });
 
   openCreate(): void {
     void this.router.navigate(['/dashboard/applications/new']);
@@ -126,9 +119,10 @@ export class ApplicationsPage {
     );
   }
 
+  /** The list's QR action shows the ENROLMENT QR (`apk_`, what phones scan).
+   * The send token (`apt_`) stays on the detail page, never as a QR. */
   openQr(app: ApplicationRead): void {
     this.qrApp.set(app);
-    this.qrError.set(null);
   }
 
   setQrVisible(visible: boolean): void {
@@ -139,24 +133,11 @@ export class ApplicationsPage {
 
   closeQr(): void {
     this.qrApp.set(null);
-    this.qrError.set(null);
   }
 
-  /** Regenerate the token (rotating it) so we hold the raw value. The shared
-   * <app-token-reveal> then renders its QR reactively once `qrToken()` is set. */
-  regenerateForQr(app: ApplicationRead): void {
-    this.qrError.set(null);
-    this.shell.regenerateToken(
-      app,
-      () => {
-        if (!this.qrToken()) {
-          this.qrError.set(this.copy().qr.error);
-        }
-      },
-      () => {
-        this.qrError.set(this.copy().errors.regenerate);
-      },
-    );
+  onEnrolmentCodeRotated(app: ApplicationRead, code: string): void {
+    this.qrApp.set({ ...app, enrolment_code: code });
+    this.shell.loadShell(app.id);
   }
 
   async revokeToken(app: ApplicationRead): Promise<void> {

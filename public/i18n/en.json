@@ -426,7 +426,7 @@
         "qrCode": "QR code"
       },
       "qr": {
-        "title": "Token QR code",
+        "title": "Enrolment QR code",
         "scanHint": "Scan this QR code with the PushIT mobile app to link a device.",
         "tokenOnce": "The token is only shown once. Regenerate it to display its QR code (already-linked devices are not affected).",
         "regenerate": "Regenerate and show",
@@ -469,7 +469,7 @@
         "loading": "Loading application..."
       },
       "alerts": {
-        "created": "Application created. Open the QR code to view, copy or download the token.",
+        "created": "Application created. Copy or download the send token now: it is shown only once.",
         "updated": "Application {name} updated.",
         "activated": "Application activated successfully.",
         "deactivated": "Application deactivated successfully.",

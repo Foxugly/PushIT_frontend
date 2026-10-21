@@ -426,7 +426,7 @@
         "qrCode": "Código QR"
       },
       "qr": {
-        "title": "Código QR del token",
+        "title": "Código QR de inscripción",
         "scanHint": "Escanea este código QR con la app móvil de PushIT para vincular un dispositivo.",
         "tokenOnce": "El token solo es visible una vez. Regenéralo para mostrar su código QR (los dispositivos ya vinculados no se ven afectados).",
         "regenerate": "Regenerar y mostrar",
@@ -469,7 +469,7 @@
         "loading": "Cargando la aplicación..."
       },
       "alerts": {
-        "created": "Aplicación creada. Abre el código QR para ver, copiar o descargar el token.",
+        "created": "Aplicación creada. Copia o descarga ahora el token de envío: solo se muestra una vez.",
         "updated": "Aplicación {name} actualizada.",
         "activated": "Aplicación activada correctamente.",
         "deactivated": "Aplicación desactivada correctamente.",

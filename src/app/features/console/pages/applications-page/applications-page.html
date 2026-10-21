@@ -147,22 +147,7 @@
     [style]="{ width: '24rem' }"
   >
     @if (qrApp(); as app) {
-      @if (qrToken(); as token) {
-        <app-token-reveal [app]="app" [token]="token" />
-      } @else {
-        <div class="app-qr">
-          @if (qrError(); as err) {
-            <app-alert [message]="err" tone="danger" (dismissed)="qrError.set(null)" />
-          }
-          <p class="console-muted">{{ copy().qr.tokenOnce }}</p>
-          <p-button
-            [label]="copy().qr.regenerate"
-            icon="pi pi-refresh"
-            severity="secondary"
-            (onClick)="regenerateForQr(app)"
-          />
-        </div>
-      }
+      <app-enrolment-panel [app]="app" (rotated)="onEnrolmentCodeRotated(app, $event)" />
     }
   </p-dialog>
 </section>
