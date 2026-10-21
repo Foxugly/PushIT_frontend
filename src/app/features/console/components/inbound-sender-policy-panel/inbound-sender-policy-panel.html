@@ -1,0 +1,131 @@
+<form class="sender-policy" data-testid="inbound-sender-policy" (ngSubmit)="save()">
+  <div>
+    <h4>{{ copy().title }}</h4>
+    <p class="sender-policy__hint">{{ copy().intro }}</p>
+  </div>
+
+  <fieldset class="sender-policy__group">
+    <legend>{{ copy().modeLabel }}</legend>
+    <div class="sender-policy__choice">
+      <p-radiobutton
+        name="inboundSenderMode"
+        value="owner"
+        inputId="sender-mode-owner"
+        [ngModel]="mode()"
+        (ngModelChange)="mode.set($event)"
+      />
+      <label for="sender-mode-owner">
+        {{ copy().modeOwner }}
+        <span class="sender-policy__hint">{{ copy().modeOwnerHint }}</span>
+      </label>
+    </div>
+    <div class="sender-policy__choice">
+      <p-radiobutton
+        name="inboundSenderMode"
+        value="anyone"
+        inputId="sender-mode-anyone"
+        [ngModel]="mode()"
+        (ngModelChange)="mode.set($event)"
+      />
+      <label for="sender-mode-anyone">
+        {{ copy().modeAnyone }}
+        <span class="sender-policy__hint">{{ copy().modeAnyoneHint }}</span>
+      </label>
+    </div>
+    <p class="sender-policy__hint">{{ copy().authNote }}</p>
+  </fieldset>
+
+  @if (mode() === 'owner') {
+    <div class="sender-policy__field" data-testid="sender-allowlist-field">
+      <label for="sender-allowlist">{{ copy().allowlistLabel }}</label>
+      <textarea
+        pTextarea
+        id="sender-allowlist"
+        name="allowlist"
+        rows="4"
+        [placeholder]="copy().listPlaceholder"
+        [ngModel]="allowlistText()"
+        (ngModelChange)="allowlistText.set($event)"
+      ></textarea>
+      <small class="sender-policy__hint">{{ copy().listHint }}</small>
+      @for (message of fieldErrors('inbound_sender_allowlist'); track message) {
+        <small class="sender-policy__error">{{ message }}</small>
+      }
+    </div>
+  }
+
+  <div class="sender-policy__field">
+    <label for="sender-blocklist">{{ copy().blocklistLabel }}</label>
+    <textarea
+      pTextarea
+      id="sender-blocklist"
+      name="blocklist"
+      rows="3"
+      [placeholder]="copy().listPlaceholder"
+      [ngModel]="blocklistText()"
+      (ngModelChange)="blocklistText.set($event)"
+    ></textarea>
+    <small class="sender-policy__hint">{{ copy().listHint }} {{ copy().blocklistHint }}</small>
+    @for (message of fieldErrors('inbound_sender_blocklist'); track message) {
+      <small class="sender-policy__error">{{ message }}</small>
+    }
+  </div>
+
+  <fieldset class="sender-policy__group">
+    <legend>{{ copy().rejectionTitle }}</legend>
+    <div class="sender-policy__choice">
+      <p-checkbox
+        name="notifyEmail"
+        inputId="sender-notify-email"
+        [binary]="true"
+        [ngModel]="notifyEmail()"
+        (ngModelChange)="notifyEmail.set($event)"
+      />
+      <label for="sender-notify-email">{{ copy().notifyEmail }}</label>
+    </div>
+    <div class="sender-policy__choice">
+      <p-checkbox
+        name="notifyPush"
+        inputId="sender-notify-push"
+        [binary]="true"
+        [ngModel]="notifyPush()"
+        (ngModelChange)="notifyPush.set($event)"
+      />
+      <label for="sender-notify-push">{{ copy().notifyPush }}</label>
+    </div>
+    <div class="sender-policy__choice">
+      <p-checkbox
+        name="replyToSender"
+        inputId="sender-reply"
+        [binary]="true"
+        [ngModel]="replyToSender()"
+        (ngModelChange)="replyToSender.set($event)"
+      />
+      <label for="sender-reply">
+        {{ copy().replyToSender }}
+        <span class="sender-policy__warning" data-testid="sender-reply-warning">{{ copy().replyWarning }}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  @if (invalidMessage(); as invalid) {
+    <app-alert [message]="invalid" tone="danger" />
+  }
+  @if (error(); as err) {
+    <app-alert [message]="err | apiError" tone="danger" (dismissed)="error.set(null)" />
+  }
+  @if (banner()) {
+    <app-alert [message]="banner()!" tone="success" (dismissed)="banner.set(null)" />
+  }
+
+  <div class="sender-policy__actions">
+    <p-button
+      type="submit"
+      icon="pi pi-check"
+      size="small"
+      [label]="saving() ? copy().saving : copy().save"
+      [loading]="saving()"
+      [disabled]="invalidEntries().length > 0"
+    />
+  </div>
+</form>

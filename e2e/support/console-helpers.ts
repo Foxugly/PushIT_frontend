@@ -27,7 +27,25 @@ type Application = {
   last_used_at: string | null;
   created_at: string;
   logo?: string | null;
+  // Inbound e-mail sender policy (absent = the server defaults below).
+  inbound_sender_mode?: 'owner' | 'anyone';
+  inbound_sender_allowlist?: string[];
+  inbound_sender_blocklist?: string[];
+  inbound_rejection_notify_email?: boolean;
+  inbound_rejection_notify_push?: boolean;
+  inbound_rejection_reply_to_sender?: boolean;
 };
+
+const SENDER_POLICY_DEFAULTS = {
+  inbound_sender_mode: 'owner' as const,
+  inbound_sender_allowlist: [] as string[],
+  inbound_sender_blocklist: [] as string[],
+  inbound_rejection_notify_email: true,
+  inbound_rejection_notify_push: false,
+  inbound_rejection_reply_to_sender: false,
+};
+
+const SENDER_ENTRY_RE = /^([^\s@]+@[^\s@]+\.[^\s@]+|@[^\s@]+\.[^\s@]+)$/;
 
 type Device = {
   id: number;
@@ -328,19 +346,39 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
     if (appDetailMatch && method === 'GET') {
       const appId = Number(appDetailMatch[1]);
       const app = state.apps.find((item) => item.id === appId);
-      return fulfillJson(route, app ? 200 : 404, app ?? { detail: 'Not found.' });
+      return fulfillJson(route, app ? 200 : 404, app ? { ...SENDER_POLICY_DEFAULTS, ...app } : { detail: 'Not found.' });
     }
 
     // Update an application (edit page save).
     if (appDetailMatch && method === 'PATCH') {
       const appId = Number(appDetailMatch[1]);
-      const payload = (request.postDataJSON() ?? {}) as { name?: string; description?: string };
+      const payload = (request.postDataJSON() ?? {}) as Partial<Application>;
       const index = state.apps.findIndex((item) => item.id === appId);
       if (index === -1) {
         return fulfillJson(route, 404, { detail: 'Not found.' });
       }
+      // Sender lists: same contract as the server (lowercase, dedupe, entries
+      // are an address or an @domain, 400 validation_error otherwise).
+      const errors: Record<string, string[]> = {};
+      for (const field of ['inbound_sender_allowlist', 'inbound_sender_blocklist'] as const) {
+        const list = payload[field];
+        if (list === undefined) {
+          continue;
+        }
+        const normalized = [...new Set(list.map((entry) => entry.trim().toLowerCase()).filter(Boolean))];
+        const invalid = normalized.filter((entry) => !SENDER_ENTRY_RE.test(entry));
+        if (invalid.length) {
+          errors[field] = invalid.map((entry) => `Invalid e-mail address: ${entry}`);
+        }
+        payload[field] = normalized;
+      }
+      if (Object.keys(errors).length) {
+        return fulfillJson(route, 400, { code: 'validation_error', detail: 'Validation error.', errors });
+      }
       const updated: Application = {
+        ...SENDER_POLICY_DEFAULTS,
         ...state.apps[index],
+        ...payload,
         name: payload.name ?? state.apps[index].name,
         description: payload.description ?? state.apps[index].description,
       };

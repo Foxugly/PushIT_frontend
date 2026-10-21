@@ -764,6 +764,30 @@
       "revokeConfirm": "¿Revocar el token «{name}»? Todo lo que envíe con él dejará de funcionar inmediatamente.",
       "revokedBanner": "Token revocado."
     },
+    "inboundSenderPolicy": {
+      "title": "Quién puede enviar por correo",
+      "intro": "Elija qué direcciones pueden crear una notificación escribiendo a la dirección de recepción.",
+      "modeLabel": "Remitentes aceptados",
+      "modeOwner": "Solo el propietario",
+      "modeOwnerHint": "Su dirección, más los remitentes autorizados abajo.",
+      "modeAnyone": "Todo el mundo",
+      "modeAnyoneHint": "Cualquier dirección, salvo los remitentes bloqueados.",
+      "authNote": "Cada remitente aceptado debe superar la verificación de autenticación de su dominio (SPF/DKIM/DMARC).",
+      "allowlistLabel": "Remitentes autorizados",
+      "blocklistLabel": "Remitentes bloqueados",
+      "listHint": "Una entrada por línea: una dirección (alice@ejemplo.com) o un dominio entero (@ejemplo.com).",
+      "blocklistHint": "El bloqueo nunca se aplica a su propia dirección.",
+      "listPlaceholder": "alice@ejemplo.com\n@ejemplo.com",
+      "rejectionTitle": "Si se rechaza un correo",
+      "notifyEmail": "Avisarme por correo",
+      "notifyPush": "Avisarme por notificación push",
+      "replyToSender": "Responder al remitente",
+      "replyWarning": "Desaconsejado: el remitente puede estar falsificado y la respuesta llegaría a un inocente (backscatter).",
+      "invalidEntries": "Entradas no válidas: {entries}",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Reglas de recepción por correo guardadas."
+    },
     "codeExamples": {
       "intro": "Enviar una notificación desde tu código, con un token de envío.",
       "envNotice": "Los ejemplos leen el token de la variable de entorno PUSHIT_TOKEN — no lo pegues nunca en claro en un repositorio. El identificador de aplicación, en cambio, no es un secreto.",
@@ -790,7 +814,7 @@
         "subject": "El asunto del correo electrónico se convierte en el título de la notificación.",
         "body": "El contenido de texto del correo electrónico se convierte en el mensaje.",
         "schedule": "La planificación es posible con [SEND_AT:ISO_DATETIME] en el asunto.",
-        "sender": "El remitente debe ser el correo electrónico del propietario de la aplicación."
+        "sender": "Por defecto solo puede enviar la dirección del propietario; vea « Quién puede enviar por correo » más abajo."
       },
       "devicesTitle": "Dispositivos vinculados",
       "enrolmentTitle": "Inscripción",

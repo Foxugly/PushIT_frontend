@@ -691,4 +691,16 @@ describe('ApplicationDetailPage', () => {
     expect(component.aliasStatusView()?.severity).toBe('warn');
     expect(component.aliasStatusView()?.hint).toBe('timeout');
   });
+
+  it('hosts the inbound sender policy in the Envoi tab and adopts its save', () => {
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-testid="inbound-sender-policy"]')).not.toBeNull();
+
+    const updated = makeApplication({ inbound_sender_mode: 'anyone', inbound_sender_blocklist: ['@spam.io'] });
+    component.onSenderPolicySaved(updated);
+
+    expect(component.application()?.inbound_sender_mode).toBe('anyone');
+    expect(component.application()?.inbound_sender_blocklist).toEqual(['@spam.io']);
+  });
 });
