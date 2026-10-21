@@ -167,4 +167,65 @@ describe('InboundSenderPolicyPanel', () => {
     expect(component.notifyEmail()).toBe(true);
     expect(component.replyToSender()).toBe(false);
   });
+
+  describe('unsaved state', () => {
+    it('is pristine on load and dirty once edited, back to pristine when reverted', () => {
+      render(makeApplication({ inbound_sender_blocklist: ['spam@x.org'] }));
+      expect(component.dirty()).toBe(false);
+
+      component.blocklistText.set('spam@x.org\nother@x.org');
+      expect(component.dirty()).toBe(true);
+      fixture.detectChanges();
+      expect(text()).toContain('Modifications non enregistrées');
+
+      // Same list once normalized: not a change.
+      component.blocklistText.set(' SPAM@x.org \n');
+      expect(component.dirty()).toBe(false);
+    });
+
+    it('keeps edits when the parent hands a new application while dirty', () => {
+      render();
+      component.mode.set('anyone');
+      component.blocklistText.set('@spam.io');
+
+      fixture.componentRef.setInput('app', makeApplication({ name: 'Renamed', inbound_sender_mode: 'owner' }));
+      fixture.detectChanges();
+
+      expect(component.mode()).toBe('anyone');
+      expect(component.blocklistText()).toBe('@spam.io');
+      expect(component.dirty()).toBe(true);
+    });
+
+    it('follows a new application while pristine', () => {
+      render();
+      fixture.componentRef.setInput('app', makeApplication({ inbound_sender_blocklist: ['@spam.io'] }));
+      fixture.detectChanges();
+
+      expect(component.blocklistText()).toBe('@spam.io');
+      expect(component.dirty()).toBe(false);
+    });
+
+    it('is pristine again after its own successful save', () => {
+      render();
+      const updated = makeApplication({ inbound_sender_mode: 'anyone' });
+      updateApp.mockReturnValue(of(updated));
+      component.mode.set('anyone');
+      expect(component.dirty()).toBe(true);
+
+      component.save();
+
+      expect(component.dirty()).toBe(false);
+      expect(component.mode()).toBe('anyone');
+    });
+
+    it('stays dirty when the save fails', () => {
+      render();
+      updateApp.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+      component.mode.set('anyone');
+
+      component.save();
+
+      expect(component.dirty()).toBe(true);
+    });
+  });
 });

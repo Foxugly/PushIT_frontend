@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { RedirectFunction, Router, Routes } from '@angular/router';
 
 import { adminGuard, authGuard, guestGuard, superuserGuard } from './core/guards/auth.guard';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 /**
  * `applications/:appId/edit` predates the tabbed detail page: editing now lives
@@ -147,6 +148,7 @@ export const routes: Routes = [
       {
         path: 'applications/:appId',
         data: { titleKey: 'console.sections.0.label' },
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./features/console/pages/application-detail-page/application-detail-page').then(
             (m) => m.ApplicationDetailPage,

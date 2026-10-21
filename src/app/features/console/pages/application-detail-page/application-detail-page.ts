@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -41,6 +41,7 @@ import { InboundSenderPolicyPanel } from '../../components/inbound-sender-policy
 import { SettingsService } from '../../../../core/services/settings.service';
 import { ApplicationFormFields } from '../../components/application-form-fields/application-form-fields';
 import { AvatarCropper } from '../../../../shared/avatar-cropper/avatar-cropper';
+import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 
 /**
  * The detail page's tabs, in display order. The active one lives in the `?tab=`
@@ -86,8 +87,11 @@ export function normalizeAppDetailTab(value: unknown): AppDetailTab {
   ],
   templateUrl: './application-detail-page.html',
   styleUrl: './application-detail-page.scss',
+  host: {
+    '(window:beforeunload)': 'onBeforeUnload($event)',
+  },
 })
-export class ApplicationDetailPage implements OnInit {
+export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(PushitApiService);
@@ -102,6 +106,12 @@ export class ApplicationDetailPage implements OnInit {
   // The one-time token reveal (QR + token) reuses the `applications` copy block
   // (qr.* labels + alerts.created guidance) so the surface matches the list.
   readonly applicationsCopy = computed(() => this.consoleCopy.current().applications);
+  readonly unsavedCopy = computed(() => this.consoleCopy.current().unsavedChanges);
+
+  /** The Envoi tab's sender-policy form keeps its own unsaved state. */
+  private readonly senderPolicyPanel = viewChild(InboundSenderPolicyPanel);
+  /** Set once the application is deleted: nothing left to save, leave without asking. */
+  private deleted = false;
 
   readonly application = signal<ApplicationRead | null>(null);
   readonly devices = signal<DeviceRead[]>([]);
@@ -280,6 +290,26 @@ export class ApplicationDetailPage implements OnInit {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
+  }
+
+  /**
+   * Any section holding edits not saved yet (name/description, sender policy).
+   * Read by the route's CanDeactivate guard and by `beforeunload`. Tabs are all
+   * rendered (only hidden), so switching tab keeps every form as it was.
+   */
+  hasUnsavedChanges(): boolean {
+    if (this.deleted) {
+      return false;
+    }
+    return this.settingsForm.dirty || (this.senderPolicyPanel()?.dirty() ?? false);
+  }
+
+  /** Closing / reloading the browser tab: let the browser ask (its own wording). */
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges()) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
   }
 
   retryRelated(): void {
@@ -581,6 +611,7 @@ export class ApplicationDetailPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.actionPending.set(false)))
       .subscribe({
         next: () => {
+          this.deleted = true;
           this.shell.loadShell();
           void this.router.navigate(['/dashboard/applications']);
         },

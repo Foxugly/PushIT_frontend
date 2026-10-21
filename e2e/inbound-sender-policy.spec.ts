@@ -86,3 +86,37 @@ test('« Tout le monde » hides the allowlist and invalid entries block the save
   await expect(panel.getByText('Règles de réception par e-mail enregistrées.')).toBeVisible();
   expect(state.apps[0]).toMatchObject({ inbound_sender_mode: 'anyone', inbound_sender_blocklist: ['@spam.io'] });
 });
+
+test('unsaved policy edits survive an overview save and a tab switch, and leaving asks first', async ({ page }) => {
+  await page.goto('/dashboard/applications/10?tab=sending');
+  const panel = page.getByTestId('inbound-sender-policy');
+  const blocklist = panel.getByRole('textbox', { name: 'Expéditeurs bloqués' });
+  await blocklist.fill('spam@corp.io');
+  await expect(blocklist).toHaveValue('spam@corp.io');
+  await expect(panel.getByTestId('sender-policy-unsaved')).toHaveText('Modifications non enregistrées');
+
+  // Save something else on the page: the application reloads, the policy draft stays.
+  await page.getByRole('tab', { name: 'Aperçu' }).click();
+  const form = page.getByTestId('app-settings-form');
+  await form.getByRole('textbox').first().fill('PushIT Mobile V2');
+  await expect(form.getByTestId('app-settings-unsaved')).toBeVisible();
+  await form.getByRole('button', { name: /enregistrer/i }).click();
+  await expect(page.getByText('Application mise à jour.')).toBeVisible();
+  await expect(form.getByTestId('app-settings-unsaved')).toHaveCount(0);
+
+  await page.getByRole('tab', { name: 'Envoi' }).click();
+  await expect(blocklist).toHaveValue('spam@corp.io');
+  expect(state.apps[0].inbound_sender_blocklist ?? []).toEqual([]);
+
+  // Leaving the page: the app's own confirm dialog; « Rester » keeps everything.
+  await page.getByRole('link', { name: 'Retour aux applications' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('Vous avez des modifications non enregistrées. Quitter sans enregistrer ?');
+  await dialog.getByRole('button', { name: 'Rester' }).click();
+  await expect(page).toHaveURL(/\/dashboard\/applications\/10\?tab=sending$/);
+  await expect(blocklist).toHaveValue('spam@corp.io');
+
+  await page.getByRole('link', { name: 'Retour aux applications' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Quitter sans enregistrer' }).click();
+  await expect(page).toHaveURL(/\/dashboard\/applications$/);
+});

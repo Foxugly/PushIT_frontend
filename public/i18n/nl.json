@@ -764,6 +764,13 @@
       "revokeConfirm": "Het token „{name}” intrekken? Alles wat ermee verzendt, stopt onmiddellijk met werken.",
       "revokedBanner": "Token ingetrokken."
     },
+    "unsavedChanges": {
+      "title": "Niet-opgeslagen wijzigingen",
+      "hint": "Niet-opgeslagen wijzigingen",
+      "confirm": "Je hebt niet-opgeslagen wijzigingen. Verlaten zonder op te slaan?",
+      "leave": "Verlaten zonder opslaan",
+      "stay": "Blijven"
+    },
     "inboundSenderPolicy": {
       "title": "Wie mag per e-mail verzenden",
       "intro": "Kies welke adressen een melding mogen aanmaken door naar het ontvangstadres te schrijven.",

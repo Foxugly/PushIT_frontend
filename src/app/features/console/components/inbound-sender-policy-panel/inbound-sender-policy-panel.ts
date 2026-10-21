@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
@@ -40,6 +40,18 @@ export function parseSenderList(text: string): string[] {
   return [...seen];
 }
 
+/** Order-stable fingerprint of a policy, to compare the form with what was loaded. */
+function policyKey(policy: InboundSenderPolicy): string {
+  return JSON.stringify([
+    policy.inbound_sender_mode,
+    policy.inbound_sender_allowlist,
+    policy.inbound_sender_blocklist,
+    policy.inbound_rejection_notify_email,
+    policy.inbound_rejection_notify_push,
+    policy.inbound_rejection_reply_to_sender,
+  ]);
+}
+
 /**
  * « Qui peut envoyer par e-mail » — the application's inbound sender policy:
  * owner-only (+ allowlist) or anyone, a blocklist, and what to do when a mail
@@ -69,6 +81,7 @@ export class InboundSenderPolicyPanel {
   readonly saved = output<ApplicationRead>();
 
   readonly copy = computed(() => this.consoleCopy.current().inboundSenderPolicy);
+  readonly unsavedCopy = computed(() => this.consoleCopy.current().unsavedChanges);
 
   readonly mode = signal<InboundSenderMode>('owner');
   readonly allowlistText = signal('');
@@ -80,6 +93,14 @@ export class InboundSenderPolicyPanel {
   readonly saving = signal(false);
   readonly error = signal<ApiErrorResponse | null>(null);
   readonly banner = signal<string | null>(null);
+
+  /** The policy as last loaded from the server, normalized like `payload()`. */
+  private readonly baseline = signal<string | null>(null);
+  /** True while the form differs from what the server holds. */
+  readonly dirty = computed(() => {
+    const baseline = this.baseline();
+    return baseline !== null && baseline !== policyKey(this.payload());
+  });
 
   /** Entries the server would refuse, shown before any round-trip. */
   readonly invalidEntries = computed(() =>
@@ -94,10 +115,19 @@ export class InboundSenderPolicyPanel {
 
   constructor() {
     // (Re)load the form whenever the parent hands a new application object
-    // (first load, after this panel's own save, after another tab's save).
-    effect(() => this.reset(this.app()));
+    // (first load, another section's save, a reload) — but never over edits the
+    // user has not saved yet: only a pristine form follows the server.
+    effect(() => {
+      const app = this.app();
+      untracked(() => {
+        if (!this.dirty()) {
+          this.reset(app);
+        }
+      });
+    });
   }
 
+  /** Load the form from `app` and make it pristine. */
   reset(app: ApplicationRead): void {
     this.mode.set(app.inbound_sender_mode ?? 'owner');
     this.allowlistText.set((app.inbound_sender_allowlist ?? []).join('\n'));
@@ -105,6 +135,7 @@ export class InboundSenderPolicyPanel {
     this.notifyEmail.set(app.inbound_rejection_notify_email ?? true);
     this.notifyPush.set(app.inbound_rejection_notify_push ?? false);
     this.replyToSender.set(app.inbound_rejection_reply_to_sender ?? false);
+    this.baseline.set(policyKey(this.payload()));
   }
 
   payload(): InboundSenderPolicy {
@@ -134,6 +165,8 @@ export class InboundSenderPolicyPanel {
       .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.saving.set(false)))
       .subscribe({
         next: (updated) => {
+          // Our own save: adopt what the server kept (normalized lists), pristine again.
+          this.reset(updated);
           this.banner.set(this.copy().saved);
           this.saved.emit(updated);
         },

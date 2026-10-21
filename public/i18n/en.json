@@ -764,6 +764,13 @@
       "revokeConfirm": "Revoke the token “{name}”? Anything sending with it stops working immediately.",
       "revokedBanner": "Token revoked."
     },
+    "unsavedChanges": {
+      "title": "Unsaved changes",
+      "hint": "Unsaved changes",
+      "confirm": "You have unsaved changes. Leave without saving?",
+      "leave": "Leave without saving",
+      "stay": "Stay"
+    },
     "inboundSenderPolicy": {
       "title": "Who can send by e-mail",
       "intro": "Choose which addresses may create a notification by writing to the inbound address.",

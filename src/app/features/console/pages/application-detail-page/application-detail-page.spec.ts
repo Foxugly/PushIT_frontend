@@ -18,6 +18,8 @@ import { ConsoleShellService } from '../../../../core/services/console-shell.ser
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { ApplicationDetailPage, normalizeAppDetailTab } from './application-detail-page';
+import { InboundSenderPolicyPanel } from '../../components/inbound-sender-policy-panel/inbound-sender-policy-panel';
+import { By } from '@angular/platform-browser';
 import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 
 /** Overlay the spec's short copy on the real FR catalog, so keys the spec does
@@ -688,5 +690,109 @@ describe('ApplicationDetailPage', () => {
 
     expect(component.application()?.inbound_sender_mode).toBe('anyone');
     expect(component.application()?.inbound_sender_blocklist).toEqual(['@spam.io']);
+  });
+
+  describe('unsaved changes', () => {
+    function policyPanel(): InboundSenderPolicyPanel {
+      const debug = fixture.debugElement.query(By.directive(InboundSenderPolicyPanel));
+      return debug.componentInstance as InboundSenderPolicyPanel;
+    }
+
+    it('saving the overview keeps the dirty sender-policy form (regression)', () => {
+      fixture.detectChanges();
+      const panel = policyPanel();
+      panel.blocklistText.set('spam@x.org');
+      panel.mode.set('anyone');
+      fixture.detectChanges();
+      expect(panel.dirty()).toBe(true);
+      expect(component.hasUnsavedChanges()).toBe(true);
+
+      component.settingsForm.patchValue({ name: 'PushIT Mobile V2' });
+      component.settingsForm.markAsDirty();
+      component.saveSettings();
+      fixture.detectChanges();
+
+      expect(component.application()?.name).toBe('PushIT Mobile V2');
+      expect(component.settingsForm.dirty).toBe(false);
+      expect(panel.mode()).toBe('anyone');
+      expect(panel.blocklistText()).toBe('spam@x.org');
+      expect(panel.dirty()).toBe(true);
+      expect(component.hasUnsavedChanges()).toBe(true);
+    });
+
+    it('a toggle (application reload) keeps the dirty sender-policy form', () => {
+      shell.toggleAppState.mockImplementation((_app: unknown, onDone?: () => void) => onDone?.());
+      fixture.detectChanges();
+      const panel = policyPanel();
+      panel.allowlistText.set('ally@partner.io');
+      fixture.detectChanges();
+
+      component.toggleState();
+      fixture.detectChanges();
+
+      expect(component.application()?.is_active).toBe(false);
+      expect(panel.allowlistText()).toBe('ally@partner.io');
+    });
+
+    it('a pristine sender-policy form follows the reloaded application', () => {
+      fixture.detectChanges();
+      const panel = policyPanel();
+
+      component.onSenderPolicySaved(makeApplication({ inbound_sender_blocklist: ['@spam.io'] }));
+      fixture.detectChanges();
+
+      expect(panel.blocklistText()).toBe('@spam.io');
+      expect(panel.dirty()).toBe(false);
+    });
+
+    it('saving the sender policy keeps the dirty overview form', () => {
+      fixture.detectChanges();
+      component.settingsForm.patchValue({ name: 'Brouillon' });
+      component.settingsForm.markAsDirty();
+
+      component.onSenderPolicySaved(makeApplication({ inbound_sender_mode: 'anyone' }));
+      fixture.detectChanges();
+
+      expect(component.settingsForm.getRawValue().name).toBe('Brouillon');
+      expect(component.hasUnsavedChanges()).toBe(true);
+    });
+
+    it('shows a hint next to each dirty section', () => {
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('[data-testid="app-settings-unsaved"]')).toBeNull();
+      expect(el.querySelector('[data-testid="sender-policy-unsaved"]')).toBeNull();
+
+      component.settingsForm.markAsDirty();
+      policyPanel().notifyPush.set(true);
+      fixture.detectChanges();
+
+      expect(el.querySelector('[data-testid="app-settings-unsaved"]')?.textContent).toContain(
+        'Modifications non enregistrées',
+      );
+      expect(el.querySelector('[data-testid="sender-policy-unsaved"]')).not.toBeNull();
+    });
+
+    it('blocks beforeunload only while something is dirty', () => {
+      fixture.detectChanges();
+      const clean = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+      component.onBeforeUnload(clean);
+      expect(clean.defaultPrevented).toBe(false);
+
+      component.settingsForm.markAsDirty();
+      const dirty = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+      component.onBeforeUnload(dirty);
+      expect(dirty.defaultPrevented).toBe(true);
+    });
+
+    it('does not report unsaved changes once the application is deleted', async () => {
+      api.deleteApp.and.returnValue(of(void 0));
+      fixture.detectChanges();
+      component.settingsForm.markAsDirty();
+
+      await component.deleteApplication();
+
+      expect(component.hasUnsavedChanges()).toBe(false);
+    });
   });
 });
