@@ -50,30 +50,30 @@
           ]
         },
         {
-          "title": "Devicefunctionaliteiten",
+          "title": "Functionaliteiten voor apparaten",
           "items": [
-            "Lijst, detail, wijziging en verwijdering van zichtbare devices.",
-            "Visualisatie van de applicaties die aan een device gekoppeld zijn.",
-            "Automatische koppeling via X-App-Token.",
-            "Ondersteuning van de mobiele flow: installatie, QR-scan, ophalen van de push token en aanmaak of update van de koppeling in de backend."
+            "Lijst, detail, wijziging en verwijdering van zichtbare apparaten.",
+            "Overzicht van de applicaties waarop een apparaat geabonneerd is.",
+            "Automatisch abonneren van een apparaat met zijn applicatietoken (X-App-Token).",
+            "Ondersteuning van de mobiele flow: installatie, QR-scan, ophalen van het pushtoken en aanmaak of update van het abonnement op de server."
           ]
         },
         {
           "title": "Notificatiefuncties",
           "items": [
-            "Aanmaken van gerichte notificaties per applicatie en expliciete device-lijst.",
+            "Aanmaken van gerichte notificaties per applicatie en expliciete lijst van apparaten.",
             "Lijst, detail, manuele verzending en statistieken van notificaties.",
             "Beheer van toekomstige notificaties: lijst, detail, wijziging en verwijdering.",
-            "Filters op applicatie, status en effectieve verzenddatum, inclusief partiele verzendingen en `effective_scheduled_for`."
+            "Filters op applicatie, status en verzenddatum, rekening houdend met gedeeltelijke verzendingen en uitstel door stille periodes."
           ]
         },
         {
           "title": "Stille-periodefunctionaliteiten",
           "items": [
-            "Beheer van stille periodes per applicatie of per device.",
-            "Ondersteuning voor ONCE- en RECURRING-periodes, met wijziging, verwijdering en activatie.",
+            "Beheer van stille periodes per applicatie of per apparaat.",
+            "Eenmalige of terugkerende periodes, met wijziging, verwijdering en activatie.",
             "Beheer van vensters die over middernacht lopen en aaneengesloten vensters.",
-            "Duidelijke business-impact: globale verschuiving op applicatieniveau, of uitgestelde delivery op deviceniveau."
+            "Duidelijke business-impact: globale verschuiving op applicatieniveau, of uitgestelde levering op apparaatniveau."
           ]
         },
         {
@@ -106,7 +106,7 @@
         {
           "icon": "pi-bolt",
           "title": "Het product",
-          "body": "PushIT centraliseert het beheer van je applicaties, devices en pushcampagnes in een heldere, moderne console."
+          "body": "PushIT centraliseert het beheer van je applicaties, apparaten en pushcampagnes in een heldere, moderne console."
         },
         {
           "icon": "pi-building",
@@ -170,7 +170,7 @@
       "title": "Wachtwoord vergeten",
       "email": "E-mailadres",
       "submit": "Link verzenden",
-      "submitted": "Als er een account met dit email bestaat, is er zojuist een reset-link verstuurd. Controleer ook je spam-map.",
+      "submitted": "Als er een account met dit e-mailadres bestaat, is er zojuist een reset-link verstuurd. Controleer ook je spam-map.",
       "registerPrompt": "Nog geen account?",
       "registerLink": "Account aanmaken",
       "backToLogin": "Terug naar inloggen",
@@ -228,7 +228,7 @@
         "tokenEyebrow": "Token gegenereerd",
         "copyButton": "Kopieren",
         "dismissButton": "Verbergen",
-        "tokenNote": "Het ruwe token is slechts eenmaal zichtbaar. Opslag alleen aan serverzijde.",
+        "tokenNote": "Het token is slechts eenmaal zichtbaar: de server bewaart er alleen een vingerafdruk van.",
         "admin": {
           "label": "Beheer",
           "description": "De status van de backend bewaken en de Django-admin openen."
@@ -255,8 +255,8 @@
           "countKey": "apps"
         },
         {
-          "label": "Devices",
-          "description": "Gekoppelde toestellen raadplegen en bijwerken.",
+          "label": "Apparaten",
+          "description": "Geabonneerde apparaten bekijken en bijwerken.",
           "icon": "pi pi-mobile",
           "link": "/dashboard/devices",
           "countKey": "devices"
@@ -270,7 +270,7 @@
         },
         {
           "label": "Stille periodes",
-          "description": "Applicatieve en device-stiltevensters beheren.",
+          "description": "Verzendingen pauzeren tijdens bepaalde uren, per applicatie of per apparaat.",
           "icon": "pi pi-moon",
           "link": "/dashboard/quiet-periods",
           "countKey": "quietPeriods"
@@ -284,7 +284,7 @@
         "metrics": {
           "apps": "Applicaties",
           "activeApps": "Actief",
-          "devices": "Devices",
+          "devices": "Apparaten",
           "notifications": "Notificaties",
           "quietPeriods": "Stille periodes"
         },
@@ -331,7 +331,7 @@
         "title": "Mijn account",
         "accountTitle": "Account",
         "email": "E-mailadres",
-        "fallbackEmail": "Email niet beschikbaar",
+        "fallbackEmail": "E-mailadres niet beschikbaar",
         "userkey": "Gebruikerssleutel",
         "copyUserkey": "Gebruikerssleutel kopiëren",
         "userkeyCopied": "Gebruikerssleutel gekopieerd.",
@@ -341,7 +341,7 @@
         "securityTitle": "Beveiliging",
         "deleteAccount": {
           "title": "Gevarenzone",
-          "lead": "Verwijderen is definitief: je account, je toestellen en de applicaties waarvan je eigenaar bent worden gewist.",
+          "lead": "Verwijderen is definitief: je account, je apparaten en de applicaties waarvan je eigenaar bent worden gewist.",
           "password": "Huidig wachtwoord",
           "button": "Mijn account verwijderen",
           "moreInfo": "Wat wordt verwijderd",
@@ -349,11 +349,11 @@
           "dialogIntro": "Dit kan niet ongedaan worden gemaakt. De applicaties waarvan je eigenaar bent worden voor iedereen verwijderd, ook voor abonnees, met al hun gegevens:",
           "dialogItems": [
             "de notificaties en hun verzendgeschiedenis;",
-            "de koppelingen met geabonneerde toestellen;",
+            "de koppelingen met geabonneerde apparaten;",
             "de sjablonen;",
             "de verzendtokens."
           ],
-          "dialogOwn": "Je eigen toestellen en hun pushtokens worden ook verwijderd, en al je sessies worden afgesloten.",
+          "dialogOwn": "Je eigen apparaten en hun pushtokens worden ook verwijderd, en al je sessies worden afgesloten.",
           "cancel": "Annuleren",
           "confirm": "Definitief verwijderen",
           "passwordRequired": "Vul je huidige wachtwoord in om te bevestigen.",
@@ -363,7 +363,7 @@
         }
       },
       "changePassword": {
-        "intro": "Na de wijziging worden uw andere sessies (andere browsers, toestellen) afgemeld. Deze sessie blijft open.",
+        "intro": "Na de wijziging worden uw andere sessies (andere browsers, apparaten) afgemeld. Deze sessie blijft open.",
         "currentPassword": "Huidig wachtwoord",
         "newPassword": "Nieuw wachtwoord",
         "confirmPassword": "Nieuw wachtwoord bevestigen",
@@ -390,7 +390,7 @@
       "deviceForm": {
         "name": "Naam",
         "platform": "Platform",
-        "pushTokenStatus": "Push-tokenstatus"
+        "pushTokenStatus": "Status van het pushtoken"
       }
     },
     "update": {
@@ -404,18 +404,18 @@
       "stepsTitle": "Zo verwijder je je account",
       "steps": [
         "Meld je aan op de console via https://pushit.foxugly.com, met hetzelfde account als in de mobiele app.",
-        "Open « Instellingen ».",
-        "Vul in de sectie « Mijn account verwijderen » je huidige wachtwoord in en klik op « Mijn account verwijderen ».",
+        "Open « Mijn account ».",
+        "Vul in de sectie « Gevarenzone » je huidige wachtwoord in en klik op « Mijn account verwijderen ».",
         "Bevestig. De verwijdering gebeurt onmiddellijk."
       ],
       "forgotPassword": "Wachtwoord vergeten? Stel het eerst opnieuw in via de aanmeldpagina.",
-      "openConsole": "Instellingen openen",
+      "openConsole": "Mijn account openen",
       "deletedTitle": "Verwijderde gegevens",
       "deleted": [
         "Je account: e-mailadres, wachtwoord en voorkeuren.",
-        "Je toestellen en hun notificatietokens (Firebase Cloud Messaging).",
-        "De applicaties waarvan je eigenaar bent, voor al hun abonnees, met hun notificaties, verzendgeschiedenis, sjablonen, verzendtokens en koppelingen met toestellen.",
-        "Al je sessies, op al je toestellen."
+        "Je apparaten en hun notificatietokens (Firebase Cloud Messaging).",
+        "De applicaties waarvan je eigenaar bent, voor al hun abonnees, met hun notificaties, verzendgeschiedenis, sjablonen, verzendtokens en koppelingen met apparaten.",
+        "Al je sessies, op al je apparaten."
       ],
       "retentionTitle": "Bewaring",
       "retention": [
@@ -428,6 +428,70 @@
     }
   },
   "console": {
+    "statusLabels": {
+      "notification": {
+        "draft": "Concept",
+        "scheduled": "Gepland",
+        "queued": "In wachtrij",
+        "processing": "Wordt verzonden",
+        "sent": "Verzonden",
+        "partial": "Gedeeltelijk verzonden",
+        "failed": "Mislukt",
+        "no_target": "Geen apparaat geselecteerd",
+        "shifted": "Uitgesteld"
+      },
+      "delivery": {
+        "pending": "In afwachting",
+        "sent": "Verzonden",
+        "failed": "Mislukt"
+      },
+      "pushToken": {
+        "active": "Actief",
+        "invalid": "Ongeldig token",
+        "revoked": "Ingetrokken"
+      },
+      "platform": {
+        "android": "Android",
+        "ios": "iPhone"
+      },
+      "application": {
+        "active": "Actief",
+        "inactive": "Inactief"
+      },
+      "quietPeriod": {
+        "active": "Actief",
+        "inactive": "Inactief"
+      },
+      "quietPeriodType": {
+        "ONCE": "Eenmalig",
+        "RECURRING": "Terugkerend"
+      },
+      "sendToken": {
+        "active": "Actief",
+        "revoked": "Ingetrokken"
+      },
+      "inboundEmail": {
+        "created": "Notificatie aangemaakt",
+        "existing": "Duplicaat genegeerd",
+        "rejected": "Geweigerd",
+        "conflict": "Conflict",
+        "error": "Fout"
+      }
+    },
+    "counts": {
+      "devices": {
+        "one": "{count} apparaat",
+        "other": "{count} apparaten"
+      },
+      "notifications": {
+        "one": "{count} notificatie",
+        "other": "{count} notificaties"
+      },
+      "quietPeriods": {
+        "one": "{count} stille periode",
+        "other": "{count} stille periodes"
+      }
+    },
     "applications": {
       "title": "Beheer van applicaties",
       "total": "Totaal",
@@ -437,14 +501,10 @@
       "empty": "Geen applicaties voor dit account.",
       "loading": "Applicatie laden...",
       "noDescription": "Geen beschrijving.",
-      "statuses": {
-        "active": "actief",
-        "inactive": "inactief"
-      },
       "table": {
         "name": "Naam",
         "description": "Beschrijving",
-        "prefix": "Prefix",
+        "prefix": "Tokenprefix",
         "status": "Status",
         "createdAt": "Aangemaakt op",
         "actions": "Acties"
@@ -459,8 +519,8 @@
       },
       "qr": {
         "title": "Inschrijvings-QR-code",
-        "scanHint": "Scan deze QR-code met de mobiele PushIT-app om een toestel te koppelen.",
-        "tokenOnce": "Het token is slechts eenmaal zichtbaar. Vernieuw het om de QR-code te tonen (reeds gekoppelde toestellen blijven werken).",
+        "scanHint": "Scan deze QR-code met de mobiele PushIT-app om een apparaat te koppelen.",
+        "tokenOnce": "Het token is slechts eenmaal zichtbaar. Vernieuw het om de QR-code te tonen (reeds gekoppelde apparaten blijven werken).",
         "regenerate": "Vernieuwen en tonen",
         "error": "Kan de QR-code niet genereren.",
         "loading": "QR-code genereren…",
@@ -511,8 +571,8 @@
         "revoke": "Kan het token niet intrekken."
       },
       "confirmDelete": "Applicatie \"{name}\" verwijderen?",
-      "confirmRegenerate": "Token van \"{name}\" vernieuwen? Alle toestellen die het huidige token gebruiken, ontvangen geen notificaties meer totdat ze met het nieuwe token zijn gekoppeld.",
-      "confirmRevoke": "Token van \"{name}\" intrekken? Alle toestellen die het huidige token gebruiken, ontvangen onmiddellijk geen notificaties meer.",
+      "confirmRegenerate": "Token van \"{name}\" vernieuwen? Alle apparaten die het huidige token gebruiken, ontvangen geen notificaties meer totdat ze met het nieuwe token zijn gekoppeld.",
+      "confirmRevoke": "Token van \"{name}\" intrekken? Alle apparaten die het huidige token gebruiken, ontvangen onmiddellijk geen notificaties meer.",
       "emptyState": {
         "title": "Nog geen applicaties",
         "message": "Maak een applicatie aan om een inschrijvings-QR-code te krijgen en notificaties te versturen.",
@@ -520,14 +580,13 @@
       }
     },
     "devices": {
-      "title": "Inventaris en koppeling van devices",
-      "countLabel": "devices",
+      "title": "Apparaten",
       "refresh": "Vernieuwen",
       "add": "Toevoegen",
       "downloadAndroid": "Android-app",
       "downloadAndroidError": "De Android-app kon niet worden gedownload.",
-      "empty": "Geen gekoppelde devices voor dit account.",
-      "loading": "Devices laden...",
+      "empty": "Geen apparaten voor dit account.",
+      "loading": "Apparaten laden...",
       "none": "geen",
       "never": "Nooit",
       "table": {
@@ -537,7 +596,7 @@
         "applications": "Applicaties",
         "lastActivity": "Laatste activiteit",
         "actions": "Acties",
-        "prefix": "Prefix",
+        "prefix": "Tokenprefix",
         "status": "Status",
         "createdAt": "Aangemaakt op"
       },
@@ -546,37 +605,37 @@
         "edit": "Bewerken",
         "delete": "Verwijderen",
         "useLatestToken": "Laatste gegenereerde token gebruiken",
-        "link": "Device koppelen",
+        "link": "Apparaat koppelen",
         "linking": "Bezig met koppelen...",
         "save": "Opslaan",
         "saving": "Bezig met opslaan..."
       },
       "dialog": {
-        "createTitle": "Een device koppelen",
-        "editTitle": "Device bewerken"
+        "createTitle": "Een apparaat koppelen",
+        "editTitle": "Apparaat bewerken"
       },
       "createForm": {
-        "appToken": "X-App-Token",
-        "appTokenPlaceholder": "Plak hier het ruwe token",
-        "deviceName": "Naam van het device",
+        "appToken": "Applicatietoken (X-App-Token)",
+        "appTokenPlaceholder": "Plak hier het token",
+        "deviceName": "Naam van het apparaat",
         "deviceNamePlaceholder": "Marie iPhone",
         "platform": "Platform",
-        "pushToken": "Push token",
+        "pushToken": "Pushtoken",
         "pushTokenPlaceholder": "ExponentPushToken..."
       },
       "alerts": {
-        "updated": "Device succesvol bijgewerkt.",
-        "deleted": "Device verwijderd.",
-        "linked": "Device {deviceId} gekoppeld aan applicatie {applicationId}."
+        "updated": "Apparaat bijgewerkt.",
+        "deleted": "Apparaat verwijderd.",
+        "linked": "Apparaat {deviceId} gekoppeld aan applicatie {applicationId}."
       },
       "errors": {
-        "missingAppToken": "Vul een X-App-Token in om een device te koppelen.",
-        "invalidId": "Ongeldige device-id.",
-        "loading": "Device laden..."
+        "missingAppToken": "Vul een applicatietoken (X-App-Token) in om een apparaat te koppelen.",
+        "invalidId": "Ongeldige apparaat-id.",
+        "loading": "Apparaat laden..."
       },
-      "confirmDelete": "Device \"{name}\" verwijderen?",
+      "confirmDelete": "Apparaat \"{name}\" verwijderen?",
       "readOnly": "Alleen-lezen",
-      "readOnlyHint": "Device van een abonnee: alleen de eigenaar kan het wijzigen.",
+      "readOnlyHint": "Apparaat van een abonnee: alleen de eigenaar kan het wijzigen.",
       "emptyState": {
         "title": "Nog geen apparaten",
         "message": "Een apparaat voegt u toe door de QR-code van een applicatie te scannen met de mobiele PushIT-app.",
@@ -586,22 +645,22 @@
       }
     },
     "notifications": {
-      "title": "Gebruikersnotificaties",
+      "title": "Mijn notificaties",
       "history": "Historiek",
       "future": "Toekomstig",
-      "shifted": "Verschoven",
+      "shifted": "Uitgesteld",
       "refresh": "Vernieuwen",
       "add": "Toevoegen",
       "empty": "Geen notificaties voor deze filters.",
       "loading": "Notificaties laden...",
-      "immediate": "onmiddellijk",
+      "immediate": "Onmiddellijk",
       "scheduledSubtext": "Gepland",
       "filters": {
         "application": "Applicatie",
-        "device": "Device",
+        "device": "Apparaat",
         "status": "Status",
-        "from": "Effectief vanaf",
-        "to": "Effectief tot",
+        "from": "Verzending vanaf",
+        "to": "Verzending tot",
         "allApps": "Alle",
         "allDevices": "Alle",
         "allStatuses": "Alle",
@@ -615,7 +674,7 @@
         "application": "Applicatie",
         "message": "Bericht",
         "status": "Status",
-        "effective": "Effectief",
+        "effective": "Verzenddatum",
         "actions": "Acties"
       },
       "actions": {
@@ -636,9 +695,9 @@
       "form": {
         "application": "Applicatie",
         "applicationPlaceholder": "Kiezen...",
-        "devices": "Doeldevices",
-        "devicesPlaceholder": "Kies een of meerdere devices",
-        "devicesHelp": "Alleen actieve devices gekoppeld aan de geselecteerde applicatie worden voorgesteld.",
+        "devices": "Geselecteerde apparaten",
+        "devicesPlaceholder": "Kies een of meerdere apparaten",
+        "devicesHelp": "Alleen actieve apparaten die op de geselecteerde applicatie geabonneerd zijn, worden voorgesteld.",
         "title": "Titel",
         "titlePlaceholder": "Weekendpromo",
         "message": "Bericht",
@@ -657,17 +716,6 @@
         "goToBilling": "Naar facturatie"
       },
       "confirmDelete": "Toekomstige notificatie \"{title}\" verwijderen?",
-      "statusLabels": {
-        "draft": "concept",
-        "scheduled": "gepland",
-        "queued": "in wachtrij",
-        "processing": "bezig",
-        "sent": "verzonden",
-        "partial": "gedeeltelijk",
-        "failed": "mislukt",
-        "no_target": "zonder doel",
-        "shifted": "verschoven"
-      },
       "typeLabels": {
         "future": "Toekomstig",
         "history": "Historiek"
@@ -678,7 +726,7 @@
       },
       "validation": {
         "title": "Ontbrekende velden",
-        "detail": "Vul alle verplichte velden in (applicatie, toestellen, titel en bericht)."
+        "detail": "Vul alle verplichte velden in (applicatie, apparaten, titel en bericht)."
       },
       "emptyState": {
         "title": "Geen notificaties verstuurd",
@@ -694,15 +742,15 @@
       }
     },
     "quietPeriods": {
-      "title": "Beheer van stille vensters",
+      "title": "Stille periodes",
       "refresh": "Vernieuwen",
       "add": "Toevoegen",
       "empty": "Geen stille periodes geconfigureerd.",
       "loading": "Stille periodes laden...",
       "targetNone": "Geen doel",
       "targetUnknownApplication": "Onbekende applicatie",
-      "targetUnknownDevice": "Onbekend device",
-      "missingTargets": "Geen applicatie of device beschikbaar om een stille periode aan te maken.",
+      "targetUnknownDevice": "Onbekend apparaat",
+      "missingTargets": "Geen applicatie of apparaat beschikbaar om een stille periode aan te maken.",
       "missingParent": "Selecteer een geldig doel voor je een stille periode aanmaakt.",
       "table": {
         "target": "Doel",
@@ -721,21 +769,11 @@
       },
       "scopeLabels": {
         "application": "Applicatie",
-        "device": "Device"
-      },
-      "typeLabels": {
-        "once": "Eenmalig",
-        "recurring": "Terugkerend",
-        "badgeOnce": "eenmalig",
-        "badgeRecurring": "terugkerend"
-      },
-      "statusLabels": {
-        "active": "actief",
-        "inactive": "inactief"
+        "device": "Apparaat"
       },
       "form": {
         "target": "Doel",
-        "device": "Device",
+        "device": "Apparaat",
         "application": "Applicatie",
         "selectPlaceholder": "Kiezen...",
         "name": "Naam",
@@ -759,7 +797,7 @@
       ],
       "defaultNames": {
         "application": "Stilte applicatie",
-        "device": "Stilte device"
+        "device": "Stilte apparaat"
       },
       "alerts": {
         "created": "Stille periode aangemaakt.",
@@ -780,7 +818,7 @@
         "differentEndTime": "De eindtijd moet verschillen van de begintijd."
       },
       "readOnly": "Alleen-lezen",
-      "readOnlyHint": "Stil venster van het device van een abonnee: alleen de eigenaar kan het wijzigen.",
+      "readOnlyHint": "Stille periode van het apparaat van een abonnee: alleen de eigenaar kan ze wijzigen.",
       "emptyState": {
         "title": "Geen stille periodes",
         "message": "Een stille periode houdt notificaties tegen tijdens een tijdvak (’s nachts, in het weekend…).",
@@ -800,8 +838,8 @@
       "downloadQr": "QR downloaden",
       "rotate": "Nieuwe code",
       "rotatePending": "Genereren...",
-      "rotateWarning": "Een nieuwe code sluit de deur voor toekomstige koppelingen. Ze verwijdert niemand: al gekoppelde devices blijven ontvangen. Gebruik de lijst met devices hieronder om er een te verwijderen.",
-      "rotateConfirm": "Een nieuwe inschrijvingscode voor „{name}” genereren? De huidige code werkt daarna niet meer; al gekoppelde devices blijven ongemoeid.",
+      "rotateWarning": "Een nieuwe code sluit de deur voor toekomstige koppelingen. Ze verwijdert niemand: al gekoppelde apparaten blijven ontvangen. Gebruik de lijst met apparaten hieronder om er een te verwijderen.",
+      "rotateConfirm": "Een nieuwe inschrijvingscode voor „{name}” genereren? De huidige code werkt daarna niet meer; al gekoppelde apparaten blijven ongemoeid.",
       "rotated": "Nieuwe inschrijvingscode gegenereerd.",
       "rotateError": "Kan geen nieuwe code genereren."
     },
@@ -822,8 +860,6 @@
         "status": "Status",
         "actions": "Acties"
       },
-      "activeLabel": "actief",
-      "revokedLabel": "ingetrokken",
       "never": "Nooit",
       "reveal": "Token opnieuw tonen",
       "revealHint": "Voer uw wachtwoord opnieuw in: een openstaande sessie volstaat niet om een geheim te herlezen.",
@@ -885,13 +921,6 @@
         "status": "Status",
         "reason": "Reden"
       },
-      "statuses": {
-        "created": "Melding aangemaakt",
-        "existing": "Duplicaat genegeerd",
-        "rejected": "Geweigerd",
-        "conflict": "Conflict",
-        "error": "Fout"
-      },
       "reasons": {
         "sender_not_allowed": "Afzender niet toegestaan",
         "sender_blocked": "Afzender geblokkeerd",
@@ -914,11 +943,11 @@
       "loading": "Applicatie laden...",
       "descriptionTitle": "Beschrijving",
       "descriptionEmpty": "Geen beschrijving beschikbaar voor deze applicatie.",
-      "inboundEmailTitle": "E-mailadres voor notificaties",
+      "inboundEmailTitle": "E-mailadres van de applicatie",
       "inboundEmailLabel": "E-mailadres",
       "inboundEmailCopy": "Adres kopieren",
       "inboundEmailCopied": "E-mailadres gekopieerd.",
-      "inboundEmailCopyFailed": "Kan het e-mailadres niet kopieren.",
+      "inboundEmailCopyFailed": "Kan het e-mailadres niet kopiëren.",
       "inboundEmailHelpTitle": "Een notificatie via e-mail versturen",
       "inboundEmailHelp": {
         "intro": "Stuur een e-mail naar dit adres om een notificatie voor deze applicatie aan te maken.",
@@ -927,18 +956,18 @@
         "schedule": "Planning is mogelijk met [SEND_AT:ISO_DATETIME] in het onderwerp.",
         "sender": "Standaard mag alleen het adres van de eigenaar verzenden; zie « Wie mag per e-mail verzenden » hieronder."
       },
-      "devicesTitle": "Gekoppelde devices",
+      "devicesTitle": "Geabonneerde apparaten",
       "enrolmentTitle": "Inschrijving",
       "sendTokensTitle": "Verzendtokens",
       "examplesTitle": "Verzendvoorbeelden",
-      "legacyWarning": "Deze applicatie heeft verzonden met het oude applicatietoken, dat sinds 29-07-2026 niet meer wordt aanvaard om te verzenden. Mislukt een verzending met „app_token_retired”, maak hieronder dan een verzendtoken aan en vervang het in uw integratie. Het koppelen van toestellen blijft werken.",
-      "devicesEmpty": "Geen devices gekoppeld aan deze applicatie.",
+      "legacyWarning": "Deze applicatie heeft verzonden met het oude applicatietoken, dat sinds 29-07-2026 niet meer wordt aanvaard om te verzenden. Mislukt een verzending met „app_token_retired”, maak hieronder dan een verzendtoken aan en vervang het in uw integratie. Het abonneren van apparaten blijft werken.",
+      "devicesEmpty": "Geen apparaten geabonneerd op deze applicatie.",
       "evict": {
         "button": "Uit de applicatie verwijderen",
-        "hint": "Een device verwijderen stopt de verzending ernaartoe. Zolang het de inschrijvingscode kent, kan het zich opnieuw abonneren — vervang ook de code.",
-        "confirm": "„{device}” uit „{name}” verwijderen? Dit device ontvangt geen meldingen meer van deze applicatie. Het kan zich opnieuw abonneren zolang de inschrijvingscode niet is vervangen.",
-        "success": "Device uit de applicatie verwijderd.",
-        "error": "Kan dit device niet verwijderen."
+        "hint": "Een apparaat verwijderen stopt de verzending ernaartoe. Zolang het de inschrijvingscode kent, kan het zich opnieuw abonneren — vervang ook de code.",
+        "confirm": "„{device}” uit „{name}” verwijderen? Dit apparaat ontvangt geen meldingen meer van deze applicatie. Het kan zich opnieuw abonneren zolang de inschrijvingscode niet is vervangen.",
+        "success": "Apparaat uit de applicatie verwijderd.",
+        "error": "Kan dit apparaat niet verwijderen."
       },
       "notificationsTitle": "Notificaties",
       "notificationsEmpty": "Geen notificaties gekoppeld aan deze applicatie.",
@@ -949,14 +978,14 @@
       "table": {
         "name": "Naam",
         "platform": "Platform",
-        "pushStatus": "Pushstatus",
+        "pushStatus": "Pushtoken",
         "lastActivity": "Laatste activiteit",
-        "prefix": "Prefix",
+        "prefix": "Tokenprefix",
         "status": "Status",
         "createdAt": "Aangemaakt op",
         "title": "Titel",
         "type": "Type",
-        "effective": "Effectief",
+        "effective": "Verzenddatum",
         "actions": "Acties"
       },
       "facts": {
@@ -969,13 +998,9 @@
         "createdAt": "Aangemaakt op"
       },
       "statusLabels": {
-        "active": "Actief",
-        "inactive": "Inactief",
         "never": "Nooit",
         "no": "Nee",
-        "immediate": "Onmiddellijk",
-        "once": "eenmalig",
-        "recurring": "terugkerend"
+        "immediate": "Onmiddellijk"
       },
       "notificationTypes": {
         "future": "Toekomstig",
@@ -1005,7 +1030,7 @@
         "loadError": "Kan deze afbeelding niet laden. Probeer een PNG of JPG — formaten zoals HEIC (iPhone-foto’s) worden niet door de browser ondersteund."
       },
       "regenerateEmail": {
-        "label": "Inkomend e-mailadres",
+        "label": "E-mailadres van de applicatie",
         "button": "Adres opnieuw genereren",
         "pending": "Bezig met genereren...",
         "hint": "Genereert een nieuw willekeurig adres; het oude stopt met werken.",
@@ -1014,15 +1039,15 @@
         "error": "Kan het e-mailadres niet opnieuw genereren."
       },
       "aliasStatus": {
-        "title": "Inkomende e-mailalias controleren",
-        "button": "Alias controleren",
+        "title": "Het ontvangstadres controleren",
+        "button": "Adres controleren",
         "pending": "Bezig met controleren...",
-        "active": "Alias actief",
-        "missing": "Alias ontbreekt",
-        "missingHint": "De alias bestaat niet op Exchange. Genereer het adres opnieuw of neem contact op met ops.",
+        "active": "Adres actief",
+        "missing": "Adres ontbreekt",
+        "missingHint": "Het adres bestaat niet op de mailserver (Exchange). Genereer het adres opnieuw of neem contact op met het ops-team.",
         "unavailable": "Controle niet beschikbaar (Exchange niet geconfigureerd)",
         "unverifiable": "Kan niet controleren",
-        "error": "Kan de alias niet controleren."
+        "error": "Kan het adres niet controleren."
       },
       "errors": {
         "invalidId": "Ongeldige applicatie-id.",
@@ -1030,14 +1055,14 @@
       },
       "tabs": {
         "overview": "Overzicht",
-        "recipients": "Ontvangers",
+        "recipients": "Apparaten",
         "email": "E-mail",
         "api": "API / ontwikkelaars",
         "notifications": "Notificaties",
         "quietPeriods": "Stille periodes"
       },
       "counters": {
-        "devices": "Gekoppelde devices",
+        "devices": "Geabonneerde apparaten",
         "notifications": "Notificaties",
         "lastSend": "Laatste verzending"
       },
@@ -1045,19 +1070,19 @@
       "newQuietPeriod": "Stille periode toevoegen",
       "nextSteps": {
         "title": "Volgende stappen",
-        "enrolTitle": "Een toestel abonneren",
+        "enrolTitle": "Een apparaat abonneren",
         "enrolHint": "Scan de inschrijvings-QR-code met de telefoon die de notificaties moet ontvangen.",
         "enrolAction": "QR-code tonen",
         "testHeading": "Een testnotificatie verzenden",
-        "testHint": "Een testbericht wordt meteen naar alle geabonneerde toestellen verzonden.",
+        "testHint": "Een testbericht wordt meteen naar alle geabonneerde apparaten verzonden.",
         "testAction": "Testnotificatie verzenden",
-        "testNoDevice": "Nog geen geabonneerd toestel kan ze ontvangen: abonneer eerst een toestel met de QR-code.",
+        "testNoDevice": "Nog geen geabonneerd apparaat kan ze ontvangen: abonneer eerst een apparaat met de QR-code.",
         "testInactive": "De applicatie is gedeactiveerd: activeer ze om een notificatie te verzenden.",
-        "testLoading": "Geabonneerde toestellen laden…",
+        "testLoading": "Geabonneerde apparaten laden…",
         "testTitle": "Testnotificatie",
-        "testMessage": "Dit is een test van „{name}”: uw notificaties komen aan op dit toestel.",
+        "testMessage": "Dit is een test van „{name}”: uw notificaties komen aan op dit apparaat.",
         "testSentSummary": "Test verzonden",
-        "testSent": "Testnotificatie verzonden naar {count} toestel(len).",
+        "testSent": "Testnotificatie verzonden naar {count} apparaat/apparaten.",
         "emailTitle": "Per e-mail verzenden",
         "emailHint": "Een e-mail naar dit adres wordt een notificatie."
       },
@@ -1078,18 +1103,18 @@
       }
     },
     "deviceDetail": {
-      "back": "Terug naar devices",
-      "eyebrow": "Device",
-      "fallbackTitle": "Devicedetail",
-      "editTooltip": "Device bewerken",
-      "loading": "Device laden...",
+      "back": "Terug naar apparaten",
+      "eyebrow": "Apparaat",
+      "fallbackTitle": "Detail van het apparaat",
+      "editTooltip": "Apparaat bewerken",
+      "loading": "Apparaat laden...",
       "applicationsTitle": "Gekoppelde applicaties",
       "applicationsEmpty": "Geen gekoppelde applicaties.",
       "unlinkedTitle": "Ontkoppelde applicaties",
       "unlinkedOn": "ontkoppeld op",
       "unlinkedUnknownDate": "datum onbekend",
       "unlinkSources": {
-        "deviceButton": "vanaf het toestel",
+        "deviceButton": "vanaf het apparaat",
         "inbox": "vanuit de inbox",
         "takeover": "overgenomen door een ander account",
         "unknown": "onbekende bron"
@@ -1106,31 +1131,29 @@
         "id": "ID",
         "name": "Naam",
         "platform": "Platform",
-        "tokenStatus": "Tokenstatus",
+        "tokenStatus": "Status van het pushtoken",
         "lastActivity": "Laatste activiteit",
         "createdAt": "Aangemaakt op"
       },
       "labels": {
-        "never": "Nooit",
-        "active": "actief",
-        "inactive": "inactief"
+        "never": "Nooit"
       },
       "actions": {
         "view": "Details bekijken"
       },
       "dialog": {
-        "title": "Device bewerken",
+        "title": "Apparaat bewerken",
         "save": "Opslaan",
         "saving": "Bezig met opslaan..."
       },
       "errors": {
-        "invalidId": "Ongeldige device-id."
+        "invalidId": "Ongeldige apparaat-id."
       },
       "notifications": {
         "title": "Ontvangen notificaties",
         "allApps": "Alle applicaties",
         "filterLabel": "Filteren op applicatie",
-        "empty": "Geen notificaties geleverd aan dit device.",
+        "empty": "Geen notificaties geleverd aan dit apparaat.",
         "unknown": "onbekend",
         "table": {
           "title": "Titel",
@@ -1141,7 +1164,7 @@
         }
       },
       "readOnly": "Alleen-lezen",
-      "readOnlyHint": "Device van een abonnee: alleen de eigenaar kan het wijzigen."
+      "readOnlyHint": "Apparaat van een abonnee: alleen de eigenaar kan het wijzigen."
     },
     "notificationDetail": {
       "back": "Terug naar notificaties",
@@ -1150,16 +1173,16 @@
       "editTooltip": "Notificatie bewerken",
       "loading": "Notificatie laden...",
       "messageTitle": "Bericht",
-      "devicesTitle": "Doeldevices",
-      "devicesEmpty": "Geen doeldevice gevonden voor deze notificatie.",
+      "devicesTitle": "Geselecteerde apparaten",
+      "devicesEmpty": "Geen apparaat geselecteerd voor deze notificatie.",
       "statusTitle": "Status",
-      "note": "`effective_scheduled_for` houdt alleen rekening met stille periodes op applicatieniveau. Deviceperiodes kunnen een delivery vertragen zonder deze datum te wijzigen.",
+      "note": "De verzenddatum houdt rekening met de stille periodes van de applicatie. Die van een apparaat kunnen de levering aan dat apparaat nog vertragen, zonder deze datum te wijzigen.",
       "table": {
         "name": "Naam",
         "platform": "Platform",
         "delivery": "Levering",
         "opened": "Geopend op",
-        "pushStatus": "Pushstatus",
+        "pushStatus": "Pushtoken",
         "lastActivity": "Laatste activiteit",
         "actions": "Acties"
       },
@@ -1170,12 +1193,10 @@
         "sentAt": "Verzonden op",
         "createdAt": "Aangemaakt op",
         "scheduledFor": "Gevraagd voor",
-        "effective": "Effectief",
-        "targetedDevices": "Doeldevices"
+        "effective": "Verzenddatum",
+        "targetedDevices": "Geselecteerde apparaten"
       },
       "labels": {
-        "scheduled": "Gepland",
-        "shifted": "Verschoven",
         "yes": "Ja",
         "no": "Nee",
         "notYet": "Nog niet",
@@ -1229,7 +1250,7 @@
       "metrics": {
         "applications": "Applicaties",
         "applicationsActive": "Actief",
-        "devices": "Devices",
+        "devices": "Apparaten",
         "notifications": "Notificaties",
         "processingStuck": "Vastgelopen notificaties",
         "none": "Geen metrieken beschikbaar."

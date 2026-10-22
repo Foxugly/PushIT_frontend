@@ -26,6 +26,7 @@ import {
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelPipe, StatusLabelService } from '../../../../core/i18n/status-labels';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
 import { pushTokenStatusSeverity } from '../../../../core/utils/device.utils';
@@ -47,6 +48,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     FormsModule,
     DatePipe,
     AppAlert, ApiErrorMessagePipe,
+    StatusLabelPipe,
     PageHeader,
     ConsoleDialogActions,
     DeviceEditFormFields,
@@ -68,6 +70,7 @@ export class DeviceDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().deviceDetail);
 
@@ -96,10 +99,10 @@ export class DeviceDetailPage implements OnInit {
     return [
       { label: this.copy().facts.id, value: String(currentDevice.id) },
       { label: this.copy().facts.name, value: currentDevice.device_name },
-      { label: this.copy().facts.platform, value: currentDevice.platform, severity: 'info' as const },
+      { label: this.copy().facts.platform, value: this.statusLabels.label('platform', currentDevice.platform), severity: 'info' as const },
       {
         label: this.copy().facts.tokenStatus,
-        value: currentDevice.push_token_status,
+        value: this.statusLabels.label('pushToken', currentDevice.push_token_status),
         severity: this.statusSeverity(currentDevice.push_token_status),
       },
       {
@@ -204,11 +207,11 @@ export class DeviceDetailPage implements OnInit {
   }
 
   readonly platformSelectOptions = computed(() =>
-    this.platformOptions.map((platform) => ({ label: platform, value: platform })),
+    this.platformOptions.map((platform) => ({ label: this.statusLabels.label('platform', platform), value: platform })),
   );
 
   readonly statusSelectOptions = computed(() =>
-    this.statusOptions.map((status) => ({ label: status, value: status })),
+    this.statusOptions.map((status) => ({ label: this.statusLabels.label('pushToken', status), value: status })),
   );
 
   appSeverity(app: ApplicationRead): 'success' | 'secondary' {

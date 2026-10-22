@@ -21,6 +21,8 @@ import {
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelPipe, StatusLabelService } from '../../../../core/i18n/status-labels';
+import { CountLabelPipe } from '../../../../core/i18n/count-label';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PageHeader } from '../../../../shared/page-header/page-header';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
@@ -41,6 +43,8 @@ import { EmptyState } from '../../../../shared/empty-state/empty-state';
     ReactiveFormsModule,
     DatePipe,
     AppAlert, ApiErrorMessagePipe,
+    StatusLabelPipe,
+    CountLabelPipe,
     ConsoleDialogActions,
     DeviceEditFormFields,
     EmptyState,
@@ -61,11 +65,13 @@ export class DevicesPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   private readonly confirm = inject(AppConfirmService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().devices);
+  readonly counts = computed(() => this.consoleCopy.current().counts);
 
   readonly platformOptions: DevicePlatform[] = ['android', 'ios'];
   readonly statusOptions: PushTokenStatus[] = ['active', 'invalid', 'revoked'];
@@ -348,11 +354,11 @@ export class DevicesPage implements OnInit {
   }
 
   readonly platformSelectOptions = computed(() =>
-    this.platformOptions.map((platform) => ({ label: platform, value: platform })),
+    this.platformOptions.map((platform) => ({ label: this.statusLabels.label('platform', platform), value: platform })),
   );
 
   readonly statusSelectOptions = computed(() =>
-    this.statusOptions.map((status) => ({ label: status, value: status })),
+    this.statusOptions.map((status) => ({ label: this.statusLabels.label('pushToken', status), value: status })),
   );
 
   statusSeverity(status: PushTokenStatus): 'success' | 'warn' | 'danger' | 'secondary' {

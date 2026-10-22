@@ -74,8 +74,6 @@ describe('QuietPeriodsPage', () => {
           table: { target: 'Cible', name: 'Nom', type: 'Type', rule: 'Regle', status: 'Statut', actions: 'Actions' },
           dialog: { createTitle: 'Nouvelle periode blanche', editTitle: 'Modifier une periode blanche', create: 'Creer la periode', update: 'Mettre a jour', saving: 'Enregistrement...' },
           scopeLabels: { application: 'Application', device: 'Device' },
-          typeLabels: { once: 'Ponctuelle', recurring: 'Recurrente', badgeOnce: 'once', badgeRecurring: 'recurring' },
-          statusLabels: { active: 'active', inactive: 'inactive' },
           form: { target: 'Cible', device: 'Device', application: 'Application', selectPlaceholder: 'Choisir...', name: 'Nom', namePlaceholder: 'Nuit marketing', type: 'Type', recurrenceDays: 'Jours de recurrence', startTime: 'Heure de debut', endTime: 'Heure de fin', startAt: 'Debut', endAt: 'Fin', active: 'Periode active' },
           weekdays: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
           defaultNames: { application: 'Silence application', device: 'Silence device' },

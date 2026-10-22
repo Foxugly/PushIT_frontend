@@ -140,7 +140,7 @@ test('@*.domain entries are accepted and the formats are explained on the info i
   expect(state.apps[0].inbound_sender_allowlist).toEqual(['@*.partner.io']);
 });
 
-test('« Mails reçus » lists what each inbound mail became, loaded with the E-mail tab', async ({ page }) => {
+test('« E-mails reçus » lists what each inbound mail became, loaded with the E-mail tab', async ({ page }) => {
   let calls = 0;
   page.on('request', (request) => {
     if (request.url().includes('/inbound-email-logs/')) {
@@ -176,7 +176,7 @@ test('« Mails reçus » lists what each inbound mail became, loaded with the E-
 
   await page.getByRole('tab', { name: 'E-mail' }).click();
   const journal = page.getByTestId('inbound-email-log');
-  await expect(journal.getByRole('heading', { name: 'Mails reçus' })).toBeVisible();
+  await expect(journal.getByRole('heading', { name: 'E-mails reçus' })).toBeVisible();
 
   const refused = journal.getByTestId('inbound-log-row-3');
   await expect(refused).toContainText('mallory@evil.io');
@@ -190,6 +190,6 @@ test('« Mails reçus » lists what each inbound mail became, loaded with the E-
   // « Actualiser » reloads; an empty journal says so.
   state.inboundEmailLogs = { 10: [] };
   await journal.getByRole('button', { name: 'Actualiser' }).click();
-  await expect(journal.getByTestId('inbound-log-empty')).toHaveText("Aucun mail reçu pour l'instant");
+  await expect(journal.getByTestId('inbound-log-empty')).toHaveText("Aucun e-mail reçu pour l'instant");
   expect(calls).toBe(2);
 });

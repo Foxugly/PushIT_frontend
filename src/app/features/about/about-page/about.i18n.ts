@@ -46,8 +46,8 @@ const FR: AboutCopy = {
     companyLabel: 'Société',
     vatLabel: 'TVA / BCE',
     addressLabel: 'Adresse',
-    emailLabel: 'Email',
-    emailButton: "M'envoyer un email",
+    emailLabel: 'E-mail',
+    emailButton: "M'envoyer un e-mail",
     phoneLabel: 'Téléphone',
     websiteLabel: 'Site web',
   },
@@ -64,8 +64,8 @@ const FR: AboutCopy = {
     {
       title: 'Données collectées',
       content: [
-        "Données d'identification : adresse email, prénom, nom.",
-        "Données applicatives : noms de vos applications et de vos appareils, tokens d'appareil, contenu et métadonnées des notifications, périodes blanches, préférence de langue.",
+        "Données d'identification : adresse e-mail, prénom, nom.",
+        "Données applicatives : noms de vos applications et de vos appareils, jetons d'appareil, contenu et métadonnées des notifications, périodes blanches, préférence de langue.",
         "Tokens push (Firebase Cloud Messaging) nécessaires à la distribution des notifications.",
         "Données techniques : journaux de connexion strictement nécessaires à la sécurité.",
       ],
@@ -103,7 +103,7 @@ const FR: AboutCopy = {
         'Les communications sont chiffrées via HTTPS/TLS.',
         'Les mots de passe sont hachés avec un algorithme irréversible (PBKDF2).',
         "L'authentification repose sur des jetons JWT à durée de vie limitée.",
-        "Les tokens applicatifs ne sont affichés qu'une seule fois et stockés hachés côté serveur.",
+        "Les jetons applicatifs ne sont affichés qu'une seule fois et stockés hachés côté serveur.",
       ],
     },
     {

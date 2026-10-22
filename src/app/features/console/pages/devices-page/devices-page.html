@@ -15,7 +15,7 @@
 
   <div class="ph-toolbar">
     <div class="console-resource-header__badges ph-toolbar__left">
-      <p-tag [value]="devicesTotal() + ' ' + copy().countLabel" severity="secondary" />
+      <p-tag [value]="devicesTotal() | countLabel: counts().devices" severity="secondary" />
     </div>
     <div class="ph-toolbar__right">
       <p-button [label]="copy().downloadAndroid" icon="pi pi-android" severity="secondary" [loading]="apkDownloading()" (onClick)="downloadAndroidApp()" />
@@ -80,8 +80,8 @@
                 <strong>{{ device.device_name }}</strong>
               </a>
             </td>
-            <td>{{ device.platform }}</td>
-            <td><p-tag [value]="device.push_token_status" [severity]="statusSeverity(device.push_token_status)" /></td>
+            <td>{{ device.platform | statusLabel: 'platform' }}</td>
+            <td><p-tag [value]="device.push_token_status | statusLabel: 'pushToken'" [severity]="statusSeverity(device.push_token_status)" /></td>
             <td>{{ deviceApplicationNames(device) }}</td>
             <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().never }}</td>
             <td class="console-table__actions">

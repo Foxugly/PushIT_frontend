@@ -9,6 +9,7 @@ import { TagModule } from 'primeng/tag';
 import { NotificationRead, NotificationStatus } from '../../../../core/models/api.models';
 import { AppCopyService } from '../../../../core/services/app-copy.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelService } from '../../../../core/i18n/status-labels';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { interpolate } from '../../../../core/utils/string.utils';
@@ -41,11 +42,11 @@ export interface DashboardMetric {
 export class DashboardHomePage implements OnInit {
   private readonly appCopy = inject(AppCopyService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   private readonly api = inject(PushitApiService);
   private readonly destroyRef = inject(DestroyRef);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.appCopy.current().console.dashboard);
-  readonly statusLabels = computed(() => this.consoleCopy.current().notifications.statusLabels);
   readonly activeAppsCount = computed(() => this.shell.apps().filter((app) => app.is_active).length);
 
   readonly recent = signal<NotificationRead[]>([]);
@@ -152,7 +153,7 @@ export class DashboardHomePage implements OnInit {
   }
 
   statusLabel(status: NotificationStatus): string {
-    return this.statusLabels()[status] ?? status;
+    return this.statusLabels.label('notification', status);
   }
 
   statusSeverity(status: NotificationStatus): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {

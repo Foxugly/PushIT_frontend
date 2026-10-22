@@ -5,7 +5,7 @@
     </a>
     <div slot="right" class="ph-actions">
       @if (application(); as app) {
-        <p-tag [value]="app.is_active ? copy().statusLabels.active : copy().statusLabels.inactive" [severity]="appSeverity(app)" />
+        <p-tag [value]="(app.is_active ? 'active' : 'inactive') | statusLabel: 'application'" [severity]="appSeverity(app)" />
       }
     </div>
   </app-page-header>
@@ -231,7 +231,7 @@
               <article class="console-detail-panel console-detail-panel--wide">
                 <div class="application-detail-section__header">
                   <h3>{{ copy().devicesTitle }}</h3>
-                  <p-tag [value]="devices().length + ' devices'" severity="info" />
+                  <p-tag [value]="devices().length | countLabel: counts().devices" severity="info" />
                 </div>
                 @if (devices().length) {
                   <p-table [value]="devices()" styleClass="p-datatable-sm application-detail-table">
@@ -251,9 +251,9 @@
                             <strong>{{ device.device_name }}</strong>
                           </a>
                         </td>
-                        <td>{{ device.platform }}</td>
+                        <td>{{ device.platform | statusLabel: 'platform' }}</td>
                         <td>
-                          <p-tag [value]="device.push_token_status" [severity]="deviceSeverity(device.push_token_status)" />
+                          <p-tag [value]="device.push_token_status | statusLabel: 'pushToken'" [severity]="deviceSeverity(device.push_token_status)" />
                         </td>
                         <td>{{ device.last_seen_at ? (device.last_seen_at | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.never }}</td>
                         <td class="console-table__actions">
@@ -432,7 +432,7 @@
                 <div class="application-detail-section__header">
                   <h3>{{ copy().notificationsTitle }}</h3>
                   <div class="application-detail-email__actions">
-                    <p-tag [value]="(notifications().length + futureNotifications().length) + ' notifications'" severity="contrast" />
+                    <p-tag [value]="notifications().length + futureNotifications().length | countLabel: counts().notifications" severity="contrast" />
                     <p-button
                       icon="pi pi-plus"
                       severity="success"
@@ -465,7 +465,7 @@
                         </td>
                         <td>{{ isFutureNotification(notification) ? copy().notificationTypes.future : copy().notificationTypes.history }}</td>
                         <td>
-                          <p-tag [value]="notification.status" [severity]="notificationSeverity(notification.status)" />
+                          <p-tag [value]="notification.status | statusLabel: 'notification'" [severity]="notificationSeverity(notification.status)" />
                         </td>
                         <td>{{ notification.effective_scheduled_for ? (notification.effective_scheduled_for | date: 'dd/MM/yyyy HH:mm') : copy().statusLabels.immediate }}</td>
                         <td class="console-table__actions">
@@ -498,7 +498,7 @@
                 <div class="application-detail-section__header">
                   <h3>{{ copy().quietPeriodsTitle }}</h3>
                   <div class="application-detail-email__actions">
-                    <p-tag [value]="quietPeriods().length + ' périodes'" severity="warn" />
+                    <p-tag [value]="quietPeriods().length | countLabel: counts().quietPeriods" severity="warn" />
                     <p-button
                       icon="pi pi-plus"
                       severity="success"
@@ -520,10 +520,10 @@
                         </div>
                         <div class="application-detail-list__meta">
                           <p-tag
-                            [value]="quietPeriod.period_type === 'ONCE' ? copy().statusLabels.once : copy().statusLabels.recurring"
+                            [value]="quietPeriod.period_type | statusLabel: 'quietPeriodType'"
                             [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
                           />
-                          <p-tag [value]="quietPeriod.is_active ? 'active' : 'inactive'" [severity]="quietPeriod.is_active ? 'success' : 'secondary'" />
+                          <p-tag [value]="(quietPeriod.is_active ? 'active' : 'inactive') | statusLabel: 'quietPeriod'" [severity]="quietPeriod.is_active ? 'success' : 'secondary'" />
                         </div>
                       </div>
                     }

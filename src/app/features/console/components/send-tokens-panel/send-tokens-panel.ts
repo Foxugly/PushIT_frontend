@@ -11,6 +11,7 @@ import { finalize } from 'rxjs';
 import { ApiErrorResponse, ApplicationRead, SendToken } from '../../../../core/models/api.models';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelPipe } from '../../../../core/i18n/status-labels';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
@@ -37,6 +38,7 @@ const REVEAL_TTL_MS = 20_000;
     FormsModule,
     AppAlert,
     ApiErrorMessagePipe,
+    StatusLabelPipe,
     ButtonModule,
     InputTextModule,
     TableModule,

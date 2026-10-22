@@ -139,7 +139,7 @@ describe('DashboardHomePage', () => {
     const element = fixture.nativeElement as HTMLElement;
     const recentBlock = element.querySelector('[data-testid="dashboard-recent"]')!;
     expect(recentBlock.textContent).toContain('Porte ouverte');
-    expect(recentBlock.textContent).toContain('envoyée');
+    expect(recentBlock.textContent).toContain('Envoyée');
     expect(recentBlock.querySelectorAll('.dashboard-home__feed-item--failed').length).toBe(1);
     expect(recentBlock.querySelector('a[href="/dashboard/notifications/1"]')).not.toBeNull();
 

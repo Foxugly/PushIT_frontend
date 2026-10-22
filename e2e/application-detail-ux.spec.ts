@@ -92,7 +92,7 @@ test.describe('Aperçu › Prochaines étapes', () => {
     await expect(steps.getByTestId('next-step-email')).toContainText('apt_alias10@pushit.com');
     // The token prefix now lives on the API tab only, not in the page header.
     await expect(page.locator('app-page-header')).not.toContainText('apt_102345678');
-    await expect(page.getByText('Préfixe token')).toBeHidden();
+    await expect(page.getByText('Préfixe du jeton')).toBeHidden();
     await expect(page.getByRole('heading', { name: 'Statut' })).toHaveCount(0);
     // Name/description, logo, activation and the danger zone stay on the overview.
     await expect(page.getByTestId('app-settings-form')).toBeVisible();
@@ -138,7 +138,7 @@ test.describe('Aperçu › Prochaines étapes', () => {
 });
 
 test.describe('« E-mail » and « API / développeurs » tabs', () => {
-  test('the e-mail tab holds the address, « Mails reçus » then the sender policy; the API tab the tokens', async ({
+  test('the e-mail tab holds the address, « E-mails reçus » then the sender policy; the API tab the tokens', async ({
     page,
   }) => {
     await setup(page);
@@ -152,7 +152,7 @@ test.describe('« E-mail » and « API / développeurs » tabs', () => {
     const policy = emailPanel.getByTestId('inbound-sender-policy');
     await expect(journal).toBeVisible();
     await expect(policy).toBeVisible();
-    // « Mails reçus » sits above the sender policy.
+    // « E-mails reçus » sits above the sender policy.
     const journalBox = await journal.boundingBox();
     const policyBox = await policy.boundingBox();
     expect(journalBox!.y).toBeLessThan(policyBox!.y);

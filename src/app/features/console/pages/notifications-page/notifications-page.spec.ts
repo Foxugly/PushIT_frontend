@@ -119,6 +119,11 @@ describe('NotificationsPage', () => {
 
     const consoleCopy = {
       current: signal({
+        // Shared enum labels (StatusLabelService), read from the console root.
+        statusLabels: {
+          notification: { draft: 'Brouillon', sent: 'Envoyée', failed: 'Échec', scheduled: 'Planifiée', shifted: 'Reportée' },
+          platform: { android: 'Android', ios: 'iPhone' },
+        },
         notifications: {
           title: 'Notifications',
           history: 'Historique',
@@ -199,17 +204,6 @@ describe('NotificationsPage', () => {
             goToBilling: 'Aller a la facturation',
           },
           confirmDelete: 'Supprimer {title} ?',
-          statusLabels: {
-            draft: 'draft',
-            scheduled: 'scheduled',
-            queued: 'queued',
-            processing: 'processing',
-            sent: 'sent',
-            partial: 'partial',
-            failed: 'failed',
-            no_target: 'no_target',
-            shifted: 'shifted',
-          },
           typeLabels: {
             future: 'Future',
             history: 'Historique',
@@ -295,7 +289,7 @@ describe('NotificationsPage', () => {
 
     expect(component.availableDeviceOptions()).toEqual([
       {
-        label: 'iPhone de Renaud (ios)',
+        label: 'iPhone de Renaud (iPhone)',
         value: 201,
       },
     ]);
@@ -609,8 +603,8 @@ describe('NotificationsPage', () => {
       );
       expect(chips.map((chip) => chip.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
         'Toutes 2',
-        'draft 1',
-        'scheduled 1',
+        'Brouillon 1',
+        'Planifiée 1',
       ]);
       expect(chips[0].getAttribute('aria-pressed')).toBe('true');
 
