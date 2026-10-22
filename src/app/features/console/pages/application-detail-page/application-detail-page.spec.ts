@@ -489,6 +489,50 @@ describe('ApplicationDetailPage', () => {
     expect(button?.textContent).toContain('Ajouter une période blanche');
   });
 
+  describe('overview layout', () => {
+    it('lays the cards out in pairs: next steps | metrics, details | logo, state | danger zone', () => {
+      fixture.detectChanges();
+      const grid = (fixture.nativeElement as HTMLElement).querySelector(
+        '[data-testid="overview-grid"]',
+      );
+      const cards = Array.from(grid?.children ?? []).map((card) => card.getAttribute('data-testid'));
+
+      expect(cards).toEqual([
+        'next-steps',
+        'overview-metrics',
+        'overview-details',
+        'overview-logo',
+        'overview-state',
+        'danger-zone',
+      ]);
+      // None of the six spans the whole row: each row holds two cards.
+      expect(grid?.querySelectorAll(':scope > .console-detail-panel--wide').length).toBe(0);
+    });
+
+    it('groups the three counters in one metrics card', () => {
+      fixture.detectChanges();
+      const metrics = (fixture.nativeElement as HTMLElement).querySelector(
+        '[data-testid="overview-metrics"]',
+      );
+      for (const id of ['counter-devices', 'counter-notifications', 'counter-last-send']) {
+        expect(metrics?.querySelector(`[data-testid="${id}"]`)).not.toBeNull();
+      }
+    });
+
+    it('puts the legacy warning above the pairs, across the whole row', () => {
+      fixture.detectChanges();
+      component.application.set(
+        makeApplication({ legacy_send_last_used_at: '2026-07-29T10:00:00Z' }),
+      );
+      fixture.detectChanges();
+      const first = (fixture.nativeElement as HTMLElement).querySelector(
+        '[data-testid="overview-grid"] > :first-child',
+      );
+      expect(first?.classList.contains('console-detail-panel--wide')).toBe(true);
+      expect(first?.querySelector('app-alert')).not.toBeNull();
+    });
+  });
+
   describe('overview « Prochaines étapes »', () => {
     it('replaces the facts table and the token tag with next steps', () => {
       fixture.detectChanges();

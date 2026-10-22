@@ -41,16 +41,17 @@
         </p-tablist>
 
         <p-tabpanels>
-          <!-- Aperçu : prochaines étapes, chiffres, informations modifiables, logo, état, zone de danger -->
+          <!-- Aperçu, deux colonnes (une seule sous 1024 px, même ordre) :
+               prochaines étapes | chiffres ; informations | logo ; état | zone de danger -->
           <p-tabpanel value="overview">
-            <div class="console-detail-grid">
+            <div class="console-detail-grid application-overview" data-testid="overview-grid">
               @if (stillSendsWithLegacyToken()) {
                 <article class="console-detail-panel console-detail-panel--wide">
                   <app-alert [message]="copy().legacyWarning" tone="danger" />
                 </article>
               }
 
-              <article class="console-detail-panel console-detail-panel--wide" data-testid="next-steps">
+              <article class="console-detail-panel application-overview__next-steps" data-testid="next-steps">
                 <h3>{{ copy().nextSteps.title }}</h3>
                 <ol class="application-next-steps">
                   <li class="application-next-steps__item" [class.application-next-steps__item--done]="devices().length > 0" data-testid="next-step-enrol">
@@ -110,7 +111,7 @@
                 </ol>
               </article>
 
-              <article class="console-detail-panel console-detail-panel--wide">
+              <article class="console-detail-panel application-overview__metrics" data-testid="overview-metrics">
                 <div class="application-detail-counters">
                   <div class="application-detail-counter" data-testid="counter-devices">
                     <span class="application-detail-counter__label">{{ copy().counters.devices }}</span>
@@ -127,7 +128,7 @@
                 </div>
               </article>
 
-              <article class="console-detail-panel console-detail-panel--wide">
+              <article class="console-detail-panel" data-testid="overview-details">
                 <h3>{{ copy().settings.detailsTitle }}</h3>
                 <form class="console-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()" data-testid="app-settings-form">
                   <app-application-form-fields
@@ -156,7 +157,7 @@
                 </form>
               </article>
 
-              <article class="console-detail-panel console-detail-panel--wide">
+              <article class="console-detail-panel" data-testid="overview-logo">
                 <div class="app-logo-field">
                   <span class="app-logo-field__label">{{ copy().logo.label }}</span>
                   <div class="app-logo-field__row">
@@ -183,7 +184,7 @@
                 </div>
               </article>
 
-              <article class="console-detail-panel console-detail-panel--wide">
+              <article class="console-detail-panel" data-testid="overview-state">
                 <div class="application-detail-section__header">
                   <div>
                     <h3>{{ copy().settings.stateTitle }}</h3>
@@ -200,7 +201,7 @@
                 </div>
               </article>
 
-              <article class="console-detail-panel console-detail-panel--wide application-detail-danger" data-testid="danger-zone">
+              <article class="console-detail-panel application-detail-danger" data-testid="danger-zone">
                 <div class="application-detail-section__header">
                   <div>
                     <h3>{{ copy().danger.title }}</h3>

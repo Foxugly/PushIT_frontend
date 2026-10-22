@@ -136,8 +136,13 @@ test.describe('phone layout (390 px)', () => {
       await page.goto(url);
       await expect(page.locator('.console-shell__main').locator('h1, h2').first()).toBeVisible();
       await page.waitForLoadState('networkidle');
-      const { scrollWidth, clientWidth } = await horizontalOverflow(page);
-      expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+      // Polled: late renders (counters, lists filled after networkidle) may still widen the page.
+      await expect
+        .poll(async () => {
+          const { scrollWidth, clientWidth } = await horizontalOverflow(page);
+          return scrollWidth - clientWidth;
+        })
+        .toBeLessThanOrEqual(0);
     });
   }
 

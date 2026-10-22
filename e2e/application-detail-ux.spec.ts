@@ -190,3 +190,63 @@ test('« Ajouter une période blanche » opens the create dialog on this applica
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText('Backoffice')).toBeVisible();
 });
+
+test.describe('Aperçu › layout', () => {
+  const CARDS = [
+    'next-steps',
+    'overview-metrics',
+    'overview-details',
+    'overview-logo',
+    'overview-state',
+    'danger-zone',
+  ];
+
+  async function boxes(page: Page) {
+    await setup(page);
+    await page.goto('/dashboard/applications/10');
+    await expect(page.getByTestId('danger-zone')).toBeVisible();
+    return Promise.all(
+      CARDS.map(async (id) => {
+        const box = await page.getByTestId(id).boundingBox();
+        expect(box, id).not.toBeNull();
+        return box!;
+      }),
+    );
+  }
+
+  test('desktop: three rows of two cards (next steps | metrics, details | logo, state | danger)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const b = await boxes(page);
+
+    for (let row = 0; row < 3; row++) {
+      const [left, right] = [b[row * 2], b[row * 2 + 1]];
+      expect(Math.abs(left.y - right.y), `row ${row + 1} top`).toBeLessThan(2);
+      expect(left.x + left.width, `row ${row + 1} order`).toBeLessThanOrEqual(right.x);
+      if (row > 0) expect(left.y).toBeGreaterThan(b[row * 2 - 2].y);
+    }
+    // The three counters sit in the metrics card.
+    const metrics = page.getByTestId('overview-metrics');
+    await expect(metrics.getByTestId('counter-devices')).toBeVisible();
+    await expect(metrics.getByTestId('counter-notifications')).toBeVisible();
+    await expect(metrics.getByTestId('counter-last-send')).toBeVisible();
+  });
+
+  test('phone: one column, same order, no sideways scroll', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const b = await boxes(page);
+
+    for (let i = 1; i < b.length; i++) {
+      expect(Math.abs(b[i].x - b[0].x), CARDS[i]).toBeLessThan(2);
+      expect(b[i].y, CARDS[i]).toBeGreaterThan(b[i - 1].y + b[i - 1].height - 1);
+    }
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        ),
+      )
+      .toBeLessThanOrEqual(0);
+  });
+});
