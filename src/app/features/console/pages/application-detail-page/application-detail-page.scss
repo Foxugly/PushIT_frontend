@@ -264,3 +264,66 @@
     }
   }
 }
+
+// Aperçu : trois rangées de deux cartes — prochaines étapes | chiffres,
+// informations | logo, état | zone de danger. La colonne de droite (chiffres,
+// logo, boutons courts) est un peu plus étroite. Sous 1024 px (breakpoint de la
+// console), une seule colonne dans le même ordre ; `minmax(0, …)` pour que rien
+// ne force de défilement horizontal.
+.application-overview {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+}
+
+// Cartes d'une même rangée à la même hauteur, contenu calé en haut.
+.application-overview > .console-detail-panel {
+  align-content: start;
+}
+
+// Sans « Prochaines étapes », la carte des chiffres prend toute la rangée.
+.application-overview:not(:has(> .application-overview__next-steps)) > .application-overview__metrics {
+  grid-column: 1 / -1;
+}
+
+// Les chiffres s'empilent quand leur carte est étroite (colonne de droite) et
+// repassent côte à côte quand elle s'élargit (rangée entière, une colonne).
+.application-overview > .application-overview__metrics {
+  container-type: inline-size;
+  align-content: stretch;
+
+  .application-detail-counter {
+    align-content: center;
+  }
+}
+
+// Dans la colonne de gauche, le bouton de chaque étape passe sous le texte
+// dès que la carte est trop étroite pour les deux.
+.application-overview__next-steps {
+  container-type: inline-size;
+}
+
+@container (max-width: 42rem) {
+  .application-overview__next-steps .application-next-steps__item {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    > p-button {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+}
+
+@container (max-width: 30rem) {
+  .application-overview__metrics .application-detail-counters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.application-overview .application-detail-section__header {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .application-overview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
