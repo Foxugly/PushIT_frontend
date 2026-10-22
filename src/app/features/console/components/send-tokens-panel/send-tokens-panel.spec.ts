@@ -52,8 +52,6 @@ describe('SendTokensPanel', () => {
           createdNotice: 'Copiez ce jeton maintenant.',
           createdDone: 'J ai copie',
           table: { name: 'Nom', prefix: 'Prefixe', lastUsed: 'Dernier usage', status: 'Statut', actions: 'Actions' },
-          activeLabel: 'actif',
-          revokedLabel: 'revoque',
           never: 'Jamais',
           reveal: 'Revoir',
           revealHint: 'Re-saisissez votre mot de passe.',

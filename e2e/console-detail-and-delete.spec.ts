@@ -87,8 +87,8 @@ test('application detail view renders linked devices and notifications', async (
   await expect(page.getByTestId('counter-devices')).toContainText('2');
   await expect(page.getByTestId('counter-notifications')).toContainText('1');
 
-  await page.getByRole('tab', { name: 'Destinataires' }).click();
-  await expect(page.getByRole('heading', { name: 'Devices' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Appareils' }).click();
+  await expect(page.getByRole('heading', { name: 'Appareils abonnés' })).toBeVisible();
   await expect(page.getByText('iPhone Marie')).toBeVisible();
 
   await page.getByRole('tab', { name: 'Notifications' }).click();
@@ -152,7 +152,7 @@ test('the owner evicts a subscriber from the application', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Confirmation' })).toBeVisible();
   await page.getByRole('button', { name: 'Confirmer' }).click();
 
-  await expect(page.getByText("Terminal retiré de l'application.")).toBeVisible();
+  await expect(page.getByText("Appareil retiré de l'application.")).toBeVisible();
   await expect(page.locator('tr', { hasText: 'iPhone Marie' })).toHaveCount(0);
   // Rotating the enrolment code is the companion gesture — the page says so.
   await expect(page.getByText("changez aussi le code", { exact: false })).toBeVisible();
@@ -162,7 +162,7 @@ test('notification detail view renders targeted devices', async ({ page }) => {
   await page.goto('/dashboard/notifications/30');
 
   await expect(page.getByRole('heading', { name: 'Promo flash' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Devices ciblés' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Appareils ciblés' })).toBeVisible();
   await expect(page.getByText('iPhone Marie')).toBeVisible();
   await expect(page.getByText('Pixel QA')).toBeVisible();
 });
@@ -223,9 +223,9 @@ test("a subscriber's device detail is read-only", async ({ page }) => {
   await page.goto('/dashboard/devices/21');
 
   await expect(page.getByTestId('device-read-only')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Éditer le device' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: "Modifier l'appareil" })).toHaveCount(0);
 
   await page.goto('/dashboard/devices/20');
-  await expect(page.getByRole('button', { name: 'Éditer le device' })).toBeVisible();
+  await expect(page.getByRole('button', { name: "Modifier l'appareil" })).toBeVisible();
   await expect(page.getByTestId('device-read-only')).toHaveCount(0);
 });

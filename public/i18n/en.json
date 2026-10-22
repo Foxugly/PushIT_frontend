@@ -54,7 +54,7 @@
           "items": [
             "List, inspect, update and delete visible devices.",
             "Show which applications a device is linked to.",
-            "Automatically link a device through X-App-Token.",
+            "Automatically subscribe a device with its application token (X-App-Token).",
             "Support the mobile flow: install, QR scan, retrieve push token and create or update the backend link."
           ]
         },
@@ -64,14 +64,14 @@
             "Create targeted notifications by application and explicit device list.",
             "List, inspect, send manually and monitor notification statistics.",
             "Manage future notifications: list, inspect, update and delete.",
-            "Filter by application, status and effective send date, including partial delivery handling and `effective_scheduled_for`."
+            "Filter by application, status and send date, taking partial sends and quiet-period postponements into account."
           ]
         },
         {
           "title": "Quiet period capabilities",
           "items": [
             "Manage quiet periods at application or device level.",
-            "Support ONCE and RECURRING periods, with update, delete and activation.",
+            "One-off or recurring periods, with update, delete and activation.",
             "Handle windows crossing midnight and contiguous windows.",
             "Reflect the distinct business impact: global notification shift for applications, device-only delivery delay for devices."
           ]
@@ -228,7 +228,7 @@
         "tokenEyebrow": "Token generated",
         "copyButton": "Copy",
         "dismissButton": "Hide",
-        "tokenNote": "The raw token is only visible once. Server-side storage only.",
+        "tokenNote": "The token is only shown once: the server only keeps a fingerprint of it.",
         "admin": {
           "label": "Administration",
           "description": "Monitor backend health and open the Django admin."
@@ -256,7 +256,7 @@
         },
         {
           "label": "Devices",
-          "description": "Inspect and update linked devices.",
+          "description": "View and update subscribed devices.",
           "icon": "pi pi-mobile",
           "link": "/dashboard/devices",
           "countKey": "devices"
@@ -270,7 +270,7 @@
         },
         {
           "label": "Quiet periods",
-          "description": "Control application and device quiet windows.",
+          "description": "Pause sending during set hours, per application or per device.",
           "icon": "pi pi-moon",
           "link": "/dashboard/quiet-periods",
           "countKey": "quietPeriods"
@@ -331,7 +331,7 @@
         "title": "My account",
         "accountTitle": "Account",
         "email": "Email address",
-        "fallbackEmail": "Email unavailable",
+        "fallbackEmail": "Email address unavailable",
         "userkey": "User key",
         "copyUserkey": "Copy the user key",
         "userkeyCopied": "User key copied.",
@@ -349,7 +349,7 @@
           "dialogIntro": "This cannot be undone. The applications you own are deleted for everyone, subscribers included, with all their data:",
           "dialogItems": [
             "notifications and their delivery history;",
-            "links with subscribed devices;",
+            "device subscriptions;",
             "templates;",
             "send tokens."
           ],
@@ -404,12 +404,12 @@
       "stepsTitle": "How to delete your account",
       "steps": [
         "Sign in to the console at https://pushit.foxugly.com, with the same account as in the mobile app.",
-        "Open “Settings”.",
-        "In the “Delete my account” section, enter your current password and click “Delete my account”.",
+        "Open “My account”.",
+        "In the “Danger zone” section, enter your current password and click “Delete my account”.",
         "Confirm. Deletion is immediate."
       ],
       "forgotPassword": "Forgot your password? Reset it first from the sign-in page.",
-      "openConsole": "Open settings",
+      "openConsole": "Open My account",
       "deletedTitle": "Data deleted",
       "deleted": [
         "Your account: email address, password and preferences.",
@@ -428,6 +428,70 @@
     }
   },
   "console": {
+    "statusLabels": {
+      "notification": {
+        "draft": "Draft",
+        "scheduled": "Scheduled",
+        "queued": "Queued",
+        "processing": "Sending",
+        "sent": "Sent",
+        "partial": "Partly sent",
+        "failed": "Failed",
+        "no_target": "No device targeted",
+        "shifted": "Postponed"
+      },
+      "delivery": {
+        "pending": "Pending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "pushToken": {
+        "active": "Active",
+        "invalid": "Invalid token",
+        "revoked": "Revoked"
+      },
+      "platform": {
+        "android": "Android",
+        "ios": "iPhone"
+      },
+      "application": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "quietPeriod": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "quietPeriodType": {
+        "ONCE": "One-off",
+        "RECURRING": "Recurring"
+      },
+      "sendToken": {
+        "active": "Active",
+        "revoked": "Revoked"
+      },
+      "inboundEmail": {
+        "created": "Notification created",
+        "existing": "Duplicate ignored",
+        "rejected": "Refused",
+        "conflict": "Conflict",
+        "error": "Error"
+      }
+    },
+    "counts": {
+      "devices": {
+        "one": "{count} device",
+        "other": "{count} devices"
+      },
+      "notifications": {
+        "one": "{count} notification",
+        "other": "{count} notifications"
+      },
+      "quietPeriods": {
+        "one": "{count} quiet period",
+        "other": "{count} quiet periods"
+      }
+    },
     "applications": {
       "title": "Application management",
       "total": "Total",
@@ -437,14 +501,10 @@
       "empty": "No applications for this account.",
       "loading": "Loading application...",
       "noDescription": "No description.",
-      "statuses": {
-        "active": "active",
-        "inactive": "inactive"
-      },
       "table": {
         "name": "Name",
         "description": "Description",
-        "prefix": "Prefix",
+        "prefix": "Token prefix",
         "status": "Status",
         "createdAt": "Created",
         "actions": "Actions"
@@ -520,13 +580,12 @@
       }
     },
     "devices": {
-      "title": "Device inventory and linking",
-      "countLabel": "devices",
+      "title": "Devices",
       "refresh": "Refresh",
       "add": "Add",
       "downloadAndroid": "Android app",
       "downloadAndroidError": "The Android app could not be downloaded.",
-      "empty": "No linked devices for this account.",
+      "empty": "No devices for this account.",
       "loading": "Loading devices...",
       "none": "none",
       "never": "Never",
@@ -537,7 +596,7 @@
         "applications": "Applications",
         "lastActivity": "Last activity",
         "actions": "Actions",
-        "prefix": "Prefix",
+        "prefix": "Token prefix",
         "status": "Status",
         "createdAt": "Created"
       },
@@ -556,8 +615,8 @@
         "editTitle": "Edit device"
       },
       "createForm": {
-        "appToken": "X-App-Token",
-        "appTokenPlaceholder": "Paste the raw token here",
+        "appToken": "Application token (X-App-Token)",
+        "appTokenPlaceholder": "Paste the token here",
         "deviceName": "Device name",
         "deviceNamePlaceholder": "Marie iPhone",
         "platform": "Platform",
@@ -570,7 +629,7 @@
         "linked": "Device {deviceId} linked to application {applicationId}."
       },
       "errors": {
-        "missingAppToken": "Provide an X-App-Token to link a device.",
+        "missingAppToken": "Provide an application token (X-App-Token) to link a device.",
         "invalidId": "Invalid device id.",
         "loading": "Loading device..."
       },
@@ -586,22 +645,22 @@
       }
     },
     "notifications": {
-      "title": "User notifications",
+      "title": "My notifications",
       "history": "History",
       "future": "Future",
-      "shifted": "Shifted",
+      "shifted": "Postponed",
       "refresh": "Refresh",
       "add": "Add",
       "empty": "No notifications for these filters.",
       "loading": "Loading notifications...",
-      "immediate": "immediate",
+      "immediate": "Immediate",
       "scheduledSubtext": "Scheduled",
       "filters": {
         "application": "Application",
         "device": "Device",
         "status": "Status",
-        "from": "Effective from",
-        "to": "Effective to",
+        "from": "Sending from",
+        "to": "Sending until",
         "allApps": "All",
         "allDevices": "All",
         "allStatuses": "All",
@@ -615,7 +674,7 @@
         "application": "Application",
         "message": "Message",
         "status": "Status",
-        "effective": "Effective",
+        "effective": "Send date",
         "actions": "Actions"
       },
       "actions": {
@@ -638,7 +697,7 @@
         "applicationPlaceholder": "Choose...",
         "devices": "Target devices",
         "devicesPlaceholder": "Choose one or more devices",
-        "devicesHelp": "Only active devices linked to the selected application are offered.",
+        "devicesHelp": "Only active devices subscribed to the selected application are offered.",
         "title": "Title",
         "titlePlaceholder": "Weekend promo",
         "message": "Message",
@@ -657,17 +716,6 @@
         "goToBilling": "Go to billing"
       },
       "confirmDelete": "Delete future notification \"{title}\"?",
-      "statusLabels": {
-        "draft": "draft",
-        "scheduled": "scheduled",
-        "queued": "queued",
-        "processing": "processing",
-        "sent": "sent",
-        "partial": "partial",
-        "failed": "failed",
-        "no_target": "no target",
-        "shifted": "shifted"
-      },
       "typeLabels": {
         "future": "Future",
         "history": "History"
@@ -694,7 +742,7 @@
       }
     },
     "quietPeriods": {
-      "title": "Quiet window management",
+      "title": "Quiet periods",
       "refresh": "Refresh",
       "add": "Add",
       "empty": "No quiet periods configured.",
@@ -722,16 +770,6 @@
       "scopeLabels": {
         "application": "Application",
         "device": "Device"
-      },
-      "typeLabels": {
-        "once": "One-time",
-        "recurring": "Recurring",
-        "badgeOnce": "once",
-        "badgeRecurring": "recurring"
-      },
-      "statusLabels": {
-        "active": "active",
-        "inactive": "inactive"
       },
       "form": {
         "target": "Target",
@@ -780,7 +818,7 @@
         "differentEndTime": "End time must differ from start time."
       },
       "readOnly": "Read-only",
-      "readOnlyHint": "Quiet window of a subscriber device: only the device owner can change it.",
+      "readOnlyHint": "Quiet period of a subscriber's device: only its owner can change it.",
       "emptyState": {
         "title": "No quiet periods",
         "message": "A quiet period holds notifications back during a time slot (at night, at the weekend…).",
@@ -822,8 +860,6 @@
         "status": "Status",
         "actions": "Actions"
       },
-      "activeLabel": "active",
-      "revokedLabel": "revoked",
       "never": "Never",
       "reveal": "Show the token again",
       "revealHint": "Re-enter your password: an open session is not enough to re-read a secret.",
@@ -846,7 +882,7 @@
       "stay": "Stay"
     },
     "inboundSenderPolicy": {
-      "title": "Who can send by e-mail",
+      "title": "Who can send by email",
       "intro": "Choose which addresses may create a notification by writing to the inbound address.",
       "modeLabel": "Accepted senders",
       "modeOwner": "Owner only",
@@ -859,24 +895,24 @@
       "listHint": "One entry per line: an address (alice@example.com), a domain (@example.com) or a domain and its subdomains (@*.example.com).",
       "blocklistHint": "Blocking never applies to your own address.",
       "listPlaceholder": "alice@example.com\n@example.com\n@*.example.com",
-      "rejectionTitle": "When a mail is refused",
-      "notifyEmail": "Notify me by e-mail",
+      "rejectionTitle": "When an email is refused",
+      "notifyEmail": "Notify me by email",
       "notifyPush": "Notify me by push notification",
       "replyToSender": "Reply to the sender",
       "replyWarning": "Not recommended: the sender may be forged, and the reply would then hit an innocent party (backscatter).",
       "invalidEntries": "Invalid entries: {entries}",
       "save": "Save",
       "saving": "Saving…",
-      "saved": "Inbound e-mail rules saved.",
+      "saved": "Inbound email rules saved.",
       "formatsLabel": "Accepted formats",
       "formatsHelp": "alice@example.com: one specific address · @example.com: the whole example.com domain (without subdomains) · @*.example.com: the domain and all its subdomains (mail.example.com…)"
     },
     "inboundEmailLog": {
-      "title": "Received e-mails",
-      "intro": "The last 50 e-mails received at this application's address, newest first.",
+      "title": "Received emails",
+      "intro": "The last 50 emails received at this application's address, newest first.",
       "refresh": "Refresh",
-      "loading": "Loading received e-mails…",
-      "empty": "No e-mail received yet",
+      "loading": "Loading received emails…",
+      "empty": "No email received yet",
       "noSubject": "(no subject)",
       "columns": {
         "date": "Date",
@@ -884,13 +920,6 @@
         "subject": "Subject",
         "status": "Status",
         "reason": "Reason"
-      },
-      "statuses": {
-        "created": "Notification created",
-        "existing": "Duplicate ignored",
-        "rejected": "Refused",
-        "conflict": "Conflict",
-        "error": "Error"
       },
       "reasons": {
         "sender_not_allowed": "Sender not allowed",
@@ -914,7 +943,7 @@
       "loading": "Loading application...",
       "descriptionTitle": "Description",
       "descriptionEmpty": "No description available for this application.",
-      "inboundEmailTitle": "Notification email address",
+      "inboundEmailTitle": "Application's email address",
       "inboundEmailLabel": "Email address",
       "inboundEmailCopy": "Copy address",
       "inboundEmailCopied": "Email address copied.",
@@ -925,14 +954,14 @@
         "subject": "The email subject becomes the notification title.",
         "body": "The plain text email content becomes the message.",
         "schedule": "Scheduling is possible with [SEND_AT:ISO_DATETIME] in the subject.",
-        "sender": "By default only the owner's address may send; see « Who can send by e-mail » below."
+        "sender": "By default only the owner's address may send; see “Who can send by email” below."
       },
-      "devicesTitle": "Linked devices",
+      "devicesTitle": "Subscribed devices",
       "enrolmentTitle": "Enrolment",
       "sendTokensTitle": "Send tokens",
       "examplesTitle": "Sending examples",
-      "legacyWarning": "This application has sent with the legacy app token, which is no longer accepted for sending since 2026-07-29. If a send fails with “app_token_retired”, create a send token below and swap it into your integration. Device enrolment keeps working.",
-      "devicesEmpty": "No devices linked to this application.",
+      "legacyWarning": "This application has sent with the legacy app token, which is no longer accepted for sending since 2026-07-29. If a send fails with “app_token_retired”, create a send token below and swap it into your integration. Device subscriptions keep working.",
+      "devicesEmpty": "No devices subscribed to this application.",
       "evict": {
         "button": "Remove from the application",
         "hint": "Removing a device stops sending to it. As long as it knows the enrolment code it can subscribe again — rotate the code as well.",
@@ -949,14 +978,14 @@
       "table": {
         "name": "Name",
         "platform": "Platform",
-        "pushStatus": "Push status",
+        "pushStatus": "Push token",
         "lastActivity": "Last activity",
-        "prefix": "Prefix",
+        "prefix": "Token prefix",
         "status": "Status",
         "createdAt": "Created",
         "title": "Title",
         "type": "Type",
-        "effective": "Effective",
+        "effective": "Send date",
         "actions": "Actions"
       },
       "facts": {
@@ -969,13 +998,9 @@
         "createdAt": "Created"
       },
       "statusLabels": {
-        "active": "Active",
-        "inactive": "Inactive",
         "never": "Never",
         "no": "No",
-        "immediate": "Immediate",
-        "once": "once",
-        "recurring": "recurring"
+        "immediate": "Immediate"
       },
       "notificationTypes": {
         "future": "Future",
@@ -1005,7 +1030,7 @@
         "loadError": "Couldn't load this image. Try a PNG or JPG — formats like HEIC (iPhone photos) aren't supported by the browser."
       },
       "regenerateEmail": {
-        "label": "Inbound email address",
+        "label": "Application's email address",
         "button": "Regenerate address",
         "pending": "Regenerating...",
         "hint": "Generates a new random address; the old one stops working.",
@@ -1014,15 +1039,15 @@
         "error": "Unable to regenerate the email address."
       },
       "aliasStatus": {
-        "title": "Verify inbound email alias",
-        "button": "Verify alias",
+        "title": "Check the inbound email address",
+        "button": "Check the address",
         "pending": "Verifying...",
-        "active": "Alias active",
-        "missing": "Alias missing",
-        "missingHint": "The alias does not exist on Exchange. Regenerate the address or contact ops.",
+        "active": "Address active",
+        "missing": "Address missing",
+        "missingHint": "The address does not exist on the mail server (Exchange). Regenerate the address or contact the ops team.",
         "unavailable": "Verification unavailable (Exchange not configured)",
         "unverifiable": "Unable to verify",
-        "error": "Unable to verify the alias."
+        "error": "Unable to check the address."
       },
       "errors": {
         "invalidId": "Invalid application id.",
@@ -1030,14 +1055,14 @@
       },
       "tabs": {
         "overview": "Overview",
-        "recipients": "Recipients",
+        "recipients": "Devices",
         "email": "Email",
         "api": "API / developers",
         "notifications": "Notifications",
         "quietPeriods": "Quiet periods"
       },
       "counters": {
-        "devices": "Linked devices",
+        "devices": "Subscribed devices",
         "notifications": "Notifications",
         "lastSend": "Last send"
       },
@@ -1106,14 +1131,12 @@
         "id": "ID",
         "name": "Name",
         "platform": "Platform",
-        "tokenStatus": "Token status",
+        "tokenStatus": "Push token status",
         "lastActivity": "Last activity",
         "createdAt": "Created"
       },
       "labels": {
-        "never": "Never",
-        "active": "active",
-        "inactive": "inactive"
+        "never": "Never"
       },
       "actions": {
         "view": "View details"
@@ -1151,15 +1174,15 @@
       "loading": "Loading notification...",
       "messageTitle": "Message",
       "devicesTitle": "Target devices",
-      "devicesEmpty": "No target device resolved for this notification.",
+      "devicesEmpty": "No device targeted by this notification.",
       "statusTitle": "Status",
-      "note": "`effective_scheduled_for` only reflects application quiet periods. Device quiet periods may delay a delivery without changing this date.",
+      "note": "The send date takes the application's quiet periods into account. A device's own quiet periods can still delay delivery to that device without changing this date.",
       "table": {
         "name": "Name",
         "platform": "Platform",
         "delivery": "Delivery",
         "opened": "Opened at",
-        "pushStatus": "Push status",
+        "pushStatus": "Push token",
         "lastActivity": "Last activity",
         "actions": "Actions"
       },
@@ -1170,12 +1193,10 @@
         "sentAt": "Sent at",
         "createdAt": "Created",
         "scheduledFor": "Requested for",
-        "effective": "Effective",
+        "effective": "Send date",
         "targetedDevices": "Target devices"
       },
       "labels": {
-        "scheduled": "Scheduled",
-        "shifted": "Shifted",
         "yes": "Yes",
         "no": "No",
         "notYet": "Not yet",

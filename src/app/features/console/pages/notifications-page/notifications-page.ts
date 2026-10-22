@@ -25,6 +25,7 @@ import {
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelService } from '../../../../core/i18n/status-labels';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PageHeader } from '../../../../shared/page-header/page-header';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
@@ -137,6 +138,7 @@ export class NotificationsPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   private readonly confirm = inject(AppConfirmService);
   private readonly messages = inject(MessageService);
   private readonly router = inject(Router);
@@ -193,7 +195,7 @@ export class NotificationsPage implements OnInit {
   // String values, like application_id: the id comes back from the URL as text.
   readonly deviceFilterOptions = computed(() =>
     this.devices().map((device) => ({
-      label: `${device.device_name} (${device.platform})`,
+      label: `${device.device_name} (${this.statusLabels.label('platform', device.platform)})`,
       value: String(device.id),
     })),
   );
@@ -225,9 +227,8 @@ export class NotificationsPage implements OnInit {
   /** One chip per status that has notifications (plus the active one), each a filter toggle. */
   readonly statusChips = computed(() => {
     const active = this.appliedFilters().status;
-    const labels = this.copy().statusLabels;
     return this.statusOptions
-      .map((status) => ({ status, label: labels[status], count: this.statusCount(status) }))
+      .map((status) => ({ status, label: this.statusLabels.label('notification', status), count: this.statusCount(status) }))
       .filter((chip) => chip.count > 0 || chip.status === active);
   });
 
@@ -270,7 +271,7 @@ export class NotificationsPage implements OnInit {
           device.application_ids.includes(applicationId),
       )
       .map((device) => ({
-        label: `${device.device_name} (${device.platform})`,
+        label: `${device.device_name} (${this.statusLabels.label('platform', device.platform)})`,
         value: device.id,
       }));
   });
@@ -741,9 +742,7 @@ export class NotificationsPage implements OnInit {
   }
 
   notificationStatusLabel(notification: NotificationRead): string {
-    return this.isShifted(notification)
-      ? this.copy().statusLabels.shifted
-      : this.copy().statusLabels[notification.status];
+    return this.statusLabels.label('notification', this.isShifted(notification) ? 'shifted' : notification.status);
   }
 
   notificationTypeLabel(notification: NotificationRead): string {

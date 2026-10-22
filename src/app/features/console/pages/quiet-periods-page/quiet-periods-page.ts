@@ -24,6 +24,7 @@ import {
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelPipe, StatusLabelService } from '../../../../core/i18n/status-labels';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PageHeader } from '../../../../shared/page-header/page-header';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
@@ -45,6 +46,7 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     ReactiveFormsModule,
     AppAlert,
     ApiErrorMessagePipe,
+    StatusLabelPipe,
     ConsoleDialogActions,
     EmptyState,
     RouterLink,
@@ -66,6 +68,7 @@ export class QuietPeriodsPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   private readonly confirm = inject(AppConfirmService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
@@ -83,8 +86,8 @@ export class QuietPeriodsPage implements OnInit {
       : []),
   ]);
   readonly periodTypeOptions = computed(() => [
-    { label: this.copy().typeLabels.once, value: 'ONCE' as QuietPeriodType },
-    { label: this.copy().typeLabels.recurring, value: 'RECURRING' as QuietPeriodType },
+    { label: this.statusLabels.label('quietPeriodType', 'ONCE'), value: 'ONCE' as QuietPeriodType },
+    { label: this.statusLabels.label('quietPeriodType', 'RECURRING'), value: 'RECURRING' as QuietPeriodType },
   ]);
   readonly weekdayOptions = computed<Array<{ label: string; value: Weekday }>>(() =>
     this.copy().weekdays.map((label, index) => ({ label, value: index as Weekday })),
@@ -128,7 +131,7 @@ export class QuietPeriodsPage implements OnInit {
     this.devices()
       .filter((device) => device.is_mine)
       .map((device) => ({
-        label: `${device.device_name} (${device.platform})`,
+        label: `${device.device_name} (${this.statusLabels.label('platform', device.platform)})`,
         value: device.id,
       })),
   );

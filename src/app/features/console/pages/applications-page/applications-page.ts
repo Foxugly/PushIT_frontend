@@ -10,6 +10,7 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { ApiErrorResponse, ApplicationRead } from '../../../../core/models/api.models';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelService } from '../../../../core/i18n/status-labels';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
@@ -40,6 +41,7 @@ import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel
 })
 export class ApplicationsPage {
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   private readonly router = inject(Router);
   readonly shell = inject(ConsoleShellService);
   readonly copy = computed(() => this.consoleCopy.current().applications);
@@ -108,7 +110,7 @@ export class ApplicationsPage {
   }
 
   appStatusLabel(app: ApplicationRead): string {
-    return app.is_active ? this.copy().statuses.active : this.copy().statuses.inactive;
+    return this.statusLabels.activeLabel('application', app.is_active);
   }
 
   refreshApplications(): void {

@@ -13,6 +13,7 @@ import {
 } from '../../../../core/models/api.models';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelService } from '../../../../core/i18n/status-labels';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
@@ -60,6 +61,7 @@ export function inboundLogReason(errorMessage: string, reasons: Record<string, s
 export class InboundEmailLogPanel {
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly appId = input.required<number>();
@@ -100,7 +102,7 @@ export class InboundEmailLogPanel {
   }
 
   statusLabel(status: InboundEmailLogStatus): string {
-    return this.copy().statuses[status] ?? status;
+    return this.statusLabels.label('inboundEmail', status);
   }
 
   statusSeverity(status: InboundEmailLogStatus): TagSeverity {

@@ -12,11 +12,11 @@ export class LanguagePreferenceService {
   private readonly session = inject(SessionService);
 
   readonly options: Array<{ value: UserLanguage; label: string }> = [
-    { value: 'FR', label: 'Francais' },
+    { value: 'FR', label: 'Français' },
     { value: 'NL', label: 'Nederlands' },
     { value: 'EN', label: 'English' },
     { value: 'IT', label: 'Italiano' },
-    { value: 'ES', label: 'Espanol' },
+    { value: 'ES', label: 'Español' },
   ];
 
   currentBackendLanguage(): UserLanguage {

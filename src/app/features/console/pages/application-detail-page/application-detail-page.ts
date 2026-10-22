@@ -23,6 +23,8 @@ import {
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelPipe } from '../../../../core/i18n/status-labels';
+import { CountLabelPipe } from '../../../../core/i18n/count-label';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { formatDateTimeFrBe, formatTimeLabel, weekdayShortLabel } from '../../../../core/utils/date-format.utils';
 import { coerceApiError, errorFieldMessages } from '../../../../core/utils/api-error.utils';
@@ -86,6 +88,8 @@ export function normalizeAppDetailTab(value: unknown): AppDetailTab {
     DatePipe,
     ReactiveFormsModule,
     AppAlert, ApiErrorMessagePipe,
+    StatusLabelPipe,
+    CountLabelPipe,
     ApplicationFormFields,
     AvatarCropper,
     TabsModule,
@@ -120,6 +124,7 @@ export class ApplicationDetailPage implements OnInit, HasUnsavedChanges {
   readonly shell = inject(ConsoleShellService);
   readonly apiBaseUrl = computed(() => this.settings.apiBaseUrl());
   readonly copy = computed(() => this.consoleCopy.current().applicationDetail);
+  readonly counts = computed(() => this.consoleCopy.current().counts);
   // The one-time token reveal (QR + token) reuses the `applications` copy block
   // (qr.* labels + alerts.created guidance) so the surface matches the list.
   readonly applicationsCopy = computed(() => this.consoleCopy.current().applications);

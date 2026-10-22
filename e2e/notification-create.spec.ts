@@ -61,8 +61,8 @@ test('user can create an immediate notification and see it in the history', asyn
 
   // The application is pre-selected from the shell, and so are its subscribed
   // devices: no need to open the multiselect.
-  await expect(dialog.getByText('iPhone Marie (ios)')).toBeVisible();
-  await expect(dialog.getByText('Choisir un ou plusieurs devices')).toHaveCount(0);
+  await expect(dialog.getByText('iPhone Marie (iPhone)')).toBeVisible();
+  await expect(dialog.getByText('Choisir un ou plusieurs appareils')).toHaveCount(0);
 
   await dialog.getByPlaceholder('Promo weekend').fill('Lancement');
   await dialog.getByPlaceholder('Votre message push').fill('Notre nouvelle campagne est en ligne.');

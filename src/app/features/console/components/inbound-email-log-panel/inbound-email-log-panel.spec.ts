@@ -96,7 +96,7 @@ describe('InboundEmailLogPanel', () => {
     getInboundEmailLogs.mockReturnValue(pending);
     render();
     expect(el().querySelector('[data-testid="inbound-log-loading"]')?.textContent).toContain(
-      'Chargement des mails reçus',
+      'Chargement des e-mails reçus',
     );
 
     pending.next([]);
@@ -105,7 +105,7 @@ describe('InboundEmailLogPanel', () => {
 
     expect(el().querySelector('[data-testid="inbound-log-loading"]')).toBeNull();
     expect(el().querySelector('[data-testid="inbound-log-empty"]')?.textContent).toContain(
-      "Aucun mail reçu pour l'instant",
+      "Aucun e-mail reçu pour l'instant",
     );
   });
 

@@ -87,7 +87,7 @@ test('a visitor can register and lands on the check-email page', async ({ page }
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
 
   await expect(page).toHaveURL(/\/auth\/check-email$/);
-  await expect(page.getByRole('heading', { name: 'Vérifiez votre boîte mail' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Vérifiez votre boîte de réception' })).toBeVisible();
   await expect(page.getByText('new.user@example.com')).toBeVisible();
 
   const payload = postTo(calls, '/auth/register/')?.postDataJSON() as Record<string, unknown>;
@@ -115,7 +115,7 @@ test('register shows required / format errors without calling the API', async ({
   await page.goto('/register');
 
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
-  await expect(page.getByText("L'email est requis.")).toBeVisible();
+  await expect(page.getByText("L'adresse e-mail est requise.")).toBeVisible();
   await expect(page.getByText('Le mot de passe est requis.')).toBeVisible();
 
   const email = page.locator('#register-email');
@@ -124,7 +124,7 @@ test('register shows required / format errors without calling the API', async ({
   await page.locator('#register-password').fill('s3cret-pass');
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
 
-  await expect(page.getByText('Saisissez une adresse email valide.')).toBeVisible();
+  await expect(page.getByText('Saisissez une adresse e-mail valide.')).toBeVisible();
   await expect(page).toHaveURL(/\/register$/);
   expect(postTo(calls, '/auth/register/')).toBeUndefined();
 });
@@ -155,7 +155,7 @@ test('a visitor can request a password reset link', async ({ page }) => {
   await page.getByRole('button', { name: 'Envoyer le lien' }).click();
 
   // Anti-enumeration wording: the same message whether or not the account exists.
-  await expect(page.getByText(/Si un compte existe avec cet email/)).toBeVisible();
+  await expect(page.getByText(/Si un compte existe avec cette adresse e-mail/)).toBeVisible();
   expect(postTo(calls, '/auth/forgot-password/')?.postDataJSON()).toMatchObject({
     email: 'renaud@example.com',
   });
@@ -202,7 +202,7 @@ test('forgot-password refuses a malformed address without calling the API', asyn
   await expect(email).toHaveValue('not-an-email');
   await page.getByRole('button', { name: 'Envoyer le lien' }).click();
 
-  await expect(page.getByText(/Si un compte existe avec cet email/)).toHaveCount(0);
+  await expect(page.getByText(/Si un compte existe avec cette adresse e-mail/)).toHaveCount(0);
   expect(postTo(calls, '/auth/forgot-password/')).toBeUndefined();
 });
 

@@ -187,8 +187,6 @@ describe('ApplicationDetailPage', () => {
           createdNotice: 'Copiez ce jeton maintenant.',
           createdDone: 'J ai copie',
           table: { name: 'Nom', prefix: 'Prefixe', lastUsed: 'Dernier usage', status: 'Statut', actions: 'Actions' },
-          activeLabel: 'actif',
-          revokedLabel: 'revoque',
           never: 'Jamais',
           reveal: 'Revoir',
           revealHint: 'Re-saisissez votre mot de passe.',
@@ -301,13 +299,9 @@ describe('ApplicationDetailPage', () => {
             createdAt: 'Creation',
           },
           statusLabels: {
-            active: 'active',
-            inactive: 'inactive',
             never: 'Jamais',
             no: 'Non',
             immediate: 'Immediate',
-            once: 'once',
-            recurring: 'recurring',
           },
         },
       })),
@@ -509,7 +503,7 @@ describe('ApplicationDetailPage', () => {
       );
     });
 
-    it('the enrol step opens the Destinataires tab (enrolment QR)', () => {
+    it('the enrol step opens the Appareils (recipients) tab (enrolment QR)', () => {
       fixture.detectChanges();
       const button = (fixture.nativeElement as HTMLElement).querySelector(
         '[data-testid="next-step-enrol"] button',

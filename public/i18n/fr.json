@@ -34,7 +34,7 @@
         {
           "title": "Fonctionnalités générales",
           "items": [
-            "Inscription, connexion, déconnexion et rafraîchissement du token JWT.",
+            "Inscription, connexion, déconnexion et rafraîchissement du jeton JWT.",
             "Récupération du profil courant et mise à jour de la langue utilisateur.",
             "Langues disponibles : français, néerlandais, anglais, italien et espagnol.",
             "Gestion de session sécurisée par JWT côté frontend classique."
@@ -44,42 +44,42 @@
           "title": "Fonctionnalités des applications",
           "items": [
             "Liste, création, détail, modification et suppression d'une application.",
-            "Activation, désactivation, révocation et régénération du token applicatif.",
+            "Activation, désactivation, révocation et régénération du jeton applicatif.",
             "Récupération des informations utiles pour l'intégration mobile ou API.",
             "Gestion complète du cycle de vie d'une application de push."
           ]
         },
         {
-          "title": "Fonctionnalités des devices",
+          "title": "Fonctionnalités des appareils",
           "items": [
-            "Liste, détail, modification et suppression des devices visibles.",
-            "Visualisation des applications liées à un device.",
-            "Liaison automatique via X-App-Token.",
-            "Support du flux mobile : installation, scan QR code, récupération du push token et création ou mise à jour du lien côté backend."
+            "Liste, détail, modification et suppression des appareils visibles.",
+            "Visualisation des applications auxquelles un appareil est abonné.",
+            "Abonnement automatique d'un appareil via son jeton d'application (X-App-Token).",
+            "Prise en charge du parcours mobile : installation, scan du QR code, récupération du jeton push et création ou mise à jour de l'abonnement côté serveur."
           ]
         },
         {
           "title": "Fonctionnalités des notifications",
           "items": [
-            "Création de notifications ciblées par application et liste explicite de devices.",
+            "Création de notifications ciblées par application et liste explicite d'appareils.",
             "Liste, détail, envoi manuel et statistiques des notifications.",
             "Gestion des notifications futures : liste, détail, modification et suppression.",
-            "Filtres par application, statut et date effective d'envoi, avec prise en compte des envois partiels et de `effective_scheduled_for`."
+            "Filtres par application, statut et date d'envoi, en tenant compte des envois partiels et des reports dus aux périodes blanches."
           ]
         },
         {
           "title": "Fonctionnalités des périodes blanches",
           "items": [
-            "Gestion des périodes blanches par application ou par device.",
-            "Support des périodes ONCE et RECURRING, avec modification, suppression et activation.",
+            "Gestion des périodes blanches par application ou par appareil.",
+            "Périodes ponctuelles ou récurrentes, avec modification, suppression et activation.",
             "Gestion des fenêtres qui passent minuit et des fenêtres contiguës.",
-            "Impact métier distinct : décalage global de notification côté application, ou report de delivery côté device."
+            "Effet distinct : report de la notification pour toute l'application, ou report de la livraison vers un seul appareil."
           ]
         },
         {
-          "title": "Fonctionnalité envoi par mail",
+          "title": "Envoi par e-mail",
           "items": [
-            "Réception d'un email entrant et résolution de l'application via le préfixe destinataire.",
+            "Réception d'un e-mail entrant et identification de l'application grâce à l'adresse du destinataire.",
             "Transformation du sujet en titre et du contenu texte en message, avec planification via un marqueur `SEND_AT`.",
             "Contrôles d'accès sur domaine, expéditeur et appartenance de l'application ciblée.",
             "Gestion de l'idempotence via `message_id`, avec rejet des rejeux au contenu différent."
@@ -106,7 +106,7 @@
         {
           "icon": "pi-bolt",
           "title": "Le produit",
-          "body": "PushIT centralise la gestion de vos applications, de vos devices et de vos campagnes de notifications push dans une console claire et moderne."
+          "body": "PushIT centralise la gestion de vos applications, de vos appareils et de vos campagnes de notifications push dans une console claire et moderne."
         },
         {
           "icon": "pi-building",
@@ -135,13 +135,13 @@
       "magicTitle": "Connexion par lien",
       "magicSend": "Envoyer le lien",
       "magicPending": "Envoi...",
-      "magicSent": "Si cet email est enregistré, un lien de connexion vient d’être envoyé.",
+      "magicSent": "Si cette adresse e-mail est enregistrée, un lien de connexion vient d’être envoyé.",
       "magicBack": "Retour à la connexion",
       "magicCaptchaRequired": "Veuillez compléter le captcha.",
       "magicCaptchaFailed": "La vérification du captcha a échoué. Réessayez.",
       "validation": {
-        "emailRequired": "L'email est requis.",
-        "emailInvalid": "Saisissez une adresse email valide.",
+        "emailRequired": "L'adresse e-mail est requise.",
+        "emailInvalid": "Saisissez une adresse e-mail valide.",
         "passwordRequired": "Le mot de passe est requis."
       }
     },
@@ -159,8 +159,8 @@
       "captchaRequired": "Merci de valider le captcha anti-robot.",
       "captchaFailed": "Échec de la vérification anti-robot. Réessayez.",
       "validation": {
-        "emailRequired": "L'email est requis.",
-        "emailInvalid": "Saisissez une adresse email valide.",
+        "emailRequired": "L'adresse e-mail est requise.",
+        "emailInvalid": "Saisissez une adresse e-mail valide.",
         "passwordRequired": "Le mot de passe est requis.",
         "passwordTooShort": "Le mot de passe doit faire au moins 8 caractères.",
         "languageRequired": "La langue est requise."
@@ -170,7 +170,7 @@
       "title": "Mot de passe oublié",
       "email": "Adresse e-mail",
       "submit": "Envoyer le lien",
-      "submitted": "Si un compte existe avec cet email, un lien de réinitialisation vient de vous être envoyé. Pensez à vérifier vos spams.",
+      "submitted": "Si un compte existe avec cette adresse e-mail, un lien de réinitialisation vient de vous être envoyé. Pensez à vérifier vos spams.",
       "registerPrompt": "Pas encore de compte ?",
       "registerLink": "Créer un compte",
       "backToLogin": "Retour à la connexion",
@@ -190,7 +190,7 @@
       "backToLogin": "Retour à la connexion"
     },
     "checkEmail": {
-      "title": "Vérifiez votre boîte mail",
+      "title": "Vérifiez votre boîte de réception",
       "intro": "Nous avons envoyé un lien de confirmation à ",
       "hint": "Cliquez sur le lien pour activer votre compte, puis connectez-vous.",
       "resend": "Renvoyer le lien",
@@ -198,10 +198,10 @@
       "backToLogin": "Retour à la connexion"
     },
     "confirmEmail": {
-      "title": "Confirmation de l'email",
+      "title": "Confirmation de l'adresse e-mail",
       "confirming": "Confirmation en cours…",
       "invalid": "Ce lien de confirmation est invalide ou a expiré.",
-      "resendHint": "Saisissez votre email pour recevoir un nouveau lien.",
+      "resendHint": "Saisissez votre adresse e-mail pour recevoir un nouveau lien.",
       "emailLabel": "Adresse e-mail",
       "resend": "Renvoyer le lien",
       "resent": "Si une confirmation est nécessaire, un nouveau lien a été envoyé.",
@@ -225,10 +225,10 @@
       "navigation": {
         "eyebrow": "Navigation",
         "title": "Menu console",
-        "tokenEyebrow": "Token généré",
+        "tokenEyebrow": "Jeton généré",
         "copyButton": "Copier",
         "dismissButton": "Masquer",
-        "tokenNote": "Le token brut n'est visible qu'une fois. Stockage côté serveur uniquement.",
+        "tokenNote": "Le jeton n'est visible qu'une fois : le serveur n'en garde qu'une empreinte.",
         "admin": {
           "label": "Administration",
           "description": "Superviser l'état du backend et accéder à l'admin Django."
@@ -249,14 +249,14 @@
       "sections": [
         {
           "label": "Applications",
-          "description": "Créer, modifier et gérer vos tokens.",
+          "description": "Créer, modifier et gérer vos jetons.",
           "icon": "pi pi-briefcase",
           "link": "/dashboard/applications",
           "countKey": "apps"
         },
         {
-          "label": "Devices",
-          "description": "Consulter et mettre à jour les terminaux liés.",
+          "label": "Appareils",
+          "description": "Consulter et mettre à jour les appareils abonnés.",
           "icon": "pi pi-mobile",
           "link": "/dashboard/devices",
           "countKey": "devices"
@@ -270,7 +270,7 @@
         },
         {
           "label": "Périodes blanches",
-          "description": "Piloter les fenêtres de silence applicatives et device.",
+          "description": "Suspendre les envois pendant certaines plages horaires, par application ou par appareil.",
           "icon": "pi pi-moon",
           "link": "/dashboard/quiet-periods",
           "countKey": "quietPeriods"
@@ -284,7 +284,7 @@
         "metrics": {
           "apps": "Applications",
           "activeApps": "Actives",
-          "devices": "Devices",
+          "devices": "Appareils",
           "notifications": "Notifications",
           "quietPeriods": "Périodes blanches"
         },
@@ -331,7 +331,7 @@
         "title": "Mon compte",
         "accountTitle": "Compte",
         "email": "Adresse e-mail",
-        "fallbackEmail": "Email indisponible",
+        "fallbackEmail": "Adresse e-mail indisponible",
         "userkey": "Clé utilisateur",
         "copyUserkey": "Copier la clé utilisateur",
         "userkeyCopied": "Clé utilisateur copiée.",
@@ -341,7 +341,7 @@
         "securityTitle": "Sécurité",
         "deleteAccount": {
           "title": "Zone de danger",
-          "lead": "La suppression est définitive : votre compte, vos terminaux et les applications dont vous êtes propriétaire sont effacés.",
+          "lead": "La suppression est définitive : votre compte, vos appareils et les applications dont vous êtes propriétaire sont effacés.",
           "password": "Mot de passe actuel",
           "button": "Supprimer mon compte",
           "moreInfo": "Ce qui est supprimé",
@@ -349,11 +349,11 @@
           "dialogIntro": "Cette action est irréversible. Les applications dont vous êtes propriétaire sont supprimées pour tout le monde, abonnés compris, avec toutes leurs données :",
           "dialogItems": [
             "les notifications et leur historique d’envoi ;",
-            "les liens avec les terminaux abonnés ;",
+            "les abonnements des appareils ;",
             "les modèles ;",
             "les jetons d’envoi."
           ],
-          "dialogOwn": "Vos propres terminaux et leurs jetons push sont aussi supprimés, et toutes vos sessions sont fermées.",
+          "dialogOwn": "Vos propres appareils et leurs jetons push sont aussi supprimés, et toutes vos sessions sont fermées.",
           "cancel": "Annuler",
           "confirm": "Supprimer définitivement",
           "passwordRequired": "Saisissez votre mot de passe actuel pour confirmer.",
@@ -390,7 +390,7 @@
       "deviceForm": {
         "name": "Nom",
         "platform": "Plateforme",
-        "pushTokenStatus": "Statut du push token"
+        "pushTokenStatus": "Statut du jeton push"
       }
     },
     "update": {
@@ -404,17 +404,17 @@
       "stepsTitle": "Comment supprimer votre compte",
       "steps": [
         "Connectez-vous à la console sur https://pushit.foxugly.com, avec le même compte que dans l’application mobile.",
-        "Ouvrez « Paramètres ».",
-        "Dans la section « Supprimer mon compte », saisissez votre mot de passe actuel puis cliquez sur « Supprimer mon compte ».",
+        "Ouvrez « Mon compte ».",
+        "Dans la section « Zone de danger », saisissez votre mot de passe actuel puis cliquez sur « Supprimer mon compte ».",
         "Confirmez. La suppression est immédiate."
       ],
       "forgotPassword": "Mot de passe oublié ? Réinitialisez-le d’abord depuis la page de connexion.",
-      "openConsole": "Ouvrir les paramètres",
+      "openConsole": "Ouvrir Mon compte",
       "deletedTitle": "Données supprimées",
       "deleted": [
         "Votre compte : adresse e-mail, mot de passe et préférences.",
-        "Vos terminaux et leurs jetons de notification (Firebase Cloud Messaging).",
-        "Les applications dont vous êtes propriétaire, pour tous leurs abonnés, avec leurs notifications, l’historique d’envoi, les modèles, les jetons d’envoi et les liens avec les terminaux.",
+        "Vos appareils et leurs jetons de notification (Firebase Cloud Messaging).",
+        "Les applications dont vous êtes propriétaire, pour tous leurs abonnés, avec leurs notifications, l’historique d’envoi, les modèles, les jetons d’envoi et les abonnements des appareils.",
         "Toutes vos sessions, sur tous vos appareils."
       ],
       "retentionTitle": "Conservation",
@@ -428,6 +428,70 @@
     }
   },
   "console": {
+    "statusLabels": {
+      "notification": {
+        "draft": "Brouillon",
+        "scheduled": "Planifiée",
+        "queued": "En file d'attente",
+        "processing": "En cours d'envoi",
+        "sent": "Envoyée",
+        "partial": "Envoi partiel",
+        "failed": "Échec",
+        "no_target": "Aucun appareil ciblé",
+        "shifted": "Reportée"
+      },
+      "delivery": {
+        "pending": "En attente",
+        "sent": "Envoyée",
+        "failed": "Échec"
+      },
+      "pushToken": {
+        "active": "Actif",
+        "invalid": "Jeton invalide",
+        "revoked": "Révoqué"
+      },
+      "platform": {
+        "android": "Android",
+        "ios": "iPhone"
+      },
+      "application": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "quietPeriod": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "quietPeriodType": {
+        "ONCE": "Ponctuelle",
+        "RECURRING": "Récurrente"
+      },
+      "sendToken": {
+        "active": "Actif",
+        "revoked": "Révoqué"
+      },
+      "inboundEmail": {
+        "created": "Notification créée",
+        "existing": "Doublon ignoré",
+        "rejected": "Refusé",
+        "conflict": "Conflit",
+        "error": "Erreur"
+      }
+    },
+    "counts": {
+      "devices": {
+        "one": "{count} appareil",
+        "other": "{count} appareils"
+      },
+      "notifications": {
+        "one": "{count} notification",
+        "other": "{count} notifications"
+      },
+      "quietPeriods": {
+        "one": "{count} période blanche",
+        "other": "{count} périodes blanches"
+      }
+    },
     "applications": {
       "title": "Gestion des applications",
       "total": "Total",
@@ -437,14 +501,10 @@
       "empty": "Aucune application pour ce compte.",
       "loading": "Chargement de l'application...",
       "noDescription": "Aucune description.",
-      "statuses": {
-        "active": "active",
-        "inactive": "inactive"
-      },
       "table": {
         "name": "Nom",
         "description": "Description",
-        "prefix": "Préfixe",
+        "prefix": "Préfixe du jeton",
         "status": "Statut",
         "createdAt": "Créée le",
         "actions": "Actions"
@@ -452,24 +512,24 @@
       "actions": {
         "activate": "Activer",
         "deactivate": "Désactiver",
-        "regenerate": "Régénérer le token",
-        "revoke": "Révoquer le token",
+        "regenerate": "Régénérer le jeton",
+        "revoke": "Révoquer le jeton",
         "qrCode": "QR code",
         "open": "Ouvrir l'application"
       },
       "qr": {
         "title": "QR code d'enrôlement",
         "scanHint": "Scannez ce QR code avec l'app mobile PushIT pour lier un appareil.",
-        "tokenOnce": "Le token n'est visible qu'une fois. Régénérez-le pour afficher son QR code (les appareils déjà liés ne sont pas affectés).",
+        "tokenOnce": "Le jeton n'est visible qu'une fois. Régénérez-le pour afficher son QR code (les appareils déjà abonnés ne sont pas affectés).",
         "regenerate": "Régénérer et afficher",
         "error": "Impossible de générer le QR code.",
         "loading": "Génération du QR code…",
-        "copyToken": "Copier le token",
-        "copied": "Token copié dans le presse-papier.",
-        "copyFailed": "Impossible de copier le token.",
+        "copyToken": "Copier le jeton",
+        "copied": "Jeton copié dans le presse-papiers.",
+        "copyFailed": "Impossible de copier le jeton.",
         "downloadQr": "Télécharger le QR code",
-        "downloadToken": "Télécharger le token",
-        "saveNotice": "⚠️ Ce token n'est affiché qu'une seule fois : copiez-le ou téléchargez-le maintenant et conservez-le en lieu sûr."
+        "downloadToken": "Télécharger le jeton",
+        "saveNotice": "⚠️ Ce jeton n'est affiché qu'une seule fois : copiez-le ou téléchargez-le maintenant et conservez-le en lieu sûr."
       },
       "logo": {
         "label": "Logo",
@@ -497,22 +557,22 @@
         "cancel": "Annuler"
       },
       "alerts": {
-        "created": "Application créée. Copiez ou téléchargez le token d'envoi maintenant : il n'est affiché qu'une fois.",
+        "created": "Application créée. Copiez ou téléchargez le jeton d'émission maintenant : il n'est affiché qu'une fois.",
         "updated": "Application {name} mise à jour.",
         "activated": "Application activée avec succès.",
         "deactivated": "Application désactivée avec succès.",
-        "regenerated": "Nouveau token généré. Ouvrez le QR code pour le voir, le copier ou le télécharger.",
-        "revoked": "Le token de cette application a été révoqué."
+        "regenerated": "Nouveau jeton généré. Ouvrez le QR code pour le voir, le copier ou le télécharger.",
+        "revoked": "Le jeton de cette application a été révoqué."
       },
       "errors": {
         "create": "Impossible de créer l'application.",
         "toggle": "Impossible de mettre à jour l'état de l'application.",
-        "regenerate": "Impossible de régénérer le token.",
-        "revoke": "Impossible de révoquer le token."
+        "regenerate": "Impossible de régénérer le jeton.",
+        "revoke": "Impossible de révoquer le jeton."
       },
       "confirmDelete": "Supprimer l'application \"{name}\" ?",
-      "confirmRegenerate": "Régénérer le token de \"{name}\" ? Tous les appareils utilisant le token actuel cesseront de recevoir des notifications jusqu'à ce qu'ils soient reliés au nouveau token.",
-      "confirmRevoke": "Révoquer le token de \"{name}\" ? Tous les appareils utilisant le token actuel cesseront immédiatement de recevoir des notifications.",
+      "confirmRegenerate": "Régénérer le jeton de \"{name}\" ? Tous les appareils utilisant le jeton actuel cesseront de recevoir des notifications jusqu'à ce qu'ils soient reliés au nouveau jeton.",
+      "confirmRevoke": "Révoquer le jeton de \"{name}\" ? Tous les appareils utilisant le jeton actuel cesseront immédiatement de recevoir des notifications.",
       "emptyState": {
         "title": "Aucune application pour l'instant",
         "message": "Créez une application pour obtenir un QR code d'enrôlement et commencer à envoyer des notifications.",
@@ -520,24 +580,23 @@
       }
     },
     "devices": {
-      "title": "Inventaire et liaison des devices",
-      "countLabel": "devices",
+      "title": "Appareils",
       "refresh": "Rafraîchir",
       "add": "Ajouter",
       "downloadAndroid": "App Android",
       "downloadAndroidError": "Impossible de télécharger l'app Android.",
-      "empty": "Aucun device lié pour ce compte.",
-      "loading": "Chargement des devices...",
+      "empty": "Aucun appareil pour ce compte.",
+      "loading": "Chargement des appareils...",
       "none": "aucune",
       "never": "Jamais",
       "table": {
         "name": "Nom",
         "platform": "Plateforme",
-        "token": "Token",
+        "token": "Jeton",
         "applications": "Applications",
         "lastActivity": "Dernière activité",
         "actions": "Actions",
-        "prefix": "Préfixe",
+        "prefix": "Préfixe du jeton",
         "status": "Statut",
         "createdAt": "Créée le"
       },
@@ -545,38 +604,38 @@
         "view": "Voir le détail",
         "edit": "Éditer",
         "delete": "Supprimer",
-        "useLatestToken": "Utiliser le dernier token généré",
-        "link": "Lier le device",
+        "useLatestToken": "Utiliser le dernier jeton généré",
+        "link": "Lier l'appareil",
         "linking": "Association...",
         "save": "Enregistrer",
         "saving": "Enregistrement..."
       },
       "dialog": {
-        "createTitle": "Lier un device",
-        "editTitle": "Modifier le device"
+        "createTitle": "Lier un appareil",
+        "editTitle": "Modifier l'appareil"
       },
       "createForm": {
-        "appToken": "X-App-Token",
-        "appTokenPlaceholder": "Coller le token brut ici",
-        "deviceName": "Nom du device",
+        "appToken": "Jeton d'application (X-App-Token)",
+        "appTokenPlaceholder": "Coller le jeton ici",
+        "deviceName": "Nom de l'appareil",
         "deviceNamePlaceholder": "iPhone Marie",
         "platform": "Plateforme",
-        "pushToken": "Push token",
+        "pushToken": "Jeton push",
         "pushTokenPlaceholder": "ExponentPushToken..."
       },
       "alerts": {
-        "updated": "Device mis à jour avec succès.",
-        "deleted": "Device supprimé.",
-        "linked": "Device {deviceId} lié à l'application {applicationId}."
+        "updated": "Appareil mis à jour.",
+        "deleted": "Appareil supprimé.",
+        "linked": "Appareil {deviceId} lié à l'application {applicationId}."
       },
       "errors": {
-        "missingAppToken": "Renseignez un X-App-Token pour lier un device.",
-        "invalidId": "Identifiant device invalide.",
-        "loading": "Chargement du device..."
+        "missingAppToken": "Renseignez un jeton d'application (X-App-Token) pour lier un appareil.",
+        "invalidId": "Identifiant d'appareil invalide.",
+        "loading": "Chargement de l'appareil..."
       },
-      "confirmDelete": "Supprimer le device \"{name}\" ?",
+      "confirmDelete": "Supprimer l'appareil \"{name}\" ?",
       "readOnly": "Lecture seule",
-      "readOnlyHint": "Device d'un abonné : seul son propriétaire peut le modifier.",
+      "readOnlyHint": "Appareil d'un abonné : seul son propriétaire peut le modifier.",
       "emptyState": {
         "title": "Aucun appareil pour l'instant",
         "message": "Un appareil s'ajoute en scannant le QR code d'une application avec l'app mobile PushIT.",
@@ -586,22 +645,22 @@
       }
     },
     "notifications": {
-      "title": "Notifications utilisateur",
+      "title": "Mes notifications",
       "history": "Historique",
       "future": "Futures",
-      "shifted": "Décalées",
+      "shifted": "Reportées",
       "refresh": "Rafraîchir",
       "add": "Ajouter",
       "empty": "Aucune notification pour ces filtres.",
       "loading": "Chargement des notifications...",
-      "immediate": "immédiat",
+      "immediate": "Immédiat",
       "scheduledSubtext": "Planifiée",
       "filters": {
         "application": "Application",
-        "device": "Device",
+        "device": "Appareil",
         "status": "Statut",
-        "from": "Effectif à partir de",
-        "to": "Effectif jusqu'à",
+        "from": "Envoi à partir du",
+        "to": "Envoi jusqu'au",
         "allApps": "Toutes",
         "allDevices": "Tous",
         "allStatuses": "Tous",
@@ -615,7 +674,7 @@
         "application": "Application",
         "message": "Message",
         "status": "Statut",
-        "effective": "Effective",
+        "effective": "Date d'envoi",
         "actions": "Actions"
       },
       "actions": {
@@ -636,9 +695,9 @@
       "form": {
         "application": "Application",
         "applicationPlaceholder": "Choisir...",
-        "devices": "Devices ciblés",
-        "devicesPlaceholder": "Choisir un ou plusieurs devices",
-        "devicesHelp": "Seuls les devices actifs liés à l'application sélectionnée sont proposés.",
+        "devices": "Appareils ciblés",
+        "devicesPlaceholder": "Choisir un ou plusieurs appareils",
+        "devicesHelp": "Seuls les appareils actifs abonnés à l'application sélectionnée sont proposés.",
         "title": "Titre",
         "titlePlaceholder": "Promo weekend",
         "message": "Message",
@@ -657,17 +716,6 @@
         "goToBilling": "Aller à la facturation"
       },
       "confirmDelete": "Supprimer la notification future \"{title}\" ?",
-      "statusLabels": {
-        "draft": "brouillon",
-        "scheduled": "planifiée",
-        "queued": "en file",
-        "processing": "en cours",
-        "sent": "envoyée",
-        "partial": "partielle",
-        "failed": "échouée",
-        "no_target": "sans cible",
-        "shifted": "décalée"
-      },
       "typeLabels": {
         "future": "Future",
         "history": "Historique"
@@ -694,15 +742,15 @@
       }
     },
     "quietPeriods": {
-      "title": "Gestion des fenêtres de silence",
+      "title": "Périodes blanches",
       "refresh": "Rafraîchir",
       "add": "Ajouter",
       "empty": "Aucune période blanche configurée.",
       "loading": "Chargement des périodes blanches...",
       "targetNone": "Aucune cible",
       "targetUnknownApplication": "Application inconnue",
-      "targetUnknownDevice": "Device inconnu",
-      "missingTargets": "Aucune application ou aucun device disponible pour créer une période blanche.",
+      "targetUnknownDevice": "Appareil inconnu",
+      "missingTargets": "Aucune application ni aucun appareil disponible pour créer une période blanche.",
       "missingParent": "Sélectionnez une cible valide avant de créer une période blanche.",
       "table": {
         "target": "Cible",
@@ -721,21 +769,11 @@
       },
       "scopeLabels": {
         "application": "Application",
-        "device": "Device"
-      },
-      "typeLabels": {
-        "once": "Ponctuelle",
-        "recurring": "Récurrente",
-        "badgeOnce": "once",
-        "badgeRecurring": "recurring"
-      },
-      "statusLabels": {
-        "active": "active",
-        "inactive": "inactive"
+        "device": "Appareil"
       },
       "form": {
         "target": "Cible",
-        "device": "Device",
+        "device": "Appareil",
         "application": "Application",
         "selectPlaceholder": "Choisir...",
         "name": "Nom",
@@ -759,7 +797,7 @@
       ],
       "defaultNames": {
         "application": "Silence application",
-        "device": "Silence device"
+        "device": "Silence appareil"
       },
       "alerts": {
         "created": "Période blanche créée.",
@@ -780,7 +818,7 @@
         "differentEndTime": "L'heure de fin doit être différente de l'heure de début."
       },
       "readOnly": "Lecture seule",
-      "readOnlyHint": "Fenêtre de silence du device d'un abonné : seul son propriétaire peut la modifier.",
+      "readOnlyHint": "Période blanche de l'appareil d'un abonné : seul son propriétaire peut la modifier.",
       "emptyState": {
         "title": "Aucune période blanche",
         "message": "Une période blanche suspend l'envoi des notifications pendant une plage horaire (la nuit, le week-end…).",
@@ -800,8 +838,8 @@
       "downloadQr": "Télécharger le QR",
       "rotate": "Nouveau code",
       "rotatePending": "Génération...",
-      "rotateWarning": "Un nouveau code ferme la porte aux futurs rattachements. Il ne retire personne : les terminaux déjà rattachés continuent de recevoir. Pour en retirer un, utilisez la liste des terminaux ci-dessous.",
-      "rotateConfirm": "Générer un nouveau code d'enrôlement pour « {name} » ? L'ancien code cessera de fonctionner ; les terminaux déjà rattachés ne sont pas touchés.",
+      "rotateWarning": "Un nouveau code ferme la porte aux futurs abonnements. Il ne retire personne : les appareils déjà abonnés continuent de recevoir. Pour en retirer un, utilisez la liste des appareils ci-dessous.",
+      "rotateConfirm": "Générer un nouveau code d'enrôlement pour « {name} » ? L'ancien code cessera de fonctionner ; les appareils déjà abonnés ne sont pas touchés.",
       "rotated": "Nouveau code d'enrôlement généré.",
       "rotateError": "Impossible de générer un nouveau code."
     },
@@ -822,8 +860,6 @@
         "status": "Statut",
         "actions": "Actions"
       },
-      "activeLabel": "actif",
-      "revokedLabel": "révoqué",
       "never": "Jamais",
       "reveal": "Revoir le jeton",
       "revealHint": "Re-saisissez votre mot de passe : une session ouverte ne suffit pas à relire un secret.",
@@ -859,7 +895,7 @@
       "listHint": "Une entrée par ligne : une adresse (alice@exemple.com), un domaine (@exemple.com) ou un domaine et ses sous-domaines (@*.exemple.com).",
       "blocklistHint": "Le blocage ne s'applique jamais à votre propre adresse.",
       "listPlaceholder": "alice@exemple.com\n@exemple.com\n@*.exemple.com",
-      "rejectionTitle": "En cas de mail refusé",
+      "rejectionTitle": "En cas d’e-mail refusé",
       "notifyEmail": "Me prévenir par e-mail",
       "notifyPush": "Me prévenir par notification push",
       "replyToSender": "Répondre à l'expéditeur",
@@ -872,11 +908,11 @@
       "formatsHelp": "alice@exemple.com : une adresse précise · @exemple.com : tout le domaine exemple.com (sans les sous-domaines) · @*.exemple.com : le domaine et tous ses sous-domaines (mail.exemple.com…)"
     },
     "inboundEmailLog": {
-      "title": "Mails reçus",
-      "intro": "Les 50 derniers mails reçus à l'adresse de cette application, du plus récent au plus ancien.",
+      "title": "E-mails reçus",
+      "intro": "Les 50 derniers e-mails reçus à l'adresse de cette application, du plus récent au plus ancien.",
       "refresh": "Actualiser",
-      "loading": "Chargement des mails reçus…",
-      "empty": "Aucun mail reçu pour l'instant",
+      "loading": "Chargement des e-mails reçus…",
+      "empty": "Aucun e-mail reçu pour l'instant",
       "noSubject": "(sans objet)",
       "columns": {
         "date": "Date",
@@ -884,13 +920,6 @@
         "subject": "Objet",
         "status": "Statut",
         "reason": "Raison"
-      },
-      "statuses": {
-        "created": "Notification créée",
-        "existing": "Doublon ignoré",
-        "rejected": "Refusé",
-        "conflict": "Conflit",
-        "error": "Erreur"
       },
       "reasons": {
         "sender_not_allowed": "Expéditeur non autorisé",
@@ -914,31 +943,31 @@
       "loading": "Chargement de l'application...",
       "descriptionTitle": "Description",
       "descriptionEmpty": "Aucune description disponible pour cette application.",
-      "inboundEmailTitle": "Adresse email de notification",
-      "inboundEmailLabel": "Adresse email",
+      "inboundEmailTitle": "Adresse e-mail de l'application",
+      "inboundEmailLabel": "Adresse e-mail",
       "inboundEmailCopy": "Copier l'adresse",
-      "inboundEmailCopied": "Adresse email copiée.",
-      "inboundEmailCopyFailed": "Impossible de copier l'adresse email.",
-      "inboundEmailHelpTitle": "Envoyer une notification par email",
+      "inboundEmailCopied": "Adresse e-mail copiée.",
+      "inboundEmailCopyFailed": "Impossible de copier l'adresse e-mail.",
+      "inboundEmailHelpTitle": "Envoyer une notification par e-mail",
       "inboundEmailHelp": {
-        "intro": "Envoyez un email à cette adresse pour créer une notification sur cette application.",
-        "subject": "Le sujet de l'email devient le titre de la notification.",
-        "body": "Le contenu texte de l'email devient le message.",
-        "schedule": "Planification possible avec [SEND_AT:ISO_DATETIME] dans le sujet.",
+        "intro": "Envoyez un e-mail à cette adresse pour créer une notification sur cette application.",
+        "subject": "L'objet de l'e-mail devient le titre de la notification.",
+        "body": "Le texte de l'e-mail devient le message.",
+        "schedule": "Pour planifier l'envoi, ajoutez [SEND_AT:ISO_DATETIME] dans l'objet.",
         "sender": "Par défaut, seule l'adresse du propriétaire peut envoyer ; voir « Qui peut envoyer par e-mail » ci-dessous."
       },
       "enrolmentTitle": "Enrôlement",
       "sendTokensTitle": "Jetons d'émission",
       "examplesTitle": "Exemples d'envoi",
-      "legacyWarning": "Cette application a émis avec l'ancien jeton applicatif, qui n'est plus accepté à l'émission depuis le 29/07/2026. Si un envoi échoue avec « app_token_retired », créez un jeton d'émission ci-dessous et remplacez-le dans votre intégration. L'enrôlement des terminaux, lui, continue de fonctionner.",
-      "devicesTitle": "Devices liés",
-      "devicesEmpty": "Aucun device lié à cette application.",
+      "legacyWarning": "Cette application a émis avec l'ancien jeton applicatif, qui n'est plus accepté à l'émission depuis le 29/07/2026. Si un envoi échoue avec « app_token_retired », créez un jeton d'émission ci-dessous et remplacez-le dans votre intégration. L'abonnement des appareils, lui, continue de fonctionner.",
+      "devicesTitle": "Appareils abonnés",
+      "devicesEmpty": "Aucun appareil abonné à cette application.",
       "evict": {
         "button": "Retirer de l'application",
-        "hint": "Retirer un terminal coupe les envois vers lui. Tant qu'il connaît le code d'enrôlement, il peut se réabonner : changez aussi le code.",
-        "confirm": "Retirer « {device} » de « {name} » ? Ce terminal ne recevra plus les notifications de cette application. Il pourra se réabonner tant que le code d'enrôlement n'a pas changé.",
-        "success": "Terminal retiré de l'application.",
-        "error": "Impossible de retirer ce terminal."
+        "hint": "Retirer un appareil coupe les envois vers lui. Tant qu'il connaît le code d'enrôlement, il peut se réabonner : changez aussi le code.",
+        "confirm": "Retirer « {device} » de « {name} » ? Cet appareil ne recevra plus les notifications de cette application. Il pourra se réabonner tant que le code d'enrôlement n'a pas changé.",
+        "success": "Appareil retiré de l'application.",
+        "error": "Impossible de retirer cet appareil."
       },
       "notificationsTitle": "Notifications",
       "notificationsEmpty": "Aucune notification liée à cette application.",
@@ -949,33 +978,29 @@
       "table": {
         "name": "Nom",
         "platform": "Plateforme",
-        "pushStatus": "Statut push",
+        "pushStatus": "Jeton push",
         "lastActivity": "Dernière activité",
-        "prefix": "Préfixe",
+        "prefix": "Préfixe du jeton",
         "status": "Statut",
         "createdAt": "Créée le",
         "title": "Titre",
         "type": "Type",
-        "effective": "Effective",
+        "effective": "Date d'envoi",
         "actions": "Actions"
       },
       "facts": {
         "id": "ID",
         "name": "Nom",
-        "tokenPrefix": "Préfixe token",
+        "tokenPrefix": "Préfixe du jeton",
         "status": "Statut",
         "lastUsed": "Dernière utilisation",
-        "revokedToken": "Token révoqué",
+        "revokedToken": "Jeton révoqué",
         "createdAt": "Créée le"
       },
       "statusLabels": {
-        "active": "Active",
-        "inactive": "Inactive",
         "never": "Jamais",
         "no": "Non",
-        "immediate": "Immédiat",
-        "once": "once",
-        "recurring": "recurring"
+        "immediate": "Immédiat"
       },
       "notificationTypes": {
         "future": "Future",
@@ -1005,24 +1030,24 @@
         "loadError": "Impossible de charger cette image. Essayez un PNG ou un JPG — les formats comme HEIC (photos iPhone) ne sont pas pris en charge par le navigateur."
       },
       "regenerateEmail": {
-        "label": "Adresse email d'ingestion",
+        "label": "Adresse e-mail de l'application",
         "button": "Régénérer l'adresse",
         "pending": "Régénération...",
         "hint": "Génère une nouvelle adresse aléatoire ; l'ancienne cessera de fonctionner.",
-        "confirm": "Régénérer l'adresse email de « {name} » ? L'adresse actuelle cessera immédiatement de fonctionner.",
-        "success": "Nouvelle adresse email générée.",
-        "error": "Impossible de régénérer l'adresse email."
+        "confirm": "Régénérer l'adresse e-mail de « {name} » ? L'adresse actuelle cessera immédiatement de fonctionner.",
+        "success": "Nouvelle adresse e-mail générée.",
+        "error": "Impossible de régénérer l'adresse e-mail."
       },
       "aliasStatus": {
-        "title": "Vérifier l'alias email entrant",
-        "button": "Vérifier l'alias",
+        "title": "Vérifier l'adresse e-mail de réception",
+        "button": "Vérifier l'adresse",
         "pending": "Vérification...",
-        "active": "Alias actif",
-        "missing": "Alias absent",
-        "missingHint": "L'alias n'existe pas côté Exchange. Régénérez l'adresse ou contactez l'équipe ops.",
+        "active": "Adresse active",
+        "missing": "Adresse absente",
+        "missingHint": "L'adresse n'existe pas côté serveur de messagerie (Exchange). Régénérez l'adresse ou contactez l'équipe ops.",
         "unavailable": "Vérification indisponible (Exchange non configuré)",
         "unverifiable": "Impossible de vérifier",
-        "error": "Impossible de vérifier l'alias."
+        "error": "Impossible de vérifier l'adresse."
       },
       "errors": {
         "invalidId": "Identifiant application invalide.",
@@ -1030,14 +1055,14 @@
       },
       "tabs": {
         "overview": "Aperçu",
-        "recipients": "Destinataires",
+        "recipients": "Appareils",
         "email": "E-mail",
         "api": "API / développeurs",
         "notifications": "Notifications",
         "quietPeriods": "Périodes blanches"
       },
       "counters": {
-        "devices": "Devices liés",
+        "devices": "Appareils abonnés",
         "notifications": "Notifications",
         "lastSend": "Dernier envoi"
       },
@@ -1078,11 +1103,11 @@
       }
     },
     "deviceDetail": {
-      "back": "Retour aux devices",
-      "eyebrow": "Device",
-      "fallbackTitle": "Détail device",
-      "editTooltip": "Éditer le device",
-      "loading": "Chargement du device...",
+      "back": "Retour aux appareils",
+      "eyebrow": "Appareil",
+      "fallbackTitle": "Détail de l'appareil",
+      "editTooltip": "Modifier l'appareil",
+      "loading": "Chargement de l'appareil...",
       "applicationsTitle": "Applications liées",
       "applicationsEmpty": "Aucune application liée.",
       "unlinkedTitle": "Applications déliées",
@@ -1090,7 +1115,7 @@
       "unlinkedUnknownDate": "date inconnue",
       "unlinkSources": {
         "deviceButton": "depuis l'appareil",
-        "inbox": "depuis l'inbox",
+        "inbox": "depuis la boîte de réception",
         "takeover": "réattribué à un autre compte",
         "unknown": "source inconnue"
       },
@@ -1106,31 +1131,29 @@
         "id": "ID",
         "name": "Nom",
         "platform": "Plateforme",
-        "tokenStatus": "Statut token",
+        "tokenStatus": "Statut du jeton push",
         "lastActivity": "Dernière activité",
         "createdAt": "Créé le"
       },
       "labels": {
-        "never": "Jamais",
-        "active": "active",
-        "inactive": "inactive"
+        "never": "Jamais"
       },
       "actions": {
         "view": "Voir le détail"
       },
       "dialog": {
-        "title": "Modifier le device",
+        "title": "Modifier l'appareil",
         "save": "Enregistrer",
         "saving": "Enregistrement..."
       },
       "errors": {
-        "invalidId": "Identifiant device invalide."
+        "invalidId": "Identifiant d'appareil invalide."
       },
       "notifications": {
         "title": "Notifications reçues",
         "allApps": "Toutes les applications",
         "filterLabel": "Filtrer par application",
-        "empty": "Aucune notification livrée à ce device.",
+        "empty": "Aucune notification livrée à cet appareil.",
         "unknown": "inconnu",
         "table": {
           "title": "Titre",
@@ -1141,7 +1164,7 @@
         }
       },
       "readOnly": "Lecture seule",
-      "readOnlyHint": "Device d'un abonné : seul son propriétaire peut le modifier."
+      "readOnlyHint": "Appareil d'un abonné : seul son propriétaire peut le modifier."
     },
     "notificationDetail": {
       "back": "Retour aux notifications",
@@ -1150,16 +1173,16 @@
       "editTooltip": "Éditer la notification",
       "loading": "Chargement de la notification...",
       "messageTitle": "Message",
-      "devicesTitle": "Devices ciblés",
-      "devicesEmpty": "Aucun device cible résolu pour cette notification.",
+      "devicesTitle": "Appareils ciblés",
+      "devicesEmpty": "Aucun appareil ciblé par cette notification.",
       "statusTitle": "Statut",
-      "note": "`effective_scheduled_for` tient compte uniquement des périodes blanches application. Les périodes device peuvent retarder une delivery sans changer cette date.",
+      "note": "La date d'envoi tient compte des périodes blanches de l'application. Celles d'un appareil peuvent encore retarder la livraison vers cet appareil, sans changer cette date.",
       "table": {
         "name": "Nom",
         "platform": "Plateforme",
         "delivery": "Livraison",
         "opened": "Ouvert le",
-        "pushStatus": "Statut push",
+        "pushStatus": "Jeton push",
         "lastActivity": "Dernière activité",
         "actions": "Actions"
       },
@@ -1170,12 +1193,10 @@
         "sentAt": "Envoyée le",
         "createdAt": "Créée le",
         "scheduledFor": "Demandée pour",
-        "effective": "Effective",
-        "targetedDevices": "Devices ciblés"
+        "effective": "Date d'envoi",
+        "targetedDevices": "Appareils ciblés"
       },
       "labels": {
-        "scheduled": "Planifiée",
-        "shifted": "Décalée",
         "yes": "Oui",
         "no": "Non",
         "notYet": "Pas encore",
@@ -1229,7 +1250,7 @@
       "metrics": {
         "applications": "Applications",
         "applicationsActive": "Actives",
-        "devices": "Devices",
+        "devices": "Appareils",
         "notifications": "Notifications",
         "processingStuck": "Notifications bloquées",
         "none": "Aucune métrique disponible."
@@ -1308,21 +1329,21 @@
       },
       "goToBilling": "Voir la facturation",
       "changePlanTitle": "Changer de formule",
-      "changePlanHint": "Vous avez deja un abonnement. Pour changer de formule ou resilier, passez par le portail : cela remplace l'abonnement en cours au lieu d'en ouvrir un second."
+      "changePlanHint": "Vous avez déjà un abonnement. Pour changer de formule ou résilier, passez par le portail : cela remplace l'abonnement en cours au lieu d'en ouvrir un second."
     },
     "accounts": {
       "title": "Comptes",
       "lead": "Chercher un compte et lui offrir l'accès. Le reste passe par l'admin Django.",
-      "searchPlaceholder": "Email ou clé utilisateur",
+      "searchPlaceholder": "E-mail ou clé utilisateur",
       "search": "Chercher",
       "noMatch": "Aucun compte ne correspond.",
       "noneOffered": "Aucun compte n'a d'accès offert pour le moment.",
       "offered": "Accès offert",
-      "unconfirmed": "Email non confirmé",
+      "unconfirmed": "E-mail non confirmé",
       "inactive": "Désactivé",
       "notePlaceholder": "Pourquoi cet accès ?",
       "saved": "Enregistré.",
-      "scopeNote": "Seul l'accès offert est modifiable ici. Email, mot de passe, activation et suppression restent dans l'admin Django. Chaque octroi et chaque retrait sont journalisés avec leur auteur.",
+      "scopeNote": "Seul l'accès offert est modifiable ici. E-mail, mot de passe, activation et suppression restent dans l'admin Django. Chaque octroi et chaque retrait sont journalisés avec leur auteur.",
       "fields": {
         "email": "Compte",
         "access": "Accès offert",

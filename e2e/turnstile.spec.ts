@@ -160,7 +160,7 @@ test('forgot-password sends the solved token', async ({ page }) => {
   await expect(email).toHaveValue('renaud@example.com');
   await page.getByRole('button', { name: 'Envoyer le lien' }).click();
 
-  await expect(page.getByText(/Si un compte existe avec cet email/)).toBeVisible();
+  await expect(page.getByText(/Si un compte existe avec cette adresse e-mail/)).toBeVisible();
   expect(postBody(calls, '/auth/forgot-password/')).toMatchObject({
     email: 'renaud@example.com',
     turnstile_token: STUB_TOKEN,

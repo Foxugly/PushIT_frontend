@@ -24,6 +24,7 @@ import {
 } from '../../../../core/models/api.models';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
+import { StatusLabelPipe, StatusLabelService } from '../../../../core/i18n/status-labels';
 import { formatDateTimeFrBe } from '../../../../core/utils/date-format.utils';
 import { coerceApiError } from '../../../../core/utils/api-error.utils';
 import { AppAlert } from '../../../../shared/app-alert/app-alert';
@@ -41,6 +42,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     ReactiveFormsModule,
     DatePipe,
     AppAlert, ApiErrorMessagePipe,
+    StatusLabelPipe,
     PageHeader,
     ConsoleDialogActions,
     ConsoleFactsTable,
@@ -62,6 +64,7 @@ export class NotificationDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PushitApiService);
   private readonly consoleCopy = inject(ConsoleCopyService);
+  private readonly statusLabels = inject(StatusLabelService);
   readonly copy = computed(() => this.consoleCopy.current().notificationDetail);
 
   readonly notification = signal<NotificationRead | null>(null);
@@ -83,9 +86,7 @@ export class NotificationDetailPage implements OnInit {
       { label: this.copy().facts.application, value: notification.application_name, severity: 'info' as const },
       {
         label: this.copy().facts.status,
-        value: this.isShifted(notification)
-          ? this.copy().labels.shifted
-          : notification.status,
+        value: this.statusLabels.label('notification', this.isShifted(notification) ? 'shifted' : notification.status),
         severity: this.notificationSeverity(notification),
       },
       { label: this.copy().facts.future, value: this.isFuture() ? this.copy().labels.yes : this.copy().labels.no, severity: this.isFuture() ? 'warn' as const : 'secondary' as const },

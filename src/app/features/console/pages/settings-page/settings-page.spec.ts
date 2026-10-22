@@ -60,7 +60,7 @@ describe('SettingsPage (« Mon compte »)', () => {
           provide: LanguagePreferenceService,
           useValue: {
             options: [
-              { value: 'FR', label: 'Francais' },
+              { value: 'FR', label: 'Français' },
               { value: 'EN', label: 'English' },
             ],
             currentBackendLanguage: () => backendLanguage(),

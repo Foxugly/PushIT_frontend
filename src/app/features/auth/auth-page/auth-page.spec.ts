@@ -61,8 +61,8 @@ describe('AuthPage', () => {
           magicCaptchaRequired: 'Captcha requis.',
           magicCaptchaFailed: 'Captcha échoué.',
           validation: {
-            emailRequired: "L'email est requis.",
-            emailInvalid: 'Saisissez une adresse email valide.',
+            emailRequired: "L'adresse e-mail est requise.",
+            emailInvalid: 'Saisissez une adresse e-mail valide.',
             passwordRequired: 'Le mot de passe est requis.',
           },
         },
@@ -254,7 +254,7 @@ describe('AuthPage', () => {
 
     expect(api.requestMagicLink).not.toHaveBeenCalled();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain("L'email est requis.");
+    expect(text).toContain("L'adresse e-mail est requise.");
   });
 
   it('tells the visitor why an empty login went nowhere', () => {
@@ -263,7 +263,7 @@ describe('AuthPage', () => {
 
     expect(api.login).not.toHaveBeenCalled();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain("L'email est requis.");
+    expect(text).toContain("L'adresse e-mail est requise.");
     expect(text).toContain('Le mot de passe est requis.');
   });
 

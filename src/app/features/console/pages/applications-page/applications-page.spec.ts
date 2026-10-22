@@ -94,10 +94,6 @@ describe('ApplicationsPage', () => {
             regenerate: 'Regeneration impossible.',
             revoke: 'Revocation impossible.',
           },
-          statuses: {
-            active: 'active',
-            inactive: 'inactive',
-          },
           confirmDelete: 'Supprimer {name} ?',
           confirmRegenerate: 'Regenerer {name} ?',
           confirmRevoke: 'Revoquer {name} ?',

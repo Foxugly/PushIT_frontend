@@ -50,36 +50,36 @@
           ]
         },
         {
-          "title": "Funzionalità dei device",
+          "title": "Funzionalità dei dispositivi",
           "items": [
-            "Elenco, dettaglio, modifica ed eliminazione dei device visibili.",
-            "Visualizzazione delle applicazioni collegate a un device.",
-            "Collegamento automatico tramite X-App-Token.",
-            "Supporto del flusso mobile: installazione, scansione del QR code, recupero del push token e creazione o aggiornamento del collegamento lato backend."
+            "Elenco, dettaglio, modifica ed eliminazione dei dispositivi visibili.",
+            "Visualizzazione delle applicazioni a cui un dispositivo è iscritto.",
+            "Iscrizione automatica di un dispositivo con il suo token applicativo (X-App-Token).",
+            "Supporto del flusso mobile: installazione, scansione del QR code, recupero del token push e creazione o aggiornamento dell'iscrizione lato server."
           ]
         },
         {
           "title": "Funzionalità delle notifiche",
           "items": [
-            "Creazione di notifiche mirate per applicazione ed elenco esplicito di device.",
+            "Creazione di notifiche mirate per applicazione ed elenco esplicito di dispositivi.",
             "Elenco, dettaglio, invio manuale e statistiche delle notifiche.",
             "Gestione delle notifiche future: elenco, dettaglio, modifica ed eliminazione.",
-            "Filtri per applicazione, stato e data effettiva di invio, tenendo conto degli invii parziali e di `effective_scheduled_for`."
+            "Filtri per applicazione, stato e data di invio, tenendo conto degli invii parziali e dei rinvii dovuti ai periodi di silenzio."
           ]
         },
         {
           "title": "Funzionalità dei periodi di silenzio",
           "items": [
-            "Gestione dei periodi di silenzio per applicazione o per device.",
-            "Supporto dei periodi ONCE e RECURRING, con modifica, eliminazione e attivazione.",
+            "Gestione dei periodi di silenzio per applicazione o per dispositivo.",
+            "Periodi una tantum o ricorrenti, con modifica, eliminazione e attivazione.",
             "Gestione delle finestre che superano la mezzanotte e delle finestre contigue.",
-            "Impatto operativo distinto: spostamento globale della notifica lato applicazione, oppure rinvio della delivery lato device."
+            "Impatto operativo distinto: spostamento globale della notifica lato applicazione, oppure rinvio della consegna lato dispositivo."
           ]
         },
         {
-          "title": "Funzionalità di invio tramite email",
+          "title": "Funzionalità di invio tramite e-mail",
           "items": [
-            "Ricezione di un'email in arrivo e risoluzione dell'applicazione tramite il prefisso del destinatario.",
+            "Ricezione di un'e-mail in arrivo e risoluzione dell'applicazione tramite il prefisso del destinatario.",
             "Trasformazione dell'oggetto in titolo e del contenuto testuale in messaggio, con pianificazione tramite un marcatore `SEND_AT`.",
             "Controlli di accesso su dominio, mittente e appartenenza dell'applicazione di destinazione.",
             "Gestione dell'idempotenza tramite `message_id`, con rifiuto dei replay dal contenuto diverso."
@@ -106,7 +106,7 @@
         {
           "icon": "pi-bolt",
           "title": "Il prodotto",
-          "body": "PushIT centralizza la gestione delle tue applicazioni, dei tuoi device e delle tue campagne di notifiche push in una console chiara e moderna."
+          "body": "PushIT centralizza la gestione delle tue applicazioni, dei tuoi dispositivi e delle tue campagne di notifiche push in una console chiara e moderna."
         },
         {
           "icon": "pi-building",
@@ -122,7 +122,7 @@
     },
     "auth": {
       "title": "Accedi",
-      "email": "Indirizzo email",
+      "email": "Indirizzo e-mail",
       "password": "Password",
       "rememberMe": "Ricordami",
       "forgotPassword": "Password dimenticata?",
@@ -135,19 +135,19 @@
       "magicTitle": "Accesso tramite link",
       "magicSend": "Invia il link",
       "magicPending": "Invio...",
-      "magicSent": "Se questa email è registrata, è stato appena inviato un link di accesso.",
+      "magicSent": "Se questa e-mail è registrata, è stato appena inviato un link di accesso.",
       "magicBack": "Torna all'accesso",
       "magicCaptchaRequired": "Completa il captcha.",
       "magicCaptchaFailed": "Verifica captcha non riuscita. Riprova.",
       "validation": {
-        "emailRequired": "L'email è obbligatoria.",
-        "emailInvalid": "Inserisci un indirizzo email valido.",
+        "emailRequired": "L'e-mail è obbligatoria.",
+        "emailInvalid": "Inserisci un indirizzo e-mail valido.",
         "passwordRequired": "La password è obbligatoria."
       }
     },
     "registerPanel": {
       "defaultTitle": "Registrazione",
-      "email": "Indirizzo email",
+      "email": "Indirizzo e-mail",
       "password": "Password",
       "passwordHint": "Minimo 8 caratteri",
       "language": "Lingua",
@@ -159,8 +159,8 @@
       "captchaRequired": "Completa il captcha anti-robot.",
       "captchaFailed": "Verifica anti-robot non riuscita. Riprova.",
       "validation": {
-        "emailRequired": "L'email è obbligatoria.",
-        "emailInvalid": "Inserisci un indirizzo email valido.",
+        "emailRequired": "L'e-mail è obbligatoria.",
+        "emailInvalid": "Inserisci un indirizzo e-mail valido.",
         "passwordRequired": "La password è obbligatoria.",
         "passwordTooShort": "La password deve contenere almeno 8 caratteri.",
         "languageRequired": "La lingua è obbligatoria."
@@ -168,9 +168,9 @@
     },
     "forgotPassword": {
       "title": "Password dimenticata",
-      "email": "Indirizzo email",
+      "email": "Indirizzo e-mail",
       "submit": "Invia il link",
-      "submitted": "Se esiste un account con questa email, ti è appena stato inviato un link di reimpostazione. Ricordati di controllare la posta indesiderata.",
+      "submitted": "Se esiste un account con questa e-mail, ti è appena stato inviato un link di reimpostazione. Ricordati di controllare la posta indesiderata.",
       "registerPrompt": "Non hai ancora un account?",
       "registerLink": "Crea un account",
       "backToLogin": "Torna all'accesso",
@@ -190,7 +190,7 @@
       "backToLogin": "Torna all'accesso"
     },
     "checkEmail": {
-      "title": "Controlla la tua casella email",
+      "title": "Controlla la tua casella e-mail",
       "intro": "Abbiamo inviato un link di conferma a ",
       "hint": "Clicca sul link per attivare il tuo account, poi accedi.",
       "resend": "Invia di nuovo il link",
@@ -198,11 +198,11 @@
       "backToLogin": "Torna all'accesso"
     },
     "confirmEmail": {
-      "title": "Conferma dell'email",
+      "title": "Conferma dell'e-mail",
       "confirming": "Conferma in corso…",
       "invalid": "Questo link di conferma non è valido o è scaduto.",
-      "resendHint": "Inserisci la tua email per ricevere un nuovo link.",
-      "emailLabel": "Indirizzo email",
+      "resendHint": "Inserisci la tua e-mail per ricevere un nuovo link.",
+      "emailLabel": "Indirizzo e-mail",
       "resend": "Invia di nuovo il link",
       "resent": "Se è necessaria una conferma, è stato inviato un nuovo link.",
       "resendError": "Impossibile inviare il link al momento. Riprova più tardi.",
@@ -228,7 +228,7 @@
         "tokenEyebrow": "Token generato",
         "copyButton": "Copia",
         "dismissButton": "Nascondi",
-        "tokenNote": "Il token grezzo è visibile una sola volta. Archiviazione solo lato server.",
+        "tokenNote": "Il token è visibile una sola volta: il server ne conserva solo un'impronta.",
         "admin": {
           "label": "Amministrazione",
           "description": "Monitora lo stato del backend e accedi all'admin Django."
@@ -255,8 +255,8 @@
           "countKey": "apps"
         },
         {
-          "label": "Device",
-          "description": "Consulta e aggiorna i terminali collegati.",
+          "label": "Dispositivi",
+          "description": "Consulta e aggiorna i dispositivi iscritti.",
           "icon": "pi pi-mobile",
           "link": "/dashboard/devices",
           "countKey": "devices"
@@ -270,7 +270,7 @@
         },
         {
           "label": "Periodi di silenzio",
-          "description": "Gestisci le finestre di silenzio applicative e device.",
+          "description": "Sospendi gli invii in certe fasce orarie, per applicazione o per dispositivo.",
           "icon": "pi pi-moon",
           "link": "/dashboard/quiet-periods",
           "countKey": "quietPeriods"
@@ -284,7 +284,7 @@
         "metrics": {
           "apps": "Applicazioni",
           "activeApps": "Attive",
-          "devices": "Device",
+          "devices": "Dispositivi",
           "notifications": "Notifiche",
           "quietPeriods": "Periodi di silenzio"
         },
@@ -330,8 +330,8 @@
       "settings": {
         "title": "Il mio account",
         "accountTitle": "Account",
-        "email": "Indirizzo email",
-        "fallbackEmail": "Email non disponibile",
+        "email": "Indirizzo e-mail",
+        "fallbackEmail": "Indirizzo e-mail non disponibile",
         "userkey": "Chiave utente",
         "copyUserkey": "Copia la chiave utente",
         "userkeyCopied": "Chiave utente copiata.",
@@ -390,7 +390,7 @@
       "deviceForm": {
         "name": "Nome",
         "platform": "Piattaforma",
-        "pushTokenStatus": "Stato del push token"
+        "pushTokenStatus": "Stato del token push"
       }
     },
     "update": {
@@ -404,12 +404,12 @@
       "stepsTitle": "Come eliminare il tuo account",
       "steps": [
         "Accedi alla console su https://pushit.foxugly.com, con lo stesso account dell’app mobile.",
-        "Apri « Impostazioni ».",
-        "Nella sezione « Elimina il mio account », inserisci la password attuale e fai clic su « Elimina il mio account ».",
+        "Apri « Il mio account ».",
+        "Nella sezione « Zona pericolosa », inserisci la password attuale e fai clic su « Elimina il mio account ».",
         "Conferma. L’eliminazione è immediata."
       ],
       "forgotPassword": "Password dimenticata? Reimpostala prima dalla pagina di accesso.",
-      "openConsole": "Apri le impostazioni",
+      "openConsole": "Apri Il mio account",
       "deletedTitle": "Dati eliminati",
       "deleted": [
         "Il tuo account: indirizzo e-mail, password e preferenze.",
@@ -428,6 +428,70 @@
     }
   },
   "console": {
+    "statusLabels": {
+      "notification": {
+        "draft": "Bozza",
+        "scheduled": "Pianificata",
+        "queued": "In coda",
+        "processing": "In invio",
+        "sent": "Inviata",
+        "partial": "Invio parziale",
+        "failed": "Non riuscita",
+        "no_target": "Nessun dispositivo selezionato",
+        "shifted": "Posticipata"
+      },
+      "delivery": {
+        "pending": "In attesa",
+        "sent": "Inviata",
+        "failed": "Non riuscita"
+      },
+      "pushToken": {
+        "active": "Attivo",
+        "invalid": "Token non valido",
+        "revoked": "Revocato"
+      },
+      "platform": {
+        "android": "Android",
+        "ios": "iPhone"
+      },
+      "application": {
+        "active": "Attiva",
+        "inactive": "Inattiva"
+      },
+      "quietPeriod": {
+        "active": "Attivo",
+        "inactive": "Inattivo"
+      },
+      "quietPeriodType": {
+        "ONCE": "Una tantum",
+        "RECURRING": "Ricorrente"
+      },
+      "sendToken": {
+        "active": "Attivo",
+        "revoked": "Revocato"
+      },
+      "inboundEmail": {
+        "created": "Notifica creata",
+        "existing": "Duplicato ignorato",
+        "rejected": "Rifiutata",
+        "conflict": "Conflitto",
+        "error": "Errore"
+      }
+    },
+    "counts": {
+      "devices": {
+        "one": "{count} dispositivo",
+        "other": "{count} dispositivi"
+      },
+      "notifications": {
+        "one": "{count} notifica",
+        "other": "{count} notifiche"
+      },
+      "quietPeriods": {
+        "one": "{count} periodo di silenzio",
+        "other": "{count} periodi di silenzio"
+      }
+    },
     "applications": {
       "title": "Gestione delle applicazioni",
       "total": "Totale",
@@ -437,14 +501,10 @@
       "empty": "Nessuna applicazione per questo account.",
       "loading": "Caricamento dell'applicazione...",
       "noDescription": "Nessuna descrizione.",
-      "statuses": {
-        "active": "attiva",
-        "inactive": "inattiva"
-      },
       "table": {
         "name": "Nome",
         "description": "Descrizione",
-        "prefix": "Prefisso",
+        "prefix": "Prefisso del token",
         "status": "Stato",
         "createdAt": "Creata il",
         "actions": "Azioni"
@@ -520,14 +580,13 @@
       }
     },
     "devices": {
-      "title": "Inventario e collegamento dei device",
-      "countLabel": "device",
+      "title": "Dispositivi",
       "refresh": "Aggiorna",
       "add": "Aggiungi",
       "downloadAndroid": "App Android",
       "downloadAndroidError": "Impossibile scaricare l'app Android.",
-      "empty": "Nessun device collegato per questo account.",
-      "loading": "Caricamento dei device...",
+      "empty": "Nessun dispositivo per questo account.",
+      "loading": "Caricamento dei dispositivi...",
       "none": "nessuna",
       "never": "Mai",
       "table": {
@@ -537,7 +596,7 @@
         "applications": "Applicazioni",
         "lastActivity": "Ultima attività",
         "actions": "Azioni",
-        "prefix": "Prefisso",
+        "prefix": "Prefisso del token",
         "status": "Stato",
         "createdAt": "Creato il"
       },
@@ -546,37 +605,37 @@
         "edit": "Modifica",
         "delete": "Elimina",
         "useLatestToken": "Usa l'ultimo token generato",
-        "link": "Collega il device",
+        "link": "Collega il dispositivo",
         "linking": "Associazione in corso...",
         "save": "Salva",
         "saving": "Salvataggio in corso..."
       },
       "dialog": {
-        "createTitle": "Collega un device",
-        "editTitle": "Modifica il device"
+        "createTitle": "Collega un dispositivo",
+        "editTitle": "Modifica il dispositivo"
       },
       "createForm": {
-        "appToken": "X-App-Token",
-        "appTokenPlaceholder": "Incolla qui il token grezzo",
-        "deviceName": "Nome del device",
+        "appToken": "Token applicativo (X-App-Token)",
+        "appTokenPlaceholder": "Incolla qui il token",
+        "deviceName": "Nome del dispositivo",
         "deviceNamePlaceholder": "iPhone di Marie",
         "platform": "Piattaforma",
-        "pushToken": "Push token",
+        "pushToken": "Token push",
         "pushTokenPlaceholder": "ExponentPushToken..."
       },
       "alerts": {
-        "updated": "Device aggiornato con successo.",
-        "deleted": "Device eliminato.",
-        "linked": "Device {deviceId} collegato all'applicazione {applicationId}."
+        "updated": "Dispositivo aggiornato.",
+        "deleted": "Dispositivo eliminato.",
+        "linked": "Dispositivo {deviceId} collegato all'applicazione {applicationId}."
       },
       "errors": {
-        "missingAppToken": "Inserisci un X-App-Token per collegare un device.",
-        "invalidId": "Identificativo device non valido.",
-        "loading": "Caricamento del device..."
+        "missingAppToken": "Inserisci un token applicativo (X-App-Token) per collegare un dispositivo.",
+        "invalidId": "Identificativo del dispositivo non valido.",
+        "loading": "Caricamento del dispositivo..."
       },
-      "confirmDelete": "Eliminare il device \"{name}\"?",
+      "confirmDelete": "Eliminare il dispositivo \"{name}\"?",
       "readOnly": "Sola lettura",
-      "readOnlyHint": "Device di un abbonato: solo il proprietario può modificarlo.",
+      "readOnlyHint": "Dispositivo di un abbonato: solo il proprietario può modificarlo.",
       "emptyState": {
         "title": "Ancora nessun dispositivo",
         "message": "Un dispositivo si aggiunge scansionando il QR code di un'applicazione con l'app mobile PushIT.",
@@ -586,22 +645,22 @@
       }
     },
     "notifications": {
-      "title": "Notifiche utente",
+      "title": "Le mie notifiche",
       "history": "Cronologia",
       "future": "Future",
-      "shifted": "Spostate",
+      "shifted": "Posticipate",
       "refresh": "Aggiorna",
       "add": "Aggiungi",
       "empty": "Nessuna notifica per questi filtri.",
       "loading": "Caricamento delle notifiche...",
-      "immediate": "immediato",
+      "immediate": "Immediato",
       "scheduledSubtext": "Pianificata",
       "filters": {
         "application": "Applicazione",
-        "device": "Device",
+        "device": "Dispositivo",
         "status": "Stato",
-        "from": "Effettivo a partire da",
-        "to": "Effettivo fino a",
+        "from": "Invio dal",
+        "to": "Invio fino al",
         "allApps": "Tutte",
         "allDevices": "Tutti",
         "allStatuses": "Tutti",
@@ -615,7 +674,7 @@
         "application": "Applicazione",
         "message": "Messaggio",
         "status": "Stato",
-        "effective": "Effettiva",
+        "effective": "Data di invio",
         "actions": "Azioni"
       },
       "actions": {
@@ -636,9 +695,9 @@
       "form": {
         "application": "Applicazione",
         "applicationPlaceholder": "Scegli...",
-        "devices": "Device di destinazione",
-        "devicesPlaceholder": "Scegli uno o più device",
-        "devicesHelp": "Vengono proposti solo i device attivi collegati all'applicazione selezionata.",
+        "devices": "Dispositivi selezionati",
+        "devicesPlaceholder": "Scegli uno o più dispositivi",
+        "devicesHelp": "Vengono proposti solo i dispositivi attivi iscritti all'applicazione selezionata.",
         "title": "Titolo",
         "titlePlaceholder": "Promo weekend",
         "message": "Messaggio",
@@ -657,17 +716,6 @@
         "goToBilling": "Vai alla fatturazione"
       },
       "confirmDelete": "Eliminare la notifica futura \"{title}\"?",
-      "statusLabels": {
-        "draft": "bozza",
-        "scheduled": "pianificata",
-        "queued": "in coda",
-        "processing": "in corso",
-        "sent": "inviata",
-        "partial": "parziale",
-        "failed": "non riuscita",
-        "no_target": "senza destinatario",
-        "shifted": "spostata"
-      },
       "typeLabels": {
         "future": "Futura",
         "history": "Cronologia"
@@ -694,15 +742,15 @@
       }
     },
     "quietPeriods": {
-      "title": "Gestione delle finestre di silenzio",
+      "title": "Periodi di silenzio",
       "refresh": "Aggiorna",
       "add": "Aggiungi",
       "empty": "Nessun periodo di silenzio configurato.",
       "loading": "Caricamento dei periodi di silenzio...",
       "targetNone": "Nessuna destinazione",
       "targetUnknownApplication": "Applicazione sconosciuta",
-      "targetUnknownDevice": "Device sconosciuto",
-      "missingTargets": "Nessuna applicazione o device disponibile per creare un periodo di silenzio.",
+      "targetUnknownDevice": "Dispositivo sconosciuto",
+      "missingTargets": "Nessuna applicazione o dispositivo disponibile per creare un periodo di silenzio.",
       "missingParent": "Seleziona una destinazione valida prima di creare un periodo di silenzio.",
       "table": {
         "target": "Destinazione",
@@ -721,21 +769,11 @@
       },
       "scopeLabels": {
         "application": "Applicazione",
-        "device": "Device"
-      },
-      "typeLabels": {
-        "once": "Occasionale",
-        "recurring": "Ricorrente",
-        "badgeOnce": "once",
-        "badgeRecurring": "recurring"
-      },
-      "statusLabels": {
-        "active": "attiva",
-        "inactive": "inattiva"
+        "device": "Dispositivo"
       },
       "form": {
         "target": "Destinazione",
-        "device": "Device",
+        "device": "Dispositivo",
         "application": "Applicazione",
         "selectPlaceholder": "Scegli...",
         "name": "Nome",
@@ -759,7 +797,7 @@
       ],
       "defaultNames": {
         "application": "Silenzio applicazione",
-        "device": "Silenzio device"
+        "device": "Silenzio dispositivo"
       },
       "alerts": {
         "created": "Periodo di silenzio creato.",
@@ -780,7 +818,7 @@
         "differentEndTime": "L'ora di fine deve essere diversa dall'ora di inizio."
       },
       "readOnly": "Sola lettura",
-      "readOnlyHint": "Finestra di silenzio del device di un abbonato: solo il proprietario può modificarla.",
+      "readOnlyHint": "Periodo di silenzio del dispositivo di un abbonato: solo il proprietario può modificarlo.",
       "emptyState": {
         "title": "Nessun periodo di silenzio",
         "message": "Un periodo di silenzio trattiene le notifiche durante una fascia oraria (di notte, nel fine settimana…).",
@@ -800,8 +838,8 @@
       "downloadQr": "Scarica il QR",
       "rotate": "Nuovo codice",
       "rotatePending": "Generazione...",
-      "rotateWarning": "Un nuovo codice chiude la porta ai collegamenti futuri. Non rimuove nessuno: i device già collegati continuano a ricevere. Per rimuoverne uno, usa l'elenco dei device qui sotto.",
-      "rotateConfirm": "Generare un nuovo codice di iscrizione per «{name}»? Il codice attuale smetterà di funzionare; i device già collegati non sono toccati.",
+      "rotateWarning": "Un nuovo codice chiude la porta ai collegamenti futuri. Non rimuove nessuno: i dispositivi già collegati continuano a ricevere. Per rimuoverne uno, usa l'elenco dei dispositivi qui sotto.",
+      "rotateConfirm": "Generare un nuovo codice di iscrizione per «{name}»? Il codice attuale smetterà di funzionare; i dispositivi già collegati non sono toccati.",
       "rotated": "Nuovo codice di iscrizione generato.",
       "rotateError": "Impossibile generare un nuovo codice."
     },
@@ -822,8 +860,6 @@
         "status": "Stato",
         "actions": "Azioni"
       },
-      "activeLabel": "attivo",
-      "revokedLabel": "revocato",
       "never": "Mai",
       "reveal": "Rivedi il token",
       "revealHint": "Reinserisci la password: una sessione aperta non basta per rileggere un segreto.",
@@ -885,13 +921,6 @@
         "status": "Stato",
         "reason": "Motivo"
       },
-      "statuses": {
-        "created": "Notifica creata",
-        "existing": "Duplicato ignorato",
-        "rejected": "Rifiutata",
-        "conflict": "Conflitto",
-        "error": "Errore"
-      },
       "reasons": {
         "sender_not_allowed": "Mittente non autorizzato",
         "sender_blocked": "Mittente bloccato",
@@ -914,31 +943,31 @@
       "loading": "Caricamento dell'applicazione...",
       "descriptionTitle": "Descrizione",
       "descriptionEmpty": "Nessuna descrizione disponibile per questa applicazione.",
-      "inboundEmailTitle": "Indirizzo email di notifica",
-      "inboundEmailLabel": "Indirizzo email",
+      "inboundEmailTitle": "Indirizzo e-mail dell'applicazione",
+      "inboundEmailLabel": "Indirizzo e-mail",
       "inboundEmailCopy": "Copia l'indirizzo",
-      "inboundEmailCopied": "Indirizzo email copiato.",
-      "inboundEmailCopyFailed": "Impossibile copiare l'indirizzo email.",
-      "inboundEmailHelpTitle": "Invia una notifica tramite email",
+      "inboundEmailCopied": "Indirizzo e-mail copiato.",
+      "inboundEmailCopyFailed": "Impossibile copiare l'indirizzo e-mail.",
+      "inboundEmailHelpTitle": "Invia una notifica tramite e-mail",
       "inboundEmailHelp": {
-        "intro": "Invia un'email a questo indirizzo per creare una notifica su questa applicazione.",
-        "subject": "L'oggetto dell'email diventa il titolo della notifica.",
-        "body": "Il contenuto testuale dell'email diventa il messaggio.",
+        "intro": "Invia un'e-mail a questo indirizzo per creare una notifica su questa applicazione.",
+        "subject": "L'oggetto dell'e-mail diventa il titolo della notifica.",
+        "body": "Il testo dell'e-mail diventa il messaggio.",
         "schedule": "Pianificazione possibile con [SEND_AT:ISO_DATETIME] nell'oggetto.",
         "sender": "Per impostazione predefinita può inviare solo l'indirizzo del proprietario; vedi « Chi può inviare via e-mail » qui sotto."
       },
-      "devicesTitle": "Device collegati",
+      "devicesTitle": "Dispositivi iscritti",
       "enrolmentTitle": "Iscrizione",
       "sendTokensTitle": "Token di invio",
       "examplesTitle": "Esempi di invio",
-      "legacyWarning": "Questa applicazione ha inviato con il vecchio token applicativo, che dal 29/07/2026 non è più accettato in invio. Se un invio fallisce con «app_token_retired», crea un token di invio qui sotto e sostituiscilo nella tua integrazione. L'iscrizione dei device continua a funzionare.",
-      "devicesEmpty": "Nessun device collegato a questa applicazione.",
+      "legacyWarning": "Questa applicazione ha inviato con il vecchio token applicativo, che dal 29/07/2026 non è più accettato in invio. Se un invio fallisce con «app_token_retired», crea un token di invio qui sotto e sostituiscilo nella tua integrazione. L'iscrizione dei dispositivi continua a funzionare.",
+      "devicesEmpty": "Nessun dispositivo iscritto a questa applicazione.",
       "evict": {
         "button": "Rimuovi dall'applicazione",
-        "hint": "Rimuovere un device interrompe gli invii verso di esso. Finché conosce il codice di iscrizione può iscriversi di nuovo: cambia anche il codice.",
-        "confirm": "Rimuovere «{device}» da «{name}»? Questo device non riceverà più le notifiche di questa applicazione. Potrà iscriversi di nuovo finché il codice di iscrizione non viene cambiato.",
-        "success": "Device rimosso dall'applicazione.",
-        "error": "Impossibile rimuovere questo device."
+        "hint": "Rimuovere un dispositivo interrompe gli invii verso di esso. Finché conosce il codice di iscrizione può iscriversi di nuovo: cambia anche il codice.",
+        "confirm": "Rimuovere «{device}» da «{name}»? Questo dispositivo non riceverà più le notifiche di questa applicazione. Potrà iscriversi di nuovo finché il codice di iscrizione non viene cambiato.",
+        "success": "Dispositivo rimosso dall'applicazione.",
+        "error": "Impossibile rimuovere questo dispositivo."
       },
       "notificationsTitle": "Notifiche",
       "notificationsEmpty": "Nessuna notifica collegata a questa applicazione.",
@@ -949,33 +978,29 @@
       "table": {
         "name": "Nome",
         "platform": "Piattaforma",
-        "pushStatus": "Stato push",
+        "pushStatus": "Token push",
         "lastActivity": "Ultima attività",
-        "prefix": "Prefisso",
+        "prefix": "Prefisso del token",
         "status": "Stato",
         "createdAt": "Creata il",
         "title": "Titolo",
         "type": "Tipo",
-        "effective": "Effettiva",
+        "effective": "Data di invio",
         "actions": "Azioni"
       },
       "facts": {
         "id": "ID",
         "name": "Nome",
-        "tokenPrefix": "Prefisso token",
+        "tokenPrefix": "Prefisso del token",
         "status": "Stato",
         "lastUsed": "Ultimo utilizzo",
         "revokedToken": "Token revocato",
         "createdAt": "Creata il"
       },
       "statusLabels": {
-        "active": "Attiva",
-        "inactive": "Inattiva",
         "never": "Mai",
         "no": "No",
-        "immediate": "Immediato",
-        "once": "once",
-        "recurring": "recurring"
+        "immediate": "Immediato"
       },
       "notificationTypes": {
         "future": "Futura",
@@ -1005,24 +1030,24 @@
         "loadError": "Impossibile caricare questa immagine. Prova con un PNG o un JPG — i formati come HEIC (foto iPhone) non sono supportati dal browser."
       },
       "regenerateEmail": {
-        "label": "Indirizzo email di ingestione",
+        "label": "Indirizzo e-mail dell'applicazione",
         "button": "Rigenera l'indirizzo",
         "pending": "Rigenerazione in corso...",
         "hint": "Genera un nuovo indirizzo casuale; quello precedente smetterà di funzionare.",
-        "confirm": "Rigenerare l'indirizzo email di \"{name}\"? L'indirizzo attuale smetterà immediatamente di funzionare.",
-        "success": "Nuovo indirizzo email generato.",
-        "error": "Impossibile rigenerare l'indirizzo email."
+        "confirm": "Rigenerare l'indirizzo e-mail di \"{name}\"? L'indirizzo attuale smetterà immediatamente di funzionare.",
+        "success": "Nuovo indirizzo e-mail generato.",
+        "error": "Impossibile rigenerare l'indirizzo e-mail."
       },
       "aliasStatus": {
-        "title": "Verifica l'alias email in arrivo",
-        "button": "Verifica l'alias",
+        "title": "Verifica l'indirizzo di ricezione",
+        "button": "Verifica l'indirizzo",
         "pending": "Verifica in corso...",
-        "active": "Alias attivo",
-        "missing": "Alias assente",
-        "missingHint": "L'alias non esiste lato Exchange. Rigenera l'indirizzo o contatta il team ops.",
+        "active": "Indirizzo attivo",
+        "missing": "Indirizzo assente",
+        "missingHint": "L'indirizzo non esiste sul server di posta (Exchange). Rigenera l'indirizzo o contatta il team ops.",
         "unavailable": "Verifica non disponibile (Exchange non configurato)",
         "unverifiable": "Impossibile verificare",
-        "error": "Impossibile verificare l'alias."
+        "error": "Impossibile verificare l'indirizzo."
       },
       "errors": {
         "invalidId": "Identificativo applicazione non valido.",
@@ -1030,14 +1055,14 @@
       },
       "tabs": {
         "overview": "Panoramica",
-        "recipients": "Destinatari",
+        "recipients": "Dispositivi",
         "email": "E-mail",
         "api": "API / sviluppatori",
         "notifications": "Notifiche",
         "quietPeriods": "Periodi di silenzio"
       },
       "counters": {
-        "devices": "Device collegati",
+        "devices": "Dispositivi iscritti",
         "notifications": "Notifiche",
         "lastSend": "Ultimo invio"
       },
@@ -1078,11 +1103,11 @@
       }
     },
     "deviceDetail": {
-      "back": "Torna ai device",
-      "eyebrow": "Device",
-      "fallbackTitle": "Dettaglio device",
-      "editTooltip": "Modifica il device",
-      "loading": "Caricamento del device...",
+      "back": "Torna ai dispositivi",
+      "eyebrow": "Dispositivo",
+      "fallbackTitle": "Dettaglio del dispositivo",
+      "editTooltip": "Modifica il dispositivo",
+      "loading": "Caricamento del dispositivo...",
       "applicationsTitle": "Applicazioni collegate",
       "applicationsEmpty": "Nessuna applicazione collegata.",
       "unlinkedTitle": "Applicazioni scollegate",
@@ -1090,7 +1115,7 @@
       "unlinkedUnknownDate": "data sconosciuta",
       "unlinkSources": {
         "deviceButton": "dal dispositivo",
-        "inbox": "dall'inbox",
+        "inbox": "dalla casella di posta",
         "takeover": "riassegnata a un altro account",
         "unknown": "origine sconosciuta"
       },
@@ -1106,31 +1131,29 @@
         "id": "ID",
         "name": "Nome",
         "platform": "Piattaforma",
-        "tokenStatus": "Stato token",
+        "tokenStatus": "Stato del token push",
         "lastActivity": "Ultima attività",
         "createdAt": "Creato il"
       },
       "labels": {
-        "never": "Mai",
-        "active": "attiva",
-        "inactive": "inattiva"
+        "never": "Mai"
       },
       "actions": {
         "view": "Vedi il dettaglio"
       },
       "dialog": {
-        "title": "Modifica il device",
+        "title": "Modifica il dispositivo",
         "save": "Salva",
         "saving": "Salvataggio in corso..."
       },
       "errors": {
-        "invalidId": "Identificativo device non valido."
+        "invalidId": "Identificativo del dispositivo non valido."
       },
       "notifications": {
         "title": "Notifiche ricevute",
         "allApps": "Tutte le applicazioni",
         "filterLabel": "Filtra per applicazione",
-        "empty": "Nessuna notifica consegnata a questo device.",
+        "empty": "Nessuna notifica consegnata a questo dispositivo.",
         "unknown": "sconosciuto",
         "table": {
           "title": "Titolo",
@@ -1141,7 +1164,7 @@
         }
       },
       "readOnly": "Sola lettura",
-      "readOnlyHint": "Device di un abbonato: solo il proprietario può modificarlo."
+      "readOnlyHint": "Dispositivo di un abbonato: solo il proprietario può modificarlo."
     },
     "notificationDetail": {
       "back": "Torna alle notifiche",
@@ -1150,16 +1173,16 @@
       "editTooltip": "Modifica la notifica",
       "loading": "Caricamento della notifica...",
       "messageTitle": "Messaggio",
-      "devicesTitle": "Device di destinazione",
-      "devicesEmpty": "Nessun device di destinazione risolto per questa notifica.",
+      "devicesTitle": "Dispositivi selezionati",
+      "devicesEmpty": "Nessun dispositivo selezionato per questa notifica.",
       "statusTitle": "Stato",
-      "note": "`effective_scheduled_for` tiene conto solo dei periodi di silenzio dell'applicazione. I periodi device possono ritardare una delivery senza modificare questa data.",
+      "note": "La data di invio tiene conto dei periodi di silenzio dell'applicazione. Quelli di un dispositivo possono ancora ritardare la consegna a quel dispositivo, senza modificare questa data.",
       "table": {
         "name": "Nome",
         "platform": "Piattaforma",
         "delivery": "Consegna",
         "opened": "Aperta il",
-        "pushStatus": "Stato push",
+        "pushStatus": "Token push",
         "lastActivity": "Ultima attività",
         "actions": "Azioni"
       },
@@ -1170,12 +1193,10 @@
         "sentAt": "Inviata il",
         "createdAt": "Creata il",
         "scheduledFor": "Richiesta per",
-        "effective": "Effettiva",
-        "targetedDevices": "Device di destinazione"
+        "effective": "Data di invio",
+        "targetedDevices": "Dispositivi selezionati"
       },
       "labels": {
-        "scheduled": "Pianificata",
-        "shifted": "Spostata",
         "yes": "Sì",
         "no": "No",
         "notYet": "Non ancora",
@@ -1229,7 +1250,7 @@
       "metrics": {
         "applications": "Applicazioni",
         "applicationsActive": "Attive",
-        "devices": "Device",
+        "devices": "Dispositivi",
         "notifications": "Notifiche",
         "processingStuck": "Notifiche bloccate",
         "none": "Nessuna metrica disponibile."
@@ -1308,21 +1329,21 @@
       },
       "goToBilling": "Vai alla fatturazione",
       "changePlanTitle": "Cambiare piano",
-      "changePlanHint": "Hai gia un abbonamento. Per cambiare piano o disdire, usa il portale: sostituisce l'abbonamento in corso invece di aprirne un secondo."
+      "changePlanHint": "Hai già un abbonamento. Per cambiare piano o disdire, usa il portale: sostituisce l'abbonamento in corso invece di aprirne un secondo."
     },
     "accounts": {
       "title": "Account",
       "lead": "Cercare un account e offrirgli l'accesso. Il resto passa dall'admin Django.",
-      "searchPlaceholder": "Email o chiave utente",
+      "searchPlaceholder": "E-mail o chiave utente",
       "search": "Cerca",
       "noMatch": "Nessun account corrisponde.",
       "noneOffered": "Al momento nessun account ha accesso offerto.",
       "offered": "Accesso offerto",
-      "unconfirmed": "Email non confermata",
+      "unconfirmed": "E-mail non confermata",
       "inactive": "Disattivato",
       "notePlaceholder": "Perché questo accesso?",
       "saved": "Salvato.",
-      "scopeNote": "Qui è modificabile solo l'accesso offerto. Email, password, attivazione ed eliminazione restano nell'admin Django. Ogni concessione e revoca è registrata con il suo autore.",
+      "scopeNote": "Qui è modificabile solo l'accesso offerto. E-mail, password, attivazione ed eliminazione restano nell'admin Django. Ogni concessione e revoca è registrata con il suo autore.",
       "fields": {
         "email": "Account",
         "access": "Accesso offerto",

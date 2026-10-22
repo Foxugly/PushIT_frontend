@@ -63,7 +63,7 @@
           <td>{{ formatDateTime(token.last_used_at) }}</td>
           <td>
             <p-tag
-              [value]="token.is_active ? copy().activeLabel : copy().revokedLabel"
+              [value]="(token.is_active ? 'active' : 'revoked') | statusLabel: 'sendToken'"
               [severity]="tokenSeverity(token)"
             />
           </td>

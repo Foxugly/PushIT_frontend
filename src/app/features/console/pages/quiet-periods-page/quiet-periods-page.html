@@ -45,14 +45,14 @@
             </td>
             <td>
               <p-tag
-                [value]="quietPeriod.period_type === 'ONCE' ? copy().typeLabels.badgeOnce : copy().typeLabels.badgeRecurring"
+                [value]="quietPeriod.period_type | statusLabel: 'quietPeriodType'"
                 [severity]="quietPeriodTypeSeverity(quietPeriod.period_type)"
               />
             </td>
             <td>{{ quietPeriodScheduleLabel(quietPeriod) }}</td>
             <td>
               <p-tag
-                [value]="quietPeriod.is_active ? copy().statusLabels.active : copy().statusLabels.inactive"
+                [value]="(quietPeriod.is_active ? 'active' : 'inactive') | statusLabel: 'quietPeriod'"
                 [severity]="quietPeriodStatusSeverity(quietPeriod)"
               />
             </td>
