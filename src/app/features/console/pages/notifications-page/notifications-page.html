@@ -254,6 +254,18 @@
                   (onClick)="deleteFutureNotification(notification)"
                 />
               }
+              @if (canDelete(notification)) {
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [ariaLabel]="copy().actions.delete"
+                  [pTooltip]="copy().actions.delete"
+                  tooltipPosition="top"
+                  (onClick)="deleteNotification(notification)"
+                />
+              }
             </div>
           </td>
         </tr>

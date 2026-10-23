@@ -609,6 +609,35 @@ export class NotificationsPage implements OnInit {
       });
   }
 
+  // History rows only: the backend refuses (409) to hide a notification that is
+  // still pending; a future one keeps its own (hard) delete.
+  canDelete(notification: NotificationRead): boolean {
+    return (
+      !this.futureNotificationIds().has(notification.id) &&
+      !['scheduled', 'queued', 'processing'].includes(notification.status)
+    );
+  }
+
+  async deleteNotification(notification: NotificationRead): Promise<void> {
+    const shouldDelete = await this.confirm.ask({
+      message: this.interpolate(this.copy().confirmHide, { title: notification.title }),
+    });
+    if (!shouldDelete) {
+      return;
+    }
+
+    this.error.set(null);
+    this.api.deleteNotification(notification.id).subscribe({
+      next: () => {
+        this.banner.set(this.interpolate(this.copy().alerts.hidden, { title: notification.title }));
+        this.refreshNotifications();
+      },
+      error: (error) => {
+        this.error.set(coerceApiError(error));
+      },
+    });
+  }
+
   // A draft can be sent; a failed/partial one can be re-sent (the backend only
   // re-dispatches the deliveries that didn't succeed — no double-notification).
   canSend(notification: NotificationRead): boolean {

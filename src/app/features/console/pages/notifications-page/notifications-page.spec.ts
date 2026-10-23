@@ -24,6 +24,7 @@ import { DeviceRead, NotificationRead } from '../../../../core/models/api.models
 import { ConsoleCopyService } from '../../../../core/services/console-copy.service';
 import { ConsoleShellService } from '../../../../core/services/console-shell.service';
 import { PushitApiService } from '../../../../core/services/pushit-api.service';
+import { AppConfirmService } from '../../../../shared/app-confirm-dialog/app-confirm.service';
 import { provideTestCatalogs } from '../../../../../testing/catalog-store.testing';
 import { NotificationsPage } from './notifications-page';
 
@@ -48,6 +49,7 @@ describe('NotificationsPage', () => {
       'createNotification',
       'updateFutureNotification',
       'deleteFutureNotification',
+      'deleteNotification',
       'sendNotification',
     ]);
 
@@ -109,6 +111,7 @@ describe('NotificationsPage', () => {
       ),
     );
     api.deleteFutureNotification.and.returnValue(of(void 0));
+    api.deleteNotification.and.returnValue(of(void 0));
     api.sendNotification.and.returnValue(of({ status: 'queued', notification_id: 301, task_id: 'task-1' }));
 
     shell = {
@@ -199,11 +202,13 @@ describe('NotificationsPage', () => {
             createdScheduled: 'Notification planifiee creee.',
             updated: 'Notification future mise a jour.',
             deleted: 'Notification {title} supprimee.',
+            hidden: 'Notification {title} masquee.',
             queued: 'Notification {notificationId} en file ({taskId}).',
             inactiveApp: 'Application desactivee.',
             goToBilling: 'Aller a la facturation',
           },
           confirmDelete: 'Supprimer {title} ?',
+          confirmHide: 'Masquer {title} ?',
           typeLabels: {
             future: 'Future',
             history: 'Historique',
@@ -475,6 +480,58 @@ describe('NotificationsPage', () => {
     });
     expect(component.banner()).toBe('Notification future mise a jour.');
     expect(component.modalMode()).toBeNull();
+  });
+
+  describe('soft delete', () => {
+    it('offers the trash only on history rows that are no longer pending', () => {
+      fixture.detectChanges();
+
+      expect(component.canDelete(makeNotification({ id: 301, status: 'sent' }))).toBe(true);
+      expect(component.canDelete(makeNotification({ id: 301, status: 'failed' }))).toBe(true);
+      expect(component.canDelete(makeNotification({ id: 310, status: 'queued' }))).toBe(false);
+      expect(component.canDelete(makeNotification({ id: 310, status: 'processing' }))).toBe(false);
+      // 302 is in the future list: it keeps its own (hard) delete.
+      expect(component.canDelete(makeNotification({ id: 302, status: 'scheduled' }))).toBe(false);
+    });
+
+    it('hides a notification once confirmed, then reloads the lists', async () => {
+      vi.spyOn(TestBed.inject(AppConfirmService), 'ask').mockResolvedValue(true);
+      fixture.detectChanges();
+      api.listNotificationsPage.calls.reset();
+
+      await component.deleteNotification(makeNotification({ id: 301, title: 'Promo', status: 'sent' }));
+
+      expect(api.deleteNotification).toHaveBeenCalledOnceWith(301);
+      expect(component.banner()).toBe('Notification Promo masquee.');
+      expect(api.listNotificationsPage).toHaveBeenCalled();
+    });
+
+    it('does nothing when the confirmation is declined', async () => {
+      vi.spyOn(TestBed.inject(AppConfirmService), 'ask').mockResolvedValue(false);
+      fixture.detectChanges();
+
+      await component.deleteNotification(makeNotification({ id: 301, status: 'sent' }));
+
+      expect(api.deleteNotification).not.toHaveBeenCalled();
+    });
+
+    it('shows the API error when the backend refuses', async () => {
+      vi.spyOn(TestBed.inject(AppConfirmService), 'ask').mockResolvedValue(true);
+      api.deleteNotification.and.returnValue(
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 409,
+              error: { code: 'notification_pending', detail: 'Pending.' },
+            }),
+        ),
+      );
+      fixture.detectChanges();
+
+      await component.deleteNotification(makeNotification({ id: 301, status: 'sent' }));
+
+      expect(component.error()?.code).toBe('notification_pending');
+    });
   });
 
   it('clears filters and reloads the default collections', () => {
