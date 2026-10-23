@@ -711,11 +711,13 @@
         "createdScheduled": "Notifica pianificata creata.",
         "updated": "Notifica futura aggiornata.",
         "deleted": "Notifica futura \"{title}\" eliminata.",
+        "hidden": "Notifica \"{title}\" eliminata.",
         "queued": "Notifica {notificationId} inserita nella coda {taskId}.",
         "inactiveApp": "Questa applicazione è disattivata: riattivala prima di inviare notifiche.",
         "goToBilling": "Vai alla fatturazione"
       },
       "confirmDelete": "Eliminare la notifica futura \"{title}\"?",
+      "confirmHide": "Eliminare la notifica \"{title}\"?",
       "typeLabels": {
         "future": "Futura",
         "history": "Cronologia"

@@ -452,6 +452,11 @@ export class PushitApiService {
     return this.http.get<NotificationRead>(this.url(`/notifications/${notificationId}/`));
   }
 
+  // Soft delete: the backend flags the notification hidden (gone from every list).
+  deleteNotification(notificationId: number): Observable<void> {
+    return this.http.delete<void>(this.url(`/notifications/${notificationId}/`));
+  }
+
   getFutureNotification(notificationId: number): Observable<NotificationRead> {
     return this.http.get<NotificationRead>(this.url(`/notifications/future/${notificationId}/`));
   }

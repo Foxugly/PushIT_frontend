@@ -711,11 +711,13 @@
         "createdScheduled": "Geplande notificatie aangemaakt.",
         "updated": "Toekomstige notificatie bijgewerkt.",
         "deleted": "Toekomstige notificatie \"{title}\" verwijderd.",
+        "hidden": "Notificatie \"{title}\" verwijderd.",
         "queued": "Notificatie {notificationId} in wachtrij geplaatst: {taskId}.",
         "inactiveApp": "Deze applicatie is gedeactiveerd: activeer ze opnieuw voordat je meldingen verstuurt.",
         "goToBilling": "Naar facturatie"
       },
       "confirmDelete": "Toekomstige notificatie \"{title}\" verwijderen?",
+      "confirmHide": "Notificatie \"{title}\" verwijderen?",
       "typeLabels": {
         "future": "Toekomstig",
         "history": "Historiek"

@@ -711,11 +711,13 @@
         "createdScheduled": "Scheduled notification created.",
         "updated": "Future notification updated.",
         "deleted": "Future notification \"{title}\" deleted.",
+        "hidden": "Notification \"{title}\" deleted.",
         "queued": "Notification {notificationId} queued in task {taskId}.",
         "inactiveApp": "This application is deactivated: reactivate it before sending notifications.",
         "goToBilling": "Go to billing"
       },
       "confirmDelete": "Delete future notification \"{title}\"?",
+      "confirmHide": "Delete notification \"{title}\"?",
       "typeLabels": {
         "future": "Future",
         "history": "History"
