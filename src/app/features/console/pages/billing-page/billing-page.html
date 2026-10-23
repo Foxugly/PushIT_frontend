@@ -26,7 +26,16 @@
           </div>
         </div>
 
-        @if (sub.isPaid) {
+        @if (sub.bypass) {
+          <div class="billing-offered" data-testid="billing-offered">
+            <p-tag severity="info" [value]="copy().offeredLabel" />
+            <p class="console-muted">{{ copy().offeredHint }}</p>
+          </div>
+          <dl class="billing-kv">
+            <dt>{{ copy().usageLabel }}</dt>
+            <dd>{{ sub.applicationsUsed }}</dd>
+          </dl>
+        } @else if (sub.isPaid) {
           <dl class="billing-kv">
             <dt>{{ copy().planLabel }}</dt>
             <dd>
@@ -121,7 +130,9 @@
            ouvrirait un SECOND abonnement Stripe -- le central le refuse
            desormais, mais proposer un bouton qui mene a un refus est pire que
            de ne pas le proposer. -->
-      @if (sub.isPaid) {
+      @if (sub.bypass) {
+        <!-- Accès offert : ni catalogue ni changement de formule, rien à acheter. -->
+      } @else if (sub.isPaid) {
         <section class="console-card">
           <div class="console-card__header">
             <div>

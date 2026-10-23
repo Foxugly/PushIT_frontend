@@ -63,3 +63,31 @@ test('saves the language as soon as it is picked', async ({ page }) => {
   expect(patches).toHaveLength(1);
   expect(patches[0].postDataJSON()).toEqual({ language: 'EN' });
 });
+
+test('shows an access offered by the staff in the subscription card', async ({ page }) => {
+  await mockConsoleApi(page, {
+    user,
+    apps: [],
+    devices: [],
+    notifications: [],
+    futureNotifications: [],
+    billingSubscription: {
+      billingEnabled: true,
+      isPaid: true,
+      bypass: true,
+      status: '',
+      plan: '',
+      interval: '',
+      quota: 10000,
+      applicationsUsed: 1,
+      currentPeriodEnd: null,
+      canManage: false,
+    },
+  });
+  await page.goto('/dashboard/settings');
+
+  const card = page.getByTestId('subscription-panel');
+  await expect(card.getByRole('heading', { level: 3, name: 'Abonnement' })).toBeVisible();
+  await expect(card.getByText('Accès offert')).toBeVisible();
+  await expect(card.getByRole('button')).toHaveCount(0);
+});

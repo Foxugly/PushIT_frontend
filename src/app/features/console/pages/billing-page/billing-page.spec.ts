@@ -71,6 +71,8 @@ const BILLING_COPY = {
   goToBilling: 'Voir la facturation',
   changePlanTitle: 'Changer de formule',
   changePlanHint: 'Vous avez deja un abonnement.',
+  offeredLabel: 'Acces offert',
+  offeredHint: 'Fonctions payantes sans abonnement.',
   statuses: { active: 'Actif', trialing: 'Essai' },
 };
 
@@ -339,5 +341,33 @@ describe('BillingPage', () => {
 
     expect(component.statusLabel('active')).toBe('Actif');
     expect(component.statusLabel('past_due')).toBe('past_due');
+  });
+
+  it('shows an offered access instead of an empty plan and never pushes to checkout', async () => {
+    await setup(
+      makeSubscription({
+        bypass: true,
+        isPaid: true,
+        status: '',
+        plan: '',
+        interval: '',
+        quota: 10000,
+        currentPeriodEnd: null,
+        canManage: false,
+      }),
+    );
+    const el = fixture.nativeElement as HTMLElement;
+    const texte = el.textContent ?? '';
+
+    expect(el.querySelector('[data-testid="billing-offered"]')?.textContent).toContain('Acces offert');
+    expect(texte).toContain('Fonctions payantes sans abonnement.');
+    expect(texte).not.toContain('Aucun abonnement');
+    expect(texte).not.toContain("S'abonner");
+    expect(texte).not.toContain('Changer de formule');
+    expect(texte).not.toContain('Gerer');
+    expect(texte).not.toContain('10000');
+    expect(component.canAdjustQuantity()).toBe(false);
+    expect(billing.plans).not.toHaveBeenCalled();
+    expect(billing.history).toHaveBeenCalled();
   });
 });

@@ -380,6 +380,21 @@
         "language": "Lingua dell'account",
         "languageSaved": "Lingua dell'account salvata.",
         "securityTitle": "Sicurezza",
+        "subscription": {
+          "title": "Abbonamento",
+          "offered": "Accesso offerto",
+          "offeredHint": "Il tuo account ha le funzioni a pagamento senza abbonamento.",
+          "planLabel": "Piano",
+          "usageLabel": "Applicazioni utilizzate",
+          "unlimited": "illimitato",
+          "periodEndLabel": "Fine del periodo in corso",
+          "intervalMonthly": "mensile",
+          "intervalYearly": "annuale",
+          "none": "Nessun abbonamento attivo.",
+          "seePlans": "Vedi le tariffe",
+          "manage": "Gestisci l'abbonamento",
+          "loadFailed": "Lo stato del tuo abbonamento è momentaneamente non disponibile."
+        },
         "deleteAccount": {
           "title": "Zona pericolosa",
           "lead": "L’eliminazione è definitiva: il tuo account, i tuoi dispositivi e le applicazioni di cui sei proprietario vengono cancellati.",
@@ -1372,7 +1387,9 @@
       },
       "goToBilling": "Vai alla fatturazione",
       "changePlanTitle": "Cambiare piano",
-      "changePlanHint": "Hai già un abbonamento. Per cambiare piano o disdire, usa il portale: sostituisce l'abbonamento in corso invece di aprirne un secondo."
+      "changePlanHint": "Hai già un abbonamento. Per cambiare piano o disdire, usa il portale: sostituisce l'abbonamento in corso invece di aprirne un secondo.",
+      "offeredLabel": "Accesso offerto",
+      "offeredHint": "Il tuo account ha le funzioni a pagamento senza abbonamento: nulla da pagare, nessuna scadenza."
     },
     "accounts": {
       "title": "Account",

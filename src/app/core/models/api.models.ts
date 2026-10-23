@@ -497,6 +497,12 @@ export interface BillingPlan {
 export interface BillingSubscription {
   billingEnabled: boolean;
   isPaid: boolean;
+  /**
+   * Accès offert par le staff (`subscription_bypass`) : `isPaid` est vrai mais
+   * sans plan, sans échéance ni portail. Absent d'un backend antérieur à
+   * PushIT_server « bypass » — lu alors comme `false`.
+   */
+  bypass?: boolean;
   status: string;
   plan: string;
   interval: string;
