@@ -5,6 +5,7 @@
       "dashboard": "Dashboard",
       "about": "About",
       "features": "Features",
+      "pricing": "Pricing",
       "donate": "Support",
       "login": "Sign in",
       "settings": "My account",
@@ -86,6 +87,45 @@
           ]
         }
       ]
+    },
+    "pricing": {
+      "badge": "Pricing",
+      "title": "Simple pricing, no surprises.",
+      "description": "Pay for the applications you actually use, or go unlimited as your project grows.",
+      "exclVat": "excl. VAT",
+      "perMonth": "/ month",
+      "perYear": "/ year",
+      "perApplication": "per application",
+      "or": "or",
+      "yearlySaving": "2 months free",
+      "currentPlan": "Your current plan",
+      "perApp": {
+        "name": "Per application",
+        "tagline": "Ideal to get started: you only pay for the applications you own.",
+        "trial": "30-day free trial",
+        "features": [
+          "Billed by the number of applications you own",
+          "Every feature included, no extra charge per device",
+          "Sending via API, send tokens and inbound email",
+          "Quiet periods and sending history"
+        ]
+      },
+      "unlimited": {
+        "name": "Unlimited",
+        "tagline": "For teams and projects that keep adding applications.",
+        "features": [
+          "Unlimited applications, no counting",
+          "Every feature included, no extra charge per device",
+          "Sending via API, send tokens and inbound email",
+          "Quiet periods and sending history"
+        ]
+      },
+      "ctaTrial": "Start the free trial",
+      "ctaRegister": "Create an account",
+      "ctaSubscribe": "Choose this plan",
+      "ctaChange": "Change plan",
+      "ctaManage": "Manage my subscription",
+      "vatNote": "Prices exclude VAT, in euros. Applicable VAT is calculated at checkout based on your country."
     },
     "donate": {
       "badge": "Donate",
@@ -218,6 +258,7 @@
     "footer": {
       "tagline": "Push notifications, made simple.",
       "version": "Version",
+      "pricing": "Pricing",
       "privacy": "Privacy",
       "rights": "All rights reserved."
     },

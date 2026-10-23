@@ -1,0 +1,133 @@
+:host {
+  display: contents;
+}
+
+.pricing-hero {
+  display: grid;
+  gap: 1rem;
+}
+
+// Deux cartes côte à côte ; une colonne sur téléphone. `minmax(0, 1fr)` : jamais
+// plus large que l'écran, même avec un long libellé (360 px sans scroll latéral).
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.pricing-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.pricing-plan--featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), var(--card-shadow);
+}
+
+.pricing-plan__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pricing-plan__head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.pricing-plan .pricing-plan__tagline {
+  margin: 0;
+}
+
+.pricing-plan__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  color: var(--ink);
+}
+
+.pricing-plan__price strong {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pricing-plan__unit {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.pricing-plan .pricing-plan__alt {
+  margin: -0.35rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.pricing-plan__save {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pricing-plan__features {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-soft);
+}
+
+.pricing-plan__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  line-height: 1.45;
+}
+
+.pricing-plan__features i {
+  margin-top: 0.25rem;
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+}
+
+.pricing-plan__cta {
+  width: 100%;
+  margin-top: auto;
+  text-align: center;
+}
+
+.pricing-vat-note {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.pricing-vat-note i {
+  margin-top: 0.2rem;
+  color: var(--accent-strong);
+}
+
+@media (max-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

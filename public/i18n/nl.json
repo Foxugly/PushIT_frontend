@@ -5,6 +5,7 @@
       "dashboard": "Dashboard",
       "about": "Over",
       "features": "Functies",
+      "pricing": "Prijzen",
       "donate": "Steunen",
       "login": "Inloggen",
       "settings": "Mijn account",
@@ -86,6 +87,45 @@
           ]
         }
       ]
+    },
+    "pricing": {
+      "badge": "Prijzen",
+      "title": "Eenvoudige prijzen, zonder verrassingen.",
+      "description": "Betaal voor de applicaties die u echt gebruikt, of stap over op onbeperkt wanneer uw project groeit.",
+      "exclVat": "excl. btw",
+      "perMonth": "/ maand",
+      "perYear": "/ jaar",
+      "perApplication": "per applicatie",
+      "or": "of",
+      "yearlySaving": "2 maanden gratis",
+      "currentPlan": "Uw huidige abonnement",
+      "perApp": {
+        "name": "Per applicatie",
+        "tagline": "Ideaal om te starten: u betaalt alleen voor de applicaties die u bezit.",
+        "trial": "30 dagen gratis proberen",
+        "features": [
+          "Gefactureerd volgens het aantal applicaties dat u bezit",
+          "Alle functionaliteiten inbegrepen, zonder meerprijs per apparaat",
+          "Verzenden via API, verzendtokens en inkomende e-mail",
+          "Stille periodes en verzendgeschiedenis"
+        ]
+      },
+      "unlimited": {
+        "name": "Onbeperkt",
+        "tagline": "Voor teams en projecten met steeds meer applicaties.",
+        "features": [
+          "Onbeperkt applicaties, zonder te tellen",
+          "Alle functionaliteiten inbegrepen, zonder meerprijs per apparaat",
+          "Verzenden via API, verzendtokens en inkomende e-mail",
+          "Stille periodes en verzendgeschiedenis"
+        ]
+      },
+      "ctaTrial": "Gratis proefperiode starten",
+      "ctaRegister": "Account aanmaken",
+      "ctaSubscribe": "Dit abonnement kiezen",
+      "ctaChange": "Abonnement wijzigen",
+      "ctaManage": "Mijn abonnement beheren",
+      "vatNote": "Prijzen exclusief btw, in euro. De toepasselijke btw wordt bij de betaling berekend volgens uw land."
     },
     "donate": {
       "badge": "Donate",
@@ -218,6 +258,7 @@
     "footer": {
       "tagline": "Pushmeldingen, eenvoudig beheerd.",
       "version": "Versie",
+      "pricing": "Prijzen",
       "privacy": "Privacy",
       "rights": "Alle rechten voorbehouden."
     },

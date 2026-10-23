@@ -36,6 +36,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/features/features-page/features-page').then((m) => m.FeaturesPage),
       },
       {
+        path: 'pricing',
+        data: { titleKey: 'header.pricing' },
+        loadComponent: () => import('./features/pricing/pricing-page/pricing-page').then((m) => m.PricingPage),
+      },
+      {
         path: 'donate',
         data: { titleKey: 'header.donate' },
         loadComponent: () => import('./features/donate/donate-page/donate-page').then((m) => m.DonatePage),
