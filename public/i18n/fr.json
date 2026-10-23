@@ -380,6 +380,21 @@
         "language": "Langue du compte",
         "languageSaved": "Langue du compte enregistrée.",
         "securityTitle": "Sécurité",
+        "subscription": {
+          "title": "Abonnement",
+          "offered": "Accès offert",
+          "offeredHint": "Votre compte a accès aux fonctions payantes sans abonnement.",
+          "planLabel": "Formule",
+          "usageLabel": "Applications utilisées",
+          "unlimited": "illimité",
+          "periodEndLabel": "Fin de la période en cours",
+          "intervalMonthly": "mensuel",
+          "intervalYearly": "annuel",
+          "none": "Aucun abonnement en cours.",
+          "seePlans": "Voir les tarifs",
+          "manage": "Gérer l'abonnement",
+          "loadFailed": "L'état de votre abonnement est momentanément indisponible."
+        },
         "deleteAccount": {
           "title": "Zone de danger",
           "lead": "La suppression est définitive : votre compte, vos appareils et les applications dont vous êtes propriétaire sont effacés.",
@@ -1372,7 +1387,9 @@
       },
       "goToBilling": "Voir la facturation",
       "changePlanTitle": "Changer de formule",
-      "changePlanHint": "Vous avez déjà un abonnement. Pour changer de formule ou résilier, passez par le portail : cela remplace l'abonnement en cours au lieu d'en ouvrir un second."
+      "changePlanHint": "Vous avez déjà un abonnement. Pour changer de formule ou résilier, passez par le portail : cela remplace l'abonnement en cours au lieu d'en ouvrir un second.",
+      "offeredLabel": "Accès offert",
+      "offeredHint": "Votre compte a accès aux fonctions payantes sans abonnement : rien à payer, aucune échéance."
     },
     "accounts": {
       "title": "Comptes",

@@ -52,6 +52,81 @@
     </div>
   </section>
 
+  @if (subscriptionState(); as state) {
+    @if (state.kind === 'error') {
+      <section class="console-card" data-testid="subscription-panel">
+        <div class="console-card__header">
+          <h3>{{ subscriptionCopy().title }}</h3>
+        </div>
+        <p class="console-muted" data-testid="subscription-error">{{ subscriptionCopy().loadFailed }}</p>
+      </section>
+    } @else if (state.kind === 'loaded' && state.subscription.billingEnabled) {
+      @let sub = state.subscription;
+      <section class="console-card" data-testid="subscription-panel">
+        <div class="console-card__header">
+          <h3>{{ subscriptionCopy().title }}</h3>
+        </div>
+
+        @if (sub.bypass) {
+          <div class="account-page__subscription-state" data-testid="subscription-offered">
+            <p-tag severity="info" [value]="subscriptionCopy().offered" />
+            <p class="console-muted">{{ subscriptionCopy().offeredHint }}</p>
+          </div>
+        } @else if (sub.isPaid) {
+          <dl class="account-page__facts">
+            <div class="account-page__fact">
+              <dt>{{ subscriptionCopy().planLabel }}</dt>
+              <dd data-testid="subscription-plan">
+                {{ planName(sub.plan) }}
+                @if (intervalLabel(sub.interval); as interval) {
+                  · {{ interval }}
+                }
+              </dd>
+            </div>
+            <div class="account-page__fact">
+              <dt>{{ subscriptionCopy().usageLabel }}</dt>
+              <dd data-testid="subscription-usage">{{ usage(sub) }}</dd>
+            </div>
+            @if (sub.currentPeriodEnd) {
+              <div class="account-page__fact">
+                <dt>{{ subscriptionCopy().periodEndLabel }}</dt>
+                <dd data-testid="subscription-period-end">
+                  {{ sub.currentPeriodEnd | date: 'mediumDate' }}
+                </dd>
+              </div>
+            }
+          </dl>
+          <div class="console-actions">
+            <p-button
+              [label]="subscriptionCopy().manage"
+              icon="pi pi-credit-card"
+              [outlined]="true"
+              severity="secondary"
+              routerLink="/dashboard/billing"
+            />
+          </div>
+        } @else {
+          <p class="console-muted" data-testid="subscription-none">{{ subscriptionCopy().none }}</p>
+          <div class="console-actions">
+            <p-button
+              [label]="subscriptionCopy().seePlans"
+              icon="pi pi-tag"
+              severity="success"
+              routerLink="/pricing"
+            />
+            <p-button
+              [label]="subscriptionCopy().manage"
+              icon="pi pi-credit-card"
+              [outlined]="true"
+              severity="secondary"
+              routerLink="/dashboard/billing"
+            />
+          </div>
+        }
+      </section>
+    }
+  }
+
   <app-change-password-panel />
 
   <app-delete-account-panel />

@@ -380,6 +380,21 @@
         "language": "Accounttaal",
         "languageSaved": "Accounttaal opgeslagen.",
         "securityTitle": "Beveiliging",
+        "subscription": {
+          "title": "Abonnement",
+          "offered": "Gratis toegang",
+          "offeredHint": "Je account heeft de betaalde functies zonder abonnement.",
+          "planLabel": "Formule",
+          "usageLabel": "Gebruikte applicaties",
+          "unlimited": "onbeperkt",
+          "periodEndLabel": "Einde van de huidige periode",
+          "intervalMonthly": "maandelijks",
+          "intervalYearly": "jaarlijks",
+          "none": "Geen lopend abonnement.",
+          "seePlans": "Tarieven bekijken",
+          "manage": "Abonnement beheren",
+          "loadFailed": "De status van je abonnement is tijdelijk niet beschikbaar."
+        },
         "deleteAccount": {
           "title": "Gevarenzone",
           "lead": "Verwijderen is definitief: je account, je apparaten en de applicaties waarvan je eigenaar bent worden gewist.",
@@ -1372,7 +1387,9 @@
       },
       "goToBilling": "Naar facturatie",
       "changePlanTitle": "Van formule veranderen",
-      "changePlanHint": "U hebt al een abonnement. Ga via het portaal om van formule te veranderen of op te zeggen: dat vervangt het lopende abonnement in plaats van er een tweede te openen."
+      "changePlanHint": "U hebt al een abonnement. Ga via het portaal om van formule te veranderen of op te zeggen: dat vervangt het lopende abonnement in plaats van er een tweede te openen.",
+      "offeredLabel": "Gratis toegang",
+      "offeredHint": "Je account heeft de betaalde functies zonder abonnement: niets te betalen, geen vervaldatum."
     },
     "accounts": {
       "title": "Accounts",

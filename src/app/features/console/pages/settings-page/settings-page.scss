@@ -37,3 +37,13 @@
 .account-page__language {
   max-width: 34rem;
 }
+
+.account-page__subscription-state {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+
+  p {
+    margin: 0;
+  }
+}

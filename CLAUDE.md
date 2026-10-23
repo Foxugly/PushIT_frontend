@@ -82,7 +82,7 @@ Pièges découverts pendant la bascule, à connaître :
   - `public/` — Public layout (home, about, features, donate)
   - `pricing/` — public `/pricing` (« Tarifs », linked from topbar + footer): per-app (2 €/month or 20 €/year per application, 30-day trial) and unlimited (20 €/month or 200 €/year), **excl. VAT, amounts hard-coded** (the `billing/plans/` catalogue needs auth). CTA: visitor → `/register`; signed in → `/dashboard/billing`, with « Votre offre actuelle » on the plan read from `billing/subscription/` (plan codes `app` / `unlimited`; only called with a session). Change the template if the central's prices change.
   - `auth/`, `register/`, `forgot-password/` — Auth flows (guest-only routes)
-  - `console/` — Authenticated dashboard with sub-pages: applications, devices, notifications, quiet-periods, settings (« Mon compte » : compte, sécurité = `ChangePasswordPanel`, zone de danger ; `dashboard/change-password` redirige vers `dashboard/settings#security`)
+  - `console/` — Authenticated dashboard with sub-pages: applications, devices, notifications, quiet-periods, settings (« Mon compte » : compte, abonnement (lecture seule de `billing/subscription/` : « Accès offert » si `bypass`, sinon formule + applications utilisées + fin de période, ou « Aucun abonnement » → `/pricing` ; masqué si `billingEnabled=false`, une erreur de lecture n'affiche qu'une note ; gestion sur `/dashboard/billing`), sécurité = `ChangePasswordPanel`, zone de danger ; `dashboard/change-password` redirige vers `dashboard/settings#security`)
 - **`shared/`** — Reusable UI components (alert, confirm dialog, emoji picker, header, footer, register panel)
 
 ### Key Patterns

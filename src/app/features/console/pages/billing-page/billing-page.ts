@@ -93,10 +93,13 @@ export class BillingPage implements OnInit {
     return this.plans().find((plan) => plan.code === code) ?? null;
   });
 
-  /** L'ajustement de quantité n'a de sens que sur un plan facturé à l'unité. */
+  /**
+   * L'ajustement de quantité n'a de sens que sur un plan facturé à l'unité —
+   * jamais sur un accès offert par le staff (`bypass`) : payé sans plan ni Stripe.
+   */
   readonly canAdjustQuantity = computed(() => {
     const sub = this.subscription();
-    return !!sub?.isPaid && !!this.currentPlan()?.per_unit_quota_key;
+    return !!sub?.isPaid && !sub.bypass && !!this.currentPlan()?.per_unit_quota_key;
   });
 
   ngOnInit(): void {
@@ -118,7 +121,9 @@ export class BillingPage implements OnInit {
         this.newQuantity.set(Math.max(1, status.quota || 1));
         this.loading.set(false);
         if (status.billingEnabled) {
-          this.loadCatalogue();
+          if (!status.bypass) {
+            this.loadCatalogue();
+          }
           this.loadHistory();
         }
       },

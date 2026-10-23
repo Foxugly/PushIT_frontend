@@ -149,3 +149,14 @@
     }
   }
 }
+
+.billing-offered {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+
+  p {
+    margin: 0;
+  }
+}

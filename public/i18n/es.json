@@ -380,6 +380,21 @@
         "language": "Idioma de la cuenta",
         "languageSaved": "Idioma de la cuenta guardado.",
         "securityTitle": "Seguridad",
+        "subscription": {
+          "title": "Suscripción",
+          "offered": "Acceso gratuito",
+          "offeredHint": "Tu cuenta tiene las funciones de pago sin suscripción.",
+          "planLabel": "Plan",
+          "usageLabel": "Aplicaciones utilizadas",
+          "unlimited": "ilimitado",
+          "periodEndLabel": "Fin del período en curso",
+          "intervalMonthly": "mensual",
+          "intervalYearly": "anual",
+          "none": "Ninguna suscripción activa.",
+          "seePlans": "Ver tarifas",
+          "manage": "Gestionar la suscripción",
+          "loadFailed": "El estado de tu suscripción no está disponible en este momento."
+        },
         "deleteAccount": {
           "title": "Zona de peligro",
           "lead": "La eliminación es definitiva: se borran tu cuenta, tus dispositivos y las aplicaciones de las que eres propietario.",
@@ -1372,7 +1387,9 @@
       },
       "goToBilling": "Ir a facturación",
       "changePlanTitle": "Cambiar de plan",
-      "changePlanHint": "Ya tienes una suscripción. Para cambiar de plan o darte de baja, usa el portal: sustituye la suscripción en curso en lugar de abrir una segunda."
+      "changePlanHint": "Ya tienes una suscripción. Para cambiar de plan o darte de baja, usa el portal: sustituye la suscripción en curso en lugar de abrir una segunda.",
+      "offeredLabel": "Acceso gratuito",
+      "offeredHint": "Tu cuenta tiene las funciones de pago sin suscripción: nada que pagar, sin fecha de fin."
     },
     "accounts": {
       "title": "Cuentas",

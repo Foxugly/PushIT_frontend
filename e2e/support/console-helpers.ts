@@ -95,6 +95,20 @@ type InboundEmailLog = {
 
 type QuietPeriod = unknown[];
 
+/** GET billing/subscription/ (PushIT_server billing/api_views.py). */
+type BillingSubscription = {
+  billingEnabled: boolean;
+  isPaid: boolean;
+  bypass?: boolean;
+  status: string;
+  plan: string;
+  interval: string;
+  quota: number;
+  applicationsUsed: number;
+  currentPeriodEnd: string | null;
+  canManage: boolean;
+};
+
 export type ConsoleState = {
   user: User;
   apps: Application[];
@@ -106,6 +120,8 @@ export type ConsoleState = {
   deviceQuietPeriods?: Record<number, QuietPeriod>;
   sendTokens?: Record<number, SendToken[]>;
   inboundEmailLogs?: Record<number, InboundEmailLog[]>;
+  /** Absent : la route tombe dans le 404 générique (lecture en échec côté SPA). */
+  billingSubscription?: BillingSubscription;
 };
 
 /** Name/path of the backend's HttpOnly refresh cookie (PushIT_server refresh_cookie.py). */
@@ -193,6 +209,10 @@ export async function mockConsoleApi(page: Page, initialState: ConsoleState): Pr
 
     if (path.endsWith('/auth/me/') && method === 'GET') {
       return fulfillJson(route, 200, state.user);
+    }
+
+    if (path.endsWith('/billing/subscription/') && method === 'GET' && state.billingSubscription) {
+      return fulfillJson(route, 200, state.billingSubscription);
     }
 
     // « Mon compte » saves the language on change (PATCH auth/me/ {language}).
