@@ -41,6 +41,7 @@ describe('Topmenu', () => {
           dashboard: 'Dashboard',
           about: 'About',
           features: 'Features',
+          pricing: 'Pricing',
           donate: 'Donate',
           login: 'Se connecter',
           settings: 'Settings',

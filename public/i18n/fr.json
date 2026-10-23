@@ -5,6 +5,7 @@
       "dashboard": "Tableau de bord",
       "about": "À propos",
       "features": "Fonctionnalités",
+      "pricing": "Tarifs",
       "donate": "Soutenir",
       "login": "Se connecter",
       "settings": "Mon compte",
@@ -86,6 +87,45 @@
           ]
         }
       ]
+    },
+    "pricing": {
+      "badge": "Tarifs",
+      "title": "Des tarifs simples, sans surprise.",
+      "description": "Payez pour les applications que vous utilisez vraiment, ou passez à l'illimité quand votre projet grandit.",
+      "exclVat": "HTVA",
+      "perMonth": "/ mois",
+      "perYear": "/ an",
+      "perApplication": "par application",
+      "or": "ou",
+      "yearlySaving": "2 mois offerts",
+      "currentPlan": "Votre offre actuelle",
+      "perApp": {
+        "name": "Par application",
+        "tagline": "Idéal pour démarrer : vous ne payez que les applications que vous possédez.",
+        "trial": "30 jours d'essai gratuit",
+        "features": [
+          "Facturé selon le nombre d'applications que vous possédez",
+          "Toutes les fonctionnalités incluses, sans supplément par appareil",
+          "Envoi par API, jetons d'émission et e-mail entrant",
+          "Périodes blanches et historique des envois"
+        ]
+      },
+      "unlimited": {
+        "name": "Illimité",
+        "tagline": "Pour les équipes et les projets qui multiplient les applications.",
+        "features": [
+          "Applications illimitées, sans compter",
+          "Toutes les fonctionnalités incluses, sans supplément par appareil",
+          "Envoi par API, jetons d'émission et e-mail entrant",
+          "Périodes blanches et historique des envois"
+        ]
+      },
+      "ctaTrial": "Commencer l'essai gratuit",
+      "ctaRegister": "Créer un compte",
+      "ctaSubscribe": "Choisir cette offre",
+      "ctaChange": "Changer d'offre",
+      "ctaManage": "Gérer mon abonnement",
+      "vatNote": "Prix hors TVA, en euros. La TVA applicable est calculée au paiement selon votre pays."
     },
     "donate": {
       "badge": "Soutenir",
@@ -218,6 +258,7 @@
     "footer": {
       "tagline": "Vos notifications push, simplement.",
       "version": "Version",
+      "pricing": "Tarifs",
       "privacy": "Confidentialité",
       "rights": "Tous droits réservés."
     },

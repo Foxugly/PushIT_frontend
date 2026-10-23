@@ -5,6 +5,7 @@
       "dashboard": "Panel de control",
       "about": "Acerca de",
       "features": "Funcionalidades",
+      "pricing": "Precios",
       "donate": "Apoyar",
       "login": "Iniciar sesión",
       "settings": "Mi cuenta",
@@ -86,6 +87,45 @@
           ]
         }
       ]
+    },
+    "pricing": {
+      "badge": "Precios",
+      "title": "Precios sencillos, sin sorpresas.",
+      "description": "Paga por las aplicaciones que realmente usas, o pásate al plan ilimitado cuando tu proyecto crezca.",
+      "exclVat": "IVA excl.",
+      "perMonth": "/ mes",
+      "perYear": "/ año",
+      "perApplication": "por aplicación",
+      "or": "o",
+      "yearlySaving": "2 meses gratis",
+      "currentPlan": "Tu plan actual",
+      "perApp": {
+        "name": "Por aplicación",
+        "tagline": "Ideal para empezar: solo pagas las aplicaciones que tienes.",
+        "trial": "30 días de prueba gratuita",
+        "features": [
+          "Facturado según el número de aplicaciones que tienes",
+          "Todas las funcionalidades incluidas, sin coste adicional por dispositivo",
+          "Envío por API, tokens de envío y correo electrónico entrante",
+          "Periodos de silencio e historial de envíos"
+        ]
+      },
+      "unlimited": {
+        "name": "Ilimitado",
+        "tagline": "Para equipos y proyectos que no paran de sumar aplicaciones.",
+        "features": [
+          "Aplicaciones ilimitadas, sin contar",
+          "Todas las funcionalidades incluidas, sin coste adicional por dispositivo",
+          "Envío por API, tokens de envío y correo electrónico entrante",
+          "Periodos de silencio e historial de envíos"
+        ]
+      },
+      "ctaTrial": "Empezar la prueba gratuita",
+      "ctaRegister": "Crear una cuenta",
+      "ctaSubscribe": "Elegir este plan",
+      "ctaChange": "Cambiar de plan",
+      "ctaManage": "Gestionar mi suscripción",
+      "vatNote": "Precios sin IVA, en euros. El IVA aplicable se calcula al pagar según tu país."
     },
     "donate": {
       "badge": "Apoyar",
@@ -218,6 +258,7 @@
     "footer": {
       "tagline": "Tus notificaciones push, sin complicaciones.",
       "version": "Versión",
+      "pricing": "Precios",
       "privacy": "Privacidad",
       "rights": "Todos los derechos reservados."
     },

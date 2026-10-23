@@ -80,6 +80,7 @@ Pièges découverts pendant la bascule, à connaître :
   - `guards/auth.guard.ts` — `authGuard` (requires login) and `guestGuard` (requires logged-out)
 - **`features/`** — Lazy-loaded feature pages, organized by route
   - `public/` — Public layout (home, about, features, donate)
+  - `pricing/` — public `/pricing` (« Tarifs », linked from topbar + footer): per-app (2 €/month or 20 €/year per application, 30-day trial) and unlimited (20 €/month or 200 €/year), **excl. VAT, amounts hard-coded** (the `billing/plans/` catalogue needs auth). CTA: visitor → `/register`; signed in → `/dashboard/billing`, with « Votre offre actuelle » on the plan read from `billing/subscription/` (plan codes `app` / `unlimited`; only called with a session). Change the template if the central's prices change.
   - `auth/`, `register/`, `forgot-password/` — Auth flows (guest-only routes)
   - `console/` — Authenticated dashboard with sub-pages: applications, devices, notifications, quiet-periods, settings (« Mon compte » : compte, sécurité = `ChangePasswordPanel`, zone de danger ; `dashboard/change-password` redirige vers `dashboard/settings#security`)
 - **`shared/`** — Reusable UI components (alert, confirm dialog, emoji picker, header, footer, register panel)

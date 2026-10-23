@@ -1,0 +1,67 @@
+<main class="public-content pricing-content">
+  <section class="public-card pricing-hero">
+    <span class="public-badge">{{ copy().badge }}</span>
+    <h1>{{ copy().title }}</h1>
+    <p>{{ copy().description }}</p>
+  </section>
+
+  <section class="pricing-grid">
+    @let perAppCta = cta('app');
+    <article class="public-card pricing-plan pricing-plan--featured" data-plan="app" [class.pricing-plan--current]="perAppCta.current">
+      <header class="pricing-plan__head">
+        <h2>{{ copy().perApp.name }}</h2>
+        @if (perAppCta.current) {
+          <span class="public-badge public-badge--success">{{ copy().currentPlan }}</span>
+        } @else {
+          <span class="public-badge public-badge--soft">{{ copy().perApp.trial }}</span>
+        }
+      </header>
+      <p class="pricing-plan__tagline">{{ copy().perApp.tagline }}</p>
+      <div class="pricing-plan__price">
+        <strong>2 €</strong>
+        <span class="pricing-plan__unit">{{ copy().exclVat }} {{ copy().perMonth }} {{ copy().perApplication }}</span>
+      </div>
+      <p class="pricing-plan__alt">
+        {{ copy().or }} 20 € {{ copy().exclVat }} {{ copy().perYear }} {{ copy().perApplication }}
+        <span class="pricing-plan__save">{{ copy().yearlySaving }}</span>
+      </p>
+      <ul class="pricing-plan__features">
+        @for (item of copy().perApp.features; track item) {
+          <li><i class="pi pi-check" aria-hidden="true"></i>{{ item }}</li>
+        }
+      </ul>
+      <a class="public-button pricing-plan__cta" [class.public-button--secondary]="perAppCta.current" [routerLink]="perAppCta.link">
+        {{ perAppCta.label }}
+      </a>
+    </article>
+
+    @let unlimitedCta = cta('unlimited');
+    <article class="public-card pricing-plan" data-plan="unlimited" [class.pricing-plan--current]="unlimitedCta.current">
+      <header class="pricing-plan__head">
+        <h2>{{ copy().unlimited.name }}</h2>
+        @if (unlimitedCta.current) {
+          <span class="public-badge public-badge--success">{{ copy().currentPlan }}</span>
+        }
+      </header>
+      <p class="pricing-plan__tagline">{{ copy().unlimited.tagline }}</p>
+      <div class="pricing-plan__price">
+        <strong>20 €</strong>
+        <span class="pricing-plan__unit">{{ copy().exclVat }} {{ copy().perMonth }}</span>
+      </div>
+      <p class="pricing-plan__alt">
+        {{ copy().or }} 200 € {{ copy().exclVat }} {{ copy().perYear }}
+        <span class="pricing-plan__save">{{ copy().yearlySaving }}</span>
+      </p>
+      <ul class="pricing-plan__features">
+        @for (item of copy().unlimited.features; track item) {
+          <li><i class="pi pi-check" aria-hidden="true"></i>{{ item }}</li>
+        }
+      </ul>
+      <a class="public-button pricing-plan__cta" [class.public-button--secondary]="unlimitedCta.current" [routerLink]="unlimitedCta.link">
+        {{ unlimitedCta.label }}
+      </a>
+    </article>
+  </section>
+
+  <p class="pricing-vat-note"><i class="pi pi-info-circle" aria-hidden="true"></i>{{ copy().vatNote }}</p>
+</main>
