@@ -58,6 +58,7 @@
   },
   "overrides": {
     "vite": "7.3.7",
-    "minimatch": "^11.0.9"
+    "minimatch": "^11.0.9",
+    "@modelcontextprotocol/sdk": "^1.32.2"
   }
 }
