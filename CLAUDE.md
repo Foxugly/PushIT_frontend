@@ -40,11 +40,12 @@ Le runner est passé de karma/jasmine à **vitest**, pour sortir de karma 6.4 (d
 tirait une chaîne `glob 7 → minimatch 3 → brace-expansion 1.x` responsable de 9 alertes
 Dependabot *high* sans correctif possible dans ces lignes majeures).
 
-Les 28 specs n'ont **pas** été réécrits : `src/testing/jasmine-compat.ts` mappe
+Les 28 specs d'alors n'ont **pas** été réécrits : `src/testing/jasmine-compat.ts` (chargé en `setupFiles`) mappe
 `jasmine.createSpyObj` / `createSpy` / `objectContaining` / `any`, `spyOn`, `.and.*`,
 `spy.calls` et les matchers `toBeTrue` / `toBeFalse` / `toHaveBeenCalledOnceWith` sur leurs
 équivalents vitest. Les nouveaux specs doivent utiliser l'**API vitest native** (`vi.fn()`,
-`vi.spyOn`, `mockReturnValue`) ; le shim disparaîtra quand les 28 fichiers seront convertis.
+`vi.spyOn`, `mockReturnValue`) ; le shim disparaîtra quand les specs encore en API jasmine
+(24 des 50 en 2026-11) seront convertis.
 
 Pièges découverts pendant la bascule, à connaître :
 
@@ -79,11 +80,11 @@ Pièges découverts pendant la bascule, à connaître :
   - `interceptors/auth.interceptor.ts` — Attaches Bearer token, handles 401 with automatic token refresh
   - `guards/auth.guard.ts` — `authGuard` (requires login) and `guestGuard` (requires logged-out)
 - **`features/`** — Lazy-loaded feature pages, organized by route
-  - `public/` — Public layout (home, about, features, donate)
+  - `home/`, `about/`, `features/`, `donate/`, `privacy/`, `account-deletion/` — public pages (the public/console layouts, `topmenu`, `user-menu` and `footer` live in **`core/layout/`**)
   - `pricing/` — public `/pricing` (« Tarifs », linked from topbar + footer): per-app (2 €/month or 20 €/year per application, 30-day trial) and unlimited (20 €/month or 200 €/year), **excl. VAT, amounts hard-coded** (the `billing/plans/` catalogue needs auth). CTA: visitor → `/register`; signed in → `/dashboard/billing`, with « Votre offre actuelle » on the plan read from `billing/subscription/` (plan codes `app` / `unlimited`; only called with a session). Change the template if the central's prices change.
   - `auth/`, `register/`, `forgot-password/` — Auth flows (guest-only routes)
   - `console/` — Authenticated dashboard with sub-pages: applications, devices, notifications, quiet-periods, settings (« Mon compte » : compte, abonnement (lecture seule de `billing/subscription/` : « Accès offert » si `bypass`, sinon formule + applications utilisées + fin de période, ou « Aucun abonnement » → `/pricing` ; masqué si `billingEnabled=false`, une erreur de lecture n'affiche qu'une note ; gestion sur `/dashboard/billing`), sécurité = `ChangePasswordPanel`, zone de danger ; `dashboard/change-password` redirige vers `dashboard/settings#security`)
-- **`shared/`** — Reusable UI components (alert, confirm dialog, emoji picker, header, footer, register panel)
+- **`shared/`** — Reusable UI components (alert, confirm dialog, emoji picker, avatar cropper, empty state, page header, language switcher, register panel, turnstile)
 
 ### Key Patterns
 - **All components are standalone** — use `imports` array in `@Component`, no shared modules
@@ -105,7 +106,7 @@ Components use single-file-name pattern (e.g., `about-page.ts` contains the comp
 ## Déploiement (prod : pushit.foxugly.com)
 
 Hébergé sur l'EC2 partagée (cohabite avec PushIT_server + QuizOnline), servi par
-**nginx**, TLS via `certbot --nginx`. Le repo est cloné dans
+**nginx**, TLS via le certificat **wildcard `*.foxugly.com`** (pas de `certbot --nginx`). Le repo est cloné dans
 `/var/www/django_websites/PushIT_frontend/` ; le SPA est servi depuis
 `dist/pushit-frontend/browser/` (artefacts rsync'és par la CI, gitignorés).
 
@@ -113,10 +114,11 @@ Hébergé sur l'EC2 partagée (cohabite avec PushIT_server + QuizOnline), servi 
 `pushit.foxugly.com/admin` → `https://pushit-api.foxugly.com/admin/` (l'admin
 canonique du backend, où ses cookies de session/CSRF et `/static/admin/` sont
 déjà servis). On redirige plutôt qu'on ne reverse-proxy pour ne pas éclater les
-cookies de l'admin sur deux hôtes. ⚠️ Le deploy installe le vhost depuis le blob
-git mais **ne recharge pas toujours nginx** — après un changement de template,
-vérifier la conf live et `sudo systemctl reload nginx` au besoin (drift connu,
-cf. l'historique `/media/`).
+cookies de l'admin sur deux hôtes. `location ^~ /admin/` (le `^~` est requis : sans
+lui la regex des assets gagnait et `/admin/x.js` renvoyait 404 — #137). Le deploy
+installe le vhost depuis le blob git puis **recharge nginx explicitement** (`nginx -t
+&& systemctl reload nginx`, depuis 2026-07-28 : le fetch runtime saute son reload
+quand le snippet SSM est inchangé).
 
 ### Config runtime (publique) via AWS SSM — Pattern A
 
@@ -161,8 +163,8 @@ bash deploy/seed-parameter-store.sh ./prod.env        # ou .ps1 sous Windows
 sudo systemctl restart pushit-frontend-runtime-fetch   # relit SSM + reload nginx
 ```
 
-Un **déploiement de code applique** les changements SSM (`deploy.sh` relance
-l'unité de fetch). L'unité est `oneshot`+`RemainAfterExit` : elle ne re-fetch pas
+Un **déploiement de code applique** les changements SSM (la commande SSM de
+`deploy.yml` relance l'unité de fetch). L'unité est `oneshot`+`RemainAfterExit` : elle ne re-fetch pas
 seule à l'exécution.
 
 ### Pipeline de déploiement
@@ -174,16 +176,17 @@ de la fleet (OPERATIONS.md §3.11) : le job `build-and-deploy` (gated par l'e2e,
 (`s3://<bucket>/builds/pushit-frontend/<sha>.tar.gz`, via un rôle OIDC), puis
 `aws ssm send-command` (AWS-RunShellScript, **root**) qui : (1) `git reset` en
 `django` (maj des sources `deploy/`), (2) installe l'unité / le script de fetch
-root / le vhost nginx **depuis le blob git committé** (jamais l'arbre django →
+root / le vhost nginx **depuis le blob git committé, lu dans le miroir nu de root**
+`/var/lib/fleet-deploy/PushIT_frontend.git` au SHA poussé (jamais l'arbre django →
 §3.10), (3) **pull le bundle depuis S3** via le rôle d'instance (creds certbot
-blankées) et l'**atomic-swap** dans `dist/pushit-frontend/browser/`, (4) restart
-`pushit-frontend-runtime-fetch` (relit SSM + `nginx -t` + reload), (5) normalise
-les perms. L'unité de fetch exécute `/usr/local/sbin/pushit-frontend-runtime-fetch.sh`
+blankées) ; extraction et **atomic-swap** dans `dist/pushit-frontend/browser/` faits
+**en `django`**, (4) restart `pushit-frontend-runtime-fetch` (relit SSM) puis
+`nginx -t && systemctl reload nginx`, (5) normalise les perms. L'unité de fetch exécute `/usr/local/sbin/pushit-frontend-runtime-fetch.sh`
 (**root:root, hors arbre applicatif**) — un RCE du process web (`django`) ne peut
 influencer aucun code exécuté en root. **Secrets CI** : `AWS_DEPLOY_ROLE_ARN`,
 `EC2_INSTANCE_ID`, `S3_DEPLOY_BUCKET`, + optionnel `SENTRY_AUTH_TOKEN` (upload des source maps) (plus de `EC2_SSH_KEY`/`EC2_HOST`/`EC2_USER`).
-`deploy/deploy.sh` (modèle rsync, et le sudoers `pushit-frontend-deploy` /
-l'authorized_keys de django) sont **obsolètes** depuis la bascule OIDC.
+L'ancien modèle rsync/SSH (`deploy/deploy.sh`, sudoers `pushit-frontend-deploy`,
+authorized_keys de django) a été supprimé (2026-06-05).
 
 ### IAM
 
@@ -216,7 +219,8 @@ en-têtes autorisés. Les deux hôtes sont *same-site* (`foxugly.com`), d'où
 ### Setup initial (one-time)
 
 ```bash
-sudo bash deploy/setup-server.sh <DEPLOY_USER>   # ex. ubuntu
+# en ubuntu, depuis un clone que django ne peut pas écrire (§3.10), jamais depuis l'arbre applicatif
+D=$(mktemp -d) && git clone --depth=1 https://github.com/Foxugly/PushIT_frontend.git "$D"   && bash "$D/deploy/setup-server.sh"
 ```
-(après avoir seedé SSM et étendu l'IAM). Voir
+(après avoir seedé SSM et étendu l'IAM ; idempotent). Voir
 `docs/superpowers/specs/2026-06-02-frontend-runtime-config-ssm-design.md`.
