@@ -131,7 +131,12 @@ Chaîne : `seed-parameter-store.{sh,ps1}` pousse un `.env` local dans SSM →
 `/etc/nginx/snippets/pushit-frontend-runtime.conf` (`set $pushit_* "...";`) →
 nginx injecte `window.__PUSHIT_*` dans `index.html` via `sub_filter` →
 `src/app/core/runtime-config.ts` lit ces globals au démarrage (défauts inline en
-dev). Sentry est initialisé dans `src/sentry-init.ts` avant le bootstrap.
+dev). Sentry est initialisé dans `src/sentry-init.ts` avant le bootstrap, avec les
+options de `src/app/core/sentry-options.ts`. **Sentry 11 :** `traceLifecycle: 'static'`
+y est obligatoire — en mode « stream » (défaut v11) `beforeSendTransaction` est ignoré
+et le jeton du chemin (reset / confirm-email / magic-link) partirait dans le nom de
+transaction ; `sentry-options.spec.ts` le vérifie dans un vrai client. `dataCollection`
+y fixe la base restrictive de la v10 (le défaut v11 collecte davantage).
 
 Paramètres : `API_BASE_URL`, `TURNSTILE_SITE_KEY` (clé publique du widget
 Cloudflare Turnstile — captcha sur l'inscription ; vide = widget masqué et

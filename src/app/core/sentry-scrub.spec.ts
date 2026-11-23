@@ -1,6 +1,6 @@
 import type { Event } from '@sentry/angular';
 
-import { FILTERED, scrubBreadcrumb, scrubEvent, scrubUrl } from './sentry-scrub';
+import { FILTERED, scrubBreadcrumb, scrubEvent, scrubSpan, scrubUrl } from './sentry-scrub';
 
 describe('scrubUrl', () => {
   it.each([
@@ -100,5 +100,20 @@ describe('scrubBreadcrumb', () => {
     });
     expect(crumb.data?.['url']).toBe(`https://x/auth/magic-link/${FILTERED}?token=${FILTERED}`);
     expect(crumb.message).toBe(`GET /reset-password/${FILTERED}`);
+  });
+});
+
+describe('scrubSpan', () => {
+  it('scrubs a static span description and its URL attributes', () => {
+    const span = scrubSpan({
+      description: 'GET /auth/confirm-email/MQ/tok',
+      data: { url: '/reset-password/MQ/abc?token=1', 'http.query': 'token=1', other: 'kept' },
+    });
+    expect(span.description).toBe(`GET /auth/confirm-email/${FILTERED}`);
+    expect(span.data).toEqual({
+      url: `/reset-password/${FILTERED}?token=${FILTERED}`,
+      'http.query': 'token=1',
+      other: 'kept',
+    });
   });
 });
