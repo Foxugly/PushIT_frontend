@@ -1,11 +1,11 @@
 import { Component, DestroyRef, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { TextareaModule } from 'primeng/textarea';
-import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { CheckboxModule } from '@openng/optimus-ui/checkbox';
+import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
+import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 import { finalize } from 'rxjs';
 
 import {

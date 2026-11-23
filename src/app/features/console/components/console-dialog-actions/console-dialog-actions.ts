@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { ButtonModule } from '@openng/optimus-ui/button';
 
 @Component({
   selector: 'app-console-dialog-actions',

@@ -4,17 +4,17 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { debounceTime, finalize, forkJoin, startWith } from 'rxjs';
-import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { DatePickerModule } from 'primeng/datepicker';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { SelectModule } from 'primeng/select';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { TextareaModule } from 'primeng/textarea';
-import { TooltipModule } from 'primeng/tooltip';
+import { MessageService } from '@openng/optimus-ui/api';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { DatePickerModule } from '@openng/optimus-ui/datepicker';
+import { DialogModule } from '@openng/optimus-ui/dialog';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { TableLazyLoadEvent, TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
+import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
 import {
   ApiErrorResponse,

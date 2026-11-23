@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ToastModule } from 'primeng/toast';
+import { ToastModule } from '@openng/optimus-ui/toast';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 import { Footer } from '../../../core/layout/footer/footer';

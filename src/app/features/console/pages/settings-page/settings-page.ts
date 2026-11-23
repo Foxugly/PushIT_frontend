@@ -3,10 +3,10 @@ import { Component, DestroyRef, computed, effect, inject, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { SelectModule } from 'primeng/select';
-import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { TagModule } from '@openng/optimus-ui/tag';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
 import { BillingSubscription, UserLanguage } from '../../../../core/models/api.models';
 import { AppCopyService } from '../../../../core/services/app-copy.service';

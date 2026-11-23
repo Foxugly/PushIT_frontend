@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
+import { TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
 
 import { ConsoleFactItem } from './console-fact-item';
 

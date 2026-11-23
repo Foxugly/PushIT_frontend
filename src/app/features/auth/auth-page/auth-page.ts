@@ -13,10 +13,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { CheckboxModule } from '@openng/optimus-ui/checkbox';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { PasswordModule } from '@openng/optimus-ui/password';
 
 import { ApiErrorResponse } from '../../../core/models/api.models';
 import { AppCopyService } from '../../../core/services/app-copy.service';

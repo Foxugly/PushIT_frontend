@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { effect, inject, Injectable } from '@angular/core';
-import { PrimeNG } from 'primeng/config';
-import { Translation } from 'primeng/api';
+import { Optimus } from '@openng/optimus-ui/config';
+import { Translation } from '@openng/optimus-ui/api';
 
 import { LanguageCode, PublicI18nService } from './public-i18n.service';
 
@@ -134,7 +134,7 @@ const PRIME_TRANSLATIONS: Partial<Record<LanguageCode, Translation>> = {
 
 @Injectable({ providedIn: 'root' })
 export class PrimeNgLocaleService {
-  private readonly primeng = inject(PrimeNG);
+  private readonly primeng = inject(Optimus);
   private readonly i18n = inject(PublicI18nService);
   private readonly document = inject(DOCUMENT);
 

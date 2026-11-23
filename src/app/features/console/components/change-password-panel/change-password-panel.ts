@@ -8,9 +8,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { ButtonModule } from 'primeng/button';
-import { MessageModule } from 'primeng/message';
-import { PasswordModule } from 'primeng/password';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { MessageModule } from '@openng/optimus-ui/message';
+import { PasswordModule } from '@openng/optimus-ui/password';
 
 import { ApiErrorResponse } from '../../../../core/models/api.models';
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';

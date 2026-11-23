@@ -1,7 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { SelectModule } from '@openng/optimus-ui/select';
 
 import { AppCopyService } from '../../../../core/services/app-copy.service';
 

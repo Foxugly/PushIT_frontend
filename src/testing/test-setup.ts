@@ -13,7 +13,7 @@
 // « Expected to be running in 'ProxyZone', but it was not found ».
 import 'zone.js/testing';
 
-// jsdom n'implémente pas ResizeObserver, et PrimeNG l'appelle sans garde dans
+// jsdom n'implémente pas ResizeObserver, et Optimus UI (ex-PrimeNG) l'appelle sans garde dans
 // `<p-tabs>` (TabList.bindResizeObserver) : sans ce stub, tout spec montant un
 // composant à onglets casse en ngAfterViewInit. Un no-op suffit — les specs
 // n'assertent rien sur le redimensionnement.

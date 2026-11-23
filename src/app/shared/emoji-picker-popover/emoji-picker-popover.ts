@@ -1,8 +1,8 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
-import { ButtonModule } from 'primeng/button';
-import { PopoverModule } from 'primeng/popover';
-import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { PopoverModule } from '@openng/optimus-ui/popover';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
 import { LanguageCode, PublicI18nService } from '../../core/services/public-i18n.service';
 

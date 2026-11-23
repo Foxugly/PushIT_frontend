@@ -10,8 +10,8 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { ButtonModule } from 'primeng/button';
-import { PasswordModule } from 'primeng/password';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { PasswordModule } from '@openng/optimus-ui/password';
 
 import { ApiErrorResponse } from '../../../core/models/api.models';
 import { AppCopyService } from '../../../core/services/app-copy.service';

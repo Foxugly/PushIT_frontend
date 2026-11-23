@@ -3,8 +3,8 @@ import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { TagModule } from '@openng/optimus-ui/tag';
 
 import { NotificationRead, NotificationStatus } from '../../../../core/models/api.models';
 import { AppCopyService } from '../../../../core/services/app-copy.service';

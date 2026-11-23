@@ -3,13 +3,13 @@ import { Component, DestroyRef, computed, inject, OnInit, signal, viewChild } fr
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { TabsModule } from 'primeng/tabs';
-import { TagModule } from 'primeng/tag';
-import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { TabsModule } from '@openng/optimus-ui/tabs';
+import { TagModule } from '@openng/optimus-ui/tag';
+import { TableModule } from '@openng/optimus-ui/table';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 import { finalize, forkJoin } from 'rxjs';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 
 import {
   ApiErrorResponse,

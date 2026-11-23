@@ -9,7 +9,7 @@ import {
   provideRouter,
   Router,
 } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';

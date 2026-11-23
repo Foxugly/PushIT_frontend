@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
+import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
 
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import { ApiErrorResponse, StaffUser } from '../../../../core/models/api.models';

@@ -1,7 +1,7 @@
 import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 import { finalize, switchMap } from 'rxjs';
 
 import { ApplicationRead } from '../../../../core/models/api.models';

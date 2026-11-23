@@ -19,6 +19,11 @@
 # n'ignorait que les majeures @angular* : c'etait traiter le symptome observe
 # au lieu de la classe entiere.
 #
+# Depuis le 2026-11-23, primeng/primeicons/@primeuix sont remplaces par
+# Optimus UI (@openng/optimus-ui, @openng/optimus-ui-themes, @openng/icons) :
+# leurs majeures (2.x = Angular 22) sont ignorees par la meme regle "*",
+# comme celles d'Angular. PrimeNG >= 22 (licence commerciale) est interdit.
+#
 # github-actions fait exception : ses majeures sont groupees en un seul PR par
 # depot, vert, donc sans nuisance.
 #

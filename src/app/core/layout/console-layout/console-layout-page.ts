@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { ToastModule } from '@openng/optimus-ui/toast';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 import { ConsoleCopyService } from '../../../core/services/console-copy.service';

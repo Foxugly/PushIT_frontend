@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
-import { TooltipModule } from 'primeng/tooltip';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
 import { AppCopyService } from '../../services/app-copy.service';
 import { SessionService } from '../../services/session.service';

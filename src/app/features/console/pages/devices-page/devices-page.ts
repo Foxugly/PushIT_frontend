@@ -4,14 +4,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { TextareaModule } from 'primeng/textarea';
-import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { DialogModule } from '@openng/optimus-ui/dialog';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { TableLazyLoadEvent, TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
+import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
 import {
   ApiErrorResponse,

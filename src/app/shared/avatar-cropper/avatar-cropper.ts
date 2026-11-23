@@ -1,7 +1,7 @@
 import { Component, computed, input, output, signal, viewChild } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
-import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { FileUploadModule, FileSelectEvent } from '@openng/optimus-ui/fileupload';
 import { ImageCropperComponent, ImageCroppedEvent, ImageTransform } from 'ngx-image-cropper';
 
 /** Labels the cropper needs — passed in so the component stays decoupled from

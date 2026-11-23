@@ -3,10 +3,10 @@ import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { TagModule } from 'primeng/tag';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
+import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
+import { TagModule } from '@openng/optimus-ui/tag';
 
 import { ApiErrorMessagePipe } from '../../../../core/pipes/api-error-message.pipe';
 import {
