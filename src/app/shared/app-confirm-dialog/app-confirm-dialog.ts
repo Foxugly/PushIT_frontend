@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { DialogModule } from '@openng/optimus-ui/dialog';
 
@@ -8,6 +8,7 @@ import { AppConfirmService } from './app-confirm.service';
   selector: 'app-confirm-dialog',
   imports: [ButtonModule, DialogModule],
   templateUrl: './app-confirm-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app-confirm-dialog.scss',
 })
 export class AppConfirmDialog {

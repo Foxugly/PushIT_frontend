@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastModule } from '@openng/optimus-ui/toast';
 
@@ -10,6 +10,7 @@ import { Topmenu } from '../../../core/layout/topmenu/topmenu';
   selector: 'app-public-layout-page',
   imports: [RouterOutlet, Topmenu, Footer, ToastModule],
   templateUrl: './public-layout-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './public-layout-page.scss',
 })
 export class PublicLayoutPage {

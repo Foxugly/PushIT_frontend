@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
@@ -43,7 +43,7 @@ function configure(
     providers: [provideTestCatalogs(), 
       provideRouter([]),
       provideNoopAnimations(),
-      provideHttpClient(),
+      provideHttpClient(withXhr()),
       { provide: PushitApiService, useValue: apiSpy },
       { provide: ConsoleShellService, useValue: shellStub },
       { provide: ConsoleCopyService, useValue: { current: signal({ applications: applicationsCopy }) } },

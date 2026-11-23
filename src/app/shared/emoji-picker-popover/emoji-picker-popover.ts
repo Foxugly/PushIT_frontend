@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { PopoverModule } from '@openng/optimus-ui/popover';
@@ -24,6 +24,7 @@ const DEFAULT_TOOLTIP: Record<LanguageCode, string> = {
   selector: 'app-emoji-picker-popover',
   imports: [PickerComponent, ButtonModule, PopoverModule, TooltipModule],
   templateUrl: './emoji-picker-popover.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './emoji-picker-popover.scss',
 })
 export class EmojiPickerPopover {

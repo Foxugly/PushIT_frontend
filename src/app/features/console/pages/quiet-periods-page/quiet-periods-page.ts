@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -62,6 +62,7 @@ type QuietPeriodContext = { scope: QuietPeriodScope; parentId: number };
     TooltipModule
 ],
   templateUrl: './quiet-periods-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './quiet-periods-page.scss',
 })
 export class QuietPeriodsPage implements OnInit {

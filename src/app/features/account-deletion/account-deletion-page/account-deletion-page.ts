@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from '@openng/optimus-ui/button';
 
@@ -13,6 +13,7 @@ import { AppCopyService } from '../../../core/services/app-copy.service';
   selector: 'app-account-deletion-page',
   imports: [RouterLink, ButtonModule],
   templateUrl: './account-deletion-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './account-deletion-page.scss',
 })
 export class AccountDeletionPage {

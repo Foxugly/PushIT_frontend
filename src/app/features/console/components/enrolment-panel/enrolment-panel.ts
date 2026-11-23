@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
@@ -28,6 +28,7 @@ import { interpolate } from '../../../../core/utils/string.utils';
   selector: 'app-enrolment-panel',
   imports: [AppAlert, ButtonModule, TooltipModule],
   templateUrl: './enrolment-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './enrolment-panel.scss',
 })
 export class EnrolmentPanel {

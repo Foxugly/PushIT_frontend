@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TabsModule } from '@openng/optimus-ui/tabs';
 
@@ -11,6 +11,7 @@ import { getAboutCopy } from './about.i18n';
   selector: 'app-about-page',
   imports: [TabsModule, ButtonModule],
   templateUrl: './about-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './about-page.scss',
 })
 export class AboutPage {

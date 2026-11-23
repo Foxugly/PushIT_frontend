@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
+import { ApplicationRef, Component, DestroyRef, afterNextRender, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -36,6 +36,7 @@ export const DELETE_ACCOUNT_CONFIRM_KEY = 'delete-account';
   imports: [ReactiveFormsModule, RouterLink, ButtonModule, ConfirmDialogModule, MessageModule, PasswordModule],
   providers: [ConfirmationService],
   templateUrl: './delete-account-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './delete-account-panel.scss',
 })
 export class DeleteAccountPanel {

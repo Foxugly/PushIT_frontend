@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, output, signal, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from '@openng/optimus-ui/button';
@@ -78,6 +78,7 @@ function policyKey(policy: InboundSenderPolicy): string {
     TooltipModule,
   ],
   templateUrl: './inbound-sender-policy-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './inbound-sender-policy-panel.scss',
 })
 export class InboundSenderPolicyPanel {

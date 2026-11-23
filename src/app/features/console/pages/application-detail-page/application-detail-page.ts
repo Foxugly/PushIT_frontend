@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, DestroyRef, computed, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -107,6 +107,7 @@ export function normalizeAppDetailTab(value: unknown): AppDetailTab {
   ],
   templateUrl: './application-detail-page.html',
   styleUrl: './application-detail-page.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '(window:beforeunload)': 'onBeforeUnload($event)',
   },

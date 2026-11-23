@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -64,6 +64,7 @@ const KNOWN_ERRORS: Record<string, KnownErrorKey> = {
     ApiErrorMessagePipe,
   ],
   templateUrl: './change-password-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './change-password-panel.scss',
 })
 export class ChangePasswordPanel {

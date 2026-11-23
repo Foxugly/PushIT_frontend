@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal, viewChild } from '@angular/core';
+import { Component, computed, input, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
 import { FileUploadModule, FileSelectEvent } from '@openng/optimus-ui/fileupload';
@@ -39,6 +39,7 @@ const MAX_SOURCE_PX = 1024;
   selector: 'app-avatar-cropper',
   imports: [ButtonModule, TooltipModule, FileUploadModule, ImageCropperComponent],
   templateUrl: './avatar-cropper.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './avatar-cropper.scss',
 })
 export class AvatarCropper {

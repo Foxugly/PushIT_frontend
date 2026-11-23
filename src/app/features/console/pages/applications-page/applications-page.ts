@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { DialogModule } from '@openng/optimus-ui/dialog';
@@ -37,6 +37,7 @@ import { EnrolmentPanel } from '../../components/enrolment-panel/enrolment-panel
     PageHeader,
   ],
   templateUrl: './applications-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './applications-page.scss',
 })
 export class ApplicationsPage {

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
@@ -23,6 +23,7 @@ const CLOSE_LABEL: Record<LanguageCode, string> = {
   selector: 'app-alert',
   imports: [ButtonModule, TooltipModule],
   templateUrl: './app-alert.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app-alert.scss',
 })
 export class AppAlert {

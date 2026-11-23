@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -31,6 +31,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   selector: 'app-reset-password-page',
   imports: [ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, PasswordModule],
   templateUrl: './reset-password-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './reset-password-page.scss',
 })
 export class ResetPasswordPage {

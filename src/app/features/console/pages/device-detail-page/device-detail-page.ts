@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -62,6 +62,7 @@ import { ConsoleFactsTable } from '../../components/console-facts-table/console-
     TooltipModule,
   ],
   templateUrl: './device-detail-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './device-detail-page.scss',
 })
 export class DeviceDetailPage implements OnInit {

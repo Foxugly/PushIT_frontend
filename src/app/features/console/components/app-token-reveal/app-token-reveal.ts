@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
 
@@ -20,6 +20,7 @@ import { AppAlert } from '../../../../shared/app-alert/app-alert';
   selector: 'app-token-reveal',
   imports: [AppAlert, ButtonModule, TooltipModule],
   templateUrl: './app-token-reveal.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app-token-reveal.scss',
 })
 export class AppTokenReveal {

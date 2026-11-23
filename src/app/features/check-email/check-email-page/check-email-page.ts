@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -12,6 +12,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
   selector: 'app-check-email-page',
   imports: [RouterLink, AppAlert, ButtonModule],
   templateUrl: './check-email-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './check-email-page.scss',
 })
 export class CheckEmailPage {

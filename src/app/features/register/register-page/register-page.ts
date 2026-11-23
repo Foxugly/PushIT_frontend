@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { RegisterPanel } from '../../../shared/register-panel/register-panel';
 
@@ -6,6 +6,7 @@ import { RegisterPanel } from '../../../shared/register-panel/register-panel';
   selector: 'app-register-page',
   imports: [RegisterPanel],
   templateUrl: './register-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './register-page.scss',
 })
 export class RegisterPage {}

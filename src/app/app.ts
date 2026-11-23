@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { PrimeNgLocaleService } from './core/services/primeng-locale.service';
@@ -9,6 +9,7 @@ import { AppConfirmDialog } from './shared/app-confirm-dialog/app-confirm-dialog
   selector: 'app-root',
   imports: [RouterOutlet, AppConfirmDialog],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss',
 })
 export class App {

@@ -8,6 +8,7 @@ import {
   inject,
   signal,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -42,6 +43,7 @@ import { rememberReturnUrl, safeReturnUrl } from '../../../core/utils/return-url
     PasswordModule
 ],
   templateUrl: './auth-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './auth-page.scss',
 })
 export class AuthPage implements OnDestroy {

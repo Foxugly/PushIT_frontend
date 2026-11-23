@@ -11,5 +11,13 @@
   "include": [
     "src/**/*.ts",
     "src/testing/jasmine-globals.d.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
 }

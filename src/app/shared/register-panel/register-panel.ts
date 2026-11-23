@@ -10,6 +10,7 @@ import {
   inject,
   input,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -45,6 +46,7 @@ import { TurnstileController } from '../turnstile/turnstile';
     TextareaModule
 ],
   templateUrl: './register-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './register-panel.scss',
 })
 export class RegisterPanel implements AfterViewInit, OnDestroy {

@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
@@ -73,7 +73,7 @@ describe('SendTokensPanel', () => {
       imports: [SendTokensPanel],
       providers: [
         provideNoopAnimations(),
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleCopyService, useValue: consoleCopy },
         { provide: AppConfirmService, useValue: { ask: () => Promise.resolve(true) } },

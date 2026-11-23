@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -53,6 +53,7 @@ const LIVE_STATUSES = new Set(['active', 'trialing']);
     TagModule,
   ],
   templateUrl: './billing-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './billing-page.scss',
 })
 export class BillingPage implements OnInit {

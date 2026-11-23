@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
@@ -132,6 +132,7 @@ function filtersKey(filters: NotificationListFilters): string {
     TooltipModule,
   ],
   templateUrl: './notifications-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notifications-page.scss',
 })
 export class NotificationsPage implements OnInit {

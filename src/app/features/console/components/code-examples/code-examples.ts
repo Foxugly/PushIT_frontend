@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TabsModule } from '@openng/optimus-ui/tabs';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
@@ -27,6 +27,7 @@ export interface CodeExample {
   selector: 'app-code-examples',
   imports: [ButtonModule, TabsModule, TooltipModule],
   templateUrl: './code-examples.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './code-examples.scss',
 })
 export class CodeExamples {

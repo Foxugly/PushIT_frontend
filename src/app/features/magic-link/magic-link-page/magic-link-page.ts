@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -20,6 +20,7 @@ import { takeRememberedReturnUrl } from '../../../core/utils/return-url';
   selector: 'app-magic-link-page',
   imports: [RouterLink, AppAlert],
   templateUrl: './magic-link-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './magic-link-page.scss',
 })
 export class MagicLinkPage implements OnInit {

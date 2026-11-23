@@ -8,6 +8,7 @@ import {
   computed,
   inject,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -27,6 +28,7 @@ import { TurnstileController } from '../../../shared/turnstile/turnstile';
   selector: 'app-forgot-password-page',
   imports: [ReactiveFormsModule, RouterLink, AppAlert, ApiErrorMessagePipe, ButtonModule, InputTextModule],
   templateUrl: './forgot-password-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './forgot-password-page.scss',
 })
 export class ForgotPasswordPage implements AfterViewInit, OnDestroy {

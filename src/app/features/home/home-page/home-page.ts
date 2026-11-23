@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from '@openng/optimus-ui/button';
 
@@ -10,6 +10,7 @@ import { openContactEmail } from '../../../shared/contact';
   selector: 'app-home-page',
   imports: [RouterLink, ButtonModule],
   templateUrl: './home-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './home-page.scss',
 })
 export class HomePage {
