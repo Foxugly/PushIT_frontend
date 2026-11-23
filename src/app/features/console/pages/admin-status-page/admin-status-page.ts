@@ -2,9 +2,9 @@ import { RouterLink } from '@angular/router';
 
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
 import { finalize } from 'rxjs';
 
 import { AdminCheck, AdminCheckStatus, AdminStatus, ApiErrorResponse } from '../../../../core/models/api.models';

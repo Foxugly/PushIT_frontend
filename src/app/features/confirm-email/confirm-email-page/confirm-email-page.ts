@@ -6,8 +6,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import * as Sentry from '@sentry/angular';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
 
 import { ApiErrorResponse } from '../../../core/models/api.models';
 import { AppCopyService } from '../../../core/services/app-copy.service';

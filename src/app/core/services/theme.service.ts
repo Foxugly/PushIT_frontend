@@ -5,7 +5,7 @@ type Theme = 'light' | 'dark';
 
 /**
  * Dark/light toggle (fleet standard). Adds `.dark-mode` on <html>, which drives
- * both PrimeNG (darkModeSelector: '.dark-mode') and the app's own `_tokens.scss`
+ * both Optimus UI (darkModeSelector: '.dark-mode') and the app's own `_tokens.scss`
  * `.dark-mode` overrides. The persisted value is applied pre-boot by the
  * anti-FOUC snippet in index.html; this service reconciles + handles the toggle.
  */

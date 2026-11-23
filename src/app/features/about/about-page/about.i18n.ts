@@ -142,7 +142,7 @@ const FR: AboutCopy = {
       description: 'Console de gestion des applications, appareils et notifications.',
       items: [
         'Angular 20, TypeScript et RxJS',
-        'PrimeNG 20 et SCSS',
+        'Optimus UI et SCSS',
         'Client API typé écrit à la main',
         'Karma, Jasmine et Playwright',
       ],
@@ -264,7 +264,7 @@ const NL: AboutCopy = {
       description: 'Console voor het beheer van applicaties, toestellen en notificaties.',
       items: [
         'Angular 20, TypeScript en RxJS',
-        'PrimeNG 20 en SCSS',
+        'Optimus UI en SCSS',
         'Handgeschreven getypte API-client',
         'Karma, Jasmine en Playwright',
       ],
@@ -386,7 +386,7 @@ const EN: AboutCopy = {
       description: 'Console to manage applications, devices and notifications.',
       items: [
         'Angular 20, TypeScript and RxJS',
-        'PrimeNG 20 and SCSS',
+        'Optimus UI and SCSS',
         'Hand-written typed API client',
         'Karma, Jasmine and Playwright',
       ],
@@ -508,7 +508,7 @@ const IT: AboutCopy = {
       description: 'Console per la gestione di applicazioni, dispositivi e notifiche.',
       items: [
         'Angular 20, TypeScript e RxJS',
-        'PrimeNG 20 e SCSS',
+        'Optimus UI e SCSS',
         'Client API tipizzato scritto a mano',
         'Karma, Jasmine e Playwright',
       ],
@@ -630,7 +630,7 @@ const ES: AboutCopy = {
       description: 'Consola para la gestión de aplicaciones, dispositivos y notificaciones.',
       items: [
         'Angular 20, TypeScript y RxJS',
-        'PrimeNG 20 y SCSS',
+        'Optimus UI y SCSS',
         'Cliente API tipado escrito a mano',
         'Karma, Jasmine y Playwright',
       ],

@@ -107,7 +107,7 @@ test('the logo cropper uploads after the image is zoomed', async ({ page }) => {
   await page.goto('/dashboard/applications/10/edit');
 
   // The logo field of an existing app lives in the Aperçu tab (the edit URL
-  // redirects there); pick the fixture image (PrimeNG's advanced fileupload
+  // redirects there); pick the fixture image (Optimus UI's advanced fileupload
   // renders two file inputs — the first is the real one).
   await expect(page).toHaveURL(/\/dashboard\/applications\/10$/);
   await page.locator('input[type="file"]').first().setInputFiles('e2e/fixtures/logo.png');

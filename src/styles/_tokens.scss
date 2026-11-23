@@ -80,7 +80,7 @@
 // ── Overrides thème sombre (classe .dark-mode sur <html>) ──────────────────
 // `:root.dark-mode` (et non `.dark-mode`) : même spécificité que les `:root`
 // d'app plus bas dans la cascade serait battue par l'ordre des sources.
-// PrimeNG lit la même classe (darkModeSelector: '.dark-mode', app.config.ts).
+// Optimus UI lit la même classe (darkModeSelector: '.dark-mode', app.config.ts).
 :root.dark-mode {
   color-scheme: dark;
 
@@ -90,7 +90,7 @@
   --ink: #e5e7eb;
   --ink-soft: #cbd5e1;
   --muted: #94a3b8;
-  --surface: #0f172a; // = PrimeNG dark content (surface.900, slate)
+  --surface: #0f172a; // = Optimus UI dark content (surface.900, slate)
   --surface-2: #020617;
   --border: #334155;
 
@@ -103,7 +103,7 @@
 
   --surface-muted: rgba(2, 6, 23, 0.55); // code / compteurs : un cran sous la carte
   --surface-glass: rgba(30, 41, 59, 0.55);
-  --field-bg: #1e293b; // = PrimeNG filled input (surface.800)
+  --field-bg: #1e293b; // = Optimus UI filled input (surface.800)
   --line-accent: rgba(52, 211, 153, 0.24);
   --line-accent-soft: rgba(52, 211, 153, 0.14);
   --accent-tint: rgba(16, 185, 129, 0.1);

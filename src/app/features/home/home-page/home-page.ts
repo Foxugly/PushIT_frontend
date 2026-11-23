@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
+import { ButtonModule } from '@openng/optimus-ui/button';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 import { SessionService } from '../../../core/services/session.service';

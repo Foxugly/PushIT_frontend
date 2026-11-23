@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { TabsModule } from 'primeng/tabs';
+import { ButtonModule } from '@openng/optimus-ui/button';
+import { TabsModule } from '@openng/optimus-ui/tabs';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 import { PublicI18nService } from '../../../core/services/public-i18n.service';

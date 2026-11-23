@@ -11,12 +11,12 @@ import { provideTransloco } from '@jsverse/transloco';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, Router, TitleStrategy, withInMemoryScrolling } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { providePrimeNG } from 'primeng/config';
-import { MessageService } from 'primeng/api';
+import { provideOptimus } from '@openng/optimus-ui/config';
+import { MessageService } from '@openng/optimus-ui/api';
 import { StaleChunkService } from './core/app-update/stale-chunk.service';
 import * as Sentry from '@sentry/angular';
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { definePreset } from '@openng/optimus-ui-themes';
+import Aura from '@openng/optimus-ui-themes/aura';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
@@ -64,7 +64,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),
-    providePrimeNG({
+    provideOptimus({
       ripple: true,
       inputVariant: 'filled',
       theme: {

@@ -1,7 +1,7 @@
 import { PushTokenStatus } from '../models/api.models';
 
 /**
- * PrimeNG tag severity for a device's push-token status. Shared by the devices
+ * Optimus UI (ex-PrimeNG) tag severity for a device's push-token status. Shared by the devices
  * list and the device detail page so the colour mapping stays in one place.
  */
 export function pushTokenStatusSeverity(
