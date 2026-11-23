@@ -978,3 +978,10 @@ a.p-button:focus {
     border-radius: 20px;
   }
 }
+
+/* Optimus UI 2.0 made `.p-tab` `display: flex; align-items: center`, so the Aura
+ * `tabs.tab.gap` (0.5rem) started spacing tab icons and labels (labels shifted
+ * 8px). Keep the PrimeNG 21 / Optimus 1 layout fleet-wide (Poker_frontend #123). */
+p-tab.p-tab {
+  display: block;
+}
