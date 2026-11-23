@@ -52,14 +52,18 @@ function navigateWithToken(): void {
       name: '/reset-password/MQ/abc-123',
       op: 'navigation',
       forceTransaction: true,
-      attributes: { 'sentry.segment.name.source': 'url' },
+      attributes: {
+        'sentry.segment.name.source': 'url',
+        'url.path': '/reset-password/MQ/abc-123',
+        'url.full': 'https://pushit.foxugly.com/reset-password/MQ/abc-123',
+      },
     },
     () => {
       Sentry.startSpan(
         {
           name: 'GET https://pushit.foxugly.com/auth/magic-link/s3cr3t',
           op: 'http.client',
-          attributes: { url: 'https://pushit.foxugly.com/auth/magic-link/s3cr3t' },
+          attributes: { 'url.full': 'https://pushit.foxugly.com/auth/magic-link/s3cr3t' },
         },
         () => undefined,
       );
