@@ -4,29 +4,16 @@
  *
  * Les valeurs viennent de la config runtime (globals injectés par nginx). Si le
  * DSN est vide (cas dev, ou bootstrap serveur sans SSM seedé), `Sentry.init`
- * n'est pas appelé : le SDK reste inerte, aucun appel réseau.
+ * n'est pas appelé : le SDK reste inerte, aucun appel réseau. Les options
+ * (dont le nettoyage des jetons) sont dans app/core/sentry-options.ts.
  */
 import * as Sentry from '@sentry/angular';
 
 import { getRuntimeConfig } from './app/core/runtime-config';
-import { scrubBreadcrumb, scrubEvent } from './app/core/sentry-scrub';
+import { buildSentryOptions } from './app/core/sentry-options';
 
 const { sentry } = getRuntimeConfig();
 
 if (sentry.dsn) {
-  Sentry.init({
-    dsn: sentry.dsn,
-    environment: sentry.environment,
-    release: sentry.release || undefined,
-    integrations: [Sentry.browserTracingIntegration()],
-    // 10 % des transactions tracées en prod : compromis volume/coût.
-    tracesSampleRate: 0.1,
-    // Propager les en-têtes de trace uniquement vers notre backend.
-    tracePropagationTargets: [/^https:\/\/pushit-api\.foxugly\.com\/api/],
-    // Jetons à usage unique (reset / confirm-email / magic-link) masqués dans
-    // les URLs, noms de transaction, spans et breadcrumbs (sentry-scrub.ts).
-    beforeSend: (event) => scrubEvent(event),
-    beforeSendTransaction: (event) => scrubEvent(event),
-    beforeBreadcrumb: (breadcrumb) => scrubBreadcrumb(breadcrumb),
-  });
+  Sentry.init(buildSentryOptions(sentry));
 }
