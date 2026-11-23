@@ -32,14 +32,22 @@ export function scrubUrl(value: string | undefined): string | undefined {
     .replace(SENSITIVE_QUERY, (_match, prefix: string) => `${prefix}${FILTERED}`);
 }
 
+/**
+ * Masque chaque valeur texte d'un objet de données (breadcrumb, span, trace).
+ * Pas de liste de clés : le SDK range l'URL sous des noms qui changent
+ * (`url`, `url.full`, `url.path`, `http.url`…) et une liste en oubliait —
+ * `url.path` / `url.full` des spans de navigation partaient en clair.
+ * `scrubUrl` ne touche qu'aux segments sensibles, le reste est inchangé.
+ */
 function scrubRecordUrls(data: Record<string, unknown> | undefined): void {
   if (!data) {
     return;
   }
-  for (const key of ['url', 'from', 'to', 'http.url', 'http.query']) {
-    const value = data[key];
+  for (const [key, value] of Object.entries(data)) {
     if (typeof value === 'string') {
       data[key] = scrubUrl(value);
+    } else if (Array.isArray(value)) {
+      data[key] = value.map((item: unknown) => (typeof item === 'string' ? scrubUrl(item) : item));
     }
   }
 }
