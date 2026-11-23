@@ -6,9 +6,9 @@
   margin-top: 1.25rem;
 }
 
-// No margin on .tab-icon: since Optimus UI 2, `.p-tab` is `display: flex` with
-// the theme's `gap` (tabs.tab.gap = 0.5rem), which already spaces icon and label.
-// A margin here doubled the gap.
+.tab-icon {
+  margin-right: 0.5rem;
+}
 
 .tab-content {
   display: grid;
