@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from '@openng/optimus-ui/button';
@@ -41,6 +41,7 @@ import { PageHeader } from '../../../../shared/page-header/page-header';
     ToggleSwitchModule,
   ],
   templateUrl: './accounts-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './accounts-page.scss',
 })
 export class AccountsPage implements OnInit {

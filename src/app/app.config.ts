@@ -8,7 +8,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { provideRouter, Router, TitleStrategy, withInMemoryScrolling } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideOptimus } from '@openng/optimus-ui/config';
@@ -78,7 +78,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     // Titre d'onglet « {page} — PushIT » (data.titleKey des routes), suivi de la langue.
     { provide: TitleStrategy, useExisting: PageTitleStrategy },
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     // Toast global : un seul <p-toast/> monté à la racine des layouts de shell,
     // alimenté par ce MessageService partagé (standard flotte).
     MessageService,

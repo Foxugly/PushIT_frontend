@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -37,6 +37,7 @@ export interface DashboardMetric {
   selector: 'app-dashboard-home-page',
   imports: [DatePipe, RouterLink, ButtonModule, TagModule, EmptyState],
   templateUrl: './dashboard-home-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './dashboard-home-page.scss',
 })
 export class DashboardHomePage implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
@@ -11,7 +11,8 @@ import { PushitApiService } from '../../services/pushit-api.service';
 import { SessionService } from '../../services/session.service';
 import { Topmenu } from './topmenu';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class EmptyPage {}
 
 describe('Topmenu', () => {

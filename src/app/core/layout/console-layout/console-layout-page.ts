@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { ToastModule } from '@openng/optimus-ui/toast';
@@ -24,6 +24,7 @@ import { Topmenu } from '../../../core/layout/topmenu/topmenu';
     ToastModule
 ],
   templateUrl: './console-layout-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './console-layout-page.scss',
 })
 export class ConsoleLayoutPage implements OnInit {

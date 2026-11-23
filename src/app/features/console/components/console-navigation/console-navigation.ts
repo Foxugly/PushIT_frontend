@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AppCopyService } from '../../../../core/services/app-copy.service';
@@ -26,6 +26,7 @@ export interface ConsoleNavigationItem {
   selector: 'app-console-navigation',
   imports: [ConsoleMenuItem, RouterLink, RouterLinkActive],
   templateUrl: './console-navigation.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './console-navigation.scss',
 })
 export class ConsoleNavigation {

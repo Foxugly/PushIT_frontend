@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PublicI18nService } from '../../../core/services/public-i18n.service';
@@ -8,6 +8,7 @@ import { getPrivacyCopy } from './privacy.i18n';
   selector: 'app-privacy-page',
   imports: [RouterLink],
   templateUrl: './privacy-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './privacy-page.scss',
 })
 export class PrivacyPage {

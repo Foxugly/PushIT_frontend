@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
@@ -64,7 +64,7 @@ describe('InboundSenderPolicyPanel', () => {
       imports: [InboundSenderPolicyPanel],
       providers: [
         provideNoopAnimations(),
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         { provide: PushitApiService, useValue: { updateApp } },
         { provide: ConsoleCopyService, useValue: { current: signal(frCatalog.console) } },
         { provide: CatalogStore, useValue: { get: () => frCatalog } },

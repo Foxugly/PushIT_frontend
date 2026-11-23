@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -51,6 +51,7 @@ type SubscriptionState =
     TooltipModule,
   ],
   templateUrl: './settings-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings-page.scss',
 })
 export class SettingsPage {

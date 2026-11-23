@@ -1,6 +1,6 @@
 import { RouterLink } from '@angular/router';
 
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { TableModule } from '@openng/optimus-ui/table';
@@ -35,6 +35,7 @@ interface NotificationMetric {
   selector: 'app-admin-status-page',
   imports: [RouterLink, ApiErrorMessagePipe, PageHeader, ButtonModule, TableModule, TagModule],
   templateUrl: './admin-status-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './admin-status-page.scss',
 })
 export class AdminStatusPage implements OnInit {

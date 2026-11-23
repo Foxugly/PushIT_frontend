@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { AppCopyService } from '../../../core/services/app-copy.service';
 
@@ -6,6 +6,7 @@ import { AppCopyService } from '../../../core/services/app-copy.service';
   selector: 'app-donate-page',
   imports: [],
   templateUrl: './donate-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './donate-page.scss',
 })
 export class DonatePage {

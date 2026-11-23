@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -21,6 +21,7 @@ import { AppAlert } from '../../../shared/app-alert/app-alert';
   selector: 'app-confirm-email-page',
   imports: [ReactiveFormsModule, RouterLink, AppAlert, ButtonModule, InputTextModule],
   templateUrl: './confirm-email-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './confirm-email-page.scss',
 })
 export class ConfirmEmailPage implements OnInit {

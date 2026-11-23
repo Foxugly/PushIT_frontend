@@ -1,10 +1,11 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-console-menu-item',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './console-menu-item.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './console-menu-item.scss',
 })
 export class ConsoleMenuItem {

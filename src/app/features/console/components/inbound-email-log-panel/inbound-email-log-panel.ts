@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, signal, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from '@openng/optimus-ui/button';
@@ -56,6 +56,7 @@ export function inboundLogReason(errorMessage: string, reasons: Record<string, s
   selector: 'app-inbound-email-log-panel',
   imports: [AppAlert, ApiErrorMessagePipe, ButtonModule, RouterLink, TableModule, TagModule],
   templateUrl: './inbound-email-log-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './inbound-email-log-panel.scss',
 })
 export class InboundEmailLogPanel {

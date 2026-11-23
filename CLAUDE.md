@@ -66,8 +66,8 @@ Pièges découverts pendant la bascule, à connaître :
 ## Architecture
 
 ### Stack
-- Angular 21 with standalone components (no NgModules)
-- **Optimus UI 1.x** (`@openng/optimus-ui`, Aura theme via `@openng/optimus-ui-themes`, icons `pi pi-*` via `@openng/icons`) for UI components — the MIT community fork of PrimeNG 21, same components, selectors and API (`provideOptimus`, ex-`providePrimeNG`). **PrimeNG ≥ 22 is banned in the fleet** (commercial licence, banner without a key); see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ». `PrimeNgLocaleService` keeps its historical name: it feeds the component translations through `Optimus.setTranslation`.
+- Angular 22 with standalone components (no NgModules), TypeScript 6.0. Components the v22 migration found without an explicit strategy carry `ChangeDetectionStrategy.Eager` (pre-v22 default behaviour kept); new components should be `OnPush`. `provideHttpClient(withXhr())` keeps the XHR backend.
+- **Optimus UI 2.x** (2.x = Angular 22, 1.x = Angular 21) (`@openng/optimus-ui`, Aura theme via `@openng/optimus-ui-themes`, icons `pi pi-*` via `@openng/icons`) for UI components — the MIT community fork of PrimeNG 21, same components, selectors and API (`provideOptimus`, ex-`providePrimeNG`). **PrimeNG ≥ 22 is banned in the fleet** (commercial licence, banner without a key); see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ». `PrimeNgLocaleService` keeps its historical name: it feeds the component translations through `Optimus.setTranslation`.
 - SCSS for component styles
 - Strict TypeScript (`strict: true`, `strictTemplates: true`)
 

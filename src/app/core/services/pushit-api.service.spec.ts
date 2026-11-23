@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
@@ -7,7 +7,7 @@ import { PushitApiService } from './pushit-api.service';
 describe('PushitApiService.deleteMe', () => {
   it('sends DELETE /auth/me/ with the current password in the body', () => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting()],
     });
     const api = TestBed.inject(PushitApiService);
     const http = TestBed.inject(HttpTestingController);
@@ -31,7 +31,7 @@ describe('PushitApiService cookie-mode auth calls', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting()],
     });
     api = TestBed.inject(PushitApiService);
     http = TestBed.inject(HttpTestingController);
@@ -89,7 +89,7 @@ describe('PushitApiService cookie-mode auth calls', () => {
 describe('PushitApiService.downloadAndroidApp', () => {
   it('GETs /devices/android-app/ as a blob, without cookie credentials', () => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting()],
     });
     const api = TestBed.inject(PushitApiService);
     const http = TestBed.inject(HttpTestingController);

@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter, Router } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { MessageService } from '@openng/optimus-ui/api';
@@ -312,7 +312,7 @@ describe('ApplicationDetailPage', () => {
       providers: [provideTestCatalogs(), 
         provideRouter([]),
         provideNoopAnimations(),
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         { provide: ActivatedRoute, useValue: routeStub },
         { provide: PushitApiService, useValue: api },
         { provide: ConsoleShellService, useValue: shell },

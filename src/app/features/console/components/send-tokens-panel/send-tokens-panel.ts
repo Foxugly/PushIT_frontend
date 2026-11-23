@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from '@openng/optimus-ui/button';
@@ -46,6 +46,7 @@ const REVEAL_TTL_MS = 20_000;
     TooltipModule
 ],
   templateUrl: './send-tokens-panel.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './send-tokens-panel.scss',
 })
 export class SendTokensPanel implements OnInit {
